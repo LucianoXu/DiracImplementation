@@ -102,6 +102,7 @@ Quantum registers are expressions (i.e., terms) of Hilbert spaces. They are used
 \textbf{Notice:} For $\mathcal{WF}(\Gamma) \vdash r_1 : T_1$ and $\mathcal{WF}(\Gamma) \vdash r_2 : T_2$, the register pair $r_1, r_2$ has the product type $T_1 * T_2$, and evaluates to the tensor subsystem of $r_1$ and $r_2$. In other words, the pair in classical type, the pair register and the tensor of subsystems are closely related. This is reflected in the typing and reduction rules.
 
 \textcolor{red}{Other register structure?}
+We may be able to design a correspondence between operation on classical terms and those on quantum variables. Pair structure is a case for it.
 
 
 \section{L0 Dirac Notation}
@@ -205,7 +206,7 @@ We can understand the multiplication $e_1 * e_2$ as \textit{contracting all poss
 
 \vspace{1em}
 
-One problem is that we have well-typed side conditions for rerwriting rules. In consideration of this, I feel that what we need is a term rewriting system for well-typed proof of Dirac notations, instead of Dirac notation alone.
+One problem is that we have well-typed side conditions for rerwriting rules. In consideration of this, I feel that what we need is a term rewriting system for \textbf{well-typed proof of Dirac notations}, instead of Dirac notation alone.
 
 \vspace{1em}
 Because we have AC functions ($e_1 + e_2$ and $e_1 \otimes e_2$), we will need a reduction order, which is defined as follows.
@@ -225,6 +226,8 @@ Because we have AC functions ($e_1 + e_2$ and $e_1 \otimes e_2$), we will need a
     \ \\
     \frac{a < s}{M[a, b]<N[s, t]}\qquad \frac{b < t}{M[a, b]<N[a, t]}\qquad \frac{M < N}{M[a, b] < N[a, b]}\\
     \ \\
+    \frac{}
+    \ \\
     \frac{e_2 < e}{e_1 + e_2 < e}\qquad \frac{e_2 < e}{e_1 * e_2 < e} \qquad \frac{e_2 < e}{e_1 \otimes e_2 < e}
   \end{gather*}
 \end{dfn}
@@ -243,6 +246,7 @@ The reduction rules for L0 Dirac notation are presented below. This term rewriti
 \subsubsection*{Complex Number}
 \begin{align*}
   & \vdash 0 \to \textbf{0}_{\emptyset, \emptyset}\\
+  & \vdash c_1 + c_2 \to c_1 + c_2\qquad \text{(the addition of complex numbers)}\\
   & \vdash c_1 \otimes c_2 \to c_1 * c_2\qquad \text{(the multiplication of complex numbers)}\\
   & \vdash c_1 \otimes e + c_2 \otimes e \to (c_1 + c_2) \otimes e\\
   & \vdash 1 \otimes e \to e\\
@@ -269,8 +273,8 @@ However, it is true that in most cases the quantum subsystems can be determined 
 
 \subsubsection*{Addition}
 \begin{align*}
-  & \vdash e1 + (e2 + e3) \to e1 + e2 + e3 \\
-  & e1 < e2 \vdash e1 + e2 \to e2 + e1
+  & \vdash e_1 + (e_2 + e_3) \to e_1 + e_2 + e_3 \\
+  & e_1 < e_2 \vdash e_1 + e_2 \to e_2 + e_1
 \end{align*}
 
 \subsubsection*{Tensorization}
@@ -304,7 +308,7 @@ These rules try to lift $e_1 \otimes e_2$ above $e_1 * e_2$ structures when poss
   & \vdash e_1 * (e_2 * e_3) \to e_1 * e_2 * e_3\\
   & \vdash e_1 * (e_2 + e_3) \to e_1 * e_2 + e_1 * e_3
   \qquad \vdash (e_1 + e_2) * e_3 \to e_1 * e_3 + e_2 * e_3\\
-  & \vdash \bra{i}_r * \ket{i}_r \to \delta_{ij}
+  & \vdash \bra{i}_r * \ket{j}_r \to \delta_{ij}
 \end{align*}
 
 \subsubsection*{Tensor}
@@ -368,9 +372,9 @@ It's reasonable to have definitions for Dirac notations. For example, $\ket{+}$ 
 & \texttt{+ |1, 1>[pair]<1, 0| + |1, 0>[pair]<1, 1|.}
 \end{align*}
 
-Of course, here $\texttt{pair : bool * bool}$ does not mean pair is a classical term of $\texttt{bool*bool}$, but means \textit{pair is a quantum variable of \texttt{bool*bool} type}. (Maybe a different notation is needed here.)
+Of course, here \texttt{pair : bool * bool} does not mean \texttt{pair} is a classical term of $\texttt{bool * bool}$, but means \textit{\texttt{pair} is a quantum variable of \texttt{bool * bool} type}. (Maybe a different notation is needed here.)
 
-Consistently, we will need environments for the definitions. But this will make the implementation more like a theorem prover than a solver.
+Consistently, we will need environments for the definitions. We can even allow additional rewriting rules, which can be considered as the extra assumptions on variables. But this will make the implementation more like a theorem prover than a solver.
 
 
 \section{L1B Dirac Notation}
@@ -380,6 +384,8 @@ Consider this notation:
 $$
 \mathcal{WF}([r : \texttt{Seq bool n}]) \vdash \frac{1}{\sqrt{2^n}}\sum_{i \in \{0, 1\}^n} \ket{i}_r = \bigotimes_{i=0}^{n-1} \frac{\ket{0}_{r[i]} + \ket{1}_{r[i]}}{\sqrt{2}}.
 $$
+
+This example demonstrates a typical case of using big operators. Also, quantum arrays appear in the right hand side, which is almost always necessary when using big operators.
 
 
 
@@ -401,8 +407,29 @@ $$
 
 \end{dfn}
 
+
+\section{L1D Dirac Notation}
+\textbf{L1D Dirac notation} is L0 Dirac notation with other common operators, e.g. subtraction, conjugte and transpose.
+
+\textcolor{red}{Maybe it's better to move conjugate/transpose to L0 and conjugate transpose to L1D?}
+
+
+\section{L2 Dirac Notation}
+
+L1 Dirac notations extends the simplest L0 theory in different perspectives.
+And at some point, we will need to consider how to combine them to get even more powerful theories.
+
+I believe there should be some ``confluent'' property between different L1 theories, so that they can work well with each other.
+
+\section{Transplant Dirac Notation onto some CiC system}
+
+This will help a lot in quantum formal verifications.
+
 \section{Implementation}
 \subsection{Reliable Encoding Mechanism}
+
+A Python framework for the calculus of order-sorted universal algebra. Most formal systems can be embedded in such a universal algebra.
+
 
 
 \clearpage
