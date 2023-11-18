@@ -1,436 +1,71 @@
-\documentclass{article}
+\documentclass{book}
 \usepackage[utf8]{inputenc}
-
-\usepackage{makecell}
-
+\usepackage[margin=0.8in]{geometry}
+%\usepackage{natbib}
+%\usepackage{graphicx}
+\usepackage{color}
+\usepackage{amsmath}
+%\usepackage{amssymb}
 \usepackage{graphicx}
-\usepackage{makecell}
+\usepackage{amsthm}
+\usepackage{stmaryrd}
+\usepackage[all]{xy}
+\usepackage{multirow}
+\usepackage{paralist}
+\usepackage{hhline}
+\usepackage{bm}
+\usepackage{listings,lstcoq}
+\definecolor{ltblue}{rgb}{0,0.4,0.4}
+\definecolor{dkblue}{rgb}{0,0.1,0.6}
+\definecolor{dkgreen}{rgb}{0,0.35,0}
+\definecolor{dkviolet}{rgb}{0.3,0,0.5}
+\definecolor{dkred}{rgb}{0.5,0,0}
+\lstset{language=Coq}
+\usepackage{pmboxdraw}
+\usepackage{pifont}% http://ctan.org/pkg/pifont
+\newcommand{\cmark}{\CIRCLE}%
+\newcommand{\xmark}{\Circle}%
+\newcommand{\hmark}{\LEFTcircle}%
+\renewcommand{\matrix}[1]{\begin{bmatrix}#1\end{bmatrix}}
+\usepackage{wasysym}
+\usepackage{extarrows}
+\usepackage{tikz}
+\usepackage{wrapfig}
+\usepackage{dsfont}
+
+\input{notations}
+
+\newcommand{\gb}[1]{\textit{\color{green}[GB] : #1}}
+\newcommand{\py}[1]{\textit{\color{red}[PY] : #1}}
+\newcommand{\lz}[1]{\textit{\color{blue}[LZ] : #1}}
+\newcommand{\jl}[1]{\textit{\color{blue}[JL] : #1}}
+\newcommand{\modify}[1]{{\color{red}#1}}
+
 \usepackage{amssymb}
 \usepackage{amsmath}
 \usepackage{stmaryrd}
-
 \usepackage{hyperref}
-
-% This file contains the settings of lstlisting
-\input{lstlisting}
-
-
-\usepackage{geometry}
-\geometry{
-  textwidth=138mm,
-  textheight=215mm,
-  left=20mm,
-  right=20mm,
-  top=25.4mm, 
-  bottom=25.4mm,
-  headheight=2.17cm,
-  headsep=4mm,
-  footskip=12mm,
-  heightrounded,
-}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Proof Formatting
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{corollary}[theorem]{Corollary}
-\newtheorem{dfn}{Definition}
-\newtheorem{hypothesis}{Hypothesis}
-\newtheorem{lemma}[theorem]{Lemma}
-\newtheorem{proposition}[theorem]{Proposition}
-\newtheorem{remark}{Remark}
-\newtheorem{example}{Example}
-\newtheorem{conjecture}{Conjecture}
-\newenvironment{proof}{\textbf{PROOF}}{\hfill $\square$ \vspace{1em}}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \usepackage{braket}
 
 
 \title{\textbf{Dirac Notation Theories (of Operators)}\\ 
 \Large{Infrastructure for Quantum Formal Systems}}
-\author{Yingte Xu}
+\author{}
 
 \begin{document}
 
 \maketitle
 
-\section{Introduction}
-
-Say we want a theory about formalizing Dirac notations. We want it to be as expressive and general as possible, while stay highly automated at the same time. One difficulty is that there are so many factors to consider: quantum registers and variables, indexes, big operators, the theory for natural and complex numbers, whether it is more like a theorem prover or a solver... 
-
-Generally speaking, there is a dilemma between automation and expressiveness. Consider the two extreme cases: we can assume that the natural/real numbers correspond to those constants stored in the computer. Then we can get rid of the decidability problems about numbers. It will be easy to implement and use, but with very limitted applicability, which makes it more like a solver. On the other hand, the whole thery of Dirac notations can be developed based on expressive logic basis (e.g., Coq). In this case, we can have complicated terms about those numbers, and even the scale of quantum system can be parameterized. But the deductions in this setting is much harder and the tool will be more like a theorem prover.
-
-It's hard to say which is the best choice. If the implementation is restricted to very limited cases (i.e., not general enough), it will not be theoretically intersting. And if the theory is too general, it will be hard to implement a corresponding practical tool, and such tools will be complicated and hard to use.
-
-In front of this situation, it seems that we need to make a decision before developming the theory and work on the implementation. But the better approach exists: one obvious conclusion is, that the ability of Dirac notation system is dependent on its basis. We can study the theory for Dirac notations with respect to different basis.
-This basis include the logic and methodology of reasoning, how natural/complex numbers are represented and reasoned about, as well as those stuff about sets. 
-
-In other words, here we consider the Dirac notation theory as a functor. (See the Coq implementation for functors: \url{https://coq.inria.fr/refman/language/core/modules.html\#typing-modules})
-
-The implementation in Python loyally reflects the theory described in this draft. To address the problem of \textit{put formal systems into Python as it is}, I designed the methodology and framework called REM (Reliable Encoding Mechanism), which is a set of concrete discipline to practise CH-correspondence in Python language. The Dirac notation theory implementation as a functor is developped with this framework. I did experiments on different basis theories(tools): Python numerical complex numbers and computer algebra system by \textit{Wolfram Engine}.
-However, the flexibility of this implementation also means the low efficiency. Therefore this can be considered as a prototype for theory verification purpose.
-
-\clearpage
-
 \tableofcontents
 
 \clearpage
 
-\section{Preliminaries}
-
-\subsection{Reduction in Mathematica}
-
-\subsection{Clarification}
-There are a few concepts to be clarified here.
-
-\subsubsection*{Classical Type/Term}
-The basis theory $\mathfrak{T}$ contains the information about classical types and terms, which further determine the possible types and basis of Hilbert spaces. The type of every Hilbert space is specified by a type $T$ in $\mathfrak{T}$, and the basis of the Hilbert space consists of the legal terms $t$ of type $T$. Notice that in casual reasoning about Dirac notations, people only care about the dimension of Hilbert spaces. Here our type is richer then dimension only, and we adopt the strict type checker $\mathfrak{T} \Vdash t : T$ which distinguishes Hilbert spaces of different types.
-
-
-\subsubsection*{Quantum Variable}
-Quantum variables refer to the variables of Hilbert spaces. Every quantum variable $x$ has a classical type $T$ (provided by basis theory $\mathfrak{T}$), written as $x : T$, and it is called a \textbf{quantum variable typing}. The variable's type is exactly that of the Hilbert space it represents. And in L1A Dirac notations, we will consider the environment of definitions and substitutions of quantum variables.
-
-\subsubsection*{Quantum Variable Context}
-A quantum variable context is an ordered sequence of quantum variable typings, denoted by $\Gamma = [x_1 : T_1; x_2 : T_2; \dots]$. The well-typed proof of Dirac notations is considered with respect to a quantum variable context. A well-typed quantum variable context is denoted by $\mathcal{WF}(\Gamma)$.
-
-\subsubsection*{Quantum Subsystem}
-A quantum subsystem treated as a set of ``atomic'' quantum system, and disjointness between subsystems corresponds to disjointness of these sets. For L0 Dirac notations, quantum subsystems are simply enumeration of quantum variables, so there is no hardness in disjointness decision. However, for L1C Dirac notations, we will have quantum arrays, which makes the problems very nasty.
-
-\subsubsection*{Quatum Register}
-Quantum registers are expressions (i.e., terms) of Hilbert spaces. They are used as the labels for Dirac notations. Quantum registers can be quantum variables or pairs. Quantum registers have their types, which is also the type of the Hilbert space they evaluate to. A well-typed quantum register is represented by $\mathcal{WF}(\Gamma) \vdash r : T$.
-
-\textbf{Notice:} For $\mathcal{WF}(\Gamma) \vdash r_1 : T_1$ and $\mathcal{WF}(\Gamma) \vdash r_2 : T_2$, the register pair $r_1, r_2$ has the product type $T_1 * T_2$, and evaluates to the tensor subsystem of $r_1$ and $r_2$. In other words, the pair in classical type, the pair register and the tensor of subsystems are closely related. This is reflected in the typing and reduction rules.
-
-\textcolor{red}{Other register structure?}
-We may be able to design a correspondence between operation on classical terms and those on quantum variables. Pair structure is a case for it.
-
-
-\section{L0 Dirac Notation}
-
-\textbf{L0 Dirac notation} refers to the simplest theories of Dirac notations. There is no big-operators, no quantum arrays, no environments and definitions.
-
-\subsection{Basis Theories}
-For distinguishability, the reasoning in basis theories is represented by $\Vdash$.
-
-\begin{dfn}[L0 classical type theory]
-  A \textbf{L0 classical type theory} $\mathfrak{T}$ is a formal system containing the following definitions:
-  \begin{itemize}
-    \item the sort \texttt{Type}, types $T$ and term $t$,
-    \item the well-typed relation $\mathfrak{T} \Vdash T : \texttt{Type}$ and $\mathfrak{T} \Vdash t : T$,
-    \item the equality of terms $\mathfrak{T} \Vdash t1 = t2$.
-  \end{itemize}
-\end{dfn}
-
-\begin{dfn}[L0 complex number theory]
-  A \textbf{L0 complex number theory} $\mathfrak{C}$ is a formal system containing the following definitions:
-  \begin{itemize}
-    \item the type $\mathbb{C}$, the well-typed relation $\mathfrak{C} \Vdash c : \mathbb{C}$.
-  \end{itemize}
-\end{dfn}
-
-\subsection{Notations}
-
-\begin{dfn}[L0 quantum register]
-  A \textbf{L0 quantum register} can be built in two ways:
-  \begin{itemize}
-    \item a quantum variable $r$,
-    \item a pair register $r_1, r_2$.
-  \end{itemize}
-\end{dfn}
-
-\begin{dfn}[L0 Dirac notation]
-  The grammar for \textbf{L0 Dirac notation} is:
-  $$
-  e ::=\ c\ |\ \textbf{0}_{S_K, S_B}\ |\ \ket{v}_r\ |\ \bra{v}_r\ |\ M_{r_1, r_2}\ |\ e + e\ |\ e * e\ |\ e \otimes e\ |\ e^\dagger.
-  $$
-  Here $c$ is the complex number term in $\mathfrak{C}$. $S_K$ and $S_B$ are quantum subsystems. $v$ is the classical term in $\mathfrak{T}$. $r$ is the quantum register. Especially, $M_{r_1, r_2}$ represents a variable of Dirac notation.
-\end{dfn}
-
-\begin{dfn}[well-typed quantum register]
-  We say $r$ is a \textbf{well-typed quantum register} in context $\Gamma$ if we can prove $\mathcal{WF}(\Gamma) \vdash r : T$ for some $T$.
-\end{dfn}
-
-\begin{dfn}[well-typed Dirac notation]
-  We say $e$ is a \textbf{well-typed Dirac notation} in context $\Gamma$ if we can prove $\mathcal{WF}(\Gamma) \vdash e : (S_K, S_B)$ for some $S_K$ and $S_B$.
-\end{dfn}
-
-\subsection{Typing rules}
-
-\subsubsection*{well-formed context}
-
-$$
-\frac{}{\mathcal{WF}([])}
-\qquad 
-\frac{\mathcal{WF}(\Gamma)\qquad \mathfrak{T}\Vdash T : \texttt{Type}\qquad x \notin \Gamma}{\mathcal{WF}(\Gamma; x : T)}
-$$
-
-\subsubsection*{well-typed quantum registers}
-$$
-\frac{\mathcal{WF}(\Gamma)\qquad x:T \in \Gamma}{\mathcal{WF}(\Gamma) \vdash x : T}
-\qquad
-\frac{\mathcal{WF}(\Gamma)\vdash a : T\qquad \mathcal{WF}(\Gamma) \vdash b : U \qquad a \| b}{\mathcal{WF}(\Gamma) \vdash a, b : T * U}
-$$
-
-Here $a \| b$ means that the quantum subsystems of $a$ and $b$ are disjoint.
-
-\subsubsection*{well-typed Dirac notations}
-\begin{gather*}
-  \frac{}{\mathcal{WF}(\Gamma)\vdash c : (\emptyset, \emptyset)} \\
-  \ \\
-  \frac{}{\mathcal{WF}(\Gamma)\vdash \textbf{0}_{S_K, S_B} : (S_K, S_B)}\\
-  \ \\
-  \frac{\mathcal{WF}(\Gamma)\vdash r : T \qquad \mathfrak{T} \Vdash v : T}{\mathcal{WF}(\Gamma)\vdash \ket{v}_r : (set(r), \emptyset)}\\
-  \ \\
-  \frac{\mathcal{WF}(\Gamma)\vdash r : T \qquad \mathfrak{T} \Vdash v : T}{\mathcal{WF}(\Gamma)\vdash \bra{v}_r : (\emptyset, set(r))}\\
-  \ \\
-  \frac{}{\mathcal{WF}(\Gamma)\vdash M_{r_1, r_2} : (set(r_1), set(r_2))}\\
-  \ \\
-  \frac{\mathcal{WF}(\Gamma)\vdash e_1 : (S_K, S_B)\qquad \mathcal{WF}(\Gamma)\vdash e_2 : (S_K, S_B)}{\mathcal{WF}(\Gamma)\vdash e_1 + e_2 : (S_K, S_B)}\\
-  \ \\
-  \frac{\mathcal{WF}(\Gamma)\vdash e_1 : (S_K, S_B)\qquad \mathcal{WF}(\Gamma)\vdash e_2 : (S_K', S_B')\qquad S_K \cap (S_K'-S_B) = \emptyset\qquad (S_B-S_K')\cap S_B' = \emptyset}{\mathcal{WF}(\Gamma)\vdash e_1 * e_2 : (S_K \cup (S_K' - S_B), (S_B-S_K') \cup S_B')}\\
-  \ \\
-  \frac{\mathcal{WF}(\Gamma)\vdash e_1 : (S_K, S_B)\qquad \mathcal{WF}(\Gamma)\vdash e_2 : (S_K', S_B')\qquad S_K \cap S_K= \emptyset\qquad S_B\cap S_B' = \emptyset}{\mathcal{WF}(\Gamma)\vdash e_1 \otimes e_2 : (S_K \cup S_K', S_B \cup S_B')}\\
-  \ \\
-  \frac{\mathcal{WF}(\Gamma)\vdash e : (S_K, S_B)}{\mathcal{WF}(\Gamma)\vdash e^\dagger : (S_B, S_K)}
-\end{gather*}
-
-In fact, all the Dirac notations have their corresponding \textit{tensor network} interpretations, and these typing rules are very intuitive in this point of view.
-
-We can understand the tensor $e_1 \otimes e_2$ as \textit{stacking two individual nodes}.
-
-We can understand the multiplication $e_1 * e_2$ as \textit{contracting all possible corresponding indices between two nodes}.
-
-\section{Deciding L0 Dirac Notation}
-
-\textcolor{red}{How to develop a convergent term rewriting system? And what is the requirement on the basis theories?}
-
-\vspace{1em}
-
-One problem is that we have well-typed side conditions for rerwriting rules. In consideration of this, I feel that what we need is a term rewriting system for \textbf{well-typed proof of Dirac notations}, instead of Dirac notation alone.
-
-\vspace{1em}
-Because we have AC functions ($e_1 + e_2$ and $e_1 \otimes e_2$), we will need a reduction order, which is defined as follows.
-
-\begin{dfn}[Dirac notation order]
-  The order $e_1 < e_2$ is defined by:
-  \begin{gather*}
-    \frac{e \neq \textbf{0}_{S_K, S_B}\qquad e \neq c}{e < c}\\
-    \ \\
-    \frac{r < s}{\ket{v}_r < \ket{u}_s} \qquad \frac{r < s}{\ket{v}_r < \bra{u}_s}\qquad \frac{r < s}{\bra{v}_r < \ket{u}_s}\qquad \frac{r < s}{\bra{v}_r < \bra{u}_s}\\
-    \ \\
-    \frac{}{\bra{v}_r < \ket{u}_r} \\
-    \ \\
-    \frac{\mathfrak{T} \Vdash v < u}{\ket{v}_r < \ket{u}_r}\qquad\frac{\mathfrak{T} \Vdash v < u}{\bra{v}_r < \bra{u}_r}\\
-    \ \\
-    \frac{}{M[a, b] < \ket{v}_r}\qquad \frac{}{M[a, b] < \bra{v}_r}\\
-    \ \\
-    \frac{a < s}{M[a, b]<N[s, t]}\qquad \frac{b < t}{M[a, b]<N[a, t]}\qquad \frac{M < N}{M[a, b] < N[a, b]}\\
-    \ \\
-    \frac{}
-    \ \\
-    \frac{e_2 < e}{e_1 + e_2 < e}\qquad \frac{e_2 < e}{e_1 * e_2 < e} \qquad \frac{e_2 < e}{e_1 \otimes e_2 < e}
-  \end{gather*}
-\end{dfn}
-
-\textcolor{red}{The ``order'' results from intuition and experiments, and I haven't considered whether it's legal for termination proof.}
-
-\subsection{Reduction rules}
-The reduction rules for L0 Dirac notation are presented below. This term rewriting system is denoted as $\textbf{L0}$.
-
-
-\subsubsection*{Register Decomposition}
-\begin{align*}
-  & \vdash \ket{v_1, v_2}_{r_1, r_2} \to \ket{v_1}_{r_1} \otimes \ket{v_2}_{r_2} \qquad \vdash \bra{v_1, v_2}_{r_1, r_2} \to \bra{v_1}_{r_1} \otimes \bra{v_2}_{r_2} 
-\end{align*}
-
-\subsubsection*{Complex Number}
-\begin{align*}
-  & \vdash 0 \to \textbf{0}_{\emptyset, \emptyset}\\
-  & \vdash c_1 + c_2 \to c_1 + c_2\qquad \text{(the addition of complex numbers)}\\
-  & \vdash c_1 \otimes c_2 \to c_1 * c_2\qquad \text{(the multiplication of complex numbers)}\\
-  & \vdash c_1 \otimes e + c_2 \otimes e \to (c_1 + c_2) \otimes e\\
-  & \vdash 1 \otimes e \to e\\
-  & \vdash c^\dagger \to conj(c)
-\end{align*}
-
-\subsubsection*{Zero Operator}
-Consider the syntax $\textbf{0}_{S_K, S_B}$. It is ugly to put quantum subsystems $S_K$ and $S_B$ into the syntax, but they are necessary for now: they are required in reduction rules, and the well-typed proof for $\textbf{0}$ alone is not unique.
-
-However, it is true that in most cases the quantum subsystems can be determined by unification, and therefore it may be a good idea to reason about well-typed proofs of Dirac notations like a typing system. However, this introduces another problem: do we allow variables of types for Dirac notations?
-
-\begin{align*}
-  & \vdash \textbf{0}_{S_K, S_B} + e \to e
-  \qquad \vdash e + \textbf{0}_{S_K, S_B} \to e\\
-  &\ \\
-  & \frac{\mathcal{WF}(\Gamma)\vdash e : (S_K', S_B')}{\textbf{0}_{S_K, S_B} * e \to \textbf{0}_{S_K \cup (S_K' - S_B), (S_B-S_K') \cup S_B'}}
-  \qquad \frac{\mathcal{WF}(\Gamma)\vdash e : (S_K, S_B)}{e * \textbf{0}_{S_K', S_B'} \to \textbf{0}_{S_K \cup (S_K' - S_B), (S_B-S_K') \cup S_B'}}\\
-  &\ \\
-  & \frac{\mathcal{WF}(\Gamma)\vdash e : (S_K', S_B')}{\textbf{0}_{S_K, S_B} \otimes e \to \textbf{0}_{S_K \cup S_K', S_B \cup S_B'}}
-  \qquad \frac{\mathcal{WF}(\Gamma)\vdash e : (S_K, S_B)}{e \otimes \textbf{0}_{S_K', S_B'} \to \textbf{0}_{S_K \cup S_K', S_B \cup S_B'}}\\
-  &\ \\
-  & \vdash \textbf{0}_{S_K, S_B}^\dagger \to \textbf{0}_{S_B, S_K}
-\end{align*}
-
-\subsubsection*{Addition}
-\begin{align*}
-  & \vdash e_1 + (e_2 + e_3) \to e_1 + e_2 + e_3 \\
-  & e_1 < e_2 \vdash e_1 + e_2 \to e_2 + e_1
-\end{align*}
-
-\subsubsection*{Tensorization}
-These rules try to lift $e_1 \otimes e_2$ above $e_1 * e_2$ structures when possible, which is closer to the desired normal form. But I am not sure whether these rules are complete for this purpose. Especially, the (\ref{rule: tmt}) rule seems artificial.
-\begin{align*}
-  & \frac{\mathcal{WF}(\Gamma)\vdash e_1 : (S_1, S_1')\quad \mathcal{WF}(\Gamma)\vdash e_3 : (S_3, S_3')\quad S_1' \cap S_3 = \emptyset}
-  {e_1 * (e_2 \otimes e_3) \to (e_1 * e_2) \otimes e_3} \\
-  &\ \\
-  & \frac{\mathcal{WF}(\Gamma)\vdash e_1 : (S_1, S_1')\quad \mathcal{WF}(\Gamma)\vdash e_2 : (S_2, S_2')\quad S_1' \cap S_2 = \emptyset}
-  {e_1 * (e_2 \otimes e_3) \to e_2 \otimes (e_1 * e_3)} \\
-  &\ \\
-  & \frac{\mathcal{WF}(\Gamma)\vdash e_2 : (S_2, S_2')\quad \mathcal{WF}(\Gamma)\vdash e_3 : (S_3, S_3')\quad S_2' \cap S_3 = \emptyset}
-  {(e_1 \otimes e_2) * e_3 \to (e_1 * e_3) \otimes e_2} \\
-  &\ \\
-  & \frac{\mathcal{WF}(\Gamma)\vdash e_1 : (S_1, S_1')\quad \mathcal{WF}(\Gamma)\vdash e_3 : (S_3, S_3')\quad S_1' \cap S_3 = \emptyset}
-  {(e_1 \otimes e_2) * e_3 \to e_1 \otimes(e_2* e_3)} \\
-  &\ \\
-  & \frac{\mathcal{WF}(\Gamma)\vdash e_1 : (S_1, S_1')\qquad \mathcal{WF}(\Gamma)\vdash e_2 : (S_2, S_2')\qquad S_1' \cap S_2 = \emptyset}
-  {e_1 * e_2 \to e_1 \otimes e_2}\\
-  &\ \\
-  & \frac{
-    \begin{aligned}
-      & \mathcal{WF}(\Gamma) \vdash e_1 : (S_1, S_1')\qquad & \mathcal{WF}(\Gamma) \vdash e_4 : (S_4, S_4') \qquad & S_1' \cap S_4 = \emptyset\\
-      & \mathcal{WF}(\Gamma) \vdash e_2 : (S_2, S_2') & \mathcal{WF}(\Gamma) \vdash e_4 : (S_4, S_4')\qquad & S_2' \cap S_3 = \emptyset
-    \end{aligned}
-  }{(e_1 \otimes e_2) * (e_3 \otimes e_4) \to (e_1 * e_3) \otimes (e_2 * e_4)} \tag{*} \label{rule: tmt}
-\end{align*}
-
-\subsubsection*{Multiplication}
-\begin{align*}
-  & \vdash e_1 * (e_2 * e_3) \to e_1 * e_2 * e_3\\
-  & \vdash e_1 * (e_2 + e_3) \to e_1 * e_2 + e_1 * e_3
-  \qquad \vdash (e_1 + e_2) * e_3 \to e_1 * e_3 + e_2 * e_3\\
-  & \vdash \bra{i}_r * \ket{j}_r \to \delta_{ij}
-\end{align*}
-
-\subsubsection*{Tensor}
-\begin{align*}
-  & \vdash e_1 \otimes (e_2 + e_3) \to e_1 \otimes e_2 + e_1 \otimes e_3
-  \qquad \vdash (e_1 + e_2) \otimes e_3 \to e_1 \otimes e_3 + e_2 \otimes e_3\\
-  & \vdash e_1 \otimes (e_2 \otimes e_3) \to e_1 \otimes e_2 \otimes e_3\\
-  & e_1 < e_2 \vdash e_1 \otimes e_2 \to e_2 \otimes e_1
-\end{align*}
-
-\subsubsection*{Conjugate Transpose}
-\begin{align*}
-  & \vdash \ket{v}_r^\dagger \to \bra{v}_r \qquad \vdash \bra{v}_r^\dagger \to \ket{v}_r\\
-  & \vdash (e_1 + e_2)^\dagger \to e_1^\dagger + e_2^\dagger \qquad \vdash (e_1 * e_2)^\dagger \to e_2^\dagger * e_1^\dagger \qquad \vdash (e_1 \otimes e_2)^\dagger \to e_1^\dagger \otimes e_2^\dagger
-\end{align*}
-  
-  
-The convergent proof of the reduction system is dependent on the order. Moreover, the efficiency of the reduction algorithm is also partially limited by the order. Therefore to optimize the algorithm, more effort is need to improve the reduction order and simplify the decending path.
-
-\begin{figure}[h]
-  \center
-  \includegraphics*[width = 0.7 \textwidth]{fig/red_illustration.png}
-  \caption{An example of normal form calculation.}
-\end{figure}
-
-\subsection{Properties}
-
-\begin{lemma}
-  The reduction rules in $\textbf{L0}$ preserve the well-typed property of Dirac notations.
-\end{lemma}
-\begin{proof}
-  To be proved.
-\end{proof}
-
-\begin{theorem}
-  The term rewriting system $\textbf{L0}$ is confluent.
-\end{theorem}
-\begin{proof}
-  To be proved.
-\end{proof}
-
-\begin{theorem}
-  If the reasonings in basis theories $\mathfrak{T}$ and $\mathfrak{C}$ are decidable, then so is the word problem for $\textbf{L0}$.
-\end{theorem}
-\begin{proof}
-  To be proved.
-\end{proof}
-
-
-\section{L1A Dirac Notation}
-\textbf{L1A Dirac notation} is L0 Dirac notation with definition, function and environment extensions.
-
-Consider this notation:
-$$
-\left [\ket{+} := \texttt{fun x : bool => }\frac{\ket{0}_x + \ket{1}_x}{\sqrt{2}} \right ][\texttt{y : bool}] \vdash \bra{+}_y * \ket{+}_y = 1
-$$
-It's reasonable to have definitions for Dirac notations. For example, $\ket{+}$ and $\texttt{CX}$. I believe the appropriate way to express such definitions is through lambda expressions. Here's another example:
-
-\begin{align*}
-\texttt{CX := fun pair : bool * bool =>} & \texttt{ |0, 0>[pair]<0, 0| + |0, 1>[pair]<0, 1|}\\
-& \texttt{+ |1, 1>[pair]<1, 0| + |1, 0>[pair]<1, 1|.}
-\end{align*}
-
-Of course, here \texttt{pair : bool * bool} does not mean \texttt{pair} is a classical term of $\texttt{bool * bool}$, but means \textit{\texttt{pair} is a quantum variable of \texttt{bool * bool} type}. (Maybe a different notation is needed here.)
-
-Consistently, we will need environments for the definitions. We can even allow additional rewriting rules, which can be considered as the extra assumptions on variables. But this will make the implementation more like a theorem prover than a solver.
-
-
-\section{L1B Dirac Notation}
-\textbf{L1B Dirac notation} is L0 Dirac notation with big-operator extensions.
-
-Consider this notation:
-$$
-\mathcal{WF}([r : \texttt{Seq bool n}]) \vdash \frac{1}{\sqrt{2^n}}\sum_{i \in \{0, 1\}^n} \ket{i}_r = \bigotimes_{i=0}^{n-1} \frac{\ket{0}_{r[i]} + \ket{1}_{r[i]}}{\sqrt{2}}.
-$$
-
-This example demonstrates a typical case of using big operators. Also, quantum arrays appear in the right hand side, which is almost always necessary when using big operators.
-
-
-
-\section{L1C Dirac Notation}
-\textbf{L1C Dirac notation} is L0 Dirac notation with quantum array extensions.
-
-\subsection{Basis Theories}
-
-\begin{dfn}[L1C classical type system]
-  A \textbf{L1C classical type system} $\mathfrak{T}$ is a L0 classical type system with the following extra definitions (mix-in):
-  \begin{itemize}
-    \item a type of natural numbers: $\mathfrak{T} \Vdash n : \mathbb{N}$,
-    \item a type constructor \texttt{Seq} satisfying
-    $$
-    \frac{\mathfrak{T} \Vdash n : \mathbb{N}\quad \mathfrak{T} \Vdash T : \texttt{Type}}
-    {\mathfrak{T} \Vdash \texttt{Seq}\ T\ n\ : \texttt{Type}}.
-    $$
-  \end{itemize}
-
-\end{dfn}
-
-
-\section{L1D Dirac Notation}
-\textbf{L1D Dirac notation} is L0 Dirac notation with other common operators, e.g. subtraction, conjugte and transpose.
-
-\textcolor{red}{Maybe it's better to move conjugate/transpose to L0 and conjugate transpose to L1D?}
-
-
-\section{L2 Dirac Notation}
-
-L1 Dirac notations extends the simplest L0 theory in different perspectives.
-And at some point, we will need to consider how to combine them to get even more powerful theories.
-
-I believe there should be some ``confluent'' property between different L1 theories, so that they can work well with each other.
-
-\section{Transplant Dirac Notation onto some CiC system}
-
-This will help a lot in quantum formal verifications.
-
-\section{Implementation}
-\subsection{Reliable Encoding Mechanism}
-
-A Python framework for the calculus of order-sorted universal algebra. Most formal systems can be embedded in such a universal algebra.
-
-
+\chapter{Li's}
+\input{li.tex}
+
+\chapter{Yingte's}
+\input{yingte.tex}
 
 \clearpage
 
