@@ -1,0 +1,443 @@
+  
+% \input{yingte/20231117.tex}
+
+First of all, I present here a simplest concrete example (the reduction-free part) of the whole theory for labelled Dirac notations called \textbf{Dirac0}. It shows the main framework which works for more complicated cases we will consider later.
+
+\section{Dirac0}
+
+I believe that the decision procedure for linear algebra is necessary, but I didn't notice any serious work on this topic. It should be because decision procedure is considered and required in formal verification, but not was linear algebra until now we have quantum programs. 
+
+The theory of linear algebra required here is special: it has rich types of linear spaces and tensor product. Later it will include big operators and some typed lambda calculus. We call such extensions \textbf{Dirac notations}. Afterwards, these Dirac notations are indexed by quantum registers to form \textbf{labelled Dirac notations}.
+
+\subsection{Dirac Notation}
+
+\begin{definition}[atomic type and term]
+  The atomic types $A$ and terms $a$ are defined as
+  \begin{align*}
+    A & ::= \mathbf{Z}_n \\
+    a & ::= i
+  \end{align*}
+  Here $n$ and $i$ are natural numbers. The well-typed terms are defined by:
+  $$
+  \frac{i < n}{\Vdash i : \mathbf{Z}_n}.
+  $$
+\end{definition}
+\textbf{Remark:} We define atomic types separatedly because they describe the types of atomic quantum subsystems.
+
+\begin{definition}[space Type] 
+  $$
+  T ::= A\ |\ \texttt{Unit}\ |\ T * T
+  $$
+  Here $A$ is an atomic type and $\texttt{Unit}$ is a terminal symbol.
+\end{definition}
+
+\begin{definition}[basis Term]
+  $$
+  t ::= a\ |\ (t, t)
+  $$
+  Here $a$ is an atomic term.
+\end{definition}
+
+\begin{definition}[well-typed basis]
+  For space type $T$ and basis term $t$, the well-typed relation $\vdash t : T$ is defined by
+  
+  \begin{align*}
+    \frac{\Vdash a : A}{\vdash a : A}
+    \qquad
+    \frac{\vdash t_1 : T_1 \qquad \vdash t_2 : T_2}{\vdash (t_1, t_2) : T_1 * T_2}
+  \end{align*}
+\end{definition}
+
+\begin{postulate}[complex number]
+  $\mathbb{C}$ is an algebra for complex numbers. It has the symbols $(0, 1, +, *, \textrm{conj})$.
+\end{postulate}
+It means that somehow we can express and decide complex number terms, but the theory should not be considered here.
+
+\begin{definition}[Dirac notation]
+  Dirac notation is a rephrase and extension of linear algebra.
+  \begin{align*}
+    e ::= \mathbf{0}\ |\ c\ |\ \delta_{s, t}\ |\ \ket{t}\ |\ \bra{t}\ |\ e^*\ |\ e^T\ |\ e + e\ |\ e * e\ |\ e \otimes e
+  \end{align*}
+  Here $s, t$ are basis terms and $c$ is a complex number term.
+\end{definition}
+
+\begin{definition}[notation typing]
+  A typing of Dirac notation $e$ is written as $e : (T_k, T_b)$, where $T_k$ and $T_b$ are space types.
+\end{definition}
+
+\begin{definition}[well-typed Dirac notation] 
+  For the typing of Dirac notation $e : (T_k, T_b)$, the well-typed proof is defined by
+  \begin{gather*}
+    \frac{}{\vdash \mathbf{0} : (T_k, T_b)}
+    \qquad
+    \frac{}{\vdash c : (\texttt{Unit}, \texttt{Unit})}
+    \qquad
+    \frac{}{\vdash \delta_{s, t} : (\texttt{Unit}, \texttt{Unit})}
+    \qquad
+    \frac{\vdash t : T}{\vdash \ket{t} : (T, \texttt{Unit})}
+    \qquad 
+    \frac{\vdash t : T}{\vdash \bra{t} : (\texttt{Unit}, T)}\\
+    \ \\
+    \frac{\vdash e : (T_k, T_b)}{\vdash e^* : (T_k, T_b)}
+    \qquad
+    \frac{\vdash e : (T_k, T_b)}{\vdash e^T : (T_b, T_k)}\\
+    \ \\
+    \frac{\vdash e_1 : (T_k, T_b)\qquad \vdash e_2 : (T_k, T_b)}{\vdash e_1 + e_2 : (T_k, T_b)}
+    \qquad 
+    \frac{\vdash e_1 : (T_k, R)\qquad \vdash e_2 : (R, T_b)}{\vdash e_1 * e_2 : (T_k, T_b)}
+    \qquad
+    \frac{\vdash e_1 : (T_k, T_b)\qquad \vdash e_2 : (T_k', T_b')}{\vdash e_1 \otimes e_2 : (T_k * T_k', T_b * T_b')}
+  \end{gather*}
+\end{definition}
+
+\begin{definition}[Dirac notation reduction]
+  We consider the reduction on typings of Dirac notations. The rules are defined by:
+  \begin{gather*}
+    \vdash (\mathbf{0} + e : (T_k, T_b)) \to (e : (T_k, T_b))\\
+    \cdots
+  \end{gather*}  
+\end{definition}
+
+\textbf{Remark:} Here we consider reduction on notations with types, because we cannot always infer the types from the notations. As a comparison, in typed lambda calculus the types are always implied by terms.
+
+\begin{claim}[well-typing preservation]
+  Reduction on notation typings preserve the well-typed proof. That is,
+  $$
+  \forall e, (e : (T_k, T_b)) \to^* (e' : (T_k, T_b))
+  $$
+  and
+  $$
+  \vdash e : (T_k, T_b)\ \mathrm{and}\ (e : (T_k, T_b)) \to^* (e' : (T_k, T_b))\ \mathrm{implies}\ \vdash e' : (T_k, T_b).
+  $$
+\end{claim}
+
+\subsection{Labelled Dirac Notation}
+
+\begin{definition}[quantum register]
+  $$
+  r ::= E\ |\ x\ |\ (r, r)
+  $$
+  Here $E$ is the terminal symbol for empty register and $x$ is a quantum variable.
+\end{definition}
+
+\begin{definition}[quantum variable typing]
+  The typing for quantum variable $x$ is written as $x : T$, where $T$ is a space type.
+\end{definition}
+
+\begin{definition}[quantum context]
+  The quantum contexts are ordered list of quantum variable typings, written as $\Gamma = [x : T; y : U; \dots]$. The empty context is denoted by $[]$.
+\end{definition}
+
+\begin{definition}[well-formed context]
+  A well-formed context $\Gamma$, written as $\mathcal{WF}(\Gamma)$, is a context where variables appear uniquely. In other words, they are defined as:
+  $$
+  \frac{}{\mathcal{WF}([])}
+  \qquad
+  \frac{\mathcal{WF}(\Gamma)\qquad x \notin \Gamma}{\mathcal{WF}(\Gamma :: (x : T))}
+  $$
+\end{definition}
+
+
+\begin{definition}[well-typed quantum register]
+  Within a well-formed context $\mathcal{WF}(\Gamma)$, the well-typed quantum register is denoted as $\mathcal{WF}(\Gamma) \vdash r : T$, where $r$ denotes a quantum register and $T$ a space type. The well-typed quantum register is defined as follows.
+  \begin{gather*}
+  \frac{\mathcal{WF}(\Gamma)}{\mathcal{WF}(\Gamma) \vdash E : \texttt{Unit}}
+  \qquad
+  \frac{\mathcal{WF}(\Gamma)\qquad x:T \in \Gamma}{\mathcal{WF}(\Gamma) \vdash x : T}\\
+  \ \\  
+  \frac{\mathcal{WF}(\Gamma) \vdash r_1 : T_1 \qquad \mathcal{WF}(\Gamma) \vdash r_2 : T_2\qquad \mathcal{WF}(\Gamma) \vdash r_1 \| r_2}{\mathcal{WF}(\Gamma) \vdash (r_1, r_2) : (T_1 * T_2) }
+  \end{gather*}
+  Note that $\mathcal{WF}(\Gamma) \vdash r_1 \| r_2$ is defined below.
+\end{definition}
+
+
+\begin{definition}[atomic quantum register]
+  We say a quantum register $r$ is atomic in context $\Gamma$ if we can prove
+  $\mathcal{WF}(\Gamma) \vdash r : A$, where $A$ is a atomic type.
+\end{definition}
+
+\begin{definition}[quantum subsystem]
+  A quantum subsystem $S$ is a set of quantum registers. 
+  We say it's a well-formed quantum subsystem in context $\Gamma$ if all the elements are atomic quantum register in $\Gamma$. 
+  For a quantum register $r$, $\mathrm{set}(\Gamma, r)$ represents the corresponding well-typed quantum subsystem in $\Gamma$.
+  Two quantum registers are disjoint in $\Gamma$, written as $\mathcal{WF}(\Gamma) \vdash r_1 \| r_2$, if the corresponding quantum subsystems are disjoint.
+\end{definition}
+\textbf{Remark:} The description of quantum subsystem still need refinement.
+
+\begin{definition}[labelled Dirac notation]
+    Labelled Dirac notation is defined by:
+    $$
+    e ::= e_d [r_k; r_b]\ |\ e + e\ |\ e * e\ |\ e \otimes e\ |\ e^*\ |\ e^T.
+    $$
+    Here $e_d$ is a Dirac notation and $r_k, r_b$ are quantum registers.
+\end{definition}
+
+\begin{definition}[labelled notation typing]
+  A typing of labelled Dirac notation $e$ in well-formed context $\Gamma$ is written as $\mathcal{WF}(\Gamma) \vdash e : (S_k, S_b)$, where $S_k$ and $S_b$ are quantum subsystems. 
+\end{definition}
+
+\begin{definition}[well-typed labelled Dirac notation]
+  For the typing of labelled Dirac notation $\mathcal{WF}(\Gamma) \vdash e : (T_k, T_b)$, the well-typed proof is defined by
+  \begin{gather*}
+    \frac{\vdash e_d : (T_k, T_b) \qquad \mathcal{WF}(\Gamma) \vdash r_k : T_k \qquad \mathcal{WF}(\Gamma) \vdash r_b : T_b}{\mathcal{WF}(\Gamma) \vdash e_d[r_k; r_b] : (\mathrm{set}(\Gamma, r_k), \mathrm{set}(\Gamma, r_b))}\\
+    \ \\
+    \frac{\mathcal{WF}(\Gamma) \vdash e_1 : (S_k, S_b) \qquad \mathcal{WF}(\Gamma) \vdash e_2 : (S_k, S_b)}{\mathcal{WF}(\Gamma) \vdash e_1 + e_2 : (S_k, S_b)}\\
+    \ \\
+    \frac{\mathcal{WF}(\Gamma) \vdash e_1 : (S_k, S_b) \qquad \mathcal{WF}(\Gamma) \vdash e_2 : (S_k', S_b')
+    \qquad S_k \cap (S_k' - S_b) = \emptyset
+    \qquad (S_b - S_k') \cap S_b' = \emptyset}
+    {\mathcal{WF}(\Gamma) \vdash e_1 * e_2 : (S_k \cup (S_k' - S_b), (S_b - S_k') \cup S_b')}\\
+    \ \\
+    \frac{\mathcal{WF}(\Gamma) \vdash e_1 : (S_k, S_b) \qquad \mathcal{WF}(\Gamma) \vdash e_2 : (S_k', S_b')
+    \qquad S_k \cap S_k' = \emptyset
+    \qquad S_b \cap S_b' = \emptyset}
+    {\mathcal{WF}(\Gamma) \vdash e_1 \otimes e_2 : (S_k \cup S_k', S_b \cup S_b')}\\
+    \ \\
+    \frac{\mathcal{WF}(\Gamma) \vdash e : (S_k, S_b)}{\mathcal{WF}(\Gamma) \vdash e^* : (S_k, S_b)}
+    \qquad
+    \frac{\mathcal{WF}(\Gamma) \vdash e : (S_k, S_b)}{\mathcal{WF}(\Gamma) \vdash e^T : (S_b, S_k)}
+  \end{gather*}
+\end{definition}
+
+\begin{definition}[labelled Dirac notation reduction]
+  We consider the reduction on typings of labelled Dirac notations. The rules are defined by:
+  \begin{gather*}
+    \mathcal{WF}(\Gamma) \vdash ((e_d + e_d')[r_k; r_b]: (S_k, S_b)) \to (e_d[r_k; r_b] + e_d'[r_k; r_b] : (S_k, S_b))\\
+    \cdots
+  \end{gather*}
+\end{definition}
+
+\begin{claim}[well-typing preservation]
+  Reduction on labelled notation typings preserve the well-typed proof. That is,
+  $$
+  \forall e \forall \Gamma, \mathcal{WF}(\Gamma) \vdash (e : (S_k, S_b)) \to (e' : (S_k, S_b)),
+  $$
+  and
+  $$
+  \mathcal{WF}(\Gamma) \vdash e : (S_k, S_b)\ \textrm{and}\ \mathcal{WF}(\Gamma) \vdash (e : (S_k, S_b)) \to (e' : (S_k, S_b))\ \textrm{imples}\ \mathcal{WF}(\Gamma) \vdash e' : (S_k, S_b).
+  $$
+\end{claim}
+
+
+\section{Modularising Dirac Notation by Category}
+In consideration of the complicated depnedency of different parts of the Dirac notation theory, expressing it in a modularised manner makes it more clear, organized and easy to extend. In Coq, the implementations follow this design by \textit{Module} and \textit{Module Types}. We can speak in category theory for the same purpose in theory developement.
+
+% \begin{definition}[SpaceType]
+%   \textsf{SpaceType} is a category. Its objects are lambda calculi with dependent types, where two special constants are defined:
+%   \begin{itemize}
+%     \item $\texttt{prod} : \texttt{Type} \to \texttt{Type} \to \texttt{Type}.$
+%     \item $\texttt{pair} : (A : \texttt{Type}) \to (B : \texttt{Type}) \to \texttt{prod}\ A\ B.$
+%   \end{itemize} 
+%   Morphisms exist from the calculi to more expressive ones.
+% \end{definition}
+% The product and pair is necessary because we will consider tensor product in the linear algebra.
+
+% More complicated module instances, such as those with tuples, can also be considered as objects in \textsf{SpaceType}.
+
+% \begin{definition}[Field]
+%   \textsf{Field} is a category. Its objects are algebras containing \textbf{field} as a subalgebra. Morphisms exist from algebras to more expressive ones.  
+% \end{definition}
+
+% \begin{definition}[LinAlg]
+%   \textsf{LinAlg} is a category. Its objects are lambda calculi with dependent types containing the following constants:
+%   \begin{itemize}
+%     \item an extra sort $\texttt{SType} : \texttt{Type}$,
+%     \item $\mathbb{F} : \texttt{Type}$
+%     \item $\texttt{WT\_Vec} : \texttt{SType} \to \texttt{Type}$,
+%     \item $\texttt{WT\_LOpt} : \texttt{SType} \to \texttt{SType} \to \texttt{Type}$,
+%     \item $\texttt{VecTerm} : (T : \texttt{SType}) \to (t : T) \to \texttt{WF\_Vec}\ T$,
+%     \item $\texttt{VecScale} : (T : \texttt{SType}) \to \mathbb{F} \to \texttt{WF\_Vec}\ T \to \texttt{WF\_Vec}\ T$,
+%     \item (more constructors on vectors ... )
+%     \item $\texttt{LOptElement} : (T_1\ T_2 : \texttt{SType}) \to \texttt{WT\_Vec}\ T_1 \to \texttt{WT\_Vec}\ T_2 \to \texttt{WT\_LOpt}\ T_1\ T_2$,
+%   \end{itemize}
+
+% \end{definition}
+
+
+
+
+\section{Motivating Examples}
+The theory \textbf{Dirac0} is very limited as we almost don't have variables. Now we investigate several examples that motivates our extension on it.
+
+
+\begin{example}
+  Assume $S, T$ are two disjoint subsystems with orthonormal basis $\{\ket{v_i}_S\}_{i \in J}$ and $\{\ket{u_i}_T\}_{i \in J}$.
+  $$
+  \sum_{mn}A(m, n) \ket{v_m}_S\bra{v_n} \sum_i \ket{v_i}_S \ket{u_i}_T.
+  $$
+\end{example}
+We have big-op of sum, and the indices appear in the vector (not the quantum register). This makes sense because the summation requires every labelled dirac notation to have the same type. It's also appropriate to assume that indices $m, n$ and $i$ are variables following some space type $T$. And the scope of summation is implicitly designated as a set. We also need functions: they appear directly as $A : T \to T \to \mathbb{C}$, and play the important role in big-op:
+$$
+\frac{\vdash v : T \to \texttt{Dirac}\ (U, \texttt{Unit}) \qquad \vdash m : T}{\vdash v_m : \texttt{Dirac}\ (U, \texttt{Unit})}.
+$$
+Here $\texttt{Dirac}\ (U, \texttt{Unit})$ represents Dirac notation with types of $(U, \texttt{Unit})$. Obviously we will need some typed lambda calculus for it. And actually the big-op of sum is a constant in such a typed lambda calculus:
+$$
+\sum : (D : \texttt{sType * sType}) \to \mathcal{P}(T) \to (T \to \texttt{Dirac}\ D) \to \texttt{Dirac}\ D.
+$$
+
+Here $\texttt{sType}$ is the sort for space types. The first argument $T$ corresponds to the type of indices, the second $D$ corresponds to the type of Dirac notations, the third argument is the set of index values and the last argument is the term expression.
+
+\begin{example}
+  Consider this notation:
+  $$
+  \left [\ket{+} := \texttt{fun x : bool => }\frac{\ket{0}_x + \ket{1}_x}{\sqrt{2}} \right ][\texttt{y : bool}] \vdash \bra{+}_y * \ket{+}_y = 1
+  $$
+\end{example}
+In other words, it's reasonable to have definitions for Dirac notations. Typed lambda calculus also solves this problem.
+
+
+\section{About Big Operators and Lambda Calculus}
+I believe the two vital considerations for big operators are \textbf{lambda calculus} and \textbf{set syntax}. We have to include lambda calculus, because the expression for big operators are essentially functions. And for sets with certain syntax, it is possible to design a complete term rewriting system.
+
+Assume the index of big operator has type $T$, then a set of index values can be considered as functions of $T \to \texttt{bool}$.
+
+\begin{example}[big-op lifting]
+  We can consider how to extend a term rewriting system $R$ with big operators. It is essentially the a functor between the two category.
+
+  \begin{enumerate}
+    \item Consider a simply typed lambda calculus, where functions in $R$ appear as constants in the calculus.
+    \item Pick out an associative bineary function symbol $+$.
+    \item Pick out the neuteral element so that $0 + a \to a$.
+    \item Define the type $T$ as type of indices.
+    \item Define the type $\texttt{set} : T \to \texttt{Type}$ as the sets.
+    \item The big operator is a constant $\sum : \texttt{set}\ T \to (T \to U) \to U$, where $U$ is the type of the big operator expression.
+  \end{enumerate}
+\end{example}
+
+
+\begin{example}
+  Assume sets are constructed by enumerating $T$ terms, then the syntax with big operators is still decidable.
+\end{example}
+
+May be the integer set $[m, n]$ worth considering. But I don't believe it can be decidable in more general cases.
+
+
+\section{Tuple, Variable Index and Separation Logic}
+
+\subsection{Motivating example}
+
+Consider the notation:
+$$
+\texttt{CX}[a[i], a[j]] = \texttt{H}[a[j]]\ \texttt{CZ}[a[i], a[j]]\ \texttt{H}[a[j]]
+$$
+where $a$ is a quantum tuple register. The equality seems to hold, but here is a precondition: $i \neq j$. Otherwise, the Dirac notation is not even well-typed. 
+
+Because we only consider well-typed Dirac notations, we use separation logic to deal with these precondition on well-typed proofs.
+
+\section{Other Examples}
+
+This section collects typical examples for Dirac notation syntax and equality.
+
+\begin{example}
+  $$
+  \sum_{k=0}^{N-1} e^{\frac{2\pi i j k}{N}}\ket{k}
+  $$
+  Assume $t$ and $b$ are bit strings.
+  $$
+  \frac{1}{\sqrt{2^n}} \sum_t (-1)^{\sum_i b_i \cdot t_i} \ket{t}_{\bar{x}}
+  $$\end{example}
+This example requires
+\begin{itemize}
+  \item big-op of sum (index in vector term and coefficent).
+\end{itemize}
+This example clearly shows that the linear algebra module is dependent on the quantum term and type. For example, here $\sum_i b_i \cdot t_i$ should be considered as a quantum term, but the whole expression $(-1)^{\sum_i b_i \cdot t_i}$ is a complex number term.
+
+
+
+\begin{example}
+  $$
+  \bigotimes_{i = 0}^{k-1} \ket{0}_{x_i}
+  $$
+  $$
+  \left ( \bigotimes_{i = 0}^{k-1} \texttt{QFT}[x_i] \right ) \ket{0}_{\bar{x}}
+  $$
+\end{example}
+This example requires 
+\begin{itemize}
+  \item tuple of quantum variable, variable indices,
+  \item big-op of tensor (index in quantum tuple).
+\end{itemize}
+
+\begin{example}
+  Assume $U$ is a unitary transform,
+  $$
+  \frac{1}{\sqrt{2^t}} \sum_{j=0}^{2^t-1} \ket{j} U^j \ket{u}
+  $$
+\end{example}
+This example requires
+\begin{itemize}
+  \item integer index and power of operators,
+  \item big-op of sum (index in the exponent).
+\end{itemize}
+
+\begin{example}
+  $$
+  \sum_{s=0}^{r-1} \sum_{j=0}^{2^t-1} e^{\frac{2\pi i s j}{r}} \ket{j} \ket{u_s}
+  $$
+\end{example}
+This example requires
+\begin{itemize}
+  \item nested big-op of sum.
+\end{itemize}
+
+
+\subsection{Equality Benchmark}
+
+\begin{example}
+  $$
+  (U_{S_1} \otimes I_{S_2}) (\ket{\phi}_{S_1} \ket{\psi}_{S_2}) = (U_{S_1} \ket{\phi}_{S_1}) (I_{S_2}\ket{\psi}_{S_2}) = (U_{S_1} \ket{\phi}_{S_1}) \ket{\psi}_{S_2}
+  $$
+\end{example}
+This example requires 
+\begin{itemize}
+  \item type variables, the universal quantification on type $T$:
+    $$
+    \forall (T : \texttt{qType}) (U : (T, T)) (S_1 : T), \dots
+    $$
+  \item quantum variables,
+  \item vector and linear operator variables.
+\end{itemize}
+
+\begin{example} [ParaHadamard]
+  $$
+  (\bigotimes_i^n H_{x_i}) \ket{b}_{\bar{x}} = \frac{1}{\sqrt{2^n}} \sum_t (-1)^{\sum_i b_i t_i} \ket{t}_{\bar{x}}
+  $$
+\end{example}
+
+
+
+% \section{Questions}
+
+% \subsection{Type for linear algebra theory?}
+
+%   The Dirac notations rely on linear algebra in its syntax, theory and tool implementations. But we will need the term of \textit{well-typed operators}, for example:
+%   $$
+%   (\ket{00} + \ket{11}) : (\textbf{bool}\times\textbf{bool}, \textbf{Unit}).
+%   $$ 
+%   I am not sure whether the theory of linear algebra should contain this.
+
+
+
+
+% \begin{definition}[AtomicType]
+%   Assume $n \in \mathbb{N}$, we define $\texttt{AType} \equiv \mathbf{Z}_n$ as the \textbf{atomic type} and $\texttt{ATerm} \equiv \mathbb{N}$ as the \textbf{atomic term}, where $n \in \mathbb{N}$. The well-typed relation $i : \mathbf{Z}_n$ holds when $i < n$.
+% \end{definition}
+
+% The AtomicType module describes the terms and types of \textbf{atomic quantum subsystems}. In the general case it contains the type sort \texttt{AType}, the term sort \texttt{ATerm} and a decidable well-typed relation in $\texttt{ATerm} \times \texttt{AType}$.
+
+
+
+% \begin{definition}[QuType]
+%   The \textbf{QuType} module is a simply typed lambda calculus. The basic types are \texttt{QUnit} and $\mathbf{Z}_n$. Every type $\mathbf{Z}_n$ has the constants $\{i : i < n\}$.
+% \end{definition}
+
+% The QuType module describes the types and basis for linear spaces, and the types for quantum registers. 
+% In the general case it depends on AtomicType.
+
+% \begin{definition}[LinAlg]
+%   A \textbf{LinAlg} module contains the following definitions:
+%   \begin{itemize}
+%     \item the syntax for vectors $\texttt{Vec}$ and linear operators $\texttt{LOpt}$,
+%     \item the decision procedure for $\texttt{Vec}$ and $\texttt{LOpt}$
+%   \end{itemize}
+% \end{definition}
