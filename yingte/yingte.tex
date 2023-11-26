@@ -26,22 +26,26 @@ The theory of linear algebra required here is special: it has rich types of line
 
 \begin{definition}[space Type] 
   $$
-  T ::= A\ |\ \texttt{Unit}\ |\ T * T
+  T ::= \texttt{Unit}\ |\ A\ |\ T * T
   $$
   Here $A$ is an atomic type and $\texttt{Unit}$ is a terminal symbol.
 \end{definition}
 
 \begin{definition}[basis Term]
   $$
-  t ::= a\ |\ (t, t)
+  t ::= \texttt{tt}\ |\ a\ |\ (t, t)
   $$
   Here $a$ is an atomic term.
 \end{definition}
+
+\yx{For variables, I plan to incorporate a STLC with product, projection and unit, which is already studied. see \url{https://en.wikipedia.org/wiki/Simply_typed_lambda_calculus}.}
 
 \begin{definition}[well-typed basis]
   For space type $T$ and basis term $t$, the well-typed relation $\vdash t : T$ is defined by
   
   \begin{align*}
+    \frac{}{\vdash \texttt{tt} : \texttt{Unit}}
+    \qquad
     \frac{\Vdash a : A}{\vdash a : A}
     \qquad
     \frac{\vdash t_1 : T_1 \qquad \vdash t_2 : T_2}{\vdash (t_1, t_2) : T_1 * T_2}
@@ -56,9 +60,9 @@ It means that somehow we can express and decide complex number terms, but the th
 \begin{definition}[Dirac notation]
   Dirac notation is a rephrase and extension of linear algebra.
   \begin{align*}
-    e ::= \mathbf{0}\ |\ c\ |\ \delta_{s, t}\ |\ \ket{t}\ |\ \bra{t}\ |\ e^*\ |\ e^T\ |\ e + e\ |\ e * e\ |\ e \otimes e
+    e ::= \mathbf{0}_{T_k, T_b}\ |\ \mathbf{1}\ |\ \delta_{s, t}\ |\ \ket{t}\ |\ \bra{t}\ |\ e^*\ |\ e^T\ |\ c\ e\ |\ e + e\ |\ e * e\ |\ e \otimes e
   \end{align*}
-  Here $s, t$ are basis terms and $c$ is a complex number term.
+  Here $T_k$ and $T_b$ are space Types, $s, t$ are basis terms and $c$ is a complex number term.
 \end{definition}
 
 \begin{definition}[notation typing]
@@ -68,19 +72,21 @@ It means that somehow we can express and decide complex number terms, but the th
 \begin{definition}[well-typed Dirac notation] 
   For the typing of Dirac notation $e : (T_k, T_b)$, the well-typed proof is defined by
   \begin{gather*}
-    \frac{}{\vdash \mathbf{0} : (T_k, T_b)}
+    \frac{}{\vdash \mathbf{0}_{T_k, T_b} : (T_k, T_b)}
     \qquad
-    \frac{}{\vdash c : (\texttt{Unit}, \texttt{Unit})}
+    \frac{}{\vdash \mathbf{1} : (\texttt{Unit}, \texttt{Unit})}
     \qquad
-    \frac{}{\vdash \delta_{s, t} : (\texttt{Unit}, \texttt{Unit})}
-    \qquad
+    \frac{\vdash s : T \qquad \vdash t : T}{\vdash \delta_{s, t} : (\texttt{Unit}, \texttt{Unit})}\\
+    \ \\
     \frac{\vdash t : T}{\vdash \ket{t} : (T, \texttt{Unit})}
     \qquad 
     \frac{\vdash t : T}{\vdash \bra{t} : (\texttt{Unit}, T)}\\
     \ \\
     \frac{\vdash e : (T_k, T_b)}{\vdash e^* : (T_k, T_b)}
     \qquad
-    \frac{\vdash e : (T_k, T_b)}{\vdash e^T : (T_b, T_k)}\\
+    \frac{\vdash e : (T_k, T_b)}{\vdash e^T : (T_b, T_k)}
+    \qquad
+    \frac{\vdash e : (T_k, T_b)}{\vdash c\ e : (T_k, T_b)}\\
     \ \\
     \frac{\vdash e_1 : (T_k, T_b)\qquad \vdash e_2 : (T_k, T_b)}{\vdash e_1 + e_2 : (T_k, T_b)}
     \qquad 
@@ -90,26 +96,106 @@ It means that somehow we can express and decide complex number terms, but the th
   \end{gather*}
 \end{definition}
 
-\begin{definition}[Dirac notation reduction]
-  We consider the reduction on typings of Dirac notations. The rules are defined by:
-  \begin{gather*}
-    \vdash (\mathbf{0} + e : (T_k, T_b)) \to (e : (T_k, T_b))\\
-    \cdots
-  \end{gather*}  
-\end{definition}
 
-\textbf{Remark:} Here we consider reduction on notations with types, because we cannot always infer the types from the notations. As a comparison, in typed lambda calculus the types are always implied by terms.
 
-\begin{claim}[well-typing preservation]
-  Reduction on notation typings preserve the well-typed proof. That is,
-  $$
-  \forall e, (e : (T_k, T_b)) \to^* (e' : (T_k, T_b))
-  $$
-  and
-  $$
-  \vdash e : (T_k, T_b)\ \mathrm{and}\ (e : (T_k, T_b)) \to^* (e' : (T_k, T_b))\ \mathrm{implies}\ \vdash e' : (T_k, T_b).
-  $$
-\end{claim}
+
+\subsection{TRS for Dirac notations}
+The reduction rules for Dirac notation are presented below.
+
+
+\subsubsection*{Delta Operator}
+\begin{align*}
+  \frac{\vdash s = t}{\delta_{s, t} \to \mathbf{1}}
+\end{align*}
+\textbf{Remark: } The delta operator seems to be redundant in the simplest situation. It will be necessary when big operators are introduced.
+
+
+% \subsubsection*{Decomposition}
+% \begin{align*}
+%   & \vdash \ket{(t_1, t_2)} \to \ket{t_1} \otimes \ket{(t_1, t_2)} \qquad \vdash \bra{(t_1, t_2)}\to \bra{t_1} \otimes \bra{t_2}
+% \end{align*}
+
+\subsubsection*{Conjugate}
+\begin{align*}
+  & \vdash \textbf{0}_{T_k, T_b}^* \to \textbf{0}_{T_k, T_b} 
+  \qquad \vdash \mathbf{1}^* \to \mathbf{1}
+  \qquad \vdash \delta_{i,j}^* \to \delta_{i,j}\\
+  & \vdash \ket{v}^* \to \ket{v} 
+  \qquad \vdash \bra{v}^* \to \bra{v} \\
+  & \vdash (e^*)^*\to e
+  \qquad \vdash (e^T)^* \to (e^*)^T
+  \qquad \vdash (c\ e)^* \to \textrm{conj}(c)\ (e^*)\\
+  & \vdash (e_1 + e_2)^* \to e_1^* + e_2^* \qquad \vdash (e_1 * e_2)^* \to e_2^* * e_1^* \qquad \vdash (e_1 \otimes e_2)^* \to e_1^* \otimes e_2^*
+\end{align*}
+
+\subsection*{Transpose}
+\begin{align*}
+  & \vdash \textbf{0}_{T_k, T_b}^T \to \textbf{0}_{T_b, T_k} 
+  \qquad \vdash \mathbf{1}^T \to \mathbf{1}
+  \qquad \vdash \delta_{i,j}^T \to \delta_{i,j} \\
+  & \vdash \ket{v}^T \to \bra{v} 
+  \qquad \vdash \bra{v}^T \to \ket{v} \\
+  & \vdash (c\ e)^T \to c\ (e^T)
+  \qquad \vdash (e^T)^T \to e\\
+  & \vdash (e_1 + e_2)^T \to e_1^T + e_2^T \qquad \vdash (e_1 * e_2)^T \to e_2^T * e_1^T \qquad \vdash (e_1 \otimes e_2)^T \to e_1^T \otimes e_2^T
+\end{align*}
+
+\subsection*{Scalar Multiplication}
+\begin{align*}
+  & \frac{\mathbb{C} \vdash c = 0 \qquad \vdash e : (T_k, T_b)}{c\ e \to \textbf{0}_{T_k, T_b}}\\
+  &\ \\
+  &\vdash c\ \mathbf{0}_{T_k, T_b} \to \mathbf{0}_{T_k, T_b} \\
+  &\vdash c_1\ (c_2\ e) \to (c_1 * c_2)\ e \\
+  &\vdash c\ (e_1 + e_2) \to c\ e_1 + c\ e_2
+\end{align*}
+
+
+\subsubsection*{Addition}
+\begin{align*}
+  & \frac{\vdash e : (T_k, T_b)}{\textbf{0}_{T_k, T_b} + e \to e}
+  \qquad \frac{\vdash e : (T_k, T_b)}{e + \textbf{0}_{T_k, T_b}\to e}\\
+  &\ \\
+  & \vdash c_1\ e + c_2\ e \to (c_1 + c_2)\ e \\
+  & \vdash e_1 + (e_2 + e_3) \to e_1 + e_2 + e_3 \\
+  & e_1 < e_2 \vdash e_1 + e_2 \to e_2 + e_1
+\end{align*}
+
+
+\subsubsection*{Multiplication}
+\begin{align*}
+  & \frac{\vdash e : (R, T_b)}{\textbf{0}_{T_k, R} * e \to \textbf{0}_{T_k, T_b}}
+  \qquad \frac{\vdash e : (T_k, R)}{e * \textbf{0}_{R, T_b}\to \textbf{0}_{T_k, T_b}}\\
+  &\ \\
+  & \vdash \mathbf{1} * e \to e
+  \qquad
+  \vdash e * \mathbf{1} \to e \\
+  & \vdash \bra{i} * \ket{j} \to \delta_{ij}\\
+  & \vdash (c_1\ e_1) * (c_2\ e_2) \to (c_1 * c_2)\ (e_1 * e_2) \\ 
+  & \vdash e_1 * (e_2 + e_3) \to e_1 * e_2 + e_1 * e_3
+  \qquad \vdash (e_1 + e_2) * e_3 \to e_1 * e_3 + e_2 * e_3 \\
+  & \vdash e_1 * (e_2 * e_3) \to e_1 * e_2 * e_3
+\end{align*}
+
+\subsubsection*{Tensor}
+\begin{align*}
+  & \frac{\vdash e : (T_k', T_b')}{\textbf{0}_{T_k, T_b} \otimes e \to \textbf{0}_{T_k * T_k', T_b * T_b'}}
+  \qquad \frac{\vdash e : (T_k, T_b)}{e \otimes \textbf{0}_{T_k', T_b'} \to \textbf{0}_{T_k * T_k', T_b * T_b'}}\\
+  &\ \\
+  & \vdash \mathbf{1} \otimes e \to e
+  \qquad
+  \vdash e \otimes \mathbf{1} \to e\\
+  & \vdash (c_1\ e_1) \otimes (c_2\ e_2) \to (c_1 * c_2)\ (e_1 \otimes e_2)\\
+  & \vdash e_1 \otimes (e_2 + e_3) \to e_1 \otimes e_2 + e_1 \otimes e_3
+  \qquad \vdash (e_1 + e_2) \otimes e_3 \to e_1 \otimes e_3 + e_2 \otimes e_3\\
+  & \vdash e_1 \otimes (e_2 \otimes e_3) \to e_1 \otimes e_2 \otimes e_3\\
+  & e_1 < e_2 \vdash e_1 \otimes e_2 \to e_2 \otimes e_1
+\end{align*}
+  
+  
+The convergent proof of the reduction system is dependent on the order. Moreover, the efficiency of the reduction algorithm is also partially limited by the order. Therefore to optimize the algorithm, more effort is need to improve the reduction order and simplify the decending path.
+
+
+
 
 \subsection{Labelled Dirac Notation}
 
