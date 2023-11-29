@@ -1,7 +1,7 @@
   
 % \input{yingte/20231117.tex}
 
-First of all, I present here a simplest concrete example (the reduction-free part) of the whole theory for labelled Dirac notations called \textbf{Dirac0}. It shows the main framework which works for more complicated cases we will consider later.
+First of all, I present here a simplest concrete example of the whole theory for labelled Dirac notations called \textbf{Dirac0}. It shows the main framework which works for more complicated cases we will consider later.
 
 \section{Dirac0}
 
@@ -33,18 +33,18 @@ The theory of linear algebra required here is special: it has rich types of line
 
 \begin{definition}[basis Term]
   $$
-  t ::= \texttt{tt}\ |\ a\ |\ (t, t)
+  t ::= ()\ |\ a\ |\ (t, t)
   $$
   Here $a$ is an atomic term.
 \end{definition}
 
-\yx{For variables, I plan to incorporate a STLC with product, projection and unit, which is already studied. see \url{https://en.wikipedia.org/wiki/Simply_typed_lambda_calculus}.}
+\yx{For variables, I plan to incorporate a STLC with product, projection and unit, which is already well studied. see \url{https://en.wikipedia.org/wiki/Simply_typed_lambda_calculus}.}
 
 \begin{definition}[well-typed basis]
   For space type $T$ and basis term $t$, the well-typed relation $\vdash t : T$ is defined by
   
   \begin{align*}
-    \frac{}{\vdash \texttt{tt} : \texttt{Unit}}
+    \frac{}{\vdash () : \texttt{Unit}}
     \qquad
     \frac{\Vdash a : A}{\vdash a : A}
     \qquad
@@ -60,7 +60,7 @@ It means that somehow we can express and decide complex number terms, but the th
 \begin{definition}[Dirac notation]
   Dirac notation is a rephrase and extension of linear algebra.
   \begin{align*}
-    e ::= \mathbf{0}_{T_k, T_b}\ |\ \mathbf{1}\ |\ \delta_{s, t}\ |\ \ket{t}\ |\ \bra{t}\ |\ e^*\ |\ e^T\ |\ c\ e\ |\ e + e\ |\ e * e\ |\ e \otimes e
+    e ::= \mathbf{0}_{T_k, T_b}\ |\ \mathbf{1}\ |\ \delta_{s, t}\ |\ \ket{t}\ |\ \bra{t}\ |\ e^*\ |\ e^T\ |\ c * e\ |\ e + e\ |\ e \cdot e\ |\ e \otimes e
   \end{align*}
   Here $T_k$ and $T_b$ are space Types, $s, t$ are basis terms and $c$ is a complex number term.
 \end{definition}
@@ -86,17 +86,20 @@ It means that somehow we can express and decide complex number terms, but the th
     \qquad
     \frac{\vdash e : (T_k, T_b)}{\vdash e^T : (T_b, T_k)}
     \qquad
-    \frac{\vdash e : (T_k, T_b)}{\vdash c\ e : (T_k, T_b)}\\
+    \frac{\vdash e : (T_k, T_b)}{\vdash c * e : (T_k, T_b)}\\
     \ \\
     \frac{\vdash e_1 : (T_k, T_b)\qquad \vdash e_2 : (T_k, T_b)}{\vdash e_1 + e_2 : (T_k, T_b)}
     \qquad 
-    \frac{\vdash e_1 : (T_k, R)\qquad \vdash e_2 : (R, T_b)}{\vdash e_1 * e_2 : (T_k, T_b)}
+    \frac{\vdash e_1 : (T_k, R)\qquad \vdash e_2 : (R, T_b)}{\vdash e_1 \cdot e_2 : (T_k, T_b)}
     \qquad
     \frac{\vdash e_1 : (T_k, T_b)\qquad \vdash e_2 : (T_k', T_b')}{\vdash e_1 \otimes e_2 : (T_k * T_k', T_b * T_b')}
   \end{gather*}
 \end{definition}
 
 
+\begin{claim}
+  For any Dirac notation $e$, there exists at most one pair $(T_k, T_b)$ which satisfies $\vdash e : (T_k, T_b)$. The types of all Dirac notations are computable (if exist).
+\end{claim}
 
 
 \subsection{TRS for Dirac notations}
@@ -124,8 +127,8 @@ The reduction rules for Dirac notation are presented below.
   \qquad \vdash \bra{v}^* \to \bra{v} \\
   & \vdash (e^*)^*\to e
   \qquad \vdash (e^T)^* \to (e^*)^T
-  \qquad \vdash (c\ e)^* \to \textrm{conj}(c)\ (e^*)\\
-  & \vdash (e_1 + e_2)^* \to e_1^* + e_2^* \qquad \vdash (e_1 * e_2)^* \to e_2^* * e_1^* \qquad \vdash (e_1 \otimes e_2)^* \to e_1^* \otimes e_2^*
+  \qquad \textcolor{blue}{\vdash (c * e)^* \to \textrm{conj}(c) * (e^*)}\\
+  & \vdash (e_1 + e_2)^* \to e_1^* + e_2^* \qquad \vdash (e_1 \cdot e_2)^* \to e_2^* \cdot e_1^* \qquad \vdash (e_1 \otimes e_2)^* \to e_1^* \otimes e_2^*
 \end{align*}
 
 \subsection*{Transpose}
@@ -135,45 +138,48 @@ The reduction rules for Dirac notation are presented below.
   \qquad \vdash \delta_{i,j}^T \to \delta_{i,j} \\
   & \vdash \ket{v}^T \to \bra{v} 
   \qquad \vdash \bra{v}^T \to \ket{v} \\
-  & \vdash (c\ e)^T \to c\ (e^T)
+  & \vdash (c * e)^T \to c * (e^T)
   \qquad \vdash (e^T)^T \to e\\
-  & \vdash (e_1 + e_2)^T \to e_1^T + e_2^T \qquad \vdash (e_1 * e_2)^T \to e_2^T * e_1^T \qquad \vdash (e_1 \otimes e_2)^T \to e_1^T \otimes e_2^T
+  & \vdash (e_1 + e_2)^T \to e_1^T + e_2^T \qquad \vdash (e_1 \cdot e_2)^T \to e_2^T \cdot e_1^T \qquad \vdash (e_1 \otimes e_2)^T \to e_1^T \otimes e_2^T
 \end{align*}
 
 \subsection*{Scalar Multiplication}
 \begin{align*}
-  & \frac{\mathbb{C} \vdash c = 0 \qquad \vdash e : (T_k, T_b)}{c\ e \to \textbf{0}_{T_k, T_b}}\\
+  & \frac{\mathbb{C} \vdash c = 0 \qquad \vdash e : (T_k, T_b)}{c * e \to \textbf{0}_{T_k, T_b}}\\
   &\ \\
-  &\vdash c\ \mathbf{0}_{T_k, T_b} \to \mathbf{0}_{T_k, T_b} \\
-  &\vdash c_1\ (c_2\ e) \to (c_1 * c_2)\ e \\
-  &\vdash c\ (e_1 + e_2) \to c\ e_1 + c\ e_2
+  & \vdash c * \mathbf{0}_{T_k, T_b} \to \mathbf{0}_{T_k, T_b} \\
+  & \textcolor{blue}{\vdash c_1 * (c_2 * e) \to (c_1 * c_2) * e} \\
+  & \textcolor{red}{\vdash c * e_1 + c * e_2 \to c * (e_1 + e_2)}
 \end{align*}
 
+\textbf{Remark:} The last rule uses distributive law reversely. This is due to the requirement of LPO. Rewriting in this direction also makes the normal form more concise.
 
 \subsubsection*{Addition}
 \begin{align*}
   & \frac{\vdash e : (T_k, T_b)}{\textbf{0}_{T_k, T_b} + e \to e}
   \qquad \frac{\vdash e : (T_k, T_b)}{e + \textbf{0}_{T_k, T_b}\to e}\\
   &\ \\
-  & \vdash c_1\ e + c_2\ e \to (c_1 + c_2)\ e \\
+  & \vdash c_1 * e + c_2 * e \to (c_1 + c_2) * e \\
+  & \vdash c * e + e \to (c + 1) * e \\
+  & \vdash e + e \to 2 * e \\
   & \vdash e_1 + (e_2 + e_3) \to e_1 + e_2 + e_3 \\
   & e_1 < e_2 \vdash e_1 + e_2 \to e_2 + e_1
 \end{align*}
 
-
 \subsubsection*{Multiplication}
 \begin{align*}
-  & \frac{\vdash e : (R, T_b)}{\textbf{0}_{T_k, R} * e \to \textbf{0}_{T_k, T_b}}
-  \qquad \frac{\vdash e : (T_k, R)}{e * \textbf{0}_{R, T_b}\to \textbf{0}_{T_k, T_b}}\\
+  & \frac{\vdash e : (R, T_b)}{\textbf{0}_{T_k, R} \cdot e \to \textbf{0}_{T_k, T_b}}
+  \qquad \frac{\vdash e : (T_k, R)}{e \cdot \textbf{0}_{R, T_b}\to \textbf{0}_{T_k, T_b}}\\
   &\ \\
-  & \vdash \mathbf{1} * e \to e
+  & \vdash \mathbf{1} \cdot e \to e
   \qquad
-  \vdash e * \mathbf{1} \to e \\
-  & \vdash \bra{i} * \ket{j} \to \delta_{ij}\\
-  & \vdash (c_1\ e_1) * (c_2\ e_2) \to (c_1 * c_2)\ (e_1 * e_2) \\ 
-  & \vdash e_1 * (e_2 + e_3) \to e_1 * e_2 + e_1 * e_3
-  \qquad \vdash (e_1 + e_2) * e_3 \to e_1 * e_3 + e_2 * e_3 \\
-  & \vdash e_1 * (e_2 * e_3) \to e_1 * e_2 * e_3
+  \vdash e \cdot \mathbf{1} \to e \\
+  & \vdash \bra{i} \cdot \ket{j} \to \delta_{ij}\\
+  & \vdash (c * e_1) \cdot e_2 \to c * (e_1 \cdot e_2)
+  \qquad \vdash e_1 \cdot (c * e_2) \to c * (e_1 \cdot e_2) \\ 
+  & \vdash e_1 \cdot (e_2 + e_3) \to e_1 \cdot e_2 + e_1 \cdot e_3
+  \qquad \vdash (e_1 + e_2) \cdot e_3 \to e_1 \cdot e_3 + e_2 \cdot e_3 \\
+  & \vdash e_1 \cdot (e_2 \cdot e_3) \to e_1 \cdot e_2 \cdot e_3
 \end{align*}
 
 \subsubsection*{Tensor}
@@ -184,15 +190,77 @@ The reduction rules for Dirac notation are presented below.
   & \vdash \mathbf{1} \otimes e \to e
   \qquad
   \vdash e \otimes \mathbf{1} \to e\\
-  & \vdash (c_1\ e_1) \otimes (c_2\ e_2) \to (c_1 * c_2)\ (e_1 \otimes e_2)\\
+  & \vdash (c * e_1) \otimes e_2 \to c * (e_1 \otimes e_2)\\
   & \vdash e_1 \otimes (e_2 + e_3) \to e_1 \otimes e_2 + e_1 \otimes e_3
   \qquad \vdash (e_1 + e_2) \otimes e_3 \to e_1 \otimes e_3 + e_2 \otimes e_3\\
-  & \vdash e_1 \otimes (e_2 \otimes e_3) \to e_1 \otimes e_2 \otimes e_3\\
-  & e_1 < e_2 \vdash e_1 \otimes e_2 \to e_2 \otimes e_1
+  & \vdash e_1 \otimes (e_2 \otimes e_3) \to e_1 \otimes e_2 \otimes e_3
 \end{align*}
+
+\textbf{Remark: } Tensor is not commutative because the order severes as the labelling.
   
   
 The convergent proof of the reduction system is dependent on the order. Moreover, the efficiency of the reduction algorithm is also partially limited by the order. Therefore to optimize the algorithm, more effort is need to improve the reduction order and simplify the decending path.
+
+\subsection{Congruence of TRS for Dirac notations}
+
+\begin{definition}[LPO]
+  Let $\Sigma$ be a finite signature and $>$ be a strict order on $\Sigma$. The \textbf{lexicographic path order}  $>_{lpo}$ on $T(\Sigma, V)$ induced by $>$ is defined as follows: $s >_{lpo} t$ iff
+  \begin{itemize}
+    \item \textbf{(LPO1)} $t \in \mathrm{Var}(s)$ and $s \neq t$, or
+    \item \textbf{(LPO2)} $s = f(s_1, \dots, s_m)$, $t = g(t_1, \dots, t_n)$, and
+    \item \begin{itemize}
+      \item \textbf{(LPO2a)} there exists $i, 1\leq i \leq m$, with $s_i \geq_{lpo} t$, or
+      \item \textbf{(LPO2b)} $f > g$ and $s >_{lpo} t_j$ for all $j, 1\leq j \leq n$, or
+      \item \textbf{(LPO2c)} $f = g$, $s >_{lpo} t_j$ for all $j, 1\leq j \leq n$, and there exists $i, 1 \leq i \leq m$, such that $s_{i+1} = t_{i+1}, \dots, s_m = t_m$ and $s_i >_{lpo} t_i$.
+    \end{itemize}
+  \end{itemize}
+  
+\end{definition}
+
+The rule \textbf{(LPO1)} and \textbf{(LPO2a)} guarantees that the induced LPO is a simplification order and thus a reduction order. The rule \textbf{(LPO2c)} compares the subterms from right to left, and that's why it's called lexicographic.
+
+\begin{lemma}[Termination of TRS for Dirac notations]
+  The termination of the TRS for Dirac notations can be proved by the LPO induced by the following strict order:
+
+  \begin{center}
+  \begin{tikzpicture}[node distance=15pt]
+    \node[draw]                     (complex) {all complex function};
+    \node[draw, right=of complex]                        (zero)   {$\mathbf{0}$};
+    \node[draw, right=of zero]         (scalar)  {$*$};
+    \node[draw, right=of scalar]        (add)  {$+$};
+    \node[draw, right=of add]     (tensor)  {$\otimes$};
+    \node[draw, below=of zero]     (one)     {$\mathbf{1}$};
+    \node[draw, right=of one]     (delta)     {$\delta_{ij}$};
+    \node[draw, right=of delta]       (mul)  {$\cdot$};
+    \node[draw, right=of mul]     (trans)     {transpose};
+    \node[draw, right=of trans]     (conj)     {conjugate};
+
+    \node[draw, above=of add]       (ket) {$\ket{t}$};
+    \node[draw, above=of ket]       (bra) {$\bra{t}$};
+    
+    \draw[->] (conj)  -- (trans);
+    \draw[->] (trans) -- (tensor);
+    \draw[->] (trans) -- (mul);
+    \draw[->] (add) -- (scalar);
+    \draw[->] (tensor) -- (add);
+    \draw[->] (mul) -- (delta);
+    \draw[->] (mul) -- (scalar);
+    \draw[->] (scalar) -- (zero);
+    \draw[->] (delta) -- (one);
+
+    \draw[->] (one) -- (zero);
+    \draw[->] (ket) -- (zero);
+    \draw[->] (bra) -- (zero);
+    \draw[->] (zero) -- (complex);
+  \end{tikzpicture}
+  \end{center}
+\end{lemma}
+
+\begin{proof}
+  Most cases are direct by definition. It's worth noting that for associative symbols $\cdot$, $\otimes$ and $+$, the simpler form is left-most associative, which is consistent with the LPO definition, because the right most subterms are compared first in \textbf{(LPO2c)}. Besides, $+$ is commutative, and the side condition of the subterm order helps avoid the infinite loop of rewriting.
+
+  We also ignore the complexity of complex scalars.
+\end{proof}
 
 
 
@@ -409,121 +477,3 @@ $$
 where $a$ is a quantum tuple register. The equality seems to hold, but here is a precondition: $i \neq j$. Otherwise, the Dirac notation is not even well-typed. 
 
 Because we only consider well-typed Dirac notations, we use separation logic to deal with these precondition on well-typed proofs.
-
-\section{Other Examples}
-
-This section collects typical examples for Dirac notation syntax and equality.
-
-\begin{example}
-  $$
-  \sum_{k=0}^{N-1} e^{\frac{2\pi i j k}{N}}\ket{k}
-  $$
-  Assume $t$ and $b$ are bit strings.
-  $$
-  \frac{1}{\sqrt{2^n}} \sum_t (-1)^{\sum_i b_i \cdot t_i} \ket{t}_{\bar{x}}
-  $$\end{example}
-This example requires
-\begin{itemize}
-  \item big-op of sum (index in vector term and coefficent).
-\end{itemize}
-This example clearly shows that the linear algebra module is dependent on the quantum term and type. For example, here $\sum_i b_i \cdot t_i$ should be considered as a quantum term, but the whole expression $(-1)^{\sum_i b_i \cdot t_i}$ is a complex number term.
-
-
-
-\begin{example}
-  $$
-  \bigotimes_{i = 0}^{k-1} \ket{0}_{x_i}
-  $$
-  $$
-  \left ( \bigotimes_{i = 0}^{k-1} \texttt{QFT}[x_i] \right ) \ket{0}_{\bar{x}}
-  $$
-\end{example}
-This example requires 
-\begin{itemize}
-  \item tuple of quantum variable, variable indices,
-  \item big-op of tensor (index in quantum tuple).
-\end{itemize}
-
-\begin{example}
-  Assume $U$ is a unitary transform,
-  $$
-  \frac{1}{\sqrt{2^t}} \sum_{j=0}^{2^t-1} \ket{j} U^j \ket{u}
-  $$
-\end{example}
-This example requires
-\begin{itemize}
-  \item integer index and power of operators,
-  \item big-op of sum (index in the exponent).
-\end{itemize}
-
-\begin{example}
-  $$
-  \sum_{s=0}^{r-1} \sum_{j=0}^{2^t-1} e^{\frac{2\pi i s j}{r}} \ket{j} \ket{u_s}
-  $$
-\end{example}
-This example requires
-\begin{itemize}
-  \item nested big-op of sum.
-\end{itemize}
-
-
-\subsection{Equality Benchmark}
-
-\begin{example}
-  $$
-  (U_{S_1} \otimes I_{S_2}) (\ket{\phi}_{S_1} \ket{\psi}_{S_2}) = (U_{S_1} \ket{\phi}_{S_1}) (I_{S_2}\ket{\psi}_{S_2}) = (U_{S_1} \ket{\phi}_{S_1}) \ket{\psi}_{S_2}
-  $$
-\end{example}
-This example requires 
-\begin{itemize}
-  \item type variables, the universal quantification on type $T$:
-    $$
-    \forall (T : \texttt{qType}) (U : (T, T)) (S_1 : T), \dots
-    $$
-  \item quantum variables,
-  \item vector and linear operator variables.
-\end{itemize}
-
-\begin{example} [ParaHadamard]
-  $$
-  (\bigotimes_i^n H_{x_i}) \ket{b}_{\bar{x}} = \frac{1}{\sqrt{2^n}} \sum_t (-1)^{\sum_i b_i t_i} \ket{t}_{\bar{x}}
-  $$
-\end{example}
-
-
-
-% \section{Questions}
-
-% \subsection{Type for linear algebra theory?}
-
-%   The Dirac notations rely on linear algebra in its syntax, theory and tool implementations. But we will need the term of \textit{well-typed operators}, for example:
-%   $$
-%   (\ket{00} + \ket{11}) : (\textbf{bool}\times\textbf{bool}, \textbf{Unit}).
-%   $$ 
-%   I am not sure whether the theory of linear algebra should contain this.
-
-
-
-
-% \begin{definition}[AtomicType]
-%   Assume $n \in \mathbb{N}$, we define $\texttt{AType} \equiv \mathbf{Z}_n$ as the \textbf{atomic type} and $\texttt{ATerm} \equiv \mathbb{N}$ as the \textbf{atomic term}, where $n \in \mathbb{N}$. The well-typed relation $i : \mathbf{Z}_n$ holds when $i < n$.
-% \end{definition}
-
-% The AtomicType module describes the terms and types of \textbf{atomic quantum subsystems}. In the general case it contains the type sort \texttt{AType}, the term sort \texttt{ATerm} and a decidable well-typed relation in $\texttt{ATerm} \times \texttt{AType}$.
-
-
-
-% \begin{definition}[QuType]
-%   The \textbf{QuType} module is a simply typed lambda calculus. The basic types are \texttt{QUnit} and $\mathbf{Z}_n$. Every type $\mathbf{Z}_n$ has the constants $\{i : i < n\}$.
-% \end{definition}
-
-% The QuType module describes the types and basis for linear spaces, and the types for quantum registers. 
-% In the general case it depends on AtomicType.
-
-% \begin{definition}[LinAlg]
-%   A \textbf{LinAlg} module contains the following definitions:
-%   \begin{itemize}
-%     \item the syntax for vectors $\texttt{Vec}$ and linear operators $\texttt{LOpt}$,
-%     \item the decision procedure for $\texttt{Vec}$ and $\texttt{LOpt}$
-%   \end{itemize}
-% \end{definition}
