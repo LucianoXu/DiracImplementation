@@ -606,6 +606,43 @@ $$
 }
 
 
+\subsection{Example for Sum}
+Let's consider the clean example in CoqQ paper: we want to check
+$$
+\sum_{mn}A(m,n)\ket{v_m}_S\bra{v_n}\sum_i\ket{v_i}_S\ket{u_i}_T
+= \sum_{ij}A(j, i) \ket{u_i}_T\bra{u_j}\sum_m\ket{v_m}_S\ket{u_m}_T
+$$
+
+The context is:
+\begin{align*}
+  A :\ & \tau \to \tau \to \mathbb{C}\\
+  v :\ & \tau \to ([*] \multimap \rho)\\
+  u :\ & \tau \to ([*] \multimap \sigma)
+\end{align*}
+
+The encoding and reduction is:
+\begin{align*}
+  LHS =\ & \sum_{m \in U_\tau} \sum_{n \in U_\tau} (A\ m\ n) \otimes ((v\ m) \otimes (v\ n)^T)[\<S\>; \<S\>] \cdot \textcolor{red}{\sum_{i \in U_\tau}} (v\ i)[\<S\>; \<\>] \otimes (u\ i)[\<T\>; \<\>] \\
+  \triangleright\ & \sum_{m \in U_\tau} \sum_{n \in U_\tau}\sum_{i \in U_\tau} (A\ m\ n) \otimes \textcolor{red}{((v\ m) \otimes (v\ n)^T)[\<S\>; \<S\>]} \cdot \left ( (v\ i)[\<S\>; \<\>] \otimes (u\ i)[\<T\>; \<\>] \right ) \\
+   \text{(decomposition)} &\\
+  \triangleright\ & \sum_{m \in U_\tau} \sum_{n \in U_\tau} \sum_{i \in U_\tau} (A\ m\ n) \otimes (v\ m)[\<S\>; \<\>] \otimes \textcolor{red}{(v\ n)^T[\<\>; \<S\>]} \cdot ( \textcolor{red}{(v\ i)[\<S\>; \<\>]} \otimes (u\ i)[\<T\>; \<\>]) \\
+  \text{(tensorization)} &\\
+  \triangleright\ & \sum_{m \in U_\tau} \sum_{n \in U_\tau} \sum_{i \in U_\tau} (A\ m\ n) \otimes (v\ m)[\<S\>; \<\>] \otimes \textcolor{red}{((v\ n)^T[\<\>; \<S\>] \cdot (v\ i)[\<S\>; \<\>])} \otimes (u\ i)[\<T\>; \<\>] \\
+  \triangleright\ & \sum_{m \in U_\tau} \sum_{n \in U_\tau} \sum_{i \in U_\tau} (A\ m\ n) \otimes (v\ m)[\<S\>; \<\>] \otimes \textcolor{red}{((v\ n)^T \cdot (v\ i))[\<\>; \<\>]} \otimes (u\ i)[\<T\>; \<\>] \\
+  \text{(orthonormal basis)} \\
+  \triangleright\ & \sum_{m \in U_\tau} \sum_{n \in U_\tau} \sum_{i \in U_\tau} (A\ m\ n) \otimes (v\ m)[\<S\>; \<\>] \otimes \textcolor{red}{\delta_{(v\ n), (v\ i)}} \otimes (u\ i)[\<T\>; \<\>] \\
+  \triangleright\ & \sum_{m \in U_\tau} \sum_{n \in U_\tau} \textcolor{red}{\sum_{i \in U_\tau} \delta_{n, i}} \otimes (A\ m\ n) \otimes (v\ m)[\<S\>; \<\>] \otimes (u\ i)[\<T\>; \<\>] \\
+  \triangleright\ & \sum_{m \in U_\tau} \sum_{n \in U_\tau} (A\ m\ n) \otimes (v\ m)[\<S\>; \<\>] \otimes (u\ n)[\<T\>; \<\>]
+\end{align*}
+
+The reductions for the right-hand side result in:
+$$
+RHS\ \triangleright\ \sum_{i \in U_\tau} \sum_{j \in U_\tau} (A\ j\ i) \otimes (v\ j)[\<S\>; \<\>] \otimes (u\ i)[\<T\>; \<\>],
+$$
+
+which is equivalent to $LHS$ due to a switch of two $\sum$ and the $\alpha$-conversion.
+
+\yx{The problem is that the condition of orthonormal basis is utilized.}
 
 
 
