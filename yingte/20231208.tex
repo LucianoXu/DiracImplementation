@@ -1,5 +1,5 @@
-  
-% \input{yingte/20231117.tex}
+
+\chapter{20231208}
 
 Firstly let's review the simply typed lambda calculus with product type and projections. Product type is used to model the tensor of linear spaces.
 
@@ -105,20 +105,23 @@ Due to the product and unit types, we need to extend the $\beta\eta\pi$-equivale
       \ \\
       \frac{\Gamma \vdash t : [*]}{\Gamma \vdash t\ \triangleright_\phi\ []}
   \end{gather*}
-  The first several rules define the equational theory for types, and the corresponding extra typing rule is:
+  The first rule defines the equational theory for types, and the corresponding extra typing rule is:
   $$
   \frac{\Gamma \vdash s : \tau\qquad \tau =_\phi \sigma}{\Gamma \vdash s : \sigma}
   $$
   Two terms are equivalent if they have the same normal form after $\beta\eta\pi\phi$-reduction.
 \end{definition}
 
-In short, the flexible tuple $[\cdots]$ is flattened and the unit types inside are removed. It is used to encode the Dirac notations in the mathematics style, and the strict tuple $\{\cdots\}$ serves as the normal form for the decision procedure.
+In short, the flexible tuple $[\cdots]$ is flattened and the unit types inside are removed. It is used to encode the Dirac notations in the mathematics style.
 
 \yx{Congruence for $\beta\eta\pi\phi$-reduction?}
 
 \section{Dirac Lambda Calculus}
 
+
 I believe that the decision procedure for linear algebra is necessary, but I didn't notice any serious work on this topic. It should be because decision procedure is considered and required in formal verification, but not was linear algebra, not until now we have quantum programs. 
+
+\yx{There's an existing work on combining linear algebra and lambda calculus: LINEAL: A LINEAR-ALGEBRAIC $\lambda$-CALCULUS}
 
 Actually the syntax we are considering here is far beyond linear algebra.
 And after I transplanted the theory onto the simply typed lambda calculus, soon I realized the theory we require is very similar to quantum lambda calculi.
@@ -197,12 +200,13 @@ It means that somehow we can express and decide complex number terms, but the th
       &\ |\ \mathbf{0}_{\tau, \tau}\ |\ \mathbf{1}\ |\ \delta_{e, e}\ |\ \ket{e}\ |\ \bra{e}\ |\ e^*\ |\ e^T\ |\ e * e\ |\ e + e\ |\ e \cdot e\ |\ e \otimes e
   \end{align*}
   Here $T \in \{\mathbf{Z}_n, \mathbb{C}\}$ is a basic type, $x$ is a variable and $c$ is a constant. $\tau *\tau*\cdots * \tau$ and $e, e, \dots, e$ are finite sequences.
+  In this article, the operators $\to$, $\multimap$, $*$ are right associative, and $+$, $\cdot$, $\otimes$ are left associative. Application $e\ e$ is left associative.
 \end{definition}
 
 \textbf{Remark: } Note that strict tuple $\{\cdots\}$ are not considered here. The essential reason is that only the order of tensor is considered in the structure of Hilbert space.
 
 \begin{definition}[typing rules]
-  The concept of typing assumption, context and typing judgement is defined the same as in Def.\ref{def:STLC_flexible_tuple_typing}. The typing rules for Dirac lambda calculus include thoes in Def.\ref{def:STLC_flexible_tuple_typing} as well as the following ones:
+  The concept of typing assumption, context and typing judgement is defined the same as in Def.\ref{def:STLC_flexible_tuple_typing}. The typing rules for Dirac lambda calculus include those in Def.\ref{def:STLC_flexible_tuple_typing} as well as the following ones:
   \begin{gather*}
     \frac{}{\Gamma \vdash \mathbf{0}_{\tau, \sigma} : [\tau] \multimap [\sigma]}
     \qquad
@@ -234,7 +238,8 @@ It means that somehow we can express and decide complex number terms, but the th
 \end{claim}
 
 \subsection{Reduction in Dirac lambda calculus}
-The reduction rules for terms in Dirac lambda calculus include thoes in Def.\ref{def:STLC_tuple_red}, Def.\ref{def:STLC_flexible_tuple_red} and the ones presented below.
+The reduction rules for terms in Dirac lambda calculus include those in Def.\ref{def:STLC_tuple_red}, Def.\ref{def:STLC_flexible_tuple_red} and the ones presented below.
+We call these rules \textbf{Dirac reduction}.
 
 
 \subsubsection*{Delta Operator}
@@ -258,7 +263,7 @@ The reduction rules for terms in Dirac lambda calculus include thoes in Def.\ref
   & \Gamma \vdash \bra{[s_1, s_2, \dots, s_n]} \ \triangleright\ \bra{s_1} \otimes \bra{s_2} \otimes \cdots \otimes \bra{s_n}
 \end{align*}
 
-\textbf{Remark: } The flexible tuple $[\cdots]$ is mainly to couple with the equivalence of tensor product. For example, we require $\mathbf{1} \otimes e = e$, which means that unit types should be removed during reduction. Another example is that we require that $\ket{s} \otimes (\ket{t} \otimes \ket{v}) = (\ket{s} \otimes \ket{t}) \otimes \ket{v}$, therefore $[s, [t, v]] = [[s, t], v]$, which means the tuple should be ``flattened'' when considering equivalence.
+\textbf{Remark: } The flexible tuple $[\cdots]$ is mainly to couple with the equivalence of tensor product. For example, we require $\mathbf{1} \otimes e = e$, which means that unit types should be removed during reduction. Another example is that we require $\ket{s} \otimes (\ket{t} \otimes \ket{v}) = (\ket{s} \otimes \ket{t}) \otimes \ket{v}$, therefore $[s, [t, v]] = [[s, t], v]$, which means the tuple should be ``flattened'' when considering equivalence.
 
 \subsubsection*{Conjugate}
 \begin{align*}
@@ -276,7 +281,7 @@ The reduction rules for terms in Dirac lambda calculus include thoes in Def.\ref
   \qquad 
   \textcolor{blue}{\Gamma \vdash (c * e)^* \ \triangleright\ \textrm{conj}(c) * (e^*)}\\
   & \Gamma \vdash (e_1 + e_2)^* \ \triangleright\ e_1^* + e_2^* 
-  \qquad \Gamma \vdash (e_1 \cdot e_2)^* \ \triangleright\ e_2^* \cdot e_1^* 
+  \qquad \Gamma \vdash (e_1 \cdot e_2)^* \ \triangleright\ e_1^* \cdot e_2^* 
   \qquad \Gamma \vdash (e_1 \otimes e_2)^* \ \triangleright\ e_1^* \otimes e_2^*
 \end{align*}
 
@@ -287,8 +292,8 @@ The reduction rules for terms in Dirac lambda calculus include thoes in Def.\ref
   \qquad \Gamma \vdash \delta_{s,t}^T \ \triangleright\ \delta_{s,t} \\
   & \Gamma \vdash \ket{v}^T \ \triangleright\ \bra{v} 
   \qquad \Gamma \vdash \bra{v}^T \ \triangleright\ \ket{v} \\
-  & \Gamma \vdash (c * e)^T \ \triangleright\ c * (e^T)
-  \qquad \Gamma \vdash (e^T)^T \ \triangleright\ e\\
+  & \Gamma \vdash (e^T)^T \ \triangleright\ e
+  \qquad \Gamma \vdash (c * e)^T \ \triangleright\ c * (e^T)\\
   & \Gamma \vdash (e_1 + e_2)^T \ \triangleright\ e_1^T + e_2^T 
   \qquad \Gamma \vdash (e_1 \cdot e_2)^T \ \triangleright\ e_2^T \cdot e_1^T 
   \qquad \Gamma \vdash (e_1 \otimes e_2)^T \ \triangleright\ e_1^T \otimes e_2^T
@@ -343,12 +348,8 @@ The reduction rules for terms in Dirac lambda calculus include thoes in Def.\ref
   & \frac{\Gamma \vdash e_1 : \rho \multimap \tau \qquad \Gamma \vdash e_2 : \sigma \multimap \rho}{\Gamma \vdash (E_1 \otimes e_1) \cdot (E_2 \otimes e_2) \ \triangleright\ (E_1 \cdot E_2) \otimes (e_1 \cdot e_2)}
 \end{align*}
 
-\textbf{Remark: } The last two rules conduct \textbf{tensorization}. Here's an illustration for the rule in tensor network.
-\begin{center}
-\includegraphics*[width=0.8\textwidth]{fig/tn_example.png}
-\end{center}
+\textbf{Remark: } The last two rules conduct \textbf{tensorization}. Here's an illustration for the rule in tensor network, see Fig.\ref{fig:tensorization_rule}.
 
-\yx{Most complicated rules can be intuitively explained by tensor network graphs. It's worth building the connection between Dirac notation and tensor network representations.}
 
 \subsubsection*{Tensor}
 \begin{align*}
@@ -363,6 +364,31 @@ The reduction rules for terms in Dirac lambda calculus include thoes in Def.\ref
 \end{align*}
 
 \textbf{Remark: } Tensor is only commutative when one side of the domain and codomain is $[*]$, because the order of product matters when there is no labelling.
+
+
+\subsection{Dirac Notation and Tensor Network}
+
+\yx{Most complicated rules can be intuitively explained by tensor network graphs. We can build the connection between equivalence of Tensor network graph and that of Dirac notations.}
+
+\begin{claim}
+  The quotient set of Dirac notations has a bijection to tensor network graphs.
+\end{claim}
+
+
+\begin{figure}[h]
+  \center
+  \includegraphics*[width=0.4\textwidth]{fig/space_stack.jpg}
+  \includegraphics*[width=0.5\textwidth]{fig/tn_example.png}
+  \caption{Tensor network interpretation of Dirac notations}
+\end{figure}
+
+  
+\begin{figure}[h]
+  \center
+  \includegraphics*[width=0.8\textwidth]{fig/rule_tn_example.png}
+  \caption{Illustration of the tensorization rule.}
+  \label{fig:tensorization_rule}  
+\end{figure}
 
 
 \subsection{Congruence of TRS for Dirac notations}
@@ -452,148 +478,116 @@ $\ket{\cdot}$ represents ket-like terms and $\bra{\cdot}$ represents bra-like te
 \clearpage
 
 
-% \subsection{Labelled Dirac Notation}
+\subsection{Labelled Dirac Notation}
 
-% \begin{definition}[quantum register]
-%   $$
-%   r ::= E\ |\ x\ |\ (r, r)
-%   $$
-%   Here $E$ is the terminal symbol for empty register and $x$ is a quantum variable.
-% \end{definition}
+\begin{definition}[quantum register]
+  $$
+  r ::= E\ |\ x\ |\ (r, r)
+  $$
+  Here $E$ is the terminal symbol for empty register and $x$ is a quantum variable.
+\end{definition}
 
-% \begin{definition}[quantum variable typing]
-%   The typing for quantum variable $x$ is written as $x : T$, where $T$ is a space type.
-% \end{definition}
+\begin{definition}[quantum variable typing]
+  The typing for quantum variable $x$ is written as $x : T$, where $T$ is a space type.
+\end{definition}
 
-% \begin{definition}[quantum context]
-%   The quantum contexts are ordered list of quantum variable typings, written as $\Gamma = [x : T; y : U; \dots]$. The empty context is denoted by $[]$.
-% \end{definition}
+\begin{definition}[quantum context]
+  The quantum contexts are ordered list of quantum variable typings, written as $\Gamma = [x : T; y : U; \dots]$. The empty context is denoted by $[]$.
+\end{definition}
 
-% \begin{definition}[well-formed context]
-%   A well-formed context $\Gamma$, written as $\mathcal{WF}(\Gamma)$, is a context where variables appear uniquely. In other words, they are defined as:
-%   $$
-%   \frac{}{\mathcal{WF}([])}
-%   \qquad
-%   \frac{\mathcal{WF}(\Gamma)\qquad x \notin \Gamma}{\mathcal{WF}(\Gamma :: (x : T))}
-%   $$
-% \end{definition}
-
-
-% \begin{definition}[well-typed quantum register]
-%   Within a well-formed context $\mathcal{WF}(\Gamma)$, the well-typed quantum register is denoted as $\mathcal{WF}(\Gamma) \vdash r : T$, where $r$ denotes a quantum register and $T$ a space type. The well-typed quantum register is defined as follows.
-%   \begin{gather*}
-%   \frac{\mathcal{WF}(\Gamma)}{\mathcal{WF}(\Gamma) \vdash E : \texttt{Unit}}
-%   \qquad
-%   \frac{\mathcal{WF}(\Gamma)\qquad x:T \in \Gamma}{\mathcal{WF}(\Gamma) \vdash x : T}\\
-%   \ \\  
-%   \frac{\mathcal{WF}(\Gamma) \vdash r_1 : T_1 \qquad \mathcal{WF}(\Gamma) \vdash r_2 : T_2\qquad \mathcal{WF}(\Gamma) \vdash r_1 \| r_2}{\mathcal{WF}(\Gamma) \vdash (r_1, r_2) : (T_1 * T_2) }
-%   \end{gather*}
-%   Note that $\mathcal{WF}(\Gamma) \vdash r_1 \| r_2$ is defined below.
-% \end{definition}
+\begin{definition}[well-formed context]
+  A well-formed context $\Gamma$, written as $\mathcal{WF}(\Gamma)$, is a context where variables appear uniquely. In other words, they are defined as:
+  $$
+  \frac{}{\mathcal{WF}([])}
+  \qquad
+  \frac{\mathcal{WF}(\Gamma)\qquad x \notin \Gamma}{\mathcal{WF}(\Gamma :: (x : T))}
+  $$
+\end{definition}
 
 
-% \begin{definition}[atomic quantum register]
-%   We say a quantum register $r$ is atomic in context $\Gamma$ if we can prove
-%   $\mathcal{WF}(\Gamma) \vdash r : A$, where $A$ is a atomic type.
-% \end{definition}
+\begin{definition}[well-typed quantum register]
+  Within a well-formed context $\mathcal{WF}(\Gamma)$, the well-typed quantum register is denoted as $\mathcal{WF}(\Gamma) \vdash r : T$, where $r$ denotes a quantum register and $T$ a space type. The well-typed quantum register is defined as follows.
+  \begin{gather*}
+  \frac{\mathcal{WF}(\Gamma)}{\mathcal{WF}(\Gamma) \vdash E : \texttt{Unit}}
+  \qquad
+  \frac{\mathcal{WF}(\Gamma)\qquad x:T \in \Gamma}{\mathcal{WF}(\Gamma) \vdash x : T}\\
+  \ \\  
+  \frac{\mathcal{WF}(\Gamma) \vdash r_1 : T_1 \qquad \mathcal{WF}(\Gamma) \vdash r_2 : T_2\qquad \mathcal{WF}(\Gamma) \vdash r_1 \| r_2}{\mathcal{WF}(\Gamma) \vdash (r_1, r_2) : (T_1 * T_2) }
+  \end{gather*}
+  Note that $\mathcal{WF}(\Gamma) \vdash r_1 \| r_2$ is defined below.
+\end{definition}
 
-% \begin{definition}[quantum subsystem]
-%   A quantum subsystem $S$ is a set of quantum registers. 
-%   We say it's a well-formed quantum subsystem in context $\Gamma$ if all the elements are atomic quantum register in $\Gamma$. 
-%   For a quantum register $r$, $\mathrm{set}(\Gamma, r)$ represents the corresponding well-typed quantum subsystem in $\Gamma$.
-%   Two quantum registers are disjoint in $\Gamma$, written as $\mathcal{WF}(\Gamma) \vdash r_1 \| r_2$, if the corresponding quantum subsystems are disjoint.
-% \end{definition}
-% \textbf{Remark:} The description of quantum subsystem still need refinement.
 
-% \begin{definition}[labelled Dirac notation]
-%     Labelled Dirac notation is defined by:
-%     $$
-%     e ::= e_d [r_k; r_b]\ |\ e + e\ |\ e * e\ |\ e \otimes e\ |\ e^*\ |\ e^T.
-%     $$
-%     Here $e_d$ is a Dirac notation and $r_k, r_b$ are quantum registers.
-% \end{definition}
+\begin{definition}[atomic quantum register]
+  We say a quantum register $r$ is atomic in context $\Gamma$ if we can prove
+  $\mathcal{WF}(\Gamma) \vdash r : A$, where $A$ is a atomic type.
+\end{definition}
 
-% \begin{definition}[labelled notation typing]
-%   A typing of labelled Dirac notation $e$ in well-formed context $\Gamma$ is written as $\mathcal{WF}(\Gamma) \vdash e : (S_k, S_b)$, where $S_k$ and $S_b$ are quantum subsystems. 
-% \end{definition}
+\begin{definition}[quantum subsystem]
+  A quantum subsystem $S$ is a set of quantum registers. 
+  We say it's a well-formed quantum subsystem in context $\Gamma$ if all the elements are atomic quantum register in $\Gamma$. 
+  For a quantum register $r$, $\mathrm{set}(\Gamma, r)$ represents the corresponding well-typed quantum subsystem in $\Gamma$.
+  Two quantum registers are disjoint in $\Gamma$, written as $\mathcal{WF}(\Gamma) \vdash r_1 \| r_2$, if the corresponding quantum subsystems are disjoint.
+\end{definition}
+\textbf{Remark:} The description of quantum subsystem still need refinement.
 
-% \begin{definition}[well-typed labelled Dirac notation]
-%   For the typing of labelled Dirac notation $\mathcal{WF}(\Gamma) \vdash e : (T_k, T_b)$, the well-typed proof is defined by
-%   \begin{gather*}
-%     \frac{\vdash e_d : (T_k, T_b) \qquad \mathcal{WF}(\Gamma) \vdash r_k : T_k \qquad \mathcal{WF}(\Gamma) \vdash r_b : T_b}{\mathcal{WF}(\Gamma) \vdash e_d[r_k; r_b] : (\mathrm{set}(\Gamma, r_k), \mathrm{set}(\Gamma, r_b))}\\
-%     \ \\
-%     \frac{\mathcal{WF}(\Gamma) \vdash e_1 : (S_k, S_b) \qquad \mathcal{WF}(\Gamma) \vdash e_2 : (S_k, S_b)}{\mathcal{WF}(\Gamma) \vdash e_1 + e_2 : (S_k, S_b)}\\
-%     \ \\
-%     \frac{\mathcal{WF}(\Gamma) \vdash e_1 : (S_k, S_b) \qquad \mathcal{WF}(\Gamma) \vdash e_2 : (S_k', S_b')
-%     \qquad S_k \cap (S_k' - S_b) = \emptyset
-%     \qquad (S_b - S_k') \cap S_b' = \emptyset}
-%     {\mathcal{WF}(\Gamma) \vdash e_1 * e_2 : (S_k \cup (S_k' - S_b), (S_b - S_k') \cup S_b')}\\
-%     \ \\
-%     \frac{\mathcal{WF}(\Gamma) \vdash e_1 : (S_k, S_b) \qquad \mathcal{WF}(\Gamma) \vdash e_2 : (S_k', S_b')
-%     \qquad S_k \cap S_k' = \emptyset
-%     \qquad S_b \cap S_b' = \emptyset}
-%     {\mathcal{WF}(\Gamma) \vdash e_1 \otimes e_2 : (S_k \cup S_k', S_b \cup S_b')}\\
-%     \ \\
-%     \frac{\mathcal{WF}(\Gamma) \vdash e : (S_k, S_b)}{\mathcal{WF}(\Gamma) \vdash e^* : (S_k, S_b)}
-%     \qquad
-%     \frac{\mathcal{WF}(\Gamma) \vdash e : (S_k, S_b)}{\mathcal{WF}(\Gamma) \vdash e^T : (S_b, S_k)}
-%   \end{gather*}
-% \end{definition}
+\begin{definition}[labelled Dirac notation]
+    Labelled Dirac notation is defined by:
+    $$
+    e ::= e_d [r_k; r_b]\ |\ e + e\ |\ e * e\ |\ e \otimes e\ |\ e^*\ |\ e^T.
+    $$
+    Here $e_d$ is a Dirac notation and $r_k, r_b$ are quantum registers.
+\end{definition}
 
-% \begin{definition}[labelled Dirac notation reduction]
-%   We consider the reduction on typings of labelled Dirac notations. The rules are defined by:
-%   \begin{gather*}
-%     \mathcal{WF}(\Gamma) \vdash ((e_d + e_d')[r_k; r_b]: (S_k, S_b)) \to (e_d[r_k; r_b] + e_d'[r_k; r_b] : (S_k, S_b))\\
-%     \cdots
-%   \end{gather*}
-% \end{definition}
+\begin{definition}[labelled notation typing]
+  A typing of labelled Dirac notation $e$ in well-formed context $\Gamma$ is written as $\mathcal{WF}(\Gamma) \vdash e : (S_k, S_b)$, where $S_k$ and $S_b$ are quantum subsystems. 
+\end{definition}
 
-% \begin{claim}[well-typing preservation]
-%   Reduction on labelled notation typings preserve the well-typed proof. That is,
-%   $$
-%   \forall e \forall \Gamma, \mathcal{WF}(\Gamma) \vdash (e : (S_k, S_b)) \to (e' : (S_k, S_b)),
-%   $$
-%   and
-%   $$
-%   \mathcal{WF}(\Gamma) \vdash e : (S_k, S_b)\ \textrm{and}\ \mathcal{WF}(\Gamma) \vdash (e : (S_k, S_b)) \to (e' : (S_k, S_b))\ \textrm{imples}\ \mathcal{WF}(\Gamma) \vdash e' : (S_k, S_b).
-%   $$
-% \end{claim}
+\begin{definition}[well-typed labelled Dirac notation]
+  For the typing of labelled Dirac notation $\mathcal{WF}(\Gamma) \vdash e : (T_k, T_b)$, the well-typed proof is defined by
+  \begin{gather*}
+    \frac{\vdash e_d : (T_k, T_b) \qquad \mathcal{WF}(\Gamma) \vdash r_k : T_k \qquad \mathcal{WF}(\Gamma) \vdash r_b : T_b}{\mathcal{WF}(\Gamma) \vdash e_d[r_k; r_b] : (\mathrm{set}(\Gamma, r_k), \mathrm{set}(\Gamma, r_b))}\\
+    \ \\
+    \frac{\mathcal{WF}(\Gamma) \vdash e_1 : (S_k, S_b) \qquad \mathcal{WF}(\Gamma) \vdash e_2 : (S_k, S_b)}{\mathcal{WF}(\Gamma) \vdash e_1 + e_2 : (S_k, S_b)}\\
+    \ \\
+    \frac{\mathcal{WF}(\Gamma) \vdash e_1 : (S_k, S_b) \qquad \mathcal{WF}(\Gamma) \vdash e_2 : (S_k', S_b')
+    \qquad S_k \cap (S_k' - S_b) = \emptyset
+    \qquad (S_b - S_k') \cap S_b' = \emptyset}
+    {\mathcal{WF}(\Gamma) \vdash e_1 * e_2 : (S_k \cup (S_k' - S_b), (S_b - S_k') \cup S_b')}\\
+    \ \\
+    \frac{\mathcal{WF}(\Gamma) \vdash e_1 : (S_k, S_b) \qquad \mathcal{WF}(\Gamma) \vdash e_2 : (S_k', S_b')
+    \qquad S_k \cap S_k' = \emptyset
+    \qquad S_b \cap S_b' = \emptyset}
+    {\mathcal{WF}(\Gamma) \vdash e_1 \otimes e_2 : (S_k \cup S_k', S_b \cup S_b')}\\
+    \ \\
+    \frac{\mathcal{WF}(\Gamma) \vdash e : (S_k, S_b)}{\mathcal{WF}(\Gamma) \vdash e^* : (S_k, S_b)}
+    \qquad
+    \frac{\mathcal{WF}(\Gamma) \vdash e : (S_k, S_b)}{\mathcal{WF}(\Gamma) \vdash e^T : (S_b, S_k)}
+  \end{gather*}
+\end{definition}
+
+\begin{definition}[labelled Dirac notation reduction]
+  We consider the reduction on typings of labelled Dirac notations. The rules are defined by:
+  \begin{gather*}
+    \mathcal{WF}(\Gamma) \vdash ((e_d + e_d')[r_k; r_b]: (S_k, S_b)) \to (e_d[r_k; r_b] + e_d'[r_k; r_b] : (S_k, S_b))\\
+    \cdots
+  \end{gather*}
+\end{definition}
+
+\begin{claim}[well-typing preservation]
+  Reduction on labelled notation typings preserve the well-typed proof. That is,
+  $$
+  \forall e \forall \Gamma, \mathcal{WF}(\Gamma) \vdash (e : (S_k, S_b)) \to (e' : (S_k, S_b)),
+  $$
+  and
+  $$
+  \mathcal{WF}(\Gamma) \vdash e : (S_k, S_b)\ \textrm{and}\ \mathcal{WF}(\Gamma) \vdash (e : (S_k, S_b)) \to (e' : (S_k, S_b))\ \textrm{imples}\ \mathcal{WF}(\Gamma) \vdash e' : (S_k, S_b).
+  $$
+\end{claim}
 
 
 \section{Modularising Dirac Notation by Category}
 In consideration of the complicated depnedency of different parts of the Dirac notation theory, expressing it in a modularised manner makes it more clear, organized and easy to extend. In Coq, the implementations follow this design by \textit{Module} and \textit{Module Types}. We can speak in category theory for the same purpose in theory developement.
-
-% \begin{definition}[SpaceType]
-%   \textsf{SpaceType} is a category. Its objects are lambda calculi with dependent types, where two special constants are defined:
-%   \begin{itemize}
-%     \item $\texttt{prod} : \texttt{Type} \to \texttt{Type} \to \texttt{Type}.$
-%     \item $\texttt{pair} : (A : \texttt{Type}) \to (B : \texttt{Type}) \to \texttt{prod}\ A\ B.$
-%   \end{itemize} 
-%   Morphisms exist from the calculi to more expressive ones.
-% \end{definition}
-% The product and pair is necessary because we will consider tensor product in the linear algebra.
-
-% More complicated module instances, such as those with tuples, can also be considered as objects in \textsf{SpaceType}.
-
-% \begin{definition}[Field]
-%   \textsf{Field} is a category. Its objects are algebras containing \textbf{field} as a subalgebra. Morphisms exist from algebras to more expressive ones.  
-% \end{definition}
-
-% \begin{definition}[LinAlg]
-%   \textsf{LinAlg} is a category. Its objects are lambda calculi with dependent types containing the following constants:
-%   \begin{itemize}
-%     \item an extra sort $\texttt{SType} : \texttt{Type}$,
-%     \item $\mathbb{F} : \texttt{Type}$
-%     \item $\texttt{WT\_Vec} : \texttt{SType} \to \texttt{Type}$,
-%     \item $\texttt{WT\_LOpt} : \texttt{SType} \to \texttt{SType} \to \texttt{Type}$,
-%     \item $\texttt{VecTerm} : (T : \texttt{SType}) \to (t : T) \to \texttt{WF\_Vec}\ T$,
-%     \item $\texttt{VecScale} : (T : \texttt{SType}) \to \mathbb{F} \to \texttt{WF\_Vec}\ T \to \texttt{WF\_Vec}\ T$,
-%     \item (more constructors on vectors ... )
-%     \item $\texttt{LOptElement} : (T_1\ T_2 : \texttt{SType}) \to \texttt{WT\_Vec}\ T_1 \to \texttt{WT\_Vec}\ T_2 \to \texttt{WT\_LOpt}\ T_1\ T_2$,
-%   \end{itemize}
-
-% \end{definition}
-
 
 
 
@@ -623,6 +617,35 @@ Assume the index of big operator has type $T$, then a set of index values can be
 May be the sets of integer intervals $[m, n]$ are worth considering. But I don't believe it can be decidable in more general cases.
 
 
+
+\subsection{Lineal with Sum}
+
+The language of \textit{vectors} is a three-sorted language, with the sorts for vectors, scalars and sets, described by the following term grammar:
+
+$$
+t ::=\ x\ |\ \lambda x\ t\ |\ t\ t\ |\ \mathbf{0}\ |\ \alpha.t\ |\ t + t\ |\ \sum_{x \in S} t
+$$
+
+Here $\sum_{x \in S} t$ can be considered as a special abstraction, where $x$ is the bound variable for index and $S$ is the set of index values for summation.
+
+\begin{definition}[The system Sum]
+    \begin{align*}
+        & \sum_{x \in S} \mathbf{0} \to \mathbf{0} \\
+        & \alpha.\sum_{x \in S} u \to \sum_{x \in S} \alpha.u \\
+        & \sum_{x \in S} u + \sum_{x \in S} v  \to \sum_{x \in S} (u + v) \\
+        \tag{*}
+        & u\ \sum_{x \in S} v \to \sum_{x \in S} (u\ v)\\
+        \tag{**}
+        & \sum_{x \in S} \sum_{y \in T} u = \sum_{y \in T} \sum_{x \in S} u
+    \end{align*}
+(*)\ This makes sense because abstractions are linear in lineal.\\
+(**)\ Requires that $T$ is not dependent on $x$.
+
+And sum is not considered as a base vector.
+\end{definition}
+
+
+
 \section{Tuple, Variable Index and Separation Logic}
 
 \subsection{Motivating example}
@@ -634,3 +657,87 @@ $$
 where $a$ is a quantum tuple register. The equality seems to hold, but here is a precondition: $i \neq j$. Otherwise, the Dirac notation is not even well-typed. 
 
 Because we only consider well-typed Dirac notations, we use separation logic to deal with these precondition on well-typed proofs.
+
+
+
+
+
+\section{Other Examples}
+
+This section collects typical examples for Dirac notation syntax and equality.
+
+\begin{example}
+  $$
+  \sum_{k=0}^{N-1} e^{\frac{2\pi i j k}{N}}\ket{k}
+  $$
+  Assume $t$ and $b$ are bit strings.
+  $$
+  \frac{1}{\sqrt{2^n}} \sum_t (-1)^{\sum_i b_i \cdot t_i} \ket{t}_{\bar{x}}
+  $$\end{example}
+This example requires
+\begin{itemize}
+  \item big-op of sum (index in vector term and coefficent).
+\end{itemize}
+This example clearly shows that the linear algebra module is dependent on the quantum term and type. For example, here $\sum_i b_i \cdot t_i$ should be considered as a quantum term, but the whole expression $(-1)^{\sum_i b_i \cdot t_i}$ is a complex number term.
+
+
+
+\begin{example}
+  $$
+  \bigotimes_{i = 0}^{k-1} \ket{0}_{x_i}
+  $$
+  $$
+  \left ( \bigotimes_{i = 0}^{k-1} \texttt{QFT}[x_i] \right ) \ket{0}_{\bar{x}}
+  $$
+\end{example}
+This example requires 
+\begin{itemize}
+  \item tuple of quantum variable, variable indices,
+  \item big-op of tensor (index in quantum tuple).
+\end{itemize}
+
+\begin{example}
+  Assume $U$ is a unitary transform,
+  $$
+  \frac{1}{\sqrt{2^t}} \sum_{j=0}^{2^t-1} \ket{j} U^j \ket{u}
+  $$
+\end{example}
+This example requires
+\begin{itemize}
+  \item integer index and power of operators,
+  \item big-op of sum (index in the exponent).
+\end{itemize}
+
+\begin{example}
+  $$
+  \sum_{s=0}^{r-1} \sum_{j=0}^{2^t-1} e^{\frac{2\pi i s j}{r}} \ket{j} \ket{u_s}
+  $$
+\end{example}
+This example requires
+\begin{itemize}
+  \item nested big-op of sum.
+\end{itemize}
+
+
+\subsection{Equality Benchmark}
+
+\begin{example}
+  $$
+  (U_{S_1} \otimes I_{S_2}) (\ket{\phi}_{S_1} \ket{\psi}_{S_2}) = (U_{S_1} \ket{\phi}_{S_1}) (I_{S_2}\ket{\psi}_{S_2}) = (U_{S_1} \ket{\phi}_{S_1}) \ket{\psi}_{S_2}
+  $$
+\end{example}
+This example requires 
+\begin{itemize}
+  \item type variables, the universal quantification on type $T$:
+    $$
+    \forall (T : \texttt{qType}) (U : (T, T)) (S_1 : T), \dots
+    $$
+  \item quantum variables,
+  \item vector and linear operator variables.
+\end{itemize}
+
+\begin{example} [ParaHadamard]
+  $$
+  (\bigotimes_i^n H_{x_i}) \ket{b}_{\bar{x}} = \frac{1}{\sqrt{2^n}} \sum_t (-1)^{\sum_i b_i t_i} \ket{t}_{\bar{x}}
+  $$
+\end{example}
