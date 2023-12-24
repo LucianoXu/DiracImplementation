@@ -629,7 +629,6 @@ The encoding and reduction is:
   \text{(tensorization)} &\\
   \triangleright\ & \sum_{m \in U_\tau} \sum_{n \in U_\tau} \sum_{i \in U_\tau} (A\ m\ n) \otimes (v\ m)[\<S\>; \<\>] \otimes \textcolor{red}{((v\ n)^T[\<\>; \<S\>] \cdot (v\ i)[\<S\>; \<\>])} \otimes (u\ i)[\<T\>; \<\>] \\
   \triangleright\ & \sum_{m \in U_\tau} \sum_{n \in U_\tau} \sum_{i \in U_\tau} (A\ m\ n) \otimes (v\ m)[\<S\>; \<\>] \otimes \textcolor{red}{((v\ n)^T \cdot (v\ i))[\<\>; \<\>]} \otimes (u\ i)[\<T\>; \<\>] \\
-  \text{(orthonormal basis)} \\
   \triangleright\ & \sum_{m \in U_\tau} \sum_{n \in U_\tau} \sum_{i \in U_\tau} (A\ m\ n) \otimes (v\ m)[\<S\>; \<\>] \otimes \textcolor{red}{\delta_{(v\ n), (v\ i)}} \otimes (u\ i)[\<T\>; \<\>] \\
   \triangleright\ & \sum_{m \in U_\tau} \sum_{n \in U_\tau} \textcolor{red}{\sum_{i \in U_\tau} \delta_{n, i}} \otimes (A\ m\ n) \otimes (v\ m)[\<S\>; \<\>] \otimes (u\ i)[\<T\>; \<\>] \\
   \triangleright\ & \sum_{m \in U_\tau} \sum_{n \in U_\tau} (A\ m\ n) \otimes (v\ m)[\<S\>; \<\>] \otimes (u\ n)[\<T\>; \<\>]
@@ -642,10 +641,7 @@ $$
 
 which is equivalent to $LHS$ due to a switch of two $\sum$ and the $\alpha$-conversion.
 
-\yx{The problem is that the condition of orthonormal basis is utilized.}
-
-
-
+\textbf{Remark: } It's worth noting that the condition for orthonormal basis naturally appears in the reduction process. This is because the base vectors $\ket{v}$ are assumed to be orthonormal to any other basis.
 
 
 
