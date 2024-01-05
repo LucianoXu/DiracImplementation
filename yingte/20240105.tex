@@ -96,6 +96,8 @@ It means that somehow we can express and decide complex number terms, but the th
   \end{gather*}
 \end{definition}
 
+\textbf{Remark:} We say a term $e$ is a Dirac notation if $\Gamma \vdash e : [\tau, \sigma]$.
+
 
 % \begin{claim}
 %   For any term $e$ of Dirac lambda calculus in any context $\Gamma$, there exists at most one type $\tau$ that satisfies $\Gamma \vdash e : \tau$. The types of all terms are computable (if exist).
@@ -168,6 +170,12 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
     \end{center}
 
 \end{definition}
+
+\begin{lemma}
+  $<_{RPO}$ is a total order for Dirac notations in any context $\Gamma$.
+\end{lemma}
+
+\yx{This property must be guaranteed because it's necessary for the confluence of ordered term rewriting.}
 
 
 \subsection{Reduction in Dirac lambda calculus}
@@ -290,8 +298,8 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
   && \textsc{(MulDeltaR)} && \Gamma \vdash u \cdot (\delta_{s, t}.v) \reduce \delta_{s, t}.(u \cdot v)
   \\
   & \textsc{(MulBraKet)} && \Gamma \vdash \bra{s} \cdot \ket{t} \reduce \delta_{s, t}.\mathbf{1} \\ 
-  & \textsc{(MulDistR)} && \Gamma \vdash e \cdot (u + v) \reduce e \cdot u + e \cdot v \\
-  & \textsc{(MulDistL)} && \Gamma \vdash (u + v) \cdot e \reduce u \cdot e + v \cdot e \\
+  & \textsc{(MulDistL)} && \Gamma \vdash (u + v) \cdot e \reduce u \cdot e + v \cdot e
+  && \textsc{(MulDistR)} && \Gamma \vdash e \cdot (u + v) \reduce e \cdot u + e \cdot v \\
   \\
   & \textsc{(ReFac2)} && \frac{\Gamma \vdash a_1 : [\rho, \tau] \qquad \Gamma \vdash b_1 : [\sigma, \rho]}{\Gamma \vdash (a_1 \otimes a_2) \cdot (b_1 \otimes b_2) \reduce (a_1 \cdot b_1) \otimes (a_2 \cdot b_2)} \\
 \end{align*}
@@ -303,11 +311,13 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
   & \textsc{(ReFac1RL)} && \frac{\Gamma \vdash e : [\tau, \unit]}{\Gamma \vdash a \cdot (e \otimes b) \reduce e \otimes (a \cdot b)} 
   && \textsc{(ReFac1RR)} && \frac{\Gamma \vdash e : [\tau, \unit]}{\Gamma \vdash a \cdot (b \otimes e) \reduce (a \cdot b) \otimes e} \\
   \\
-  & \textsc{(ReFac0)} && \frac{\Gamma \vdash a : [\unit, \tau] \qquad \Gamma \vdash b : [\sigma, \unit]}{\Gamma \vdash a \cdot b \reduce a \otimes b} \\
+  & \textsc{(ReFac0)} && \frac{\Gamma \vdash a : [\unit, \tau] \qquad \Gamma \vdash b : [\sigma, \unit]}{\Gamma \vdash a \cdot b \reduce a \otimes b}
+\end{align*}
+
+\begin{align*}
+  & \textsc{(ReFacBPair)} && \frac{\Gamma \vdash u : (\tau * \sigma) \qquad \tau \neq \unit \qquad \sigma \neq \unit \qquad \Gamma \vdash a : [\rho, \tau]}{\Gamma \vdash \bra{u} \cdot (a \otimes b) \reduce (\bra{\fst\ u} \cdot a) \otimes (\bra{\snd\ u} \cdot b)} \\
   \\
-  & \textsc{(ReFacBPair)} && \frac{\Gamma \vdash s : \tau \qquad \Gamma \vdash a : [\sigma, \tau]}{\Gamma \vdash \bra{(s, t)} \cdot (a \otimes b) \reduce (\bra{s} \cdot a) \otimes (\bra{t} \cdot b)} \\
-  \\
-  & \textsc{(ReFacKPair)} && \frac{\Gamma \vdash s : \tau \qquad \Gamma \vdash a : [\tau, \sigma]}{\Gamma \vdash (a \otimes b) \cdot \ket{(s, t)}  \reduce (a \cdot \ket{s}) \otimes (b \cdot \ket{t})}
+  & \textsc{(ReFacKPair)} && \frac{\Gamma \vdash u : (\tau * \sigma) \qquad \tau \neq \unit \qquad \sigma \neq \unit \qquad \Gamma \vdash a : [\sigma, \rho]}{\Gamma \vdash (a \otimes b) \cdot \ket{u}  \reduce (a \cdot \ket{\fst\ u}) \otimes (b \cdot \ket{\snd\ u})}
 \end{align*}
 % \textbf{Remark: } The last several rules conduct \textbf{tensorization}. They have clear tensor network interpretations. 
 % And also, the procedure of tensorization is actually optimizing the contraction order of the tensor network.
@@ -330,11 +340,8 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
   & \textcolor{red}{\textsc{(TsrDeltaL)}} && \Gamma \vdash (\delta_{s, t}.u) \otimes v \reduce \delta_{s, t}.(u \otimes v) 
   && \textcolor{red}{\textsc{(TsrDeltaR)}} && \Gamma \vdash u \otimes (\delta_{s, t}.v) \reduce \delta_{s, t}.(u \otimes v)
   \\
-  & \textsc{(TsrDistR)} && \Gamma \vdash e \otimes (u + v) \reduce e \otimes u + e \otimes v
-  && \textsc{(TsrDistL)} &&
-  \Gamma \vdash (u + v) \otimes e \reduce e \otimes u + e \otimes v \\
-  & \textcolor{red}{\textsc{(TsrFacBra)}} && \Gamma \vdash (\bra{\fst\ e} \cdot a) \otimes (\bra{\snd\ e} \cdot b) \reduce \bra{e} \cdot (a \otimes b) \\
-  & \textcolor{red}{\textsc{(TsrFacKet)}} && \Gamma \vdash (a \cdot \ket{\fst\ e}) \otimes (b \cdot \ket{\snd\ e}) \reduce (a \otimes b) \cdot \ket{e}
+  & \textsc{(TsrDistL)} && \Gamma \vdash (u + v) \otimes e \reduce u \otimes e + v \otimes e
+  && \textsc{(TsrDistR)} && \Gamma \vdash e \otimes (u + v) \reduce e \otimes u + e \otimes v
 \end{align*}
   
 \begin{align*}
@@ -343,7 +350,9 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
     \begin{aligned}
       & \Gamma \vdash u : [\tau_u, \sigma_u] \qquad \Gamma \vdash v : [\tau_v, \sigma_v] \\
       & \tau_u = \unit \vee \tau_v = \unit \qquad \sigma_u = \unit \vee \sigma_v = \unit
-    \end{aligned} \qquad \qquad v <_{RPO} u
+    \end{aligned} 
+    \qquad 
+    \qquad v <_{RPO} u
     }{\Gamma \vdash u \otimes v \reduce v \otimes u} \\
   \\
   & \textsc{(TsrAssoc)} &&
@@ -352,9 +361,31 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
       & \Gamma \vdash u : [\tau_u, \sigma_u] \qquad \Gamma \vdash v : [\tau_v, \sigma_v] \qquad \Gamma \vdash w : [\tau_w, \sigma_w] \\
       & \tau_u = \unit \vee \tau_v = \unit \vee \tau_w = \unit \qquad \sigma_u = \unit \vee \sigma_v = \unit \vee \sigma_w = \unit
     \end{aligned}
-    }{\Gamma \vdash u \otimes (v \otimes w) \reduce u \otimes v \otimes w}
+    }{\Gamma \vdash u \otimes (v \otimes w) \reduce u \otimes v \otimes w} \\
+  \\
+  & \textsc{(TsrSort1)} &&
+  \frac{ 
+    \begin{aligned}
+      & \Gamma \vdash u : [\tau_u, \sigma_u] \qquad \Gamma \vdash v : [\tau_v, \sigma_v] \qquad \Gamma \vdash w : [\tau_w, \sigma_w] \\
+      & \tau_v = \unit \vee \tau_w = \unit \qquad \sigma_v = \unit \vee \sigma_w = \unit
+    \end{aligned}
+    \qquad
+    v <_{RPO} w
+  }
+  {\Gamma \vdash u \otimes v \otimes w \reduce u \otimes w \otimes v }
+  \\
+  \\
+  & \textsc{(TsrSort2)} &&
+  \frac{ 
+    \begin{aligned}
+      & \Gamma \vdash u : [\tau_u, \sigma_u] \qquad \Gamma \vdash v : [\tau_v, \sigma_v] \qquad \Gamma \vdash w : [\tau_w, \sigma_w] \\
+      & \tau_u = \unit \vee (\tau_v = \unit \wedge \tau_w = \unit) \qquad \sigma_u = \unit \vee (\sigma_v = \unit \wedge \sigma_w = \unit)
+    \end{aligned}
+    \qquad
+    u <_{RPO} w
+  }
+  {\Gamma \vdash u \otimes v \otimes w \reduce v \otimes w \otimes u }
 \end{align*}
-\textbf{Remark:} The rules \textsc{(TsrComm)} and \textsc{(TsrAssoc)} sort the tensor product expressions whenever possible.
 
 \yx{The rules in red does not follow the $<_{RPO}$.
 \begin{enumerate}
@@ -401,22 +432,6 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
 
       \textbf{Remark:} There is no critical pairs between \textsc{(Squash1)-(DeltaDcp)}: $\delta_{u, (\utt, t)}.e$ does not satisfy the side condition of \textsc{(DeltaDcp)}. Similar for \textsc{(Squash2)-(DeltaDcp)}.
 
-      \begin{flalign*}
-        & \bra{(\utt, s)} \cdot (a \otimes b) \reduce \left \{
-          \begin{aligned}
-            & \textsc{(Squash1)} && \bra{s} \cdot (a \otimes b) \\
-            & \textsc{(ReFacBPair)} && (\bra{\utt} \cdot a) \otimes (\bra{s} \cdot b) \reduce (\mathbf{1} \cdot a) \otimes (\bra{s} \cdot b)
-          \end{aligned}
-        \right \} \reduce a \otimes (\bra{s} \cdot b) \\
-        & (\Gamma \vdash a : [\tau, \unit]) &
-      \end{flalign*}
-      \textbf{Remark:} Similar for:
-      \begin{itemize}
-        \item \textsc{(Squash2)-(ReFacBPair)} pair from $\bra{(s, \utt)} \cdot (a \otimes b)$,
-        \item \textsc{(Squash1)-(ReFacKPair)} pair from $(a \otimes b) \cdot \ket{(\utt, s)}$, and
-        \item \textsc{(Squash2)-(ReFacKPair)} pair from $(a \otimes b) \cdot \ket{(s, \utt)}$.
-      \end{itemize}
-
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       \item \textbf{critical pairs containing} \textsc{(Proj1)}/\textsc{(Proj2)}
       \begin{flalign*}
@@ -439,22 +454,7 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
       \end{flalign*}
       \textbf{Remark:} Similar for the \textsc{(Proj2)-(DeltaPair)} pair from $\delta_{\fst\ (a, b), \fst\ u}.\delta_{\snd\ (a, b), \snd\ u}.e$.
 
-      \begin{flalign*}
-        & (\bra{\fst\ (e_1, e_2)} \cdot a) \otimes (\bra{\snd\ (e_1, e_2)} \cdot b) \reduce \left \{
-          \begin{aligned}
-            & \textsc{(Proj1)} && (\bra{e_1} \cdot a) \otimes (\bra{\snd\ (e_1, e_2)} \cdot b) \\
-            & \textsc{(TsrFacBra)} && \bra{(e_1, e_2)} \cdot (a \otimes b)
-          \end{aligned}
-        \right \} \\
-        & \qquad \qquad \reduce (\bra{e_1} \cdot a) \otimes (\bra{e_2} \cdot b) &
-      \end{flalign*}
-      \textbf{Remark:} Similar for 
-      \begin{itemize}
-        \item \textsc{(Proj2)-(TsrFacBra)} pair from $(\bra{\fst\ (e_1, e_2)} \cdot a) \otimes (\bra{\snd\ (e_1, e_2)} \cdot b)$,
-        \item \textsc{(Proj1)-(TsrFacKet)} pair from $(a \cdot \ket{\fst\ (e_1, e_2)}) \otimes (b \cdot \ket{\snd\ (e_1, e_2)})$, and
-        \item \textsc{(Proj2)-(TsrFacKet)} pair from $(a \cdot \ket{\fst\ (e_1, e_2)}) \otimes (b \cdot \ket{\snd\ (e_1, e_2)})$.
-      \end{itemize}
-      
+
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       \item \textbf{critical pairs containing} \textsc{(Pair)}
       \begin{flalign*}
@@ -466,15 +466,6 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
         \right \} \reduce \delta_{u, v}.e &
       \end{flalign*}
 
-      \begin{flalign*}
-        & \bra{(\fst\ e, \snd\ e)} \cdot (a \otimes b) \reduce \left \{
-          \begin{aligned}
-            & \textsc{(Pair)} && \\
-            & \textsc{(ReFacBPair)} && (\bra{\fst\ e} \cdot a) \otimes (\bra{\snd\ e} \cdot b)
-          \end{aligned}
-        \right \} \reduce \bra{e} \cdot (a \otimes b) &
-      \end{flalign*}
-      \textbf{Remark:} Similar for the \textsc{(Pair)-(ReFacKPair)} pair from $(a \otimes b) \cdot \ket{(\fst\ e, \snd\ e)}$.
 
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -662,13 +653,15 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
       & (a \otimes b) \cdot (\ket{s} \otimes \ket{t}) \reduce \left \{
         \begin{aligned}
           & \textsc{(KetPair)} && (a \otimes b) \cdot \ket{(s, t)} \\
-          & \textsc{(ReFacKPair)} && 
+          & \textsc{(ReFac2)} && 
         \end{aligned}
       \right \} \reduce (a \cdot \ket{s}) \otimes (b \cdot \ket{t}) \\
       & (\Gamma \vdash a : [\rho, \tau], \Gamma \vdash \ket{s} : [\unit, \rho]) &
     \end{flalign*}
 
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     \item \textbf{conjugate critical pairs}    
+    
       \begin{flalign*}
       & (\mathbf{0}_{\tau, \sigma}^*)^* \reduce \left \{
         \begin{aligned}
@@ -995,16 +988,6 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
           \end{flalign*}
           \textbf{Remark:} Similar for $e \cdot \mathbf{0}_{\tau, \unit}$.
 
-          \begin{flalign*}
-            & (\bra{\fst\ e} \cdot \mathbf{0}_{\tau, \sigma}) \otimes (\bra{\snd\ e} \cdot b) \reduce \left \{
-              \begin{aligned}
-                & \textsc{(MulZeroR)} && \mathbf{0} \otimes (\bra{\snd\ e} \cdot b)\\
-                & \textsc{(TsrFacBra)} && \bra{e} \cdot (\mathbf{0} \otimes b)
-              \end{aligned}
-              \right \} \reduce \mathbf{0} &
-          \end{flalign*}
-          \textbf{Remark:} Similar for the critical pairs between \textsc{(MulZeroL)-(TsrFacKet)}.
-
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         \item \textbf{critical pairs containing} \textsc{(MulIdL)}/\textsc{(MulIdR)}
         
@@ -1028,14 +1011,9 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
               \qquad (\Gamma \vdash s : \unit, \Gamma \vdash t : \unit) &
           \end{flalign*}
 
-          \begin{flalign*}
-            & (\bra{\fst\ e} \cdot \ket{s}) \otimes (\bra{\snd\ e} \cdot b) \reduce \left \{
-              \begin{aligned}
-                & \textsc{(MulBraKet)} && \delta_{\fst\ e, s} \otimes (\bra{\snd\ e} \cdot b) \\
-                & \textsc{(TsrFacBra)} && \bra{e} \cdot (\ket{s} \otimes b)
-              \end{aligned}
-              \right \} \reduce & %%%%% REFACBPAIR rule should be changed
-          \end{flalign*}
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \item \textbf{critical pairs containing} \textsc{(MulDistL)}/\textsc{(MulDistR)}
 
           \begin{flalign*}
             & (a_1 + a_2) \cdot (b_1 + b_2) \reduce \left \{
@@ -1057,43 +1035,34 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
           \end{flalign*}
           \textbf{Remark:} Similar for $(u + v) \cdot e$.
 
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \item \textbf{critical pairs containing} \textsc{(ReFac2)}/\textsc{(ReFac1)}/\textsc{(ReFac0)}
+
           \begin{flalign*}
             & (a_1 \otimes a_2) \cdot (b_1 \otimes b_2) \reduce \left \{
               \begin{aligned}
-                & \textsc{(ReFac2)} && (a_1 \cdot b_1) \otimes (a_2 \cdot b_2) \reduce (a_1 \otimes b_1) \otimes (a_2 \otimes b_2) \\
-                & \textsc{(ReFac0)} && (a_1 \otimes a_2) \otimes (b_1 \otimes b_2) 
+                & \textsc{(ReFac2)} && (a_1 \cdot b_1) \otimes (a_2 \cdot b_2) \\
+                & && \reduce (a_1 \otimes b_1) \otimes (a_2 \otimes b_2) \\
+                & && \reduce ((a_1 \otimes b_1) \otimes a_2) \otimes b_2 \\
+                & \textsc{(ReFac0)} && (a_1 \otimes a_2) \otimes (b_1 \otimes b_2) \\
+                & && \reduce ((a_1 \otimes a_2) \otimes b_1) \otimes b_2
               \end{aligned}
-            \right \} \reduce \text{(sorted)}\\
+            \right \} \reduce 
+            \left \{
+              \begin{aligned}
+                & ((a_1 \otimes b_1) \otimes a_2) \otimes b_2 & (b_1 <_{RPO} a_2) \\
+                & ((a_1 \otimes a_2) \otimes b_1) \otimes b_2 & (a_2 <_{RPO} b_2)
+              \end{aligned}
+            \right . \\
             & (\Gamma \vdash a_1 : [\unit, \tau_1], \Gamma \vdash a_2 : [\unit, \tau_2], \Gamma \vdash b_1 : [\sigma_1, \unit], \Gamma \vdash b_2 : [\sigma_2, \unit]) &
           \end{flalign*}
-          \yx{We have to prove that the two expressions will result in the same sorted normal form.}
 
           \textbf{Remark:} Similar for other critical pairs among \textsc{(ReFac2)}, \textsc{(ReFac1)} and \textsc{(ReFac0)}.
 
-
-          \begin{flalign*}
-            & \bra{(\utt, s)} \cdot (e \otimes b) \reduce \left \{
-              \begin{aligned}
-                & \textsc{(ReFac1)} && e \otimes (\bra{(\utt, s)} \cdot b) \\
-                & \textsc{(ReFacBPair)} && (\bra{\utt} \cdot e) \otimes (\bra{s} \cdot b) \reduce (\textbf{1} \cdot e) \otimes (\bra{s} \cdot b)
-              \end{aligned}
-            \right \} \reduce e \otimes (\bra{s} \cdot b) \\
-            & (\Gamma \vdash e : [\tau, \unit]) &
-          \end{flalign*}
-          \textbf{Remark:} Similar for other critical paris between \textsc{(ReFac1)-(ReFacBPair)} and \textsc{(ReFac1)-(ReFacKPair)}.
-
-          \begin{flalign*}
-            & \bra{(\utt, \utt)} \cdot (e_1 \otimes e_2) \reduce \left \{
-              \begin{aligned}
-                & \textsc{(ReFac0)} && \bra{(\utt, \utt)} \otimes (e_1 \otimes e_2) \reduce \bra{\utt} \otimes (e_1 \otimes e_2) \\
-                & \textsc{(ReFacBPair)} && (\bra{\utt} \otimes e_1) \otimes (\bra{\utt} \cdot e_2) \reduce (\textbf{1} \otimes e_1) \otimes (\textbf{1} \otimes e_2)
-              \end{aligned}
-            \right \} \reduce e_1 \otimes e_2 \\
-            & (\Gamma \vdash e_1 : [\sigma_1, \unit], \Gamma \vdash e_2 : [\sigma_2, \unit]) &
-          \end{flalign*}
-          \textbf{Remark:} Similar for $(e_1 \otimes e_2) \cdot \ket{(\utt, \utt)}$.
-
-        \item \textbf{tensor product:}
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \item \textbf{critical pairs containing} \textsc{(TsrZeroL)}/\textsc{(TsrZeroR)}
+        
           \begin{flalign*}
             & \mathbf{0}_{\tau, \sigma} \otimes \mathbf{0}_{\tau', \sigma'}\reduce \left \{
               \begin{aligned}
@@ -1104,6 +1073,16 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
           \end{flalign*}
 
           \begin{flalign*}
+            & \mathbf{0}_{\tau, \sigma} \otimes \mathbf{1} \reduce \left \{
+              \begin{aligned}
+                & \textsc{(TsrZeroL)} && \\
+                & \textsc{(TsrIdR)} &&
+              \end{aligned}
+              \right \} \reduce \mathbf{0}_{\tau, \sigma} & 
+          \end{flalign*}
+          \textbf{Remark:} Similar for $\mathbf{1} \otimes \mathbf{0}_{\tau, \sigma}$.
+
+          \begin{flalign*}
             & (\alpha.u) \otimes \mathbf{0}_{\tau', \sigma'} \reduce \left \{
               \begin{aligned}
                 & \textsc{(TsrZeroR)} && \\
@@ -1111,7 +1090,7 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
               \end{aligned}
               \right \} \reduce \mathbf{0}_{(\tau * \tau'), (\sigma * \sigma')} \qquad (\Gamma \vdash u : [\tau, \sigma]) & 
           \end{flalign*}
-          \textbf{Remark:} Similar for $\mathbf{0}_{\tau, \sigma}\otimes (\alpha.v)$
+          \textbf{Remark:} Similar for $\mathbf{0}_{\tau, \sigma}\otimes (\alpha.v)$, $(\delta_{s, t}.u) \otimes \mathbf{0}_{\tau', \sigma'}$ and $\mathbf{0}_{\tau, \sigma} \otimes (\delta_{s, t}.v)$.
 
 
           \begin{flalign*}
@@ -1125,6 +1104,7 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
           \end{flalign*}
           \textbf{Remark:} Similar for $(u + v) \otimes \mathbf{0}_{\tau, \sigma}$.
 
+
           \begin{flalign*}
             & \mathbf{0}_{\tau, \sigma} \otimes e \reduce \left \{
               \begin{aligned}
@@ -1133,97 +1113,179 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
               \end{aligned}
               \right \} \reduce \mathbf{0} \qquad (\Gamma \vdash e : [\unit, \sigma]) & 
           \end{flalign*}
-          \textbf{Remark:} Similar for $e \otimes \mathbf{0}_{\unit, \sigma}$. Also similar for critical pairs between \textsc{(TsrZeroL)}, \textsc{(TsrZeroR)} and \textsc{(TsrSortC)}, \textsc{(TsrSortCL)}, \textsc{(TsrSortCR)}.
+          \textbf{Remark:} Similar for $e \otimes \mathbf{0}_{\unit, \sigma}$. Also similar for critical pairs between \textsc{(TsrZeroL)}, \textsc{(TsrZeroR)} and \textsc{(TsrAssoc)}, \textsc{(TsrSort)}.
 
-          \begin{flalign*}
-            & 0 \otimes \alpha \reduce \left \{
-              \begin{aligned}
-                & \textsc{(Tsr0)} && \\
-                & \textsc{(TsrCC)} && \mathrm{mul}(0, \alpha)
-              \end{aligned}
-              \right \} \reduce 0 \qquad (\Gamma \vdash \alpha : \mathbb{C}) & 
-          \end{flalign*}
 
-          \begin{flalign*}
-            & 0 \otimes (u + v) \reduce \left \{
-              \begin{aligned}
-                & \textsc{(Tsr0)} && \\
-                & \textsc{(TsrDistR)} && 0 \otimes u + 0 \otimes v \reduce \mathbf{0}_{\tau, \sigma} + \mathbf{0}_{\tau, \sigma}
-              \end{aligned}
-              \right \} \reduce \mathbf{0}_{\tau, \sigma} \qquad (\Gamma \vdash (u + v) : [\tau, \sigma]) & 
-          \end{flalign*}
-          
-          \begin{flalign*}
-            & 0 \otimes u \reduce \left \{
-              \begin{aligned}
-                & \textsc{(Tsr0)} && \\
-                & \textsc{(TsrSortC)} && u \otimes 0
-              \end{aligned}
-              \right \} \reduce \mathbf{0}_{\unit, \unit} \qquad (\Gamma \vdash u : [\unit, \unit], u <_{RPO} 0) & 
-          \end{flalign*}
-          \textbf{Remark:} Similar for critical pairs between \textsc{(Tsr0L)}, \textsc{(Tsr0R)} and \textsc{(TsrSortCR)}, \textsc{(TsrSortCL)}.
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \item \textbf{critical pairs containing} \textsc{(TsrIdL)}/\textsc{(TsrIdR)}
+        
+        \begin{flalign*}
+          & \mathbf{1} \otimes \mathbf{1} \reduce \left \{
+            \begin{aligned}
+              & \textsc{(TsrIdL)} && \\
+              & \textsc{(TsrIdR)} &&
+            \end{aligned}
+            \right \} \mathbf{1} & 
+        \end{flalign*}
 
+        
+        \begin{flalign*}
+          & \mathbf{1} \otimes \alpha.e \reduce \left \{
+            \begin{aligned}
+              & \textsc{(TsrIdL)} && \\
+              & \textsc{(TsrScrR)} && \alpha.(\mathbf{1} \otimes e)
+            \end{aligned}
+            \right \} \reduce \alpha.e & 
+        \end{flalign*}
+        \textbf{Remark:} Similar for $\alpha.e \otimes \mathbf{1}$, $\mathbf{1} \otimes (\delta_{s, t}.e)$ and $(\delta_{s, t}.e) \otimes \mathbf{1}$.
+        
           \begin{flalign*}
-            & 1 \otimes (u + v) \reduce \left \{
+            & \mathbf{1} \otimes (u + v) \reduce \left \{
               \begin{aligned}
-                & \textsc{(Tsr1)} && \\
-                & \textsc{(TsrDistR)} && 1 \otimes u + 1 \otimes v
+                & \textsc{(TsrIdL)} && \\
+                & \textsc{(TsrDistR)} && \mathbf{1} \otimes u + \mathbf{1} \otimes v
               \end{aligned}
               \right \} \reduce u + v & 
           \end{flalign*}
+          \textbf{Remark:} Similar for $(u + v) \otimes \mathbf{1}$.
 
           \begin{flalign*}
-            & 1 \otimes u \reduce \left \{
+            & \mathbf{1} \otimes e \reduce \left \{
               \begin{aligned}
-                & \textsc{(Tsr1)} && \\
-                & \textsc{(TsrSortC)} && u \otimes 1
+                & \textsc{(TsrIdL)} && \\
+                & \textsc{(TsrComm)} && e \otimes \mathbf{1}
               \end{aligned}
-              \right \} \reduce u \qquad (\Gamma \vdash u : [\unit, \unit], u <_{RPO} 1) & 
+              \right \} \reduce e & 
           \end{flalign*}
-          \textbf{Remark:} Similar for critical pairs between \textsc{(Tsr1L)}, \textsc{(Tsr1R)} and \textsc{(TsrSortCR)}, \textsc{(TsrSortCL)}.
+          \textbf{Remark:} Similar for $e \otimes \mathbf{1}$. Also similar for critical pairs between \textsc{(TsrIdL)}, \textsc{(TsrIdR)} and \textsc{(TsrAssoc)}, \textsc{(TsrSort)}.
 
-          \begin{flalign*}
-            & \alpha \otimes \beta \reduce \left \{
-              \begin{aligned}
-                & \textsc{(TsrCC)} && \\
-                & \textsc{(TsrSortC)} && \beta \otimes \alpha \reduce \mathrm{mul}(\beta, \alpha)
-              \end{aligned}
-              \right \} \reduce \mathrm{mul}(\alpha, \beta) \qquad (\Gamma \vdash \alpha : \mathbb{C}, \Gamma \vdash \beta : \mathbb{C}, \beta <_{RPO} \alpha) & 
-          \end{flalign*}
 
-          \begin{flalign*}
-            & (a_1 + a_2) \otimes (b_1 + b_2) \reduce \left \{
-              \begin{aligned}
-                & \textsc{(TsrDistL)} && (a_1 + a_2) \otimes b_1 + (a_1 + a_2) \otimes b_2 \\
-                & \textsc{(TsrDistR)} && a_1 \otimes (b_1 + b_2) + a_2 \otimes (b_1 + b_2)
-              \end{aligned}
-              \right \} \\
-              & \qquad \qquad \reduce a_1 \otimes b_1 + a_1 \otimes b_2 + a_2 \otimes b_1 + a_2 \otimes b_2 & 
-          \end{flalign*}
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \item \textbf{critical pairs containing} \textsc{(TsrScrL)}/\textsc{(TsrScrR)}/\textsc{(TsrDeltaL)}/\textsc{(TsrDeltaR)}
 
-          \begin{flalign*}
-            & e \otimes u \reduce \left \{
-              \begin{aligned}
-                & \textsc{(TsrSortBK)} && \\
-                & \textsc{(TsrSortC)} &&
-              \end{aligned}
-              \right \} \reduce u \otimes e \qquad (\Gamma \vdash u : [\unit, \unit], \Gamma \vdash e : [\sigma, \unit], \sigma \neq \unit, u <_{RPO} e) & 
-          \end{flalign*}
+        \begin{flalign*}
+          & (\alpha.u) \otimes v \left \{
+            \begin{aligned}
+              & \textsc{(TsrScrL)} && \alpha.(u \otimes v) \\
+              & \textsc{(TsrComm)} && v \otimes (\alpha.u) \reduce \alpha.(v \otimes u)
+            \end{aligned}
+            \right \} \reduce 
+            \left \{
+            \begin{aligned}
+              & \alpha.(u \otimes v) & (v <_{RPO} u) \\
+              & \alpha.(v \otimes u) & (u <_{RPO} v) 
+            \end{aligned}
+            \right . 
+            \qquad (v <_{RPO} \alpha.u) &
+        \end{flalign*}
+        \textbf{Remark:} The two expressions will join at either $\alpha.(u \otimes v)$ or $\alpha.(v \otimes u)$, depending on the order of $u$ and $v$. Similar for other critical pairs between \textsc{(TsrScrL)}, \textsc{(TsrScrR)} and \text{(TsrComm)}, \textsc{(TsrAssoc)}, \textsc{(TsrSort)}.
 
-          \begin{flalign*}
-            & (u \otimes e_1) \otimes e_2 \reduce \left \{
-              \begin{aligned}
-                & \textsc{(TsrSortBK)} && e_2 \otimes (u \otimes e_1)  \\
-                & \textsc{(TsrSortCL)} && u \otimes e_1 \otimes e_2
-              \end{aligned}
-              \right \} \reduce u \otimes e_2 \otimes e_1 \\
-              & (\Gamma \vdash u : [\unit, \unit], \Gamma \vdash e_1 : [\sigma, \unit], \sigma \neq \unit, \Gamma \vdash e_2 : [\unit, \tau]) & 
-          \end{flalign*}
-          \textbf{Remark:} Similar for the critical pair between \textsc{(TsrSortBK)} and \textsc{(TsrSortCR)}.
 
-   
-          \textbf{Remark:} It's also easy to check that the critical pairs between \textsc{(TsrSort)}, \textsc{(TsrSortCL)}, \textsc{(TsrSortCR)} and \textsc{(TsrRefact)} are joinable.
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \item \textbf{critical pairs containing} \textsc{(TsrDistL)}/\textsc{(TsrDistR)}
+        
+        \begin{flalign*}
+          & (a + b)\otimes (u + v) \reduce \left \{
+            \begin{aligned}
+              & \textsc{(TsrDistL)} && (a + b) \otimes u + (a + b) \otimes v \\
+              & \textsc{(TsrDistR)} && a \otimes (u + v) + b \otimes (u + v)
+            \end{aligned}
+            \right \} \reduce a \otimes u + a \otimes v + b \otimes u + b \otimes v & 
+        \end{flalign*}
 
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \item \textbf{critical pairs between} \textsc{(TsrComm)-(TsrAssoc)}
+        
+        The critical pairs between \textsc{(TsrComm)} and \textsc{(TsrAssoc)} diverge from the expression $A \otimes (B \otimes C)$, with corresponding side conditions on their types being satisfied. There are three different cases (merging the symmetric ones):
+
+        \begin{center}
+          \includegraphics*[width=0.8\textwidth]{fig/CommAssocPairs.png}
+        \end{center}
+
+        Take the first case as an example. The assumptions are $\Gamma \vdash B : [\unit, \unit]$ and $B <_{RPO} C$. The confluence proof is shown in the following graph. Similar for other cases.
+        \begin{center}
+          \includegraphics*[width=0.8\textwidth]{fig/CommAssocCase1.png}
+        \end{center}
+
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \item \textbf{critical pairs between} \textsc{(TsrComm)-(TsrSort1)}
+        
+        The critical pairs have three different cases (merging the symmetric ones):
+        
+        \begin{center}
+          \includegraphics*[width=0.8\textwidth]{fig/CommSort1Pairs.png}
+        \end{center}
+
+        Take the first case as an example. The assumptions are $\Gamma \vdash A : [\tau, \unit]$, $\Gamma \vdash B : [\unit, \sigma]$, $\Gamma \vdash C : [\rho, \unit]$, $A <_{RPO} B < _{RPO} < C$. The confluence proof is shown in the following graph. Similar for other cases.
+        \begin{center}
+          \includegraphics*[width=0.8\textwidth]{fig/CommSort1Case1.png}
+        \end{center}
+
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \item \textbf{critical pairs between} \textsc{(TsrComm)-(TsrSort2)}
+        
+        Similar to \textsc{(TsrComm)-(TsrSort1)} critical pairs.
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \item \textbf{critical pairs of} \textsc{(TsrAssoc)}
+
+        \begin{flalign*}
+          & A \otimes (B \otimes (C \otimes D)) \reduce \left \{
+            \begin{aligned}
+              & \textsc{(TsrAssoc)} && A \otimes (B \otimes C \otimes D) \reduce \cdots \\
+              & \textsc{(TsrAssoc)} && A \otimes B \otimes (C \otimes D) \reduce \cdots
+            \end{aligned}
+            \right \} \reduce A \otimes B \otimes C \otimes D & 
+        \end{flalign*}
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \item \textbf{critical pairs between} \textsc{(TsrAssoc)-(TsrSort1)}
+        
+        \begin{itemize}
+          \item $(A \otimes B) \otimes (C \otimes D)$
+          \item $(A \otimes (B \otimes C)) \otimes D$
+        \end{itemize}
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \item \textbf{critical pairs of} \textsc{(TsrSort1)}
+
+        The critical pairs comes from $A \otimes B \otimes C \otimes D$. There are three cases:
+
+        \begin{center}
+          \includegraphics*[width=0.8\textwidth]{fig/Sort1Sort1Pairs.png}
+        \end{center}
+
+        Take the first case as an example. The assumptions are $\Gamma \vdash A : [\tau_A, \sigma_A]$, $\Gamma \vdash B : [\tau_B, \sigma_B]$, $\Gamma \vdash C : [\unit, \unit]$, $\Gamma \vdash D : [\tau_D, \sigma_D]$, $B <_{RPO} C < _{RPO} < D$. The confluence proof is shown in the following graph. Similar for other cases.
+
+        \begin{center}
+          \includegraphics*[width=0.8\textwidth]{fig/Sort1Sort1Case1.png}
+        \end{center}
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \item \textbf{critical pairs between} \textsc{(TsrSort1)-(TsrSort2)}
+
+        \begin{itemize}
+          \item $A \otimes B \otimes C$
+          \item $A \otimes B \otimes C \otimes D$
+        \end{itemize}
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \item \textbf{critical pairs of} \textsc{(TsrSort2)}
+
+        The critical pairs comes from $A \otimes B \otimes C \otimes D$. There are five cases:
+
+        \begin{center}
+          \includegraphics*[width=0.8\textwidth]{fig/Sort2Sort2Pairs.png}
+        \end{center}
+
+        Take the first case as an example. The assumptions are $\Gamma \vdash A : [\tau_A, \sigma_A]$, $\Gamma \vdash B : [\tau_B, \sigma_B]$, $\Gamma \vdash C : [\unit, \unit]$, $\Gamma \vdash D : [\tau_D, \sigma_D]$, $B <_{RPO} C < _{RPO} < D$. The confluence proof is shown in the following graph. Similar for other cases.
+
+        \begin{center}
+          \includegraphics*[width=0.8\textwidth]{fig/Sort1Sort1Case1.png}
+        \end{center}
       \end{itemize}
 
 \end{proof}
