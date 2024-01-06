@@ -133,7 +133,9 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
     A + (B + C) = & A + B + C \\
 \end{align*}
 
-\yx{Should check whether the equational theory is compatible with the reduction rules.}
+\yx{Should check that the equational theory is compatible with the reduction rules:
+  forall $u, v$, $u = v$ implies $u \downarrow v$.
+}
 
 
 \subsection{Simplification Order}
@@ -161,24 +163,33 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
 
       \node[draw, below=of scaling]       (pair) {$(s_1, s_2)$};
 
+      \node[draw, below=of tensor]       (fst)     {$\fst$};
+      \node[draw, below=of fst]       (snd)     {$\snd$};
+
       
       \graph{
         (conj) -> (trans) -> (mul) -> (tensor) -> (scaling) -> (delta) -> (add) -> (ket) -> (bra) -> (id) -> (zero) ->(var) -> (tt);
         (tensor) -> (pair);
+        (mul) -> (fst);
+        (mul) -> (snd);
       };
     \end{tikzpicture}
     \end{center}
 
+    Note that for terms with the same function symbol, the subterms are compared from right to left. Therefore, for example we have $ (a \otimes b) \otimes c <_{RPO} a \otimes (b \otimes c) $. 
+
 \end{definition}
 
-\begin{lemma}
-  $<_{RPO}$ is a total order for Dirac notations in any context $\Gamma$.
-\end{lemma}
+% \begin{lemma}
+%   $<_{RPO}$ is a total order for Dirac notations in any context $\Gamma$.
+% \end{lemma}
 
-\yx{This property must be guaranteed because it's necessary for the confluence of ordered term rewriting.}
+% \yx{This property must be guaranteed because it's necessary for the confluence of ordered term rewriting.}
 
 
-\subsection{Reduction in Dirac lambda calculus}
+\subsection{Reduction of Dirac Notations}
+
+We call this term rewriting system \textsf{DN}. We use $u =_{\textsf{DN}} v$ to denote that $u$ and $v$ are equivalent in \textsf{DN}.
 
 \subsubsection*{Pair and Projection}
 \begin{align*}
@@ -201,7 +212,7 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
   \\
   \\
   & \textcolor{red}{\textsc{(Delta0)}} && 
-  \frac{s =? t\ \textrm{has no unifier in}\ \Gamma \qquad \Gamma \vdash e : [\tau, \sigma]}{\Gamma \vdash \delta_{s, t}.e \reduce \textbf{0}_{\tau, \sigma}} \\
+  \frac{s =_\textsf{DN} t\ \textrm{is not satisfiable in}\ \Gamma \qquad \Gamma \vdash e : [\tau, \sigma]}{\Gamma \vdash \delta_{s, t}.e \reduce \textbf{0}_{\tau, \sigma}} \\
   \\
   & \textcolor{red}{\textsc{(DeltaDcp)}} && 
   \frac{\Gamma \vdash u : ( \tau * \sigma ) \qquad \tau \neq \unit \qquad \sigma \neq \unit}{\Gamma \vdash \delta_{u, (s, t)}.e \reduce \delta_{\fst\ u, s}.\delta_{\snd\ u, t}.e} 
@@ -213,7 +224,10 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
   & \textsc{(DeltaDist)} &&
   \Gamma \vdash \delta_{s, t}.(e_1 + e_2) \reduce \delta_{s, t}.e_1 + \delta_{s, t}.e_2
 \end{align*}
-\textbf{Remark:} Here \textsc{(Delta0)} should check whether the two terms are unifiable on the semantic level, using the same reduction system. In other words, $\delta_{s, t}$ is reduced to 0 only when $s = t$ does not hold for all possible valuations.
+
+\yx{$\delta_{s, t}$ is reduced to 1 when $s =_\textsf{DN} t$ is valid, and is reduced to 0 when $s =_\textsf{DN} t$ is not satisfiable. In other words, it requires to check the two terms $s$ and $t$ using the same reduction system \textsf{DN}. This is closest to the behaviour of $\delta_{s, t}$ in maths but is hard to test. I don't know whether it's appropriate.}
+
+\textbf{Remark:} \textsc{(DeltaDcp)} does not decrease the $<_{RPO}$ order. But it should terminate because the types of $s$ and $t$ becomes simpler for $\delta_{s, t}$.
 
 \subsubsection*{Ket}
 \begin{align*}
@@ -281,6 +295,8 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
     \Gamma \vdash e + e \reduce \mathrm{add}(1, 1).e
 \end{align*}
 
+\yx{These three factorization rules does not decrease the $<_{RPO}$ order. I should consult the Lineal paper and see how they handled this. }
+
 \subsubsection*{Multiplication}
 \begin{align*}
   & \textcolor{red}{\textsc{(MulZeroL)}}
@@ -329,31 +345,41 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
   \frac{\Gamma \vdash e : [\tau, \sigma]}{\Gamma \vdash \textbf{0}_{\tau', \sigma'} \otimes e \reduce \textbf{0}_{(\tau' * \tau), (\sigma' * \sigma)}} 
   && \textcolor{red}{\textsc{(TsrZeroR)}} && 
   \frac{\Gamma \vdash e : [\tau, \sigma]}{\Gamma \vdash e \otimes \textbf{0}_{\tau', \sigma'} \reduce \textbf{0}_{(\tau * \tau'), (\sigma * \sigma')}} \\
-  & \textcolor{red}{\textsc{(TsrIdL)}} && 
+  & \textsc{(TsrIdL)} && 
   \Gamma \vdash \mathbf{1} \otimes e \reduce e
-  && \textcolor{red}{\textsc{(TsrIdR)}} && 
+  && \textsc{(TsrIdR)} && 
   \Gamma \vdash e \otimes \mathbf{1} \reduce e
   \\
-  & \textcolor{red}{\textsc{(TsrScrL)}} && \Gamma \vdash (\alpha.u) \otimes v \reduce \alpha.(u \otimes v) 
-  && \textcolor{red}{\textsc{(TsrScrR)}} && \Gamma \vdash u \otimes (\alpha.v) \reduce \alpha.(u \otimes v)
+  & \textsc{(TsrScrL)} && \Gamma \vdash (\alpha.u) \otimes v \reduce \alpha.(u \otimes v) 
+  && \textsc{(TsrScrR)} && \Gamma \vdash u \otimes (\alpha.v) \reduce \alpha.(u \otimes v)
   \\
-  & \textcolor{red}{\textsc{(TsrDeltaL)}} && \Gamma \vdash (\delta_{s, t}.u) \otimes v \reduce \delta_{s, t}.(u \otimes v) 
-  && \textcolor{red}{\textsc{(TsrDeltaR)}} && \Gamma \vdash u \otimes (\delta_{s, t}.v) \reduce \delta_{s, t}.(u \otimes v)
+  & \textsc{(TsrDeltaL)} && \Gamma \vdash (\delta_{s, t}.u) \otimes v \reduce \delta_{s, t}.(u \otimes v) 
+  && \textsc{(TsrDeltaR)} && \Gamma \vdash u \otimes (\delta_{s, t}.v) \reduce \delta_{s, t}.(u \otimes v)
   \\
   & \textsc{(TsrDistL)} && \Gamma \vdash (u + v) \otimes e \reduce u \otimes e + v \otimes e
   && \textsc{(TsrDistR)} && \Gamma \vdash e \otimes (u + v) \reduce e \otimes u + e \otimes v
 \end{align*}
   
 \begin{align*}
-  & \textsc{(TsrComm)} && 
+  & \textsc{(TsrSort0)} && 
   \frac{
     \begin{aligned}
-      & \Gamma \vdash u : [\tau_u, \sigma_u] \qquad \Gamma \vdash v : [\tau_v, \sigma_v] \\
-      & \tau_u = \unit \vee \tau_v = \unit \qquad \sigma_u = \unit \vee \sigma_v = \unit
+      & \Gamma \vdash u : [\tau_u, \sigma_u] \qquad \Gamma \vdash v_i : [\tau_{v_i}, \sigma_{v_i}] \\
+      & \tau_u = \unit \vee \bigwedge_{i = 1}^n \tau_{v_i} = \unit \qquad \sigma_u = \unit \vee \bigwedge_{i = 1}^n \sigma_{v_i} = \unit
     \end{aligned} 
     \qquad 
-    \qquad v <_{RPO} u
-    }{\Gamma \vdash u \otimes v \reduce v \otimes u} \\
+    \qquad u <_{RPO} v_n
+    }{\Gamma \vdash u \otimes v_1 \otimes \cdots \otimes v_n \reduce v_i \otimes \cdots \otimes v_n \otimes u} \\
+  \\
+  & \textsc{(TsrSort1)} && 
+  \frac{
+    \begin{aligned}
+      & \Gamma \vdash u : [\tau_u, \sigma_u] \qquad \Gamma \vdash v_i : [\tau_{v_i}, \sigma_{v_i}] \\
+      & \tau_u = \unit \vee \bigwedge_{i = 1}^n \tau_{v_i} = \unit \qquad \sigma_u = \unit \vee \bigwedge_{i = 1}^n \sigma_{v_i} = \unit
+    \end{aligned} 
+    \qquad 
+    \qquad u <_{RPO} v_n
+    }{\Gamma \vdash e \otimes u \otimes v_1 \otimes \cdots \otimes v_n \reduce e \otimes v_i \otimes \cdots \otimes v_n \otimes u} \\
   \\
   & \textsc{(TsrAssoc)} &&
   \frac{
@@ -361,35 +387,15 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
       & \Gamma \vdash u : [\tau_u, \sigma_u] \qquad \Gamma \vdash v : [\tau_v, \sigma_v] \qquad \Gamma \vdash w : [\tau_w, \sigma_w] \\
       & \tau_u = \unit \vee \tau_v = \unit \vee \tau_w = \unit \qquad \sigma_u = \unit \vee \sigma_v = \unit \vee \sigma_w = \unit
     \end{aligned}
-    }{\Gamma \vdash u \otimes (v \otimes w) \reduce u \otimes v \otimes w} \\
-  \\
-  & \textsc{(TsrSort1)} &&
-  \frac{ 
-    \begin{aligned}
-      & \Gamma \vdash u : [\tau_u, \sigma_u] \qquad \Gamma \vdash v : [\tau_v, \sigma_v] \qquad \Gamma \vdash w : [\tau_w, \sigma_w] \\
-      & \tau_v = \unit \vee \tau_w = \unit \qquad \sigma_v = \unit \vee \sigma_w = \unit
-    \end{aligned}
-    \qquad
-    v <_{RPO} w
-  }
-  {\Gamma \vdash u \otimes v \otimes w \reduce u \otimes w \otimes v }
-  \\
-  \\
-  & \textsc{(TsrSort2)} &&
-  \frac{ 
-    \begin{aligned}
-      & \Gamma \vdash u : [\tau_u, \sigma_u] \qquad \Gamma \vdash v : [\tau_v, \sigma_v] \qquad \Gamma \vdash w : [\tau_w, \sigma_w] \\
-      & \tau_u = \unit \vee (\tau_v = \unit \wedge \tau_w = \unit) \qquad \sigma_u = \unit \vee (\sigma_v = \unit \wedge \sigma_w = \unit)
-    \end{aligned}
-    \qquad
-    u <_{RPO} w
-  }
-  {\Gamma \vdash u \otimes v \otimes w \reduce v \otimes w \otimes u }
+    }{\Gamma \vdash u \otimes (v \otimes w) \reduce u \otimes v \otimes w}
 \end{align*}
+
+\yx{Because there are some restrictions on swapping the order of tensoring, we have to incorporate special rules \textsc{(TsrSort0)} and \textsc{(TsrSort1)}. Common commutative and associative rules are not enough for confluence. I don't know whether this is appropriate.}
+\\
 
 \yx{The rules in red does not follow the $<_{RPO}$.
 \begin{enumerate}
-  \item Conflict in the order of function symbols $\otimes$ and $+$, due to the existence of factorization rules and distribution rules.
+  \item Conflict in the order of function symbols $\alpha.e$ and $e + e$, due to the existence of factorization rules and distribution rules.
   \item problem of $\mathbf{0}_{\tau, \sigma}$: the types $\tau$ and $\sigma$ do not appear as subterms in the LHS of the rule.
 \end{enumerate}
 }
@@ -408,12 +414,13 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
   The reduction system is terminating. In other words, for any context $\Gamma$ and a well-typed expression $\Gamma \vdash e : \tau$, there does not exists an infinite reduction $\Gamma \vdash e \reduce e' \reduce\cdots .$
 \end{lemma}
 \begin{proof}
-  It is checked that all the rules reduce $<_{RPO}$, with only several exceptions \dots \yx{TO BE PROVED}
+  \yx{TO BE PROVED. Outline: for rules that do not decrease $<_{RPO}$, we prove they are terminating (on all terms matching their LHS). Then combined with the fact that $<_{RPO}$ is a well-founded order, we can conclude that the whole system is terminating.
+  I don't know whether this works. More consideration needed.}
 \end{proof}
 
 
 \begin{lemma}[convergence]
-  The reduction system is convergent. In other words, for any context $\Gamma$ and a well-typed expression $\Gamma \vdash e : \tau$, there exists a unique normal form for $e$.
+  The reduction system is convergent. In other words, for any context $\Gamma$ and a well-typed expression $\Gamma \vdash e : \tau$, all reduction sequence from it are finite and end in the unique normal form for $e$.
 \end{lemma}
 \begin{proof}
   Since the reduction system is terminating, we only need to check that all the critical pairs are joinable. Here is a thorough list of them:
@@ -524,9 +531,9 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
             & \textsc{(DeltaDcp)} && \delta_{\fst\ u, s}.\delta_{\snd\ u, t}.e \reduce \cdots
           \end{aligned}
         \right \} \reduce \textbf{0}_{\tau, \sigma} \\
-        & \text{($u =? (s, t)$ cannot be unified, $\Gamma \vdash e : [\tau, \sigma]$)} &
+        & \text{($u =_\textsf{DN} (s, t)$ is not satisfiable, $\Gamma \vdash e : [\tau, \sigma]$)} &
       \end{flalign*}
-      \textbf{Remark:} If $u =? (s, t)$ cannot be unified, then either $\fst\ u =? s$ or $\snd\ u =? t$ cannot be unified. Therefore the expression will always be reduced to $\textbf{0}$.  
+      \textbf{Remark:} If $u =_\textsf{DN} (s, t)$ is not satisfiable, then either $\fst\ u =_\textsf{DN} s$ or $\snd\ u =_\textsf{DN} t$ is not satisfiable. Therefore the expression will always be reduced to $\textbf{0}$.  
     
       \begin{flalign*}
         & \delta_{\fst\ u, \fst\ v}.\delta_{\snd\ u, \snd\ v}.e \reduce \left \{
@@ -535,9 +542,9 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
             & \textsc{(DeltaPair)} && \delta_{u, v}.e
           \end{aligned}
         \right \} \reduce \textbf{0}_{\tau, \sigma} \\
-        & \text{($\fst\ u =? \fst\ v$ cannot be unified, $\Gamma \vdash e : [\tau, \sigma]$)} &
+        & \text{($\fst\ u =_\textsf{DN} \fst\ v$ is not satisfiable, $\Gamma \vdash e : [\tau, \sigma]$)} &
       \end{flalign*}
-      \textbf{Remark:} If $\fst\ u =? \fst\ v$ cannot be unified, then $u =? v$ cannot be unified.
+      \textbf{Remark:} If $\fst\ u =_\textsf{DN} \fst\ v$ is not satisfiable, then $u =_\textsf{DN} v$ is not satisfiable.
 
     \textbf{Remark:} Other critical pairs are trival:
     \begin{itemize}
@@ -592,7 +599,7 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
         & \ket{\utt} \otimes \ket{s} \reduce \left \{
           \begin{aligned}
             & \textsc{(Ket1)} && \mathbf{1} \otimes \ket{s} \\
-            & \textsc{(KetPair)} && \ket{(tt, s)}
+            & \textsc{(KetPair)} && \ket{(\utt, s)}
           \end{aligned}
         \right \} \reduce \ket{s} &
       \end{flalign*}
@@ -1105,15 +1112,7 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
           \textbf{Remark:} Similar for $(u + v) \otimes \mathbf{0}_{\tau, \sigma}$.
 
 
-          \begin{flalign*}
-            & \mathbf{0}_{\tau, \sigma} \otimes e \reduce \left \{
-              \begin{aligned}
-                & \textsc{(TsrZeroL)} && \\
-                & \textsc{(TsrComm)} && e \otimes \mathbf{0}_{\tau, \sigma}
-              \end{aligned}
-              \right \} \reduce \mathbf{0} \qquad (\Gamma \vdash e : [\unit, \sigma]) & 
-          \end{flalign*}
-          \textbf{Remark:} Similar for $e \otimes \mathbf{0}_{\unit, \sigma}$. Also similar for critical pairs between \textsc{(TsrZeroL)}, \textsc{(TsrZeroR)} and \textsc{(TsrAssoc)}, \textsc{(TsrSort)}.
+          \textbf{Remark:} The critical pairs between \textsc{(TsrZeroL)}, \textsc{(TsrZeroR)} and \textsc{(TsrSort0)}, \textsc{(TsrSort1)}, \textsc{(TsrAssoc)} are trivial.
 
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1149,36 +1148,13 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
           \end{flalign*}
           \textbf{Remark:} Similar for $(u + v) \otimes \mathbf{1}$.
 
-          \begin{flalign*}
-            & \mathbf{1} \otimes e \reduce \left \{
-              \begin{aligned}
-                & \textsc{(TsrIdL)} && \\
-                & \textsc{(TsrComm)} && e \otimes \mathbf{1}
-              \end{aligned}
-              \right \} \reduce e & 
-          \end{flalign*}
-          \textbf{Remark:} Similar for $e \otimes \mathbf{1}$. Also similar for critical pairs between \textsc{(TsrIdL)}, \textsc{(TsrIdR)} and \textsc{(TsrAssoc)}, \textsc{(TsrSort)}.
+          \textbf{Remark:} The critical pairs between \textsc{(TsrIdL)}, \textsc{(TsrIdR)} and \textsc{(TsrSort0)}, \textsc{(TsrSort1)}, \textsc{(TsrAssoc)} are trivial.
 
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         \item \textbf{critical pairs containing} \textsc{(TsrScrL)}/\textsc{(TsrScrR)}/\textsc{(TsrDeltaL)}/\textsc{(TsrDeltaR)}
 
-        \begin{flalign*}
-          & (\alpha.u) \otimes v \left \{
-            \begin{aligned}
-              & \textsc{(TsrScrL)} && \alpha.(u \otimes v) \\
-              & \textsc{(TsrComm)} && v \otimes (\alpha.u) \reduce \alpha.(v \otimes u)
-            \end{aligned}
-            \right \} \reduce 
-            \left \{
-            \begin{aligned}
-              & \alpha.(u \otimes v) & (v <_{RPO} u) \\
-              & \alpha.(v \otimes u) & (u <_{RPO} v) 
-            \end{aligned}
-            \right . 
-            \qquad (v <_{RPO} \alpha.u) &
-        \end{flalign*}
-        \textbf{Remark:} The two expressions will join at either $\alpha.(u \otimes v)$ or $\alpha.(v \otimes u)$, depending on the order of $u$ and $v$. Similar for other critical pairs between \textsc{(TsrScrL)}, \textsc{(TsrScrR)} and \text{(TsrComm)}, \textsc{(TsrAssoc)}, \textsc{(TsrSort)}.
+        \textbf{Remark:} The critical pairs between \textsc{(TsrScrL)}, \textsc{(TsrScrR)}, \textsc{(TsrDeltaL)}, \textsc{(TsrDeltaR)} and \textsc{(TsrSort0)}, \textsc{(TsrSort1)}, \textsc{(TsrAssoc)} are trivial.
 
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1195,97 +1171,10 @@ For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alp
 
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        \item \textbf{critical pairs between} \textsc{(TsrComm)-(TsrAssoc)}
+        \item \textbf{about} \textsc{(TsrSort0)}, \textsc{(TsrSort1)} and \textsc{(TsrAssoc)}
         
-        The critical pairs between \textsc{(TsrComm)} and \textsc{(TsrAssoc)} diverge from the expression $A \otimes (B \otimes C)$, with corresponding side conditions on their types being satisfied. There are three different cases (merging the symmetric ones):
-
-        \begin{center}
-          \includegraphics*[width=0.8\textwidth]{fig/CommAssocPairs.png}
-        \end{center}
-
-        Take the first case as an example. The assumptions are $\Gamma \vdash B : [\unit, \unit]$ and $B <_{RPO} C$. The confluence proof is shown in the following graph. Similar for other cases.
-        \begin{center}
-          \includegraphics*[width=0.8\textwidth]{fig/CommAssocCase1.png}
-        \end{center}
-
-
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        \item \textbf{critical pairs between} \textsc{(TsrComm)-(TsrSort1)}
+        These three rules are confluent because they will work together and transform any string of tensor product into a sorted normal form.
         
-        The critical pairs have three different cases (merging the symmetric ones):
-        
-        \begin{center}
-          \includegraphics*[width=0.8\textwidth]{fig/CommSort1Pairs.png}
-        \end{center}
-
-        Take the first case as an example. The assumptions are $\Gamma \vdash A : [\tau, \unit]$, $\Gamma \vdash B : [\unit, \sigma]$, $\Gamma \vdash C : [\rho, \unit]$, $A <_{RPO} B < _{RPO} < C$. The confluence proof is shown in the following graph. Similar for other cases.
-        \begin{center}
-          \includegraphics*[width=0.8\textwidth]{fig/CommSort1Case1.png}
-        \end{center}
-
-
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        \item \textbf{critical pairs between} \textsc{(TsrComm)-(TsrSort2)}
-        
-        Similar to \textsc{(TsrComm)-(TsrSort1)} critical pairs.
-
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        \item \textbf{critical pairs of} \textsc{(TsrAssoc)}
-
-        \begin{flalign*}
-          & A \otimes (B \otimes (C \otimes D)) \reduce \left \{
-            \begin{aligned}
-              & \textsc{(TsrAssoc)} && A \otimes (B \otimes C \otimes D) \reduce \cdots \\
-              & \textsc{(TsrAssoc)} && A \otimes B \otimes (C \otimes D) \reduce \cdots
-            \end{aligned}
-            \right \} \reduce A \otimes B \otimes C \otimes D & 
-        \end{flalign*}
-
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        \item \textbf{critical pairs between} \textsc{(TsrAssoc)-(TsrSort1)}
-        
-        \begin{itemize}
-          \item $(A \otimes B) \otimes (C \otimes D)$
-          \item $(A \otimes (B \otimes C)) \otimes D$
-        \end{itemize}
-
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        \item \textbf{critical pairs of} \textsc{(TsrSort1)}
-
-        The critical pairs comes from $A \otimes B \otimes C \otimes D$. There are three cases:
-
-        \begin{center}
-          \includegraphics*[width=0.8\textwidth]{fig/Sort1Sort1Pairs.png}
-        \end{center}
-
-        Take the first case as an example. The assumptions are $\Gamma \vdash A : [\tau_A, \sigma_A]$, $\Gamma \vdash B : [\tau_B, \sigma_B]$, $\Gamma \vdash C : [\unit, \unit]$, $\Gamma \vdash D : [\tau_D, \sigma_D]$, $B <_{RPO} C < _{RPO} < D$. The confluence proof is shown in the following graph. Similar for other cases.
-
-        \begin{center}
-          \includegraphics*[width=0.8\textwidth]{fig/Sort1Sort1Case1.png}
-        \end{center}
-
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        \item \textbf{critical pairs between} \textsc{(TsrSort1)-(TsrSort2)}
-
-        \begin{itemize}
-          \item $A \otimes B \otimes C$
-          \item $A \otimes B \otimes C \otimes D$
-        \end{itemize}
-
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        \item \textbf{critical pairs of} \textsc{(TsrSort2)}
-
-        The critical pairs comes from $A \otimes B \otimes C \otimes D$. There are five cases:
-
-        \begin{center}
-          \includegraphics*[width=0.8\textwidth]{fig/Sort2Sort2Pairs.png}
-        \end{center}
-
-        Take the first case as an example. The assumptions are $\Gamma \vdash A : [\tau_A, \sigma_A]$, $\Gamma \vdash B : [\tau_B, \sigma_B]$, $\Gamma \vdash C : [\unit, \unit]$, $\Gamma \vdash D : [\tau_D, \sigma_D]$, $B <_{RPO} C < _{RPO} < D$. The confluence proof is shown in the following graph. Similar for other cases.
-
-        \begin{center}
-          \includegraphics*[width=0.8\textwidth]{fig/Sort1Sort1Case1.png}
-        \end{center}
       \end{itemize}
 
 \end{proof}
