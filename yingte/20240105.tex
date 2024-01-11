@@ -1,68 +1,112 @@
 \chapter{20240105}
 
-
-\section{Dirac Notation}
-
-
-\subsection{Syntax and Typing}
-
-\begin{postulate}[complex number]
-  $\mathbb{C}$ is an algebra for complex numbers. It has the symbols $(0, 1, \textrm{add}, \textrm{mul}, \textrm{conj})$.
-\end{postulate}
-It means that somehow we can express and decide complex number terms, but the theory should not be considered here.
-
-\begin{definition}[atomic type and term]
-  The atomic types are $\mathbf{Z}_n$.
-  The constants of the type $\mathbf{Z}_n$ is $\{i \in \mathbb{N} : i<n\}$
-  Here $n$ and $i$ are natural numbers.
-\end{definition}
-
-% \textbf{Remark:} We define atomic types separatedly because they describe the types of atomic quantum subsystems.
-
 \newcommand*{\unit}{\texttt{unit}}
 \newcommand*{\utt}{\texttt{tt}}
 \newcommand*{\fst}{\texttt{fst}}
 \newcommand*{\snd}{\texttt{snd}}
 \newcommand*{\reduce}{\ \triangleright\ }
 
-\begin{definition}[syntax]
+\section{Dirac Notation}
+
+We want to study the theory of Dirac notations modulo the scalars. This idea is inspired by the Lineal paper \cite{Arrighi2017}.
+
+\begin{definition}[complex scalar rewrite system]
+  A \textbf{complex scalar rewriting system} is a rewrite system $S$ on a language containing at least the symbols $0, 1, +, \times, *$, such that:
+  \begin{itemize}
+    \item $S$ is terminating and ground confluent,
+    \item $+$ and $\times$ are AC-symbols,
+    \item for all closed terms $\alpha$, $\beta$ and $\gamma$, the pair of terms
+      \begin{itemize}
+        \item $0 + \alpha$ and $\alpha$
+        \item $0 \times \alpha$ and $0$,
+        \item $1 \times \alpha$ and $\alpha$,
+        \item $\alpha \times (\beta + \gamma)$ and $\alpha \times \beta + \alpha \times \gamma$,
+        \item $(\alpha + \beta)^*$ and $\alpha^* + \beta^*$,
+        \item $(\alpha \times \beta)^*$ and $\alpha^* \times \beta^*$,
+        \item $(\alpha^*)^*$ and $\alpha$,
+      \end{itemize}
+      have the same normal forms,
+    \item $0$ and $1$ are normal terms.
+  \end{itemize}
+\end{definition}
+
+We can give a smallest instantiation $S_0$ of a complext scalar rewriting system. This will help in the proof of confluence of the Dirac notation rewriting system by the avatar lamma.
+
+\begin{definition}[The rewrite system $S_0$]
+  The system $S_0$ is defined by the following rules:
+  \begin{gather*}
+    0 + \alpha \reduce \alpha\\
+    0 \times \alpha \reduce 0\\
+    1 \times \alpha \reduce \alpha\\
+    \alpha \times (\beta + \gamma) \reduce \alpha \times \beta + \alpha \times \gamma\\
+    (\alpha + \beta)^* \reduce \alpha^* + \beta^*\\
+    (\alpha \times \beta)^* \reduce \alpha^* \times \beta^*\\
+    (\alpha^*)^* \reduce \alpha
+  \end{gather*}
+  where $+$ and $\times$ are AC-symbols.
+\end{definition}
+
+The Dirac notation theory is also studied modulo the types and terms for the atomic basis of Hilbert spaces, which are defined by basis rewrite systems.
+
+\begin{definition}[atomic basis rewrite system]
+  An \textbf{atomic basis rewrite system} $B$ is a terminating and ground confluent rewrite system.
+\end{definition}
+
+\subsection{Syntax and Typing}
+
+Assume we are given a complex scalar rewrite system $S$ and an atomic basis rewrite system $B$ in the following.
+
+\begin{definition}[language of scalars]
+  The \textbf{language of scalars} is a first order language containing all the symbols in $S$.
+\end{definition}
+
+
+\begin{definition}[language of atomic basis]
+  The \textbf{language of atomic basis} is a first order language containing all the symbols in $B$.
+\end{definition}
+
+
+\begin{definition}[term and type of basis]
+  The \textbf{term of basis} with pairing is defined:
   \begin{align*}
-    \tau ::= \ 
-      & T\ |\ \mathbb{C}                && \text{(basic types)} \\
-      & |\ (\tau * \tau)                && \text{(product type)} \\
-      % We use product type instead of tuple type because we want to adhere to the strict criterion of equivalence for tensor product: associativity is not considered.
-      & |\ \unit                          && \text{(unit type)} \\
-      % product type will not be squashed (i.e., tau*unit != tau) also because the strict criterion of equivalence for tensor product.
-      & |\ [\tau, \tau]                   && \text{(Dirac notation types)} \\ 
+    t ::= b\ |\ x\ |\ \utt\ |\ (t, t)\ |\ \fst\ t\ |\ \snd\ t
+  \end{align*}
+  Here $b$ is an atomic basis and $x$ is a variable. The \textbf{type of basis} is defined by
+  \begin{align*}
+    \tau ::= T\ |\ \unit\ |\ (\tau * \tau)
+  \end{align*}
+  Here $T$ is the type for atomic bases.
+\end{definition}
+
+\begin{definition}[language of Dirac notations]
+  The \textbf{term of Dirac notations} is defined by
+  \begin{align*}
     e ::= \ 
       &    x                          && \text{(variable)} \\
-      & |\ 0\ |\ 1\ |\ \mathrm{add}(e, e)\ |\ \mathrm{mul}(e, e)\ |\ \mathrm{conj}(e) && \text{(complex number)} \\
-      & |\ c                          && \text{(constant)} \\
-      & |\ (e, e)                     && \text{(pair)} \\
-      & |\ \utt                       && \text{(inhabitant of \unit)} \\
-      & |\ \fst\ e\ |\ \snd\ e        && \text{(projection)} \\
       & |\ \mathbf{0}_{\tau, \tau}    && \text{(zero operator)}\\
       & |\ \mathbf{1}                 && \text{(identity operator)}\\
-      & |\ \delta_{e, e}.e            && \text{(Delta expression)} \\
-      & |\ \ket{e}                    && \text{(ket)} \\
-      & |\ \bra{e}                    && \text{(bra)} \\
+      & |\ \delta_{t, t}.e            && \text{(Delta expression)} \\
+      & |\ \ket{t}                    && \text{(ket)} \\
+      & |\ \bra{t}                    && \text{(bra)} \\
       & |\ e^*                        && \text{(conjugate)} \\
-      & |\ e^T                        && \text{(transpose)} \\
+      & |\ e^\top                        && \text{(transpose)} \\
       & |\ \alpha.e                   && \text{(scaling)} \\
       & |\ e + e                      && \text{(addition)} \\
       & |\ e \cdot e                  && \text{(multiplication)} \\
       & |\ e \otimes e                && \text{(tensor product)}
-    \end{align*}
-  Here $T$ is a basic type, $x$ is a variable and $c$ is a constant of some basic type $T$. $\tau$ and $e$ are called types and terms respectively.
+  \end{align*}
+  Here $x$ is a variable. $\tau$ is a type and $t$ is a term of the basis. $\alpha$ is a scalar. 
+  The \textbf{type of Dirac notations} is defined by $[\tau, \tau]$, where $\tau$ is a type of basis.
 \end{definition}
 
 \begin{definition}[typing rules]
-  A typing assumption has the form $x : \tau$, meaning variable $x$ has the type $\tau$. A typing context $\Gamma$ consists of typing assumptions and each variable appears only once at most.
+  A typing assumption has the form $x : \tau$, meaning variable $x$ has the type $\tau$. A typing context $\Gamma$ consists of typing assumptions and each variable appears only once.
 
   A typing judgement $\Gamma \vdash e : \sigma$ indicates that $e$ is a term of type $\sigma$ in context $\Gamma$. The well-typed terms are defined by the following rules:
   \begin{gather*}
     \frac{x : \sigma \in \Gamma}{\Gamma \vdash x : \sigma}
-    \qquad \frac{c\ \textrm{is a constant of}\ T}{\Gamma \vdash c : T}\\
+    \qquad 
+    \frac{b\ \textrm{is an atomic basis}}{\Gamma \vdash b : T}\\
     \\
     \frac{\Gamma \vdash e_1 : \tau \qquad \Gamma \vdash e_2 : \sigma}{\Gamma \vdash (e_1, e_2) : ( \tau * \sigma )} \\
     \\
@@ -84,9 +128,9 @@ It means that somehow we can express and decide complex number terms, but the th
     \ \\
     \frac{\Gamma \vdash e : [\tau, \sigma]}{\Gamma \vdash e^* : [\tau, \sigma]}
     \qquad
-    \frac{\Gamma \vdash e : [\tau, \sigma]}{\Gamma \vdash e^T : [\sigma, \tau]} 
+    \frac{\Gamma \vdash e : [\tau, \sigma]}{\Gamma \vdash e^\top : [\sigma, \tau]} 
     \qquad
-    \frac{\Gamma \vdash \alpha : \mathbb{C} \qquad \Gamma \vdash e : [\tau, \sigma]}{\Gamma \vdash \alpha.e : [\tau, \sigma]}\\
+    \frac{\Gamma \vdash e : [\tau, \sigma]}{\Gamma \vdash \alpha.e : [\tau, \sigma]}\\
     \ \\
     \frac{\Gamma \vdash e_1 : [\tau, \sigma] \qquad \Gamma \vdash e_2 : [\tau, \sigma] }{\Gamma \vdash e_1 + e_2 : [\tau, \sigma] }
     \qquad 
@@ -96,9 +140,6 @@ It means that somehow we can express and decide complex number terms, but the th
   \end{gather*}
 \end{definition}
 
-\textbf{Remark:} We say a term $e$ is a Dirac notation if $\Gamma \vdash e : [\tau, \sigma]$.
-
-
 % \begin{claim}
 %   For any term $e$ of Dirac lambda calculus in any context $\Gamma$, there exists at most one type $\tau$ that satisfies $\Gamma \vdash e : \tau$. The types of all terms are computable (if exist).
 % \end{claim}
@@ -106,9 +147,6 @@ It means that somehow we can express and decide complex number terms, but the th
 
 \subsection{Equational Theory}
 The following equations are incorporated when considering the equivalence of types and terms.
-
-\subsubsection*{Complex Number}
-For example, $\mathrm{add}(\alpha, 0) = \alpha$, $\mathrm{mul}(\alpha, 1) = \alpha$, $\mathrm{mul}(\alpha, \beta) = \mathrm{mul}(\beta, \alpha)$ \dots
 
 \subsubsection*{Type Squash}
 \begin{gather*}
@@ -251,8 +289,8 @@ We call this term rewriting system \textsf{DN}. We use $u =_{\textsf{DN}} v$ to 
   & \textsc{(Ket*)} && \Gamma \vdash \ket{s}^* \reduce \ket{s}
   && \textsc{(Bra*)} && \Gamma \vdash \bra{s}^* \reduce \bra{s} \\
   & \textsc{(Double*)} && \Gamma \vdash (e^*)^*\reduce e
-  && \textsc{(T*)} && \Gamma \vdash (e^T)^* \reduce(e^*)^T \\
-  & \textsc{(Scr*)} && \Gamma \vdash (\alpha.e)^* \reduce \mathrm{conj}(\alpha).(e^*) \\
+  && \textsc{(T*)} && \Gamma \vdash (e^\top)^* \reduce(e^*)^\top \\
+  & \textsc{(Scr*)} && \Gamma \vdash (\alpha.e)^* \reduce (\alpha^*).(e^*) \\
   & \textsc{(Add*)} && \Gamma \vdash (e_1 + e_2)^* \reduce e_1^* + e_2^* 
   && \textsc{(Mul*)} && \Gamma \vdash (e_1 \cdot e_2)^* \reduce e_1^* \cdot e_2^* \\
   & \textsc{(Tsr*)} && \Gamma \vdash (e_1 \otimes e_2)^* \reduce e_1^* \otimes e_2^*
@@ -260,16 +298,16 @@ We call this term rewriting system \textsf{DN}. We use $u =_{\textsf{DN}} v$ to 
 
 \subsubsection*{Transpose}
 \begin{align*}
-  & \textsc{(ZeroT)} && \Gamma \vdash \textbf{0}_{\tau, \sigma}^T \reduce \textbf{0}_{\sigma, \tau}
-  && \textsc{(IdT)} && \Gamma \vdash \mathbf{1}^T \reduce \mathbf{1} \\
-  & \textsc{(DeltaT)} && \Gamma \vdash (\delta_{s,t}.e)^T \reduce \delta_{s,t}.(e^T) \\
-  & \textsc{(KetT)} && \Gamma \vdash \ket{s}^T \reduce \bra{s} 
-  && \textsc{(BraT)} && \Gamma \vdash \bra{s}^T \reduce \ket{s} \\
-  & \textsc{(DoubleT)} && \Gamma \vdash (e^T)^T \reduce e 
-  && \textsc{(ScrT)} && \Gamma \vdash (\alpha.e)^T \reduce \alpha.(e^T) \\
-  & \textsc{(AddT)} && \Gamma \vdash (e_1 + e_2)^T \reduce e_1^T + e_2^T
-  && \textsc{(MulT)} && \Gamma \vdash (e_1 \cdot e_2)^T \reduce e_2^T \cdot e_1^T \\
-  & \textsc{(TsrT)} && \Gamma \vdash (e_1 \otimes e_2)^T \reduce e_1^T \otimes e_2^T
+  & \textsc{(ZeroT)} && \Gamma \vdash \textbf{0}_{\tau, \sigma}^\top \reduce \textbf{0}_{\sigma, \tau}
+  && \textsc{(IdT)} && \Gamma \vdash \mathbf{1}^\top \reduce \mathbf{1} \\
+  & \textsc{(DeltaT)} && \Gamma \vdash (\delta_{s,t}.e)^\top \reduce \delta_{s,t}.(e^\top) \\
+  & \textsc{(KetT)} && \Gamma \vdash \ket{s}^\top \reduce \bra{s} 
+  && \textsc{(BraT)} && \Gamma \vdash \bra{s}^\top \reduce \ket{s} \\
+  & \textsc{(DoubleT)} && \Gamma \vdash (e^\top)^\top \reduce e 
+  && \textsc{(ScrT)} && \Gamma \vdash (\alpha.e)^\top \reduce \alpha.(e^\top) \\
+  & \textsc{(AddT)} && \Gamma \vdash (e_1 + e_2)^\top \reduce e_1^\top + e_2^\top
+  && \textsc{(MulT)} && \Gamma \vdash (e_1 \cdot e_2)^\top \reduce e_2^\top \cdot e_1^\top \\
+  & \textsc{(TsrT)} && \Gamma \vdash (e_1 \otimes e_2)^\top \reduce e_1^\top \otimes e_2^\top
 \end{align*}
 
 \subsubsection*{Scaling}
@@ -279,7 +317,7 @@ We call this term rewriting system \textsf{DN}. We use $u =_{\textsf{DN}} v$ to 
   \\
   & \textsc{(ScrZero)} && \Gamma \vdash \alpha.\mathbf{0}_{\tau, \sigma} \reduce \mathbf{0}_{\tau, \sigma}
   && \textsc{(ScrDelta)} && \Gamma \vdash \alpha.\delta_{s, t}.e \reduce \delta_{s, t}.\alpha.e \\
-  & \textsc{(ScrScr)} && \Gamma \vdash \alpha.\beta.e \reduce \mathrm{mul}(\alpha, \beta).e
+  & \textsc{(ScrScr)} && \Gamma \vdash \alpha.\beta.e \reduce (\alpha \times \beta).e
   \\
   & \textsc{(ScrDist)} && \Gamma \vdash \alpha.(e_1 + e_2) \reduce \alpha.e_1 + \alpha.e_2
 \end{align*}
@@ -288,11 +326,11 @@ We call this term rewriting system \textsf{DN}. We use $u =_{\textsf{DN}} v$ to 
 \begin{align*}
   & \textsc{(AddZero)} && \Gamma \vdash e + \textbf{0}_{\tau, \sigma} \reduce e \\
   & \textcolor{red}{\textsc{(Fac2)}} && 
-    \Gamma \vdash \alpha.e + \beta.e \reduce \mathrm{add}(\alpha, \beta).e
+    \Gamma \vdash \alpha.e + \beta.e \reduce (\alpha + \beta).e
   && \textcolor{red}{\textsc{(Fac1)}} &&
-    \Gamma \vdash \alpha.e + e \reduce \mathrm{add}(\alpha, 1).e \\
+    \Gamma \vdash \alpha.e + e \reduce (\alpha + 1).e \\
   & \textcolor{red}{\textsc{(Fac0)}} &&
-    \Gamma \vdash e + e \reduce \mathrm{add}(1, 1).e
+    \Gamma \vdash e + e \reduce (1 + 1).e
 \end{align*}
 
 \yx{These three factorization rules does not decrease the $<_{RPO}$ order. I should consult the Lineal paper and see how they handled this. }
@@ -396,7 +434,7 @@ We call this term rewriting system \textsf{DN}. We use $u =_{\textsf{DN}} v$ to 
 \yx{The rules in red does not follow the $<_{RPO}$.
 \begin{enumerate}
   \item Conflict in the order of function symbols $\alpha.e$ and $e + e$, due to the existence of factorization rules and distribution rules.
-  \item problem of $\mathbf{0}_{\tau, \sigma}$: the types $\tau$ and $\sigma$ do not appear as subterms in the LHS of the rule.
+  \item problem of $\mathbf{0}_{\tau, \sigma}$: the types $\tau$ and $\sigma$ do not appear as subterms in the LHS of the rule. (Maybe we can ignore the type hints for zero operator)
 \end{enumerate}
 }
 
@@ -512,7 +550,7 @@ We call this term rewriting system \textsf{DN}. We use $u =_{\textsf{DN}} v$ to 
       \textbf{Remark:} Other critical pairs are trival:
       \begin{itemize}
         \item \textsc{(Delta1)-(Delta*)} pair from $(\delta_{s, s}.e)^*$,
-        \item \textsc{(Delta1)-(DeltaT)} pair from $(\delta_{s, s}.e)^T$,
+        \item \textsc{(Delta1)-(DeltaT)} pair from $(\delta_{s, s}.e)^\top$,
         \item \textsc{(Delta1)-(ScrDelta)} pair from $\alpha.\delta_{s, s}.e$,
         \item \textsc{(Delta1)-(MulDeltaL)} pair from $(\delta_{s, s}.u) \cdot v$,
         \item \textsc{(Delta1)-(MulDeltaR)} pair from $u \cdot (\delta_{s, s}.v)$,
@@ -550,7 +588,7 @@ We call this term rewriting system \textsf{DN}. We use $u =_{\textsf{DN}} v$ to 
     \begin{itemize}
       \item \textsc{(Delta0)-(DeltaDist)} pair from $\delta_{s, t}.(e_1 + e_2)$,
       \item \textsc{(Delta0)-(Delta*)} pair from $(\delta_{s, t}.e)^*$,
-      \item \textsc{(Delta0)-(DeltaT)} pair from $(\delta_{s, t}.e)^T$,
+      \item \textsc{(Delta0)-(DeltaT)} pair from $(\delta_{s, t}.e)^\top$,
       \item \textsc{(Delta0)-(ScrDelta)} pair from $\alpha.\delta_{s, t}.e$,
       \item \textsc{(Delta0)-(MulDeltaL)} pair from $(\delta_{s, t}.u) \cdot v$,
       \item \textsc{(Delta0)-(MulDeltaR)} pair from $u \cdot (\delta_{s, t}.v)$,
@@ -615,9 +653,9 @@ We call this term rewriting system \textsf{DN}. We use $u =_{\textsf{DN}} v$ to 
       \end{flalign*}
 
       \begin{flalign*}
-        & \ket{\utt}^T \reduce \left \{
+        & \ket{\utt}^\top \reduce \left \{
           \begin{aligned}
-            & \textsc{(Ket1)} && \mathbf{1}^T \\
+            & \textsc{(Ket1)} && \mathbf{1}^\top \\
             & \textsc{(KetT)} && \bra{\utt}
           \end{aligned}
         \right \} \reduce \mathbf{1} &
@@ -648,10 +686,10 @@ We call this term rewriting system \textsf{DN}. We use $u =_{\textsf{DN}} v$ to 
     \end{flalign*}
 
     \begin{flalign*}
-      & (\ket{s} \otimes \ket{t})^T \reduce \left \{
+      & (\ket{s} \otimes \ket{t})^\top \reduce \left \{
         \begin{aligned}
-          & \textsc{(KetPair)} && \ket{(s, t)}^T \\
-          & \textsc{(TsrT)} && \ket{s}^T \otimes \ket{t}^T \reduce \bra{s} \otimes \bra{t}
+          & \textsc{(KetPair)} && \ket{(s, t)}^\top \\
+          & \textsc{(TsrT)} && \ket{s}^\top \otimes \ket{t}^\top \reduce \bra{s} \otimes \bra{t}
         \end{aligned}
       \right \} \reduce \bra{(s, t)} &
     \end{flalign*}
@@ -683,7 +721,7 @@ We call this term rewriting system \textsf{DN}. We use $u =_{\textsf{DN}} v$ to 
         & ((\alpha.e)^*)^* \reduce \left \{
           \begin{aligned}
             & \textsc{(Double*)} && \\
-            & \textsc{(C*)} && (\mathrm{conj}(\alpha).e^*)^* \reduce \mathrm{conj}(\mathrm{conj}(\alpha)).e 
+            & \textsc{(C*)} && ((\alpha^*).e^*)^* \reduce ((\alpha^*)^*).e 
           \end{aligned}
         \right \} \reduce \alpha.e &
       \end{flalign*}
@@ -699,12 +737,12 @@ We call this term rewriting system \textsf{DN}. We use $u =_{\textsf{DN}} v$ to 
       \textbf{Remark:} The \textsc{(Double*)} rule can overlap with itself.
 
       \begin{flalign*}
-        & ((e^T)^*)^* \reduce \left \{
+        & ((e^\top)^*)^* \reduce \left \{
           \begin{aligned}
             & \textsc{(Double*)} && \\
-            & \textsc{(T*)} && ((e^*)^T)^* \reduce ((e^*)^*)^T 
+            & \textsc{(T*)} && ((e^*)^\top)^* \reduce ((e^*)^*)^\top 
           \end{aligned}
-        \right \} \reduce e^T &
+        \right \} \reduce e^\top &
       \end{flalign*}
 
       \begin{flalign*}
@@ -747,7 +785,7 @@ We call this term rewriting system \textsf{DN}. We use $u =_{\textsf{DN}} v$ to 
         & 0.\alpha.e \reduce \left \{
           \begin{aligned}
             & \textsc{(Scr0)} && \\
-            & \textsc{(ScrScr)} && \mathrm{mul}(0, \alpha).e
+            & \textsc{(ScrScr)} && (0 \times \alpha).e
           \end{aligned}
         \right \} \reduce \mathbf{0}_{\tau, \sigma} \qquad (\Gamma \vdash e : [\tau, \sigma]) &
       \end{flalign*}
@@ -765,7 +803,7 @@ We call this term rewriting system \textsf{DN}. We use $u =_{\textsf{DN}} v$ to 
         & 0.e + \beta.e \reduce \left \{
           \begin{aligned}
             & \textsc{(Scr0)} && \mathbf{0}_{\tau, \sigma} + \beta.e \\
-            & \textsc{(Fac2)} && \mathrm{add}(0, \beta).e
+            & \textsc{(Fac2)} && (0 + \beta).e
           \end{aligned}
         \right \} \reduce \beta.e \qquad (\Gamma \vdash e : [\tau, \sigma]) &
       \end{flalign*}
@@ -807,7 +845,7 @@ We call this term rewriting system \textsf{DN}. We use $u =_{\textsf{DN}} v$ to 
         & 1.\alpha.e \reduce \left \{
           \begin{aligned}
             & \textsc{(Scr1)} && \\
-            & \textsc{(ScrScr)} && \mathrm{mul}(1, \alpha).e
+            & \textsc{(ScrScr)} && (1 \times \alpha).e
           \end{aligned}
         \right \} \reduce \alpha.e &
       \end{flalign*}
@@ -827,7 +865,7 @@ We call this term rewriting system \textsf{DN}. We use $u =_{\textsf{DN}} v$ to 
             & \textsc{(Scr1)} && e + \beta.e \\
             & \textsc{(Fac2)} && 
           \end{aligned}
-        \right \} \reduce \mathrm{add}(1, \beta).e &
+        \right \} \reduce (1 + \beta).e &
       \end{flalign*}
       \textbf{Remark:} Similar for the \textsc{(Scr1)-(Fac1)} pair from $1.e + e$.
 
@@ -848,7 +886,7 @@ We call this term rewriting system \textsf{DN}. We use $u =_{\textsf{DN}} v$ to 
         & \alpha.\mathbf{0}_{\tau, \sigma} + \beta.\mathbf{0}_{\tau, \sigma} \reduce \left \{
           \begin{aligned}
             & \textsc{(ScrZero)} && \mathbf{0}_{\tau, \sigma} + \beta.\mathbf{0}_{\tau, \sigma} \reduce \mathbf{0}_{\tau, \sigma} + \mathbf{0}_{\tau, \sigma} \\
-            & \textsc{(Fac2)} && \mathrm{add}(\alpha, \beta). \mathbf{0}_{\tau, \sigma} 
+            & \textsc{(Fac2)} && (\alpha + \beta). \mathbf{0}_{\tau, \sigma} 
           \end{aligned}
           \right \} \reduce \mathbf{0}_{\tau, \sigma} &
         \end{flalign*}
@@ -884,7 +922,7 @@ We call this term rewriting system \textsf{DN}. We use $u =_{\textsf{DN}} v$ to 
           & \alpha.\mathbf{0}_{\tau, \sigma} + \mathbf{0}_{\tau, \sigma} \reduce \left \{
             \begin{aligned}
               & \textsc{(AddZero)} && \alpha.\mathbf{0}_{\tau, \sigma} \\
-              & \textsc{(Fac1)} && \mathrm{add}(\alpha, 1). \mathbf{0}_{\tau, \sigma} 
+              & \textsc{(Fac1)} && (\alpha + 1). \mathbf{0}_{\tau, \sigma} 
             \end{aligned}
             \right \} \reduce \mathbf{0}_{\tau, \sigma} &
           \end{flalign*}
@@ -894,7 +932,7 @@ We call this term rewriting system \textsf{DN}. We use $u =_{\textsf{DN}} v$ to 
         \left \{
           \begin{aligned}
             & \textsc{(AddZero)} && \\
-            & \textsc{(Fac0)} && \mathrm{add}(1, 1). \mathbf{0}_{\tau, \sigma}
+            & \textsc{(Fac0)} && (1 + 1). \mathbf{0}_{\tau, \sigma}
           \end{aligned}
           \right \} \reduce \mathbf{0}_{\tau, \sigma} &
       \end{flalign*}     
@@ -918,18 +956,18 @@ We call this term rewriting system \textsf{DN}. We use $u =_{\textsf{DN}} v$ to 
         \left \{
           \begin{aligned}
             & \textsc{(Fac2)} && \\
-            & \textsc{(Fac0)} && \mathrm{add}(1, 1). \alpha. e \reduce \mathrm{mul}(\mathrm{add}(1, 1), \alpha).e
+            & \textsc{(Fac0)} && (1 + 1). \alpha. e \reduce ((1 + 1) \times \alpha).e
           \end{aligned}
-          \right \} \reduce \mathrm{add}(\alpha, \alpha).e &
+          \right \} \reduce (\alpha + \alpha).e &
       \end{flalign*}     
         
         \begin{flalign*}
           & e \cdot (\alpha.u + \beta.u) \reduce \left \{
             \begin{aligned}
-              & \textsc{(Fac2)} && e \cdot (\mathrm{add}(\alpha, \beta).u)\\
+              & \textsc{(Fac2)} && e \cdot ((\alpha + \beta).u)\\
               & \textsc{(MulDistR)} && e \cdot (\alpha.u) + e \cdot (\beta.u) \reduce \cdots \reduce \alpha.(e \cdot u) + \beta.(e \cdot u)
             \end{aligned}
-          \right \} \reduce \mathrm{add}(\alpha, \beta).(e \cdot u) &
+          \right \} \reduce (\alpha + \beta).(e \cdot u) &
         \end{flalign*}
         \textbf{Remark:} Similar for $(\alpha.u + \beta.u) \cdot e$, $e \otimes (\alpha.u + \beta.u)$ and $(\alpha.u + \beta.u) \otimes e$. Also similar for the critical pairs between \textsc{(Fac1)}, \textsc{(Fac0)} and \textsc{(MulDistL(R))}, \textsc{(TsrDistL(R))}.
 
