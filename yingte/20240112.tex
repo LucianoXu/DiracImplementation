@@ -1,0 +1,1237 @@
+\chapter{20240112}
+
+\newcommand*{\unit}{\texttt{unit}}
+\newcommand*{\utt}{\texttt{tt}}
+\newcommand*{\fst}{\texttt{fst}}
+\newcommand*{\snd}{\texttt{snd}}
+\newcommand*{\reduce}{\ \triangleright\ }
+
+\section{Dirac Notation}
+
+We want to study the theory of Dirac notations modulo the scalars. This idea is inspired by the Lineal paper \cite{Arrighi2017}.
+
+\begin{definition}[complex scalar rewrite system]
+  A \textbf{complex scalar rewriting system} is a rewrite system $S$ on a language containing at least the symbols $0, 1, +, \times, *$, such that:
+  \begin{itemize}
+    \item $S$ is terminating and ground confluent,
+    \item $+$ and $\times$ are AC-symbols,
+    \item for all closed terms $\alpha$, $\beta$ and $\gamma$, the pair of terms
+      \begin{itemize}
+        \item $0 + \alpha$ and $\alpha$
+        \item $0 \times \alpha$ and $0$,
+        \item $1 \times \alpha$ and $\alpha$,
+        \item $\alpha \times (\beta + \gamma)$ and $\alpha \times \beta + \alpha \times \gamma$,
+        \item $(\alpha + \beta)^*$ and $\alpha^* + \beta^*$,
+        \item $(\alpha \times \beta)^*$ and $\alpha^* \times \beta^*$,
+        \item $(\alpha^*)^*$ and $\alpha$,
+      \end{itemize}
+      have the same normal forms,
+    \item $0$ and $1$ are normal terms.
+  \end{itemize}
+\end{definition}
+
+We can give a smallest instantiation $S_0$ of a complext scalar rewriting system. This will help in the proof of confluence of the Dirac notation rewriting system by the avatar lamma.
+
+\begin{definition}[The rewrite system $S_0$]
+  The system $S_0$ is defined by the following rules:
+  \begin{gather*}
+    0 + \alpha \reduce \alpha\\
+    0 \times \alpha \reduce 0\\
+    1 \times \alpha \reduce \alpha\\
+    \alpha \times (\beta + \gamma) \reduce \alpha \times \beta + \alpha \times \gamma\\
+    (\alpha + \beta)^* \reduce \alpha^* + \beta^*\\
+    (\alpha \times \beta)^* \reduce \alpha^* \times \beta^*\\
+    (\alpha^*)^* \reduce \alpha
+  \end{gather*}
+  where $+$ and $\times$ are AC-symbols.
+\end{definition}
+
+The Dirac notation theory is also studied modulo the types and terms for the atomic basis of Hilbert spaces, which are defined by basis rewrite systems.
+
+\begin{definition}[atomic basis rewrite system]
+  An \textbf{atomic basis rewrite system} $B$ is a terminating and ground confluent rewrite system.
+\end{definition}
+
+\subsection{Syntax and Typing}
+
+Assume we are given a complex scalar rewrite system $S$ and an atomic basis rewrite system $B$ in the following.
+
+\begin{definition}[language of scalars]
+  The \textbf{language of scalars} is a first order language containing all the symbols in $S$.
+\end{definition}
+
+
+\begin{definition}[language of atomic basis]
+  The \textbf{language of atomic basis} is a first order language containing all the symbols in $B$.
+\end{definition}
+
+
+\begin{definition}[term and type of basis]
+  The \textbf{term of basis} with pairing is defined:
+  \begin{align*}
+    t ::= b\ |\ x\ |\ \utt\ |\ (t, t)\ |\ \fst\ t\ |\ \snd\ t
+  \end{align*}
+  Here $b$ is an atomic basis and $x$ is a variable. The \textbf{type of basis} is defined by
+  \begin{align*}
+    \tau ::= T\ |\ \unit\ |\ (\tau * \tau)
+  \end{align*}
+  Here $T$ is the type for atomic bases.
+\end{definition}
+
+\begin{definition}[language of Dirac notations]
+  The \textbf{term of Dirac notations} is defined by
+  \begin{align*}
+    e ::= \ 
+      &    x                          && \text{(variable)} \\
+      & |\ \alpha                     && \text{(complex scalar)}   \\
+      & |\ \mathbf{0}_{\tau, \tau}    && \text{(zero operator)}\\
+      & |\ \delta_{t, t}              && \text{(Delta expression)} \\
+      & |\ \ket{t}                    && \text{(ket)} \\
+      & |\ \bra{t}                    && \text{(bra)} \\
+      & |\ e^*                        && \text{(conjugate)} \\
+      & |\ e^\top                     && \text{(transpose)} \\
+      & |\ e.e                        && \text{(scaling)} \\
+      & |\ e + e                      && \text{(addition)} \\
+      & |\ e \cdot e                  && \text{(multiplication)} \\
+      & |\ e \otimes e                && \text{(tensor product)}
+  \end{align*}
+  Here $x$ is a variable and $\alpha$ is a complex scalar. $\tau$ is a type and $t$ is a term of the basis. $\alpha$ is a scalar. 
+  The \textbf{type of Dirac notations} is defined by $[\tau, \tau]$, where $\tau$ is a type of basis.
+\end{definition}
+
+\begin{definition}[typing rules]
+  A typing assumption has the form $x : \tau$, meaning variable $x$ has the type $\tau$. A typing context $\Gamma$ consists of typing assumptions and each variable appears only once.
+
+  A typing judgement $\Gamma \vdash e : \sigma$ indicates that $e$ is a term of type $\sigma$ in context $\Gamma$. The well-typed terms are defined by the following rules:
+  \begin{gather*}
+    \frac{x : \sigma \in \Gamma}{\Gamma \vdash x : \sigma}
+    \qquad 
+    \frac{b\ \textrm{is an atomic basis}}{\Gamma \vdash b : T}\\
+    \\
+    \frac{\Gamma \vdash e_1 : \tau \qquad \Gamma \vdash e_2 : \sigma}{\Gamma \vdash (e_1, e_2) : ( \tau * \sigma )} \\
+    \\
+    \frac{\Gamma \vdash e : ( \tau * \sigma ) \qquad \tau \neq \unit \qquad \sigma \neq \unit}{\Gamma \vdash \fst\ e : \tau}
+    \qquad
+    \frac{\Gamma \vdash e : ( \tau * \sigma ) \qquad \tau \neq \unit \qquad \sigma \neq \unit}{\Gamma \vdash \snd\ e : \sigma} \\
+    \\
+    \frac{}{\Gamma \vdash \utt : \unit}\\
+    \\
+    \frac{\alpha\ \textrm{is a complex scalar}}{\Gamma \vdash \alpha : [\unit, \unit]}
+    \qquad
+    \frac{}{\Gamma \vdash \mathbf{0}_{\tau, \sigma} : [\tau, \sigma]}
+    \qquad
+    \frac{\Gamma \vdash s : \rho \qquad \Gamma \vdash t : \rho}{\Gamma \vdash \delta_{s, t} : [\unit, \unit]}\\
+    \\
+    \frac{\Gamma \vdash t : \tau}{\Gamma \vdash \ket{t} : [\unit, \tau]}
+    \qquad 
+    \frac{\Gamma \vdash t : \tau}{\Gamma \vdash \bra{t} : [\tau, \unit]}\\
+    \\
+    \frac{\Gamma \vdash e : [\tau, \sigma]}{\Gamma \vdash e^* : [\tau, \sigma]}
+    \qquad
+    \frac{\Gamma \vdash e : [\tau, \sigma]}{\Gamma \vdash e^\top : [\sigma, \tau]} \\
+    \\
+    \frac{\Gamma \vdash u : [\unit, \unit] \qquad \Gamma \vdash e : [\tau, \sigma]}{\Gamma \vdash u.e : [\tau, \sigma]}
+    \qquad
+    \frac{\Gamma \vdash u : [\unit, \unit] \qquad \Gamma \vdash e : [\tau, \sigma]}{\Gamma \vdash e.u : [\tau, \sigma]}\\
+    \\
+    \frac{\Gamma \vdash e_1 : [\tau, \sigma] \qquad \Gamma \vdash e_2 : [\tau, \sigma] }{\Gamma \vdash e_1 + e_2 : [\tau, \sigma] }
+    \qquad 
+    \frac{\Gamma \vdash e_1 : [\tau, \rho] \qquad \Gamma \vdash e_2 : [\rho, \sigma] }{\Gamma \vdash e_2 \cdot e_1 : [\tau, \sigma] } \\
+    \\
+    \frac{\Gamma \vdash e_1 : [\tau, \sigma] \qquad \Gamma \vdash e_2 : [\tau', \sigma'] }{\Gamma \vdash e_1 \otimes e_2 : [(\tau * \tau'), (\sigma * \sigma')]}
+  \end{gather*}
+\end{definition}
+
+\begin{definition}[shape of Dirac notations]
+    Dirac notations are divided into four sets according to their types:
+    \begin{itemize}
+        \item $\Gamma \vdash e \in \textrm{Scalar}$, if $\Gamma \vdash e : [\unit, \unit]$,
+        \item $\Gamma \vdash e \in \textrm{Ket}$, if $\Gamma \vdash e : [\tau, \unit]\wedge\tau \neq \unit$,
+        \item $\Gamma \vdash e \in \textrm{Bra}$, if $\Gamma \vdash e : [\unit, \tau]\wedge\tau \neq \unit$,
+        \item $\Gamma \vdash e \in \textrm{Matrix}$, if $\Gamma \vdash e : [\tau, \sigma]\wedge\tau \neq \unit\wedge\sigma \neq \unit$.
+    \end{itemize}
+\end{definition}
+
+% \begin{claim}
+%   For any term $e$ of Dirac lambda calculus in any context $\Gamma$, there exists at most one type $\tau$ that satisfies $\Gamma \vdash e : \tau$. The types of all terms are computable (if exist).
+% \end{claim}
+
+
+\subsection{Equational Theory}
+The following equations are incorporated when considering the equivalence of types and terms.
+
+\subsubsection*{Type Squash}
+\begin{gather*}
+  (\tau * \unit)  = \tau \qquad (\unit * \tau) = \tau \\
+\end{gather*}
+\textbf{Remark:} The type squash is necessary because we have to handle inner product as a scalar. For example, $e \cdot \ket{s}$ where $e$ is a variable of bra shape.
+
+\subsubsection*{Delta Expression}
+\begin{align*}
+    & \delta_{t, s} = \delta_{s, t}
+\end{align*}
+
+\subsubsection*{AC function}
+\begin{align*}
+    A + B = & B + A \\
+    A + (B + C) = & A + B + C \\
+    A.B = & B.A \\
+    A.(B.C) = & A.B.C \\
+\end{align*}
+
+
+% \subsection{Simplification Order}
+
+% \begin{definition}
+  
+%   We define $<_{RPO}$ as a simplification order on Dirac notations, which is the recursive path order induced by the function order:
+
+
+%   \begin{center}
+%     \begin{tikzpicture}[node distance=15pt]
+%       \node[draw]                     (tt) {$\utt$};
+%       \node[draw, right=of tt]         (var)   {\text{Var}};
+%       \node[draw, right=of var]       (zero)   {$\mathbf{0}$};
+%       \node[draw, right=of zero]       (id)   {$\mathbf{1}$};
+%       \node[draw, right=of id]       (bra) {$\bra{t}$};
+%       \node[draw, right=of bra]       (ket) {$\ket{t}$};
+%       \node[draw, right=of ket]      (add)  {$+$};
+%       \node[draw, right=of add]     (delta)     {$\delta_{ij}$};
+%       \node[draw, right=of delta]     (scaling)     {$\alpha.e$};
+%       \node[draw, right=of scaling]     (tensor)     {$\otimes$};
+%       \node[draw, right=of tensor]       (mul)  {$\cdot$};
+%       \node[draw, right=of mul]       (trans)     {transpose};
+%       \node[draw, right=of trans]     (conj)     {conjugate};
+
+%       \node[draw, below=of scaling]       (pair) {$(s_1, s_2)$};
+
+%       \node[draw, below=of tensor]       (fst)     {$\fst$};
+%       \node[draw, below=of fst]       (snd)     {$\snd$};
+
+      
+%       \graph{
+%         (conj) -> (trans) -> (mul) -> (tensor) -> (scaling) -> (delta) -> (add) -> (ket) -> (bra) -> (id) -> (zero) ->(var) -> (tt);
+%         (tensor) -> (pair);
+%         (mul) -> (fst);
+%         (mul) -> (snd);
+%       };
+%     \end{tikzpicture}
+%     \end{center}
+
+%     Note that for terms with the same function symbol, the subterms are compared from right to left. Therefore, for example we have $ (a \otimes b) \otimes c <_{RPO} a \otimes (b \otimes c) $. 
+
+% \end{definition}
+
+
+\subsection{Reduction of Dirac Notations}
+
+\subsubsection*{\textsf{BASIS}}
+\begin{align*}
+    & \textsc{(Squash1)} && \Gamma \vdash (\utt, e) \reduce e 
+    && \textsc{(Squash2)} && \Gamma \vdash (e, \utt) \reduce e \\
+    & \textsc{(Proj1)} && \Gamma \vdash \fst\ (e_1, e_2) \reduce e_1
+    && \textsc{(Proj2)} && \Gamma \vdash \snd\ (e_1, e_2) \reduce e_2  \\
+    \\
+    & \textsc{(Pair)} && \Gamma \vdash (\fst\ e, \snd\ e)\reduce e
+    && \textsc{(Unit)} && \frac{\Gamma \vdash x : \unit \qquad x \neq \utt}{\Gamma \vdash x\reduce\utt} 
+\end{align*}
+
+\subsection*{\textsf{ZERO}}
+\begin{align*}
+    & \textsc{(Zero0)} && \Gamma \vdash \mathbf{0}_{\unit, \unit} \reduce 0
+\end{align*}
+
+\subsubsection*{\textsf{DELTA}}
+\begin{align*}
+  & \textsc{(Delta1)} && 
+  \Gamma \vdash \delta_{s, s} \reduce 1
+  \\
+  \\
+  & \textsc{(Delta0)} && 
+  \frac{s =_\textsf{BASIS} t\ \textrm{is not satisfiable in}\ \Gamma}{\Gamma \vdash \delta_{s, t} \reduce 0} \\
+  \\
+  & \textsc{(DeltaDcp)} && 
+  \frac{\Gamma \vdash u : ( \tau * \sigma ) \qquad \tau \neq \unit \qquad \sigma \neq \unit}{\Gamma \vdash \delta_{u, (s, t)} \reduce \delta_{\fst\ u, s}.\delta_{\snd\ u, t}} 
+  \\
+  \\
+  & \textsc{(DeltaPair)} &&
+  \Gamma \vdash \delta_{\fst\ u, \fst\ v}.\delta_{\snd\ u, \snd\ v} \reduce \delta_{u, v}
+\end{align*}
+
+\yx{$\delta_{s, t}$ is reduced to 1 when $s =_\textsf{BASIC} t$ is valid, and is reduced to 0 when $s =_\textsf{BASIC} t$ is not satisfiable. This is closest to the behaviour of $\delta_{s, t}$ in maths but is hard to test. I don't know whether it's appropriate.}
+
+
+\subsubsection*{\textsf{KET}}
+\begin{align*}
+  & \textsc{(Ket1)} && \Gamma \vdash \ket{\utt} \reduce 1
+  && \textsc{(KetPair)} && \Gamma \vdash \ket{s} \otimes \ket{t}\reduce\ket{(s, t)} 
+\end{align*}
+
+\subsubsection*{\textsf{BRA}}
+\begin{align*}
+  & \textsc{(Bra1)} && \Gamma \vdash \bra{\utt} \reduce 1
+  && \textsc{(BraPair)} && \Gamma \vdash \bra{s} \otimes \bra{t}\reduce\bra{(s, t)} 
+\end{align*}
+
+
+\subsubsection*{\textsf{CONJ}}
+\begin{align*}
+  & \textsc{(Complex*)} && \Gamma \vdash \alpha^* \reduce \alpha^*\ \textrm{(conjugate in $S$)} \\
+  & \textsc{(Zero*)} && \Gamma \vdash \textbf{0}_{\tau, \sigma}^* \reduce \textbf{0}_{\tau, \sigma} \\
+  & \textsc{(Delta*)} &&
+  \Gamma \vdash \delta_{s,t}^* \reduce \delta_{s,t}\\
+  & \textsc{(Ket*)} && \Gamma \vdash \ket{s}^* \reduce \ket{s}
+  && \textsc{(Bra*)} && \Gamma \vdash \bra{s}^* \reduce \bra{s} \\
+  & \textsc{(Double*)} && \Gamma \vdash (e^*)^*\reduce e
+  && \textsc{(T*)} && \Gamma \vdash (e^\top)^* \reduce(e^*)^\top \\
+  & \textsc{(Scr*)} && \Gamma \vdash (\alpha.e)^* \reduce (\alpha^*).(e^*) \\
+  & \textsc{(Add*)} && \Gamma \vdash (e_1 + e_2)^* \reduce e_1^* + e_2^* 
+  && \textsc{(Mul*)} && \Gamma \vdash (e_1 \cdot e_2)^* \reduce e_1^* \cdot e_2^* \\
+  & \textsc{(Tsr*)} && \Gamma \vdash (e_1 \otimes e_2)^* \reduce e_1^* \otimes e_2^*
+\end{align*}
+
+\subsubsection*{\textsf{TRANS}}
+\begin{align*}
+  & \textsc{(ComplexT)} && \Gamma \vdash \alpha^\top \reduce \alpha \\
+  & \textsc{(ZeroT)} && \Gamma \vdash \textbf{0}_{\tau, \sigma}^\top \reduce \textbf{0}_{\sigma, \tau} \\
+  & \textsc{(DeltaT)} && \Gamma \vdash \delta_{s,t}^\top \reduce \delta_{s,t} \\
+  & \textsc{(KetT)} && \Gamma \vdash \ket{s}^\top \reduce \bra{s} 
+  && \textsc{(BraT)} && \Gamma \vdash \bra{s}^\top \reduce \ket{s} \\
+  & \textsc{(DoubleT)} && \Gamma \vdash (e^\top)^\top \reduce e 
+  && \textsc{(ScrT)} && \Gamma \vdash (\alpha.e)^\top \reduce \alpha.(e^\top) \\
+  & \textsc{(AddT)} && \Gamma \vdash (e_1 + e_2)^\top \reduce e_1^\top + e_2^\top
+  && \textsc{(MulT)} && \Gamma \vdash (e_1 \cdot e_2)^\top \reduce e_2^\top \cdot e_1^\top \\
+  & \textsc{(TsrT)} && \Gamma \vdash (e_1 \otimes e_2)^\top \reduce e_1^\top \otimes e_2^\top
+\end{align*}
+
+\subsubsection*{\textsf{SCAL}}
+\begin{align*}
+  & \textsc{(Scl0)} && \frac{\Gamma \vdash e : [\tau, \sigma]}{\Gamma \vdash 0.e \reduce \textbf{0}_{\tau, \sigma}}
+  && \textsc{(Scl1)} && \Gamma \vdash 1.e \reduce e \\
+  \\
+  & \textsc{(SclZero)} && \frac{\Gamma \vdash u : [\unit, \unit]}{\Gamma \vdash u.\mathbf{0}_{\tau, \sigma} \reduce \mathbf{0}_{\tau, \sigma}}
+  && \textsc{(SclComp)} && 
+  \frac{\textrm{$\alpha$ and $\beta$ are complex scalars}}{\Gamma \vdash \alpha.(\beta.e) \reduce (\alpha \times \beta).e} \\
+  \\
+  & \textsc{(SclScl)} && \Gamma \vdash (u.v).e \reduce u.(v.e)
+  && \textsc{(SclDist)} && \Gamma \vdash u.(e_1 + e_2) \reduce u.e_1 + u.e_2
+\end{align*}
+
+\subsubsection*{\textsf{ADD}}
+\begin{align*}
+  & \textsc{(AddZero)} && \Gamma \vdash e + \textbf{0}_{\tau, \sigma} \reduce e 
+  && \textsc{(AddComp)} && \frac{\textrm{$\alpha$ and $\beta$ are complex scalars}}{\Gamma \vdash \alpha + \beta \reduce \alpha + \beta\ \textrm{(addition in $S$)}} \\
+  \\
+  & \textsc{(Fac2)} && 
+    \Gamma \vdash u.e + v.e \reduce (u + v).e
+  && \textsc{(Fac1)} &&
+    \Gamma \vdash u.e + e \reduce (u + 1).e \\
+  & \textsc{(Fac0)} &&
+    \Gamma \vdash e + e \reduce (1 + 1).e
+\end{align*}
+
+\subsubsection*{\textsf{MULT}}
+\begin{align*}
+  & \textsc{(MulZeroL)}
+  && \frac{\Gamma \vdash e : [\tau, \rho]}{\Gamma \vdash \textbf{0}_{\rho, \sigma} \cdot e \reduce \textbf{0}_{\tau, \sigma}}
+  && \textsc{(MulZeroR)}
+  && \frac{\Gamma \vdash e : [\rho, \sigma]}{\Gamma \vdash e \cdot \textbf{0}_{\tau, \rho} \reduce \textbf{0}_{\tau, \sigma}} \\
+  \\
+  & \textsc{(MulScrL)} && \Gamma \vdash (u.e_1) \cdot e_2 \reduce u.(e_1 \cdot e_2)
+  && \textsc{(MulScrR)} && \Gamma \vdash e_1 \cdot (u.e_2) \reduce u.(e_1 \cdot e_2)
+  \\
+  & \textsc{(MulBraKet)} && \Gamma \vdash \bra{s} \cdot \ket{t} \reduce \delta_{s, t} \\ 
+  & \textsc{(MulAssoc)} && 
+  \Gamma \vdash u \cdot (v \cdot w) \reduce u \cdot v \cdot w \\
+  & \textsc{(MulDistL)} && \Gamma \vdash (u + v) \cdot e \reduce u \cdot e + v \cdot e
+  && \textsc{(MulDistR)} && \Gamma \vdash e \cdot (u + v) \reduce e \cdot u + e \cdot v \\
+  \\
+  & \textsc{(ReFac2)} && \frac{\Gamma \vdash a_1 : [\rho, \tau] \qquad \Gamma \vdash b_1 : [\sigma, \rho]}{\Gamma \vdash (a_1 \otimes a_2) \cdot (b_1 \otimes b_2) \reduce (a_1 \cdot b_1) \otimes (a_2 \cdot b_2)} \\
+\end{align*}
+
+\begin{align*}
+  & \textsc{(ReFac1LL)} && \frac{\Gamma \vdash e \in \textrm{Ket}}{\Gamma \vdash (e \otimes a) \cdot b \reduce e \otimes (a \cdot b)}
+  && \textsc{(ReFac1LR)} && \frac{\Gamma \vdash e \in \textrm{Ket}}{\Gamma \vdash (a \otimes e) \cdot b \reduce (a \cdot b) \otimes e} \\
+  \\
+  & \textsc{(ReFac1RL)} && \frac{\Gamma \vdash e \in \textrm{Bra}}{\Gamma \vdash a \cdot (e \otimes b) \reduce e \otimes (a \cdot b)} 
+  && \textsc{(ReFac1RR)} && \frac{\Gamma \vdash e \in \textrm{Bra}}{\Gamma \vdash a \cdot (b \otimes e) \reduce (a \cdot b) \otimes e} \\
+\end{align*}
+
+\begin{align*}
+  & \textsc{(ReFac0KB)} && \frac{\Gamma \vdash a \in \textrm{Ket} \qquad \Gamma \vdash b \in \textrm{Bra}}{\Gamma \vdash a \cdot b \reduce a \otimes b} \\
+  \\
+  & \textsc{(ReFac0)} && \frac{\Gamma \vdash a : [\unit, \unit] \vee \Gamma \vdash b : [\unit, \unit]}{\Gamma \vdash a \otimes b \reduce a.b} \\
+  \\
+  & \textsc{(ReFacBPair)} && \frac{\Gamma \vdash t : (\tau * \sigma) \qquad \tau \neq \unit \qquad \sigma \neq \unit \qquad \Gamma \vdash a : [\rho, \tau]}{\Gamma \vdash \bra{t} \cdot (a \otimes b) \reduce (\bra{\fst\ t} \cdot a) \otimes (\bra{\snd\ t} \cdot b)} \\
+  \\
+  & \textsc{(ReFacKPair)} && \frac{\Gamma \vdash t : (\tau * \sigma) \qquad \tau \neq \unit \qquad \sigma \neq \unit \qquad \Gamma \vdash a : [\sigma, \rho]}{\Gamma \vdash (a \otimes b) \cdot \ket{t}  \reduce (a \cdot \ket{\fst\ t}) \otimes (b \cdot \ket{\snd\ t})}
+\end{align*}
+% \textbf{Remark: } The last several rules conduct \textbf{tensorization}. They have clear tensor network interpretations. 
+% And also, the procedure of tensorization is actually optimizing the contraction order of the tensor network.
+
+
+\subsubsection*{\textsf{TSR}}
+\begin{align*}
+  & \textsc{(TsrZeroL)} && 
+  \frac{\Gamma \vdash e : [\tau, \sigma]}{\Gamma \vdash \textbf{0}_{\tau', \sigma'} \otimes e \reduce \textbf{0}_{(\tau' * \tau), (\sigma' * \sigma)}} 
+  && \textsc{(TsrZeroR)} && 
+  \frac{\Gamma \vdash e : [\tau, \sigma]}{\Gamma \vdash e \otimes \textbf{0}_{\tau', \sigma'} \reduce \textbf{0}_{(\tau * \tau'), (\sigma * \sigma')}} \\
+  \\
+  & \textsc{(TsrScrL)} && \Gamma \vdash (u.e_1) \otimes e_2 \reduce u.(e_1 \otimes e_2) 
+  && \textsc{(TsrScrR)} && \Gamma \vdash e_1 \otimes (u.e_2) \reduce u.(e_1 \otimes e_2)
+  \\
+  & \textsc{(TsrDistL)} && \Gamma \vdash (u + v) \otimes e \reduce u \otimes e + v \otimes e
+  && \textsc{(TsrDistR)} && \Gamma \vdash e \otimes (u + v) \reduce e \otimes u + e \otimes v \\
+  \\
+  & \textsc{(TsrPull)} &&
+  \frac{\Gamma \vdash a : [\unit, \unit] \vee \Gamma \vdash b : [\unit, \unit]}{\Gamma \vdash a \otimes b \reduce a.b}
+\end{align*}
+
+\subsubsection*{\textsf{TSRSORT}}
+\begin{align*}
+  & \textsc{(TsrSort1)} &&
+  \frac{\Gamma \vdash A \in \textrm{Bra} \qquad \Gamma \vdash B \in \textrm{Ket}}{\Gamma \vdash A \otimes B \reduce B \otimes A} \\
+  \\
+  & && \<\ | \otimes |\ \> \reduce |\ \> \otimes \<\ | \\
+  \\
+  & \textsc{(TsrSort2)} &&
+  \frac{\Gamma \vdash A \in \textrm{Ket} \qquad \Gamma \vdash B \in \textrm{Ket} \qquad \Gamma \vdash C \in \textrm{Bra}}{\Gamma \vdash A \otimes (B \otimes C) \reduce (A \otimes B) \otimes C} \\
+  \\
+  & && |\ \> \otimes (|\ \> \otimes \<\ |) \reduce (|\ \> \otimes |\ \>) \otimes \<\ | \\
+  \\
+  & \textsc{(TsrSort3)} &&
+  \frac{\Gamma \vdash A \in \textrm{Ket} \qquad \Gamma \vdash B \in \textrm{Bra} \qquad \Gamma \vdash C \in \textrm{Bra}}{\Gamma \vdash (A \otimes B) \otimes C \reduce A \otimes (B \otimes C)} \\
+  \\
+  & && (|\ \> \otimes \<\ |) \otimes \<\ | \reduce |\ \> \otimes (\<\ | \otimes \<\ |) \\
+  \\
+  & \textsc{(TsrSort4)} &&
+  \frac{\Gamma \vdash A \in \textrm{Ket} \qquad \Gamma \vdash B \in \textrm{Bra} \qquad \Gamma \vdash C \in \textrm{Ket}}{\Gamma \vdash (A \otimes B) \otimes C \reduce (A \otimes C) \otimes B} \\
+  \\
+  & && (|\ \> \otimes \<\ |) \otimes |\ \> \reduce (|\ \> \otimes |\ \>) \otimes \<\ | \\
+  \\
+  & \textsc{(TsrSort5)} &&
+  \frac{\Gamma \vdash A \in \textrm{Bra} \qquad \Gamma \vdash B \in \textrm{Ket} \qquad \Gamma \vdash C \in \textrm{Bra}}{\Gamma \vdash A \otimes (B \otimes C) \reduce B \otimes (A \otimes C)} \\
+  \\
+  & && \<\ | \otimes (|\ \> \otimes \<\ |) \reduce |\ \> \otimes (\<\ | \otimes \<\ |) \\
+  \\
+  & \textsc{(TsrSort6)} &&
+  \frac{\Gamma \vdash A \in \textrm{Matrix} \qquad \Gamma \vdash B \in \textrm{Ket} \qquad \Gamma \vdash C \in \textrm{Bra}}{\Gamma \vdash (A \otimes B) \otimes C \reduce A \otimes (B \otimes C)} \\
+  \\
+  & && (|\ | \otimes |\ \>) \otimes \<\ | \reduce |\ | \otimes (|\ \> \otimes \<\ |) \\
+  \\
+  & \textsc{(TsrSort7)} &&
+  \frac{\Gamma \vdash A \in \textrm{Matrix} \qquad \Gamma \vdash B \in \textrm{Bra} \qquad \Gamma \vdash C \in \textrm{Ket}}{\Gamma \vdash (A \otimes B) \otimes C \reduce A \otimes (C \otimes B)} \\
+  \\
+  & && (|\ | \otimes \<\ |) \otimes |\ \> \reduce |\ | \otimes (|\ \> \otimes \<\ |) \\
+  \\
+  & \textsc{(TsrSort8)} &&
+  \frac{\Gamma \vdash A \in \textrm{Ket} \qquad \Gamma \vdash B \in \textrm{Bra} \qquad \Gamma \vdash C \in \textrm{Matrix}}{\Gamma \vdash A \otimes (B \otimes C) \reduce (A \otimes B) \otimes C} \\
+  \\
+  & && |\ \> \otimes (\<\ | \otimes |\ |) \reduce (|\ \> \otimes \<\ |) \otimes |\ | \\
+  \\
+  & \textsc{(TsrSort9)} &&
+  \frac{\Gamma \vdash A \in \textrm{Bra} \qquad \Gamma \vdash B \in \textrm{Ket} \qquad \Gamma \vdash C \in \textrm{Matrix}}{\Gamma \vdash A \otimes (B \otimes C) \reduce (B \otimes A) \otimes C} \\
+  \\
+  & && \<\ | \otimes (|\ \> \otimes |\ |) \reduce (|\ \> \otimes \<\ |) \otimes |\ | \\  
+\end{align*}
+
+\begin{lemma}[preservation of Dirac types]
+  For any context $\Gamma$ and terms $e, e'$, if $\Gamma \vdash e : \tau$ and $\Gamma \vdash e \reduce e'$, we have
+  $ \Gamma \vdash e' : \tau $. 
+\end{lemma}
+\begin{proof}
+  By case analysis. It's worth noting that tensoring scalar-like notations will not change the type, becuase $(\unit * \tau) = \tau$ by the equational theory.
+\end{proof}
+
+\begin{proposition}
+  The system \textsf{TSRSORT} terminates.
+\end{proposition}
+\begin{proof}
+  Consider the following interpretation
+  $$
+  | A \otimes B | = \left \{
+    \begin{aligned}
+      & 1 + | A | + | B |, && A \in \textrm{Ket} \wedge B \in \textrm{Bra}, \\
+      & 2 + | A | + | B |, && A \in \textrm{Ket} \wedge B \in \textrm{Ket} \vee A \in \textrm{Bra} \wedge B \in \textrm{Bra}, \\
+      & 3 + | A | + | B |, && \textrm{otherwise}.
+    \end{aligned}
+  \right .
+  $$
+  Each time a term $t$ is reduced to $t'$ by rules in \textsf{TSRSORT}, we have $|t| > |t'|$. Therefore, the system terminates.
+\end{proof}
+
+
+
+%%%%%%%%%%%%%%%%%
+
+\clearpage
+\subsection{Termination and Confluence}
+
+\begin{lemma}[termination]
+  The reduction system is terminating. In other words, for any context $\Gamma$ and a well-typed expression $\Gamma \vdash e : \tau$, there does not exists an infinite reduction $\Gamma \vdash e \reduce e' \reduce\cdots .$
+\end{lemma}
+\begin{proof}
+  \yx{TO BE PROVED. Outline: for rules that do not decrease $<_{RPO}$, we prove they are terminating (on all terms matching their LHS). Then combined with the fact that $<_{RPO}$ is a well-founded order, we can conclude that the whole system is terminating.
+  I don't know whether this works. More consideration needed.}
+\end{proof}
+
+
+\begin{lemma}[convergence]
+  The reduction system is convergent. In other words, for any context $\Gamma$ and a well-typed expression $\Gamma \vdash e : \tau$, all reduction sequence from it are finite and end in the unique normal form for $e$.
+\end{lemma}
+\begin{proof}
+  Since the reduction system is terminating, we only need to check that all the critical pairs are joinable. Here is a thorough list of them:
+  \begin{itemize}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \item \textbf{critical pairs containing} \textsc{(Squash1)}/\textsc{(Squash2)} 
+    
+      \begin{flalign*}
+        & (\utt, \utt) \reduce \left \{
+          \begin{aligned}
+            & \textsc{(Squash1)} && \\
+            & \textsc{(Squash2)} &&
+          \end{aligned}
+        \right \} \reduce \utt &
+      \end{flalign*}
+
+      \textbf{Remark:} There is no critical pairs between \textsc{(Squash1)-(DeltaDcp)}: $\delta_{u, (\utt, t)}.e$ does not satisfy the side condition of \textsc{(DeltaDcp)}. Similar for \textsc{(Squash2)-(DeltaDcp)}.
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \item \textbf{critical pairs containing} \textsc{(Proj1)}/\textsc{(Proj2)}
+      \begin{flalign*}
+        & (\fst\ (e_1, e_2), \snd\ (e_1, e_2)) \reduce \left \{
+          \begin{aligned}
+            & \textsc{(Proj1)} && (e_1, \snd\ (e_1, e_2)) \\
+            & \textsc{(Pair)} &&
+          \end{aligned}
+        \right \} \reduce (e_1, e_2) &
+      \end{flalign*}
+      \textbf{Remark:} Similar for the \textsc{(Proj2)-(Pair)} pair from $(\fst\ (e_1, e_2), \snd\ (e_1, e_2))$.
+
+      \begin{flalign*}
+        & \delta_{\fst\ (a, b), \fst\ u}.\delta_{\snd\ (a, b), \snd\ u}.e \reduce \left \{
+          \begin{aligned}
+            & \textsc{(Proj1)} && \delta_{a, \fst\ u}.\delta_{\snd\ (a, b), \snd\ u}.e  \\
+            & \textsc{(DeltaPair)} && \delta_{(a, b), u}.e 
+          \end{aligned}
+        \right \} \reduce \delta_{a, \fst\ u}.\delta_{b, \snd\ u}.e &
+      \end{flalign*}
+      \textbf{Remark:} Similar for the \textsc{(Proj2)-(DeltaPair)} pair from $\delta_{\fst\ (a, b), \fst\ u}.\delta_{\snd\ (a, b), \snd\ u}.e$.
+
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \item \textbf{critical pairs containing} \textsc{(Pair)}
+      \begin{flalign*}
+        & \delta_{u, (\fst\ v, \snd\ v)}.e \reduce \left \{
+          \begin{aligned}
+            & \textsc{(Pair)} && \\
+            & \textsc{(DeltaDcp)} && \delta_{\fst\ u, \fst\ v}.\delta_{\snd\ u, \snd\ v}.e
+          \end{aligned}
+        \right \} \reduce \delta_{u, v}.e &
+      \end{flalign*}
+
+
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \item \textbf{critical pairs containing} \textsc{(DeltaZero)}
+     
+      These critical pairs always join at the zero operator and are all trival.
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \item \textbf{critical pairs containing} \textsc{(Delta1)}
+
+      \begin{flalign*}
+        & \delta_{(s, t), (s, t)}.e \reduce \left \{
+          \begin{aligned}
+            & \textsc{(Delta1)} && \\
+            & \textsc{(DeltaDcp)} && \delta_{\fst\ (s, t), s}.\delta_{\snd\ (s, t), t}.e \reduce \delta_{s, s}.\delta_{t, t}.e
+          \end{aligned}
+        \right \} \reduce e &
+      \end{flalign*}
+
+      \begin{flalign*}
+        & \delta_{\fst\ u, \fst\ u}.\delta_{\snd\ u, \snd\ u}.e \reduce \left \{
+          \begin{aligned}
+            & \textsc{(Delta1)} && \\
+            & \textsc{(DeltaPair)} && \delta_{u, u}.e
+          \end{aligned}
+        \right \} \reduce e &
+      \end{flalign*}
+
+      \begin{flalign*}
+        & \delta_{s, s}.(e_1 + e_2) \reduce \left \{
+          \begin{aligned}
+            & \textsc{(Delta1)} && \\
+            & \textsc{(DeltaDist)} && \delta_{s, s}.e_1 + \delta_{s, s}.e_2
+          \end{aligned}
+        \right \} \reduce e_1 + e_2 &
+      \end{flalign*}
+      \textbf{Remark:} Other critical pairs are trival:
+      \begin{itemize}
+        \item \textsc{(Delta1)-(Delta*)} pair from $(\delta_{s, s}.e)^*$,
+        \item \textsc{(Delta1)-(DeltaT)} pair from $(\delta_{s, s}.e)^\top$,
+        \item \textsc{(Delta1)-(ScrDelta)} pair from $\alpha.\delta_{s, s}.e$,
+        \item \textsc{(Delta1)-(MulDeltaL)} pair from $(\delta_{s, s}.u) \cdot v$,
+        \item \textsc{(Delta1)-(MulDeltaR)} pair from $u \cdot (\delta_{s, s}.v)$,
+        \item \textsc{(Delta1)-(TsrDeltaL)} pair from $(\delta_{s, s}.u) \otimes v$, and
+        \item \textsc{(Delta1)-(TsrDeltaR)} pair from $u \otimes (\delta_{s, s}.v)$.
+      \end{itemize}
+
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \item \textbf{critical pairs containing} \textsc{(Delta0)}
+
+      \begin{flalign*}
+        & \delta_{u, (s, t)}.e \reduce \left \{
+          \begin{aligned}
+            & \textsc{(Delta0)} && \\
+            & \textsc{(DeltaDcp)} && \delta_{\fst\ u, s}.\delta_{\snd\ u, t}.e \reduce \cdots
+          \end{aligned}
+        \right \} \reduce \textbf{0}_{\tau, \sigma} \\
+        & \text{($u =_\textsf{DN} (s, t)$ is not satisfiable, $\Gamma \vdash e : [\tau, \sigma]$)} &
+      \end{flalign*}
+      \textbf{Remark:} If $u =_\textsf{DN} (s, t)$ is not satisfiable, then either $\fst\ u =_\textsf{DN} s$ or $\snd\ u =_\textsf{DN} t$ is not satisfiable. Therefore the expression will always be reduced to $\textbf{0}$.  
+    
+      \begin{flalign*}
+        & \delta_{\fst\ u, \fst\ v}.\delta_{\snd\ u, \snd\ v}.e \reduce \left \{
+          \begin{aligned}
+            & \textsc{(Delta0)} && \\
+            & \textsc{(DeltaPair)} && \delta_{u, v}.e
+          \end{aligned}
+        \right \} \reduce \textbf{0}_{\tau, \sigma} \\
+        & \text{($\fst\ u =_\textsf{DN} \fst\ v$ is not satisfiable, $\Gamma \vdash e : [\tau, \sigma]$)} &
+      \end{flalign*}
+      \textbf{Remark:} If $\fst\ u =_\textsf{DN} \fst\ v$ is not satisfiable, then $u =_\textsf{DN} v$ is not satisfiable.
+
+    \textbf{Remark:} Other critical pairs are trival:
+    \begin{itemize}
+      \item \textsc{(Delta0)-(DeltaDist)} pair from $\delta_{s, t}.(e_1 + e_2)$,
+      \item \textsc{(Delta0)-(Delta*)} pair from $(\delta_{s, t}.e)^*$,
+      \item \textsc{(Delta0)-(DeltaT)} pair from $(\delta_{s, t}.e)^\top$,
+      \item \textsc{(Delta0)-(ScrDelta)} pair from $\alpha.\delta_{s, t}.e$,
+      \item \textsc{(Delta0)-(MulDeltaL)} pair from $(\delta_{s, t}.u) \cdot v$,
+      \item \textsc{(Delta0)-(MulDeltaR)} pair from $u \cdot (\delta_{s, t}.v)$,
+      \item \textsc{(Delta0)-(TsrDeltaL)} pair from $(\delta_{s, t}.u) \otimes v$, and
+      \item \textsc{(Delta0)-(TsrDeltaR)} pair from $u \otimes (\delta_{s, t}.v)$.
+    \end{itemize}
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \item \textbf{critical pairs containing} \textsc{(DeltaDcp)}
+      \begin{flalign*}
+        & \delta_{(a, b), (u, v)}.e \reduce \left \{
+          \begin{aligned}
+            & \textsc{(DeltaDcp)} && \delta_{\fst\ (a, b), u}.\delta_{\snd\ (a, b), v}.e \\
+            & \textsc{(DeltaDcp)} && \delta_{a, \fst\ (u, v)}.\delta_{b, \snd\ (u, v)}.e
+          \end{aligned}
+        \right \} \reduce \delta_{a, u}.\delta_{b, v}.e &
+      \end{flalign*}
+
+      \textbf{Remark:} Other critical pairs are trival.
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \item \textbf{critical pairs containing} \textsc{(DeltaPair)}
+    
+    No extra critical pairs.
+    % \begin{flalign*}
+    %   & \delta_{\fst\ u, \fst\ v}.\delta_{\snd\ u, \snd\ v}.\delta_{\fst\ u, \fst\ v}.e \reduce \left \{
+    %     \begin{aligned}
+    %       & \textsc{(DeltaPair)} && \delta_{u, v}.\delta_{\fst\ u, \fst\ v}.e \\
+    %       & \textsc{(DeltaPair)} && \delta_{\fst\ u, \fst\ v}.\delta_{u, v}.e
+    %     \end{aligned}
+    %   \right \} \reduce \delta_{u, v}.\delta_{\fst\ u, \fst\ v}.e &
+    % \end{flalign*}
+    % \textbf{Remark:} Similar for another critical pair from $\delta_{\fst\ u, \fst\ v}.\delta_{\snd\ u, \snd\ v}.\delta_{\snd\ u, \snd\ v}.e$.
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \item \textbf{critical pairs containing} \textsc{(DeltaDist)}
+    
+    All critical pairs are trivial.
+  
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \item \textbf{critical pairs containing} \textsc{(Ket1)}/\textsc{(Bra1)}
+    
+    Here we present all the critical pairs involves ket $\ket{\utt}$. Those for bra $\bra{\utt}$ are totally symmetric.
+
+      \begin{flalign*}
+        & \ket{\utt} \otimes \ket{s} \reduce \left \{
+          \begin{aligned}
+            & \textsc{(Ket1)} && \mathbf{1} \otimes \ket{s} \\
+            & \textsc{(KetPair)} && \ket{(\utt, s)}
+          \end{aligned}
+        \right \} \reduce \ket{s} &
+      \end{flalign*}
+      \textbf{Remark:} Similar for the \textsc{(Ket1)-(KetPair)} from $\ket{s} \otimes \ket{\utt}$.
+
+      \begin{flalign*}
+        & \ket{\utt}^* \reduce \left \{
+          \begin{aligned}
+            & \textsc{(Ket1)} && \mathbf{1}^* \\
+            & \textsc{(Ket*)} && \ket{\utt}
+          \end{aligned}
+        \right \} \reduce \mathbf{1} &
+      \end{flalign*}
+
+      \begin{flalign*}
+        & \ket{\utt}^\top \reduce \left \{
+          \begin{aligned}
+            & \textsc{(Ket1)} && \mathbf{1}^\top \\
+            & \textsc{(KetT)} && \bra{\utt}
+          \end{aligned}
+        \right \} \reduce \mathbf{1} &
+      \end{flalign*}
+
+      \begin{flalign*}
+        & \bra{s} \cdot \ket{\utt} \reduce \left \{
+          \begin{aligned}
+            & \textsc{(Ket1)}&& \bra{s} \cdot \mathbf{1} \reduce \bra{\utt} \cdot \mathbf{1} \reduce \mathbf{1} \cdot \mathbf{1} \\
+            & \textsc{(MulBraKet)} && \delta_{s, \utt}.\mathbf{1} \reduce \delta_{\utt, \utt}.\mathbf{1}
+          \end{aligned}
+        \right \} \reduce \mathbf{1} &
+      \end{flalign*}
+      \textbf{Remark:} $\Gamma \vdash s : \unit$ holds in this case. 
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \item \textbf{critical pairs containing} \textsc{(KetPair)}/\textsc{(BraPair)}
+  
+  Here we present all the critical pairs involves ket $\ket{s} \otimes \ket{t}$. Those for bra $\bra{s} \otimes \bra{t}$ are totally symmetric.
+
+  \begin{flalign*}
+      & (\ket{s} \otimes \ket{t})^* \reduce \left \{
+        \begin{aligned}
+          & \textsc{(KetPair)} && \ket{(s, t)}^* \\
+          & \textsc{(Tsr*)} && \ket{s}^* \otimes \ket{t}^* \reduce \ket{s} \otimes \ket{t}
+        \end{aligned}
+      \right \} \reduce \ket{(s, t)} &
+    \end{flalign*}
+
+    \begin{flalign*}
+      & (\ket{s} \otimes \ket{t})^\top \reduce \left \{
+        \begin{aligned}
+          & \textsc{(KetPair)} && \ket{(s, t)}^\top \\
+          & \textsc{(TsrT)} && \ket{s}^\top \otimes \ket{t}^\top \reduce \bra{s} \otimes \bra{t}
+        \end{aligned}
+      \right \} \reduce \bra{(s, t)} &
+    \end{flalign*}
+
+    \begin{flalign*}
+      & (a \otimes b) \cdot (\ket{s} \otimes \ket{t}) \reduce \left \{
+        \begin{aligned}
+          & \textsc{(KetPair)} && (a \otimes b) \cdot \ket{(s, t)} \\
+          & \textsc{(ReFac2)} && 
+        \end{aligned}
+      \right \} \reduce (a \cdot \ket{s}) \otimes (b \cdot \ket{t}) \\
+      & (\Gamma \vdash a : [\rho, \tau], \Gamma \vdash \ket{s} : [\unit, \rho]) &
+    \end{flalign*}
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \item \textbf{conjugate critical pairs}    
+    
+      \begin{flalign*}
+      & (\mathbf{0}_{\tau, \sigma}^*)^* \reduce \left \{
+        \begin{aligned}
+          & \textsc{(Double*)} && \\
+          & \textsc{(Zero*)} && (\mathbf{0}_{\tau, \sigma})^* 
+        \end{aligned}
+        \right \} \reduce \mathbf{0}_{\tau, \sigma}&
+      \end{flalign*}
+      \textbf{Remark:} Similar for $((\mathbf{1})^*)^*$, $((\delta_{s, t}.e)^*)^*$, $(\ket{s}^*)^*$ and $(\bra{s}^*)^*$.
+      
+      \begin{flalign*}
+        & ((\alpha.e)^*)^* \reduce \left \{
+          \begin{aligned}
+            & \textsc{(Double*)} && \\
+            & \textsc{(C*)} && ((\alpha^*).e^*)^* \reduce ((\alpha^*)^*).e 
+          \end{aligned}
+        \right \} \reduce \alpha.e &
+      \end{flalign*}
+
+      \begin{flalign*}
+        & ((e^*)^*)^* \reduce \left \{
+          \begin{aligned}
+            & \textsc{(Double*)} && \\
+            & \textsc{(Double*)} &&
+          \end{aligned}
+        \right \} \reduce e^* &
+      \end{flalign*}
+      \textbf{Remark:} The \textsc{(Double*)} rule can overlap with itself.
+
+      \begin{flalign*}
+        & ((e^\top)^*)^* \reduce \left \{
+          \begin{aligned}
+            & \textsc{(Double*)} && \\
+            & \textsc{(T*)} && ((e^*)^\top)^* \reduce ((e^*)^*)^\top 
+          \end{aligned}
+        \right \} \reduce e^\top &
+      \end{flalign*}
+
+      \begin{flalign*}
+        & ((e_1 + e_2)^*)^* \reduce \left \{
+          \begin{aligned}
+            & \textsc{(Double*)} && \\
+            & \textsc{(Add*)} && (e_1^* + e_2^*)^* \reduce (e_1^*)^* + (e_2^*)^*
+          \end{aligned}
+        \right \} \reduce e_1 + e_2 &
+      \end{flalign*}
+      \textbf{Remark:} Similar for $((e_1 \cdot e_2)^*)^*$, $((e_1 \otimes e_2)^*)^*$.
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \item \textbf{transpose critical pairs}
+    
+      The critical pairs related to transpose reduction rules are similar to those of conjugate.
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \item \textbf{critical pairs containing} \textsc{(Scr0)}
+    
+      \begin{flalign*}
+        & 0.\mathbf{0}_{\tau, \sigma} \reduce \left \{
+          \begin{aligned}
+            & \textsc{(Scr0)} && \\
+            & \textsc{(ScrZero)} && 
+          \end{aligned}
+        \right \} \reduce \mathbf{0}_{\tau, \sigma} &
+      \end{flalign*}
+
+      \begin{flalign*}
+        & 0.\delta_{s, t}.e \reduce \left \{
+          \begin{aligned}
+            & \textsc{(Scr0)} && \\
+            & \textsc{(ScrDelta)} && \delta_{s, t}.0.e \reduce \delta_{s, t}.\mathbf{0}_{\tau, \sigma}
+          \end{aligned}
+        \right \} \reduce \mathbf{0}_{\tau, \sigma} \qquad (\Gamma \vdash e : [\tau, \sigma]) &
+      \end{flalign*}
+
+      \begin{flalign*}
+        & 0.\alpha.e \reduce \left \{
+          \begin{aligned}
+            & \textsc{(Scr0)} && \\
+            & \textsc{(ScrScr)} && (0 \times \alpha).e
+          \end{aligned}
+        \right \} \reduce \mathbf{0}_{\tau, \sigma} \qquad (\Gamma \vdash e : [\tau, \sigma]) &
+      \end{flalign*}
+
+      \begin{flalign*}
+        & 0.(e_1 + e_2) \reduce \left \{
+          \begin{aligned}
+            & \textsc{(Scr0)} && \\
+            & \textsc{(ScrDist)} && 0.e_1 + 0.e_2 \reduce \mathbf{0}_{\tau, \sigma} + 0.e_2 \reduce \mathbf{0}_{\tau, \sigma} + \mathbf{0}_{\tau, \sigma}
+          \end{aligned}
+        \right \} \reduce \mathbf{0}_{\tau, \sigma} \qquad (\Gamma \vdash (e_1 + e_2) : [\tau, \sigma]) &
+      \end{flalign*}
+
+      \begin{flalign*}
+        & 0.e + \beta.e \reduce \left \{
+          \begin{aligned}
+            & \textsc{(Scr0)} && \mathbf{0}_{\tau, \sigma} + \beta.e \\
+            & \textsc{(Fac2)} && (0 + \beta).e
+          \end{aligned}
+        \right \} \reduce \beta.e \qquad (\Gamma \vdash e : [\tau, \sigma]) &
+      \end{flalign*}
+      \textbf{Remark:} Similar for the \textsc{(Scr0)-(Fac1)} pair from $0.e + e$
+
+      \begin{flalign*}
+        & (0.u) \cdot v \reduce \left \{
+          \begin{aligned}
+            & \textsc{(Scr0)} && \mathbf{0}_{\tau, \sigma} \cdot v \\
+            & \textsc{(MulScrL)} && 0.(u \cdot v)
+          \end{aligned}
+        \right \} \reduce \mathbf{0}_{\rho, \sigma} \qquad (\Gamma \vdash u : [\tau, \sigma], \Gamma \vdash v : [\rho, \tau]) &
+      \end{flalign*}
+      \textbf{Remark:} Similar for the \textsc{(Scr0)-(MulScrR)} pair from $u \cdot (0.v)$, the \textsc{(Scr0)-(TsrScrL)} pair from $(0.u) \otimes v$ and the \textsc{(Scr0)-(TsrScrR)} pair from $u \otimes (0.v)$.
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \item \textbf{critical pairs containing} \textsc{(Scr1)}
+      
+      \begin{flalign*}
+        & 1.\mathbf{0}_{\tau, \sigma} \reduce \left \{
+          \begin{aligned}
+            & \textsc{(Scr1)} && \\
+            & \textsc{(ScrZero)} && 
+          \end{aligned}
+        \right \} \reduce \mathbf{0}_{\tau, \sigma} &
+      \end{flalign*}
+
+
+      \begin{flalign*}
+        & 1.\delta_{s, t}.e \reduce \left \{
+          \begin{aligned}
+            & \textsc{(Scr1)} && \\
+            & \textsc{(ScrDelta)} && \delta_{s, t}.1.e
+          \end{aligned}
+        \right \} \reduce \delta_{s, t}.e &
+      \end{flalign*}
+
+      \begin{flalign*}
+        & 1.\alpha.e \reduce \left \{
+          \begin{aligned}
+            & \textsc{(Scr1)} && \\
+            & \textsc{(ScrScr)} && (1 \times \alpha).e
+          \end{aligned}
+        \right \} \reduce \alpha.e &
+      \end{flalign*}
+
+      \begin{flalign*}
+        & 1.(e_1 + e_2) \reduce \left \{
+          \begin{aligned}
+            & \textsc{(Scr1)} && \\
+            & \textsc{(ScrDist)} && 1.e_1 + 1.e_2 \reduce e_1 + 1.e_2
+          \end{aligned}
+        \right \} \reduce e_1 + e_2 &
+      \end{flalign*}
+
+      \begin{flalign*}
+        & 1.e + \beta.e \reduce \left \{
+          \begin{aligned}
+            & \textsc{(Scr1)} && e + \beta.e \\
+            & \textsc{(Fac2)} && 
+          \end{aligned}
+        \right \} \reduce (1 + \beta).e &
+      \end{flalign*}
+      \textbf{Remark:} Similar for the \textsc{(Scr1)-(Fac1)} pair from $1.e + e$.
+
+      \begin{flalign*}
+        & (1.u) \cdot v \reduce \left \{
+          \begin{aligned}
+            & \textsc{(Scr1)} && \\
+            & \textsc{(MulScrL)} && 1.(u \cdot v)
+          \end{aligned}
+        \right \} \reduce u \cdot v &
+      \end{flalign*}
+      \textbf{Remark:} Similar for the \textsc{(Scr1)-(MulScrR)} pair from $u \cdot (1.v)$, the \textsc{(Scr1)-(TsrScrL)} pair from $(1.u) \otimes v$ and the \textsc{(Scr1)-(TsrScrR)} pair from $u \otimes (1.v)$.
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \item \textbf{critical pairs containing} \textsc{(ScrZero)}
+
+      \begin{flalign*}
+        & \alpha.\mathbf{0}_{\tau, \sigma} + \beta.\mathbf{0}_{\tau, \sigma} \reduce \left \{
+          \begin{aligned}
+            & \textsc{(ScrZero)} && \mathbf{0}_{\tau, \sigma} + \beta.\mathbf{0}_{\tau, \sigma} \reduce \mathbf{0}_{\tau, \sigma} + \mathbf{0}_{\tau, \sigma} \\
+            & \textsc{(Fac2)} && (\alpha + \beta). \mathbf{0}_{\tau, \sigma} 
+          \end{aligned}
+          \right \} \reduce \mathbf{0}_{\tau, \sigma} &
+        \end{flalign*}
+        \textbf{Remark:} Similar for the \textsc{(ScrZero)-(Fac1)} pair from $\alpha.\textbf{0}_{\tau, \sigma} + \textbf{0}_{\tau, \sigma}$.
+          
+        \begin{flalign*}
+          & (\alpha.\textbf{0}_{\tau, \sigma}) \cdot v \reduce \left \{
+            \begin{aligned}
+              & \textsc{(ScrZero)} && \textbf{0}_{\tau, \sigma} \cdot v\\
+              & \textsc{(MulScrL)} && \alpha.(\textbf{0}_{\tau, \sigma} \cdot v)
+            \end{aligned}
+          \right \} \reduce \textbf{0}_{\rho, \sigma} \qquad (\Gamma \vdash v : [\rho, \tau])&
+        \end{flalign*}
+        \textbf{Remark:} Similar for the \textsc{(ScrZero)-(MulScrR)} pair from $u \cdot (\alpha.\textbf{0}_{\tau, \sigma})$, the \textsc{(ScrZero)-(TsrScrL)} pair from $(\alpha.\textbf{0}_{\tau, \sigma}) \otimes v$ and the \textsc{(ScrZero)-(TsrScrR)} pair from $u \otimes (\alpha.\textbf{0}_{\tau, \sigma})$.
+  
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \item \textbf{critical pairs containing} \textsc{(AddZero)}
+    
+      \begin{flalign*}
+        & \mathbf{0}_{\tau, \sigma} + \mathbf{0}_{\tau, \sigma} \reduce 
+        \left \{
+          \begin{aligned}
+            & \textsc{(AddZero)} && \\
+            & \textsc{(AddZero)} && 
+          \end{aligned}
+          \right \} \reduce \mathbf{0}_{\tau, \sigma} &
+      \end{flalign*}
+      \textbf{Remark:} The \textsc{(AddZero)} can overlap with itself.
+
+
+        \begin{flalign*}
+          & \alpha.\mathbf{0}_{\tau, \sigma} + \mathbf{0}_{\tau, \sigma} \reduce \left \{
+            \begin{aligned}
+              & \textsc{(AddZero)} && \alpha.\mathbf{0}_{\tau, \sigma} \\
+              & \textsc{(Fac1)} && (\alpha + 1). \mathbf{0}_{\tau, \sigma} 
+            \end{aligned}
+            \right \} \reduce \mathbf{0}_{\tau, \sigma} &
+          \end{flalign*}
+
+      \begin{flalign*}
+        & \mathbf{0}_{\tau, \sigma} + \mathbf{0}_{\tau, \sigma} \reduce 
+        \left \{
+          \begin{aligned}
+            & \textsc{(AddZero)} && \\
+            & \textsc{(Fac0)} && (1 + 1). \mathbf{0}_{\tau, \sigma}
+          \end{aligned}
+          \right \} \reduce \mathbf{0}_{\tau, \sigma} &
+      \end{flalign*}     
+
+        \begin{flalign*}
+          & e \cdot (u + \mathbf{0}_{\tau, \sigma}) \reduce \left \{
+            \begin{aligned}
+              & \textsc{(AddZero)} && \\
+              & \textsc{(MulDistR)} && e \cdot u + e \cdot \mathbf{0}_{\tau, \sigma} \reduce e \cdot u + \mathbf{0}_{\tau, \rho}
+            \end{aligned}
+          \right \} \reduce e \cdot u \qquad (\Gamma \vdash e : [\sigma, \rho])&
+        \end{flalign*}
+        \textbf{Remark:} Similar for $(u + \mathbf{0}_{\tau, \sigma}) \cdot e$, $e \otimes (u + \mathbf{0}_{\tau, \sigma})$ and $(u + \mathbf{0}_{\tau, \sigma}) \otimes e$.
+
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \item \textbf{critical pairs containing} \textsc{(Fac2)}/\textsc{(Fac1)}/\textsc{(Fac0)}
+
+      \begin{flalign*}
+        & \alpha.e + \alpha.e \reduce 
+        \left \{
+          \begin{aligned}
+            & \textsc{(Fac2)} && \\
+            & \textsc{(Fac0)} && (1 + 1). \alpha. e \reduce ((1 + 1) \times \alpha).e
+          \end{aligned}
+          \right \} \reduce (\alpha + \alpha).e &
+      \end{flalign*}     
+        
+        \begin{flalign*}
+          & e \cdot (\alpha.u + \beta.u) \reduce \left \{
+            \begin{aligned}
+              & \textsc{(Fac2)} && e \cdot ((\alpha + \beta).u)\\
+              & \textsc{(MulDistR)} && e \cdot (\alpha.u) + e \cdot (\beta.u) \reduce \cdots \reduce \alpha.(e \cdot u) + \beta.(e \cdot u)
+            \end{aligned}
+          \right \} \reduce (\alpha + \beta).(e \cdot u) &
+        \end{flalign*}
+        \textbf{Remark:} Similar for $(\alpha.u + \beta.u) \cdot e$, $e \otimes (\alpha.u + \beta.u)$ and $(\alpha.u + \beta.u) \otimes e$. Also similar for the critical pairs between \textsc{(Fac1)}, \textsc{(Fac0)} and \textsc{(MulDistL(R))}, \textsc{(TsrDistL(R))}.
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \item \textbf{critical pairs containing} \textsc{(MulZeroL)}/\textsc{(MulZeroR)}
+        
+          \begin{flalign*}
+            & \mathbf{0}_{\rho, \sigma} \cdot \mathbf{0}_{\tau, \rho} \reduce \left \{
+                \begin{aligned}
+                  & \textsc{(MulZeroL)} \\
+                  & \textsc{(MulZeroR)}
+                \end{aligned}
+                \right \} \reduce \mathbf{0}_{\tau, \sigma} &
+          \end{flalign*}
+
+          \begin{flalign*}
+            & \mathbf{0}_{\tau, \sigma} \cdot \mathbf{1} \reduce \left \{
+                \begin{aligned}
+                  & \textsc{(MulZeroL)} \\
+                  & \textsc{(MulIdR)}
+                \end{aligned}
+                \right \} \reduce \mathbf{0}_{\tau, \sigma} &
+          \end{flalign*}
+          \textbf{Remark:} Similar for $\mathbf{1} \cdot \mathbf{0}_{\tau, \sigma}$.
+
+          \begin{flalign*}
+            & (\alpha.e) \cdot \mathbf{0}_{\tau, \sigma} \reduce \left \{
+                \begin{aligned}
+                  & \textsc{(MulZeroR)} && \\
+                  & \textsc{(MulScrL)} && \alpha.(e \cdot \mathbf{0}_{\tau, \sigma})
+                \end{aligned}
+                \right \} \reduce \mathbf{0}_{\tau, \rho} \qquad (\Gamma \vdash e : [\sigma, \rho]) &
+          \end{flalign*}
+          \textbf{Remark:} Similar for $\mathbf{0}_{\tau, \sigma} \cdot (\alpha.e)$, $(\delta_{s, t}.e)\cdot \mathbf{0}_{\tau, \sigma}$ and $\mathbf{0}_{\tau, \sigma} \cdot (\delta_{s, t}.e)$.
+
+          \begin{flalign*}
+            & \mathbf{0}_{\rho, \sigma} \cdot (e_1 + e_2) \reduce \left \{
+              \begin{aligned}
+                & \textsc{(MulZeroL)} && \\
+                & \textsc{(MulDistR)} && \mathbf{0}_{\rho, \sigma} \cdot e_1 + \mathbf{0}_{\rho, \sigma} \cdot e_2 \reduce \mathbf{0}_{\tau, \sigma} + \mathbf{0}_{\tau, \sigma} 
+              \end{aligned}
+              \right \} \reduce \mathbf{0}_{\tau, \sigma} \qquad (\Gamma \vdash (e_1 + e_2) : [\tau, \rho])&
+          \end{flalign*}
+          \textbf{Remark:} Similar for $(e_1 + e_2) \cdot \mathbf{0}_{\tau, \rho}$
+          
+          \begin{flalign*}
+            & \mathbf{0}_{\tau, \sigma} \cdot (e \otimes b) \reduce \left \{
+              \begin{aligned}
+                & \textsc{(MulZeroL)} && \\
+                & \textsc{(ReFac1RL)} && e \otimes (\textbf{0}_{\tau, \sigma} \cdot b) \reduce e \otimes \mathbf{0}_{\rho, \sigma}
+              \end{aligned}
+              \right \} \reduce \mathbf{0}_{(\eta * \rho), \sigma} \qquad (\Gamma \vdash e : [\eta, \unit], \Gamma \vdash b : [\rho, \tau])&
+          \end{flalign*}
+          \textbf{Remark:} Similar for the critical pairs between \textsc{(MulZeroL)-(ReFac1RR)}, \textsc{(MulZeroR)-(ReFac1LL)} and \textsc{(MulZeroR)-(ReFac1LR)}.
+
+          \begin{flalign*}
+            & \mathbf{0}_{\unit, \sigma} \cdot e \reduce \left \{
+              \begin{aligned}
+                & \textsc{(MulZeroL)} && \\
+                & \textsc{(ReFac0)} && \mathbf{0}_{\unit, \sigma} \otimes e
+              \end{aligned}
+              \right \} \reduce \mathbf{0}_{\tau, \sigma} \qquad (\Gamma \vdash e : [\tau, \unit]) &
+          \end{flalign*}
+          \textbf{Remark:} Similar for $e \cdot \mathbf{0}_{\tau, \unit}$.
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \item \textbf{critical pairs containing} \textsc{(MulIdL)}/\textsc{(MulIdR)}
+        
+        All critical pairs are trivial.
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \item \textbf{critical pairs containing} \textsc{(MulScrL)}/\textsc{(MulScrR)}/\textsc{(MulDeltaL)}/\textsc{(MulDeltaR)}
+        
+        All critical pairs are trivial.
+        
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \item \textbf{critical pairs containing} \textsc{(MulBraKet)}
+
+        \begin{flalign*}
+            & \bra{s} \cdot \ket{t} \reduce \left \{
+              \begin{aligned}
+                & \textsc{(MulBraKet)} && \delta_{s, t}.\mathbf{1} \reduce \delta_{\utt, \utt}.\mathbf{1} \\
+                & \textsc{(ReFac0)} && \bra{s} \otimes \ket{t} \reduce \bra{\utt} \otimes \ket{\utt} \reduce \cdots
+              \end{aligned}
+              \right \} \reduce \mathbf{1}
+              \qquad (\Gamma \vdash s : \unit, \Gamma \vdash t : \unit) &
+          \end{flalign*}
+
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \item \textbf{critical pairs containing} \textsc{(MulDistL)}/\textsc{(MulDistR)}
+
+          \begin{flalign*}
+            & (a_1 + a_2) \cdot (b_1 + b_2) \reduce \left \{
+              \begin{aligned}
+                & \textsc{(MulDistR)} && (a_1 + a_2) \cdot b_1 + (a_1 + a_2) \cdot b_2  \\
+                & \textsc{(MulDistL)} && a_1 \cdot (b_1 + b_2) + a_2 \cdot (b_1 + b_2)
+              \end{aligned}
+            \right \} \\
+            & \qquad \qquad \reduce a_1 \cdot b_1 + a_1 \cdot b_2 + a_2 \cdot b_1 + a_2 \cdot b_2 &
+          \end{flalign*}
+
+          \begin{flalign*}
+            & e \cdot (u + v) \reduce \left \{
+              \begin{aligned}
+                & \textsc{(MulDistR)} && e \cdot u + e \cdot v  \\
+                & \textsc{(ReFac0)} && e \otimes (u + v) 
+              \end{aligned}
+            \right \} \reduce e \otimes u + e \otimes v \qquad (\Gamma \vdash e : [\tau, \unit], \Gamma \vdash (u + v) : [\unit, \sigma]) &
+          \end{flalign*}
+          \textbf{Remark:} Similar for $(u + v) \cdot e$.
+
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \item \textbf{critical pairs containing} \textsc{(ReFac2)}/\textsc{(ReFac1)}/\textsc{(ReFac0)}
+
+          \begin{flalign*}
+            & (a_1 \otimes a_2) \cdot (b_1 \otimes b_2) \reduce \left \{
+              \begin{aligned}
+                & \textsc{(ReFac2)} && (a_1 \cdot b_1) \otimes (a_2 \cdot b_2) \\
+                & && \reduce (a_1 \otimes b_1) \otimes (a_2 \otimes b_2) \\
+                & && \reduce ((a_1 \otimes b_1) \otimes a_2) \otimes b_2 \\
+                & \textsc{(ReFac0)} && (a_1 \otimes a_2) \otimes (b_1 \otimes b_2) \\
+                & && \reduce ((a_1 \otimes a_2) \otimes b_1) \otimes b_2
+              \end{aligned}
+            \right \} \reduce 
+            \left \{
+              \begin{aligned}
+                & ((a_1 \otimes b_1) \otimes a_2) \otimes b_2 & (b_1 <_{RPO} a_2) \\
+                & ((a_1 \otimes a_2) \otimes b_1) \otimes b_2 & (a_2 <_{RPO} b_2)
+              \end{aligned}
+            \right . \\
+            & (\Gamma \vdash a_1 : [\unit, \tau_1], \Gamma \vdash a_2 : [\unit, \tau_2], \Gamma \vdash b_1 : [\sigma_1, \unit], \Gamma \vdash b_2 : [\sigma_2, \unit]) &
+          \end{flalign*}
+
+          \textbf{Remark:} Similar for other critical pairs among \textsc{(ReFac2)}, \textsc{(ReFac1)} and \textsc{(ReFac0)}.
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \item \textbf{critical pairs containing} \textsc{(TsrZeroL)}/\textsc{(TsrZeroR)}
+        
+          \begin{flalign*}
+            & \mathbf{0}_{\tau, \sigma} \otimes \mathbf{0}_{\tau', \sigma'}\reduce \left \{
+              \begin{aligned}
+                & \textsc{(TsrZeroL)} && \\
+                & \textsc{(TsrZeroR)} &&
+              \end{aligned}
+              \right \} \reduce \mathbf{0}_{(\tau * \tau'), (\sigma * \sigma')} & 
+          \end{flalign*}
+
+          \begin{flalign*}
+            & \mathbf{0}_{\tau, \sigma} \otimes \mathbf{1} \reduce \left \{
+              \begin{aligned}
+                & \textsc{(TsrZeroL)} && \\
+                & \textsc{(TsrIdR)} &&
+              \end{aligned}
+              \right \} \reduce \mathbf{0}_{\tau, \sigma} & 
+          \end{flalign*}
+          \textbf{Remark:} Similar for $\mathbf{1} \otimes \mathbf{0}_{\tau, \sigma}$.
+
+          \begin{flalign*}
+            & (\alpha.u) \otimes \mathbf{0}_{\tau', \sigma'} \reduce \left \{
+              \begin{aligned}
+                & \textsc{(TsrZeroR)} && \\
+                & \textsc{(TsrScrL)} && \alpha.(u \otimes \mathbf{0}_{\tau', \sigma'})
+              \end{aligned}
+              \right \} \reduce \mathbf{0}_{(\tau * \tau'), (\sigma * \sigma')} \qquad (\Gamma \vdash u : [\tau, \sigma]) & 
+          \end{flalign*}
+          \textbf{Remark:} Similar for $\mathbf{0}_{\tau, \sigma}\otimes (\alpha.v)$, $(\delta_{s, t}.u) \otimes \mathbf{0}_{\tau', \sigma'}$ and $\mathbf{0}_{\tau, \sigma} \otimes (\delta_{s, t}.v)$.
+
+
+          \begin{flalign*}
+            & \mathbf{0}_{\tau, \sigma} \otimes (u + v) \reduce \left \{
+              \begin{aligned}
+                & \textsc{(TsrZeroL)} && \\
+                & \textsc{(TsrDistR)} && \mathbf{0}_{\tau, \sigma} \otimes u + \mathbf{0}_{\tau, \sigma} \otimes v \reduce \mathbf{0}_{(\tau * \tau'), (\sigma * \sigma')} + \mathbf{0}_{(\tau * \tau'), (\sigma * \sigma')}
+              \end{aligned}
+              \right \} \reduce \mathbf{0}_{(\tau * \tau'), (\sigma * \sigma')} \\
+              & (\Gamma \vdash (u + v) : [\tau', \sigma']) & 
+          \end{flalign*}
+          \textbf{Remark:} Similar for $(u + v) \otimes \mathbf{0}_{\tau, \sigma}$.
+
+
+          \textbf{Remark:} The critical pairs between \textsc{(TsrZeroL)}, \textsc{(TsrZeroR)} and \textsc{(TsrSort0)}, \textsc{(TsrSort1)}, \textsc{(TsrAssoc)} are trivial.
+
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \item \textbf{critical pairs containing} \textsc{(TsrIdL)}/\textsc{(TsrIdR)}
+        
+        \begin{flalign*}
+          & \mathbf{1} \otimes \mathbf{1} \reduce \left \{
+            \begin{aligned}
+              & \textsc{(TsrIdL)} && \\
+              & \textsc{(TsrIdR)} &&
+            \end{aligned}
+            \right \} \mathbf{1} & 
+        \end{flalign*}
+
+        
+        \begin{flalign*}
+          & \mathbf{1} \otimes \alpha.e \reduce \left \{
+            \begin{aligned}
+              & \textsc{(TsrIdL)} && \\
+              & \textsc{(TsrScrR)} && \alpha.(\mathbf{1} \otimes e)
+            \end{aligned}
+            \right \} \reduce \alpha.e & 
+        \end{flalign*}
+        \textbf{Remark:} Similar for $\alpha.e \otimes \mathbf{1}$, $\mathbf{1} \otimes (\delta_{s, t}.e)$ and $(\delta_{s, t}.e) \otimes \mathbf{1}$.
+        
+          \begin{flalign*}
+            & \mathbf{1} \otimes (u + v) \reduce \left \{
+              \begin{aligned}
+                & \textsc{(TsrIdL)} && \\
+                & \textsc{(TsrDistR)} && \mathbf{1} \otimes u + \mathbf{1} \otimes v
+              \end{aligned}
+              \right \} \reduce u + v & 
+          \end{flalign*}
+          \textbf{Remark:} Similar for $(u + v) \otimes \mathbf{1}$.
+
+          \textbf{Remark:} The critical pairs between \textsc{(TsrIdL)}, \textsc{(TsrIdR)} and \textsc{(TsrSort0)}, \textsc{(TsrSort1)}, \textsc{(TsrAssoc)} are trivial.
+
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \item \textbf{critical pairs containing} \textsc{(TsrScrL)}/\textsc{(TsrScrR)}/\textsc{(TsrDeltaL)}/\textsc{(TsrDeltaR)}
+
+        \textbf{Remark:} The critical pairs between \textsc{(TsrScrL)}, \textsc{(TsrScrR)}, \textsc{(TsrDeltaL)}, \textsc{(TsrDeltaR)} and \textsc{(TsrSort0)}, \textsc{(TsrSort1)}, \textsc{(TsrAssoc)} are trivial.
+
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \item \textbf{critical pairs containing} \textsc{(TsrDistL)}/\textsc{(TsrDistR)}
+        
+        \begin{flalign*}
+          & (a + b)\otimes (u + v) \reduce \left \{
+            \begin{aligned}
+              & \textsc{(TsrDistL)} && (a + b) \otimes u + (a + b) \otimes v \\
+              & \textsc{(TsrDistR)} && a \otimes (u + v) + b \otimes (u + v)
+            \end{aligned}
+            \right \} \reduce a \otimes u + a \otimes v + b \otimes u + b \otimes v & 
+        \end{flalign*}
+
+
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \item \textbf{about} \textsc{(TsrSort0)}, \textsc{(TsrSort1)} and \textsc{(TsrAssoc)}
+        
+        These three rules are confluent because they will work together and transform any string of tensor product into a sorted normal form.
+        
+      \end{itemize}
+
+\end{proof}
