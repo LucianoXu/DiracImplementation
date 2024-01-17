@@ -1,0 +1,5 @@
+(VAR ys x xs)
+(RULES
+   @([],ys) -> ys
+   @(::(x,xs),ys) -> ::(x,@(xs,ys))
+)

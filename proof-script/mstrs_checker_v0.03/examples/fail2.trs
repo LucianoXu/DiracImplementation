@@ -1,0 +1,7 @@
+(SIG
+   (f    o -> o)
+   (g    o -> o)
+)
+(RULES
+   f(x,y) -> g(x)
+)

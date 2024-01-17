@@ -1,0 +1,43 @@
+
+mstrsck v0.03
+=============
+
+Syntax checker for many-sorted TRSs in MSTRS format
+
+This tool checks the following adequateness of given MSTRS specification:
+ * syntax check
+ * variable conditions
+ * well-sortedness
+ * whether there exist multiple sorts 
+
+It quetly exits if no problem found. Otherwise it reports some error.
+
+Options:
+ -t : It outputs the first-order TRS if the signature 
+      consists of one sort and many-sorted TRS otherwise.
+ -tt : It outputs the first-order TRS obtained by identifying all sorts.
+ -r : It reads a first-order TRS and output the many-sorted TRS 
+      obtained by attaching a unique sort "o".
+
+The system is tested on SML/NJ v110.77. You need SML/NJ to be installed 
+on your box. 
+
+To compile the tool on a Linux box, run 
+ $ make
+to obtain "mstrsck.x86-linux".
+
+To run the command, 
+ $ sml @SMLload=mstrsck.x86-linux filename
+
+For non x86-linux systems, invoke the SML/NJ interpreter, 
+and run
+ - CM.make "sources.cm";
+ - SMLofNJ.exportFn ("mstrsck", Main.main);
+to compile. Also replace "x86-linux" accordingly to run.
+
+You can also compile to a native code on a Linux box using mlton. 
+For this, run
+ $ make native
+to obtain "mstrsck".
+
+You can find sample files in the director ./examples.

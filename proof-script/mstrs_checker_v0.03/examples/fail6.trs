@@ -1,0 +1,6 @@
+(SIG
+   (f   A -> A)
+)
+(RULES
+   f(x) -> f(y)
+)

@@ -1,0 +1,21 @@
+Group is
+#if defined (NEW_CM)
+	$/basis.cm
+	$/smlnj-lib.cm
+	$/ml-yacc-lib.cm
+#else
+	smlnj-lib.cm
+	ml-yacc-lib.cm
+#endif
+	./util.sml
+	./term.sml
+
+	./mstrs.yacc.sig
+	./mstrs.lex.sml
+	./mstrs.yacc.sml
+
+	./fotrs.yacc.sig
+	./fotrs.lex.sml
+	./fotrs.yacc.sml
+
+	./main.sml

@@ -1,0 +1,9 @@
+(SIG
+   (@    List List -> List)
+   (::   Nat List -> List)
+   ([]   -> List)
+)
+(RULES
+   @([],ys) -> ys
+   @(::(x,xs),ys) -> ::(x,@(xs,ys)))
+)
