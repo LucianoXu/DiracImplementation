@@ -1,0 +1,23 @@
+let V = vars "Y X" ;
+
+let F = signature "
+ 0 : 0;
+ackout, u11, u22, s : 1;
+ackin, u21 : 2;"
+;
+
+let R = HTRS {} F V "
+ ackin(0,X) -> ackout(s(X));
+ ackin(s(X),0) -> u11(ackin(X,s(0)));
+ u11(ackout(X)) -> ackout(X);
+ ackin(s(X), s(Y)) -> u21(ackin(s(X), Y), X);
+ u21(ackout(X),Y) -> u22(ackin(Y,X));
+ u22(ackout(X)) -> ackout(X);
+";
+
+termcrit "minimal" ; 
+polyinterpkind {("linear",1)} ;
+#time on;
+h_termination  R;
+
+#quit;

@@ -1,0 +1,29 @@
+
+
+operators 
+
+  0,h : constant
+  S : unary
+  . : infix binary
+  s : unary
+
+  x,y,z : variable
+
+% theory A(.)
+
+axioms 
+
+  (x.y).z = x.(y.z) ;
+  s(x).s(S(S(y))).s(z) = s(S(x)).s(y).s(S(z)) ;
+  s(x).s(S(S(y))).h = s(S(x)).s(y).s(S(0)).h ;
+  h.s(S(S(y))).s(z) = h.s(S(0)).s(y).s(S(z)) ;
+  h.s(S(S(y))).h = h.s(S(0)).s(y).s(S(0)).h ;
+
+
+problems
+
+  reduce h.s(S(S(S(S(S(S(S(0)))))))).h ;
+  reduce h.s(S(S(S(S(S(S(S(S(0))))))))).h ;
+end
+
+  

@@ -1,6 +1,0 @@
-(SIG
-   (f    o -> o)
-)
-(RULES
-   f(x) -> g(x)
-)

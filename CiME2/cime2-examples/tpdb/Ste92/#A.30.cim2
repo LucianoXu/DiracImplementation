@@ -1,0 +1,39 @@
+(***************************************************************************)
+(*                                                                         *)
+(*         This file was generated using the testocime tool                *)
+(*                                                                         *)
+(***************************************************************************)
+
+
+let X = vars "z y x ";
+(* 3 variables defined *)
+
+let F = signature "
+	nil: 0;
+	minsort: 1;
+	min: 2;
+	le: 2;
+	if: 3;
+	eq: 2;
+	del: 2;
+	cons: 2;
+";
+(* 8 non-variable symbols defined *)
+
+let R = HTRS {} F X "
+	minsort(nil) -> nil;
+	minsort(cons(x, y)) -> cons(min(x, y), minsort(del(min(x, y), cons(x, y))));
+	min(x, nil) -> x;
+	min(x, cons(y, z)) -> if(le(x, y), min(x, z), min(y, z));
+	del(x, nil) -> nil;
+	del(x, cons(y, z)) -> if(eq(x, y), z, cons(y, del(x, z)));
+";
+(* 6 rules *)
+
+termcrit "minimal";
+termcrit "graph";
+polyinterpkind {("linear",2);("simple",2);("simple",6)};
+#time on;
+h_termination R;
+
+#quit;

@@ -1,0 +1,24 @@
+(* Example borrowed from G. Karpilosky, Schur multipliers *)
+
+
+let F = word_signature "a b a' b'";
+
+let R = SRS F "
+a^5 -> ;
+b^2 -> ;
+b a b' -> a^4;
+a a' -> ;
+a' a -> ;
+b b' -> ;
+b' b -> ;
+";
+
+let o = length_lex (word_precedence F "b' > a' > b > a");
+
+#time;
+
+let G4 = word_completion o R ;
+
+#mem;
+
+word_counter G4; (* should be 10 *)

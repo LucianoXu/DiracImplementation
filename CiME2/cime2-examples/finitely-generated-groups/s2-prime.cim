@@ -1,0 +1,50 @@
+%***************************************************************************
+%
+%
+% Comple'tion du groupe $S_3$
+%
+%
+%***************************************************************************
+
+operators
+  . : infix binary
+  I : unary
+  e : constant
+  x,y,z : variable
+  a,b,a',b' : constant
+
+axioms
+  (x.y).z = x.(y.z);
+  x.e = x;
+  e.x = x;
+  x.I(x) = e;
+  I(x).x = e;
+  x.(I(x).y) = y;
+  I(x).(x.y) = y;
+  I(e) = e;
+  I(I(x)) = x;
+  I(x.y) = I(y).I(x) ;
+  a.a = e;
+  b.b = e;
+  a.b.a'.b'.a.b.a'.b'.a.b.a'.b' = e;
+  a.a' = e;
+  b.b' = e;
+  a'.a = e;
+  b'.b = e;
+  a.b = e ;
+
+order
+%  rpo(b'=a'>b=a>I>e>. ; . lrlex)
+
+  lexico( rpo( I>.>a'>a>e , a=b<a'=b' ; . lrlex) ;
+          rpo( a>b ; . lrlex) ;
+          interactive )
+
+end
+
+
+result :
+
+
+
+

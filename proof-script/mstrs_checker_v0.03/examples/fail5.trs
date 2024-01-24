@@ -1,6 +1,0 @@
-(SIG
-   (f   A B -> B)
-)
-(RULES
-   f(x,y) -> x
-)

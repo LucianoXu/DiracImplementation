@@ -1,0 +1,30 @@
+(*
+
+append(nil,L,L).
+append(cons(X,L1),L2,cons(X,L3)) :- append(L1,L2,L3).
+
+append(i,i,o)
+
+*)
+
+let F = signature "
+niltree, nil : constant;
+flat_in, flat_out, u2 : unary;
+cons, u1 : binary;
+tree : 3;
+";
+
+let X = vars "x t y t1 t2 t3 l";
+
+let R = TRS F X "
+flat_in(niltree) -> flat_out(nil) ;
+flat_in(tree(x,niltree,t)) -> u1(flat_in(t),x) ;
+u1(flat_out(l),x) -> flat_out(cons(x,l)) ;
+flat_in(tree(x,tree(y,t1,t2),t3)) -> u2(flat_in(tree(y,t1,tree(x,t2,t3)))) ;
+u2(flat_out(l)) -> flat_out(l) ;
+";
+
+termcrit "dp";
+termpolybound 2;
+#time on;
+termination R;

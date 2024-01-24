@@ -1,0 +1,43 @@
+let F = signature "
+0 : constant;
+s : unary;
+ack_in : binary;
+ack_out : unary;
+u21 : binary;
+u11, u22 : unary;
+";
+
+let X = vars "n m";
+
+let R = HTRS {} F X "
+ack_in(0,n) -> ack_out(s(n))  ;
+ack_in(s(m),0) -> u11(ack_in(m,s(0))) ; 
+u11(ack_out(n)) -> ack_out(n) ;
+ack_in(s(m), s(n)) -> u21(ack_in(s(m), n), m) ;
+u21(ack_out(n),m) -> u22(ack_in(m,n)) ;
+u22(ack_out(n)) -> ack_out(n) ;
+";
+
+termcrit "dp";
+polyinterpkind {("linear",1)};
+#verbose ;
+#time on;
+timelimit "10";
+termcrit "minimal";
+h_termination R;
+output_last_proof "";
+(*
+
+The DP graph is :
+
+0: < 'u21`(ack_out(n),m) , 'ack_in`(m,n) >
+1: < 'u21`(ack_out(n),m) , 'u22`(ack_in(m,n)) >
+2: < 'ack_in`(s(m),s(n)) , 'ack_in`(s(m),n) >
+3: < 'ack_in`(s(m),s(n)) , 'u21`(ack_in(s(m),n),m) >
+4: < 'ack_in`(s(m),0) , 'ack_in`(m,s(0)) >
+5: < 'ack_in`(s(m),0) , 'u11`(ack_in(m,s(0))) >
+0 -> 2 , 0 -> 3 , 0 -> 4 , 0 -> 5 , 2 -> 2 , 2 -> 3 , 2 -> 4 , 2 -> 5 ,
+3 -> 0 , 3 -> 1 , 4 -> 2 , 4 -> 3 ,
+
+*)
+

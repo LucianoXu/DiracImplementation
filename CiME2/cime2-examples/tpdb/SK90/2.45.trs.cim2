@@ -1,0 +1,36 @@
+(***************************************************************************)
+(*                                                                         *)
+(*         This file was generated using the testocime tool                *)
+(*                                                                         *)
+(***************************************************************************)
+
+
+let X = vars "z y x w v u ";
+(* 6 variables defined *)
+
+let F = signature "
+	true: 0;
+	sum: 3;
+	nil: 0;
+	cond: 2;
+	carry: 3;
+	admit: 2;
+	=: 2;
+	.: 2;
+";
+(* 8 non-variable symbols defined *)
+
+let R = HTRS {} F X "
+	admit(x, nil) -> nil;
+	admit(x, .(u, .(v, .(w, z)))) -> cond(=(sum(x, u, v), w), .(u, .(v, .(w, admit(carry(x, u, v), z)))));
+	cond(true, y) -> y;
+";
+(* 3 rules *)
+
+termcrit "minimal";
+termcrit "graph";
+polyinterpkind {("linear",1);("linear",2);("simple",2)};
+#time on;
+h_termination R;
+
+#quit;

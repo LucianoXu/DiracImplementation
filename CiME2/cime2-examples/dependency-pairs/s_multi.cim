@@ -1,0 +1,45 @@
+operators
+  +,* : AC
+  0 : constant
+  s: unary
+  x,y,z : variable
+
+problems
+
+termination 
+ (
+  x+0 -> x ;  
+  x+s(y) -> s(x+y) ; 
+
+  x*0    -> 0 ;
+  x*s(y) -> x*y+x
+ ) ;
+
+%compare x+0 with x ;
+%compare x+s(y) with s(x+y) ;
+%compare x*0 with 0 ;
+%compare x*s(y) with x*y+x ;
+
+
+order
+lexico(  
+poly(
+[*](x,y)=1.x.y + 2.(x+y) + 2 ; 
+[+](x,y)=0.x.y + 1.(x+y) + 1 ; 
+[s](x)= 1.x+1 ; 
+[0] = 1 )
+;
+poly(
+[*](x,y)=0.x.y + 0.(x+y) + 0 ; 
+[+](x,y)=2.x.y + 2.(x+y) + 1 ; 
+[s](x)= 1.x+1 ; 
+[0] = 1 )  
+)  
+end
+
+
+
+%[*](x,y)=1.x.y + 1.(x+y) + 0 ; 
+%[+](x,y)=0.x.y + 1.(x+y) + 0 ; 
+%[s](x)= 1.x+1 ; 
+%[0] = 2 )  

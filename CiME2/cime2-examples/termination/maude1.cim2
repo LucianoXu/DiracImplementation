@@ -1,0 +1,443 @@
+
+let F_bool = signature " 
+  or_bool, and_bool : 2;
+  if_bool : 3;
+  True, False : 0;
+  ";
+
+let X_bool = vars "x y z";
+
+let R_bool = HTRS {} F_bool X_bool "
+  if_bool(True,x,y) -> x;
+  if_bool(False,x,y) -> y; 
+  or_bool(x,True) -> True;
+  or_bool(x,False) -> x;
+  or_bool(True,x) -> True;
+  or_bool(False,x) -> x;
+  and_bool(True,x) -> x;
+  and_bool(False,x) -> False;
+  and_bool(x,True) -> x;
+  and_bool(x,False) -> False;
+";  
+
+(*
+fmod PROP is
+sorts Nat Var Truth Prop .
+subsort Truth < Prop .
+subsort Var < Prop .
+op t : -> Truth [ctor] .
+op f : -> Truth [ctor] .
+op 0 : -> Nat [ctor] .
+op s : Nat -> Nat [ctor] .
+op v : Nat -> Var [ctor] .         **** variables constructed out of numbers
+op _#_ : Var Var -> Truth [comm] . **** equality of variables 
+op if : Var Prop Prop -> Prop [ctor] .
+op if : Prop Prop Prop -> Prop .
+op not : Prop -> Prop .
+op _or_ : Prop Prop -> Prop .
+op _and_ : Prop Prop -> Prop .
+op (_->_) : Prop Prop -> Prop .
+op _<->_ : Prop Prop -> Prop .
+vars N M : Nat .
+vars P Q R S T : Prop .
+eq v(N) # v(N) = t .
+eq v(0) # v(s(N)) = f .
+eq v(s(N)) # v(s(M)) = v(N) # v(M) .
+eq if(t,P,Q) = P .
+eq if(f,P,Q) = Q .
+eq if(P,t,f) = P .
+eq if(if(P,Q,R),S,T) = if(P,if(Q,S,T),if(R,S,T)) .
+eq not(P) = if(P,f,t) .
+eq P or Q = if(P,t,Q) .
+eq P and Q = if(P,Q,f) .
+eq P -> Q = if(P,Q,t) . 
+eq P <-> Q = if(P,Q,if(Q,f,t)) .
+endfm
+*)
+
+let F_PROP = signature "  
+  (* sorts Nat Var Truth Prop . *)
+  isNat, isVar, isTruth, isProp : unary;
+  (* subsort Truth < Prop . *)
+  (* subsort Var < Prop . *)
+  (* op t : -> Truth [ctor] . *)
+  t : constant;
+  (* op f : -> Truth [ctor] . *)
+  f : constant;
+  (* op 0 : -> Nat [ctor] . *)
+  0 : constant ;
+  (* op s : Nat -> Nat [ctor] . *)
+  s : unary ;
+  u3 : unary ;
+  (* op v : Nat -> Var [ctor] .         
+     **** variables constructed out of numbers *)
+  v : unary ;
+  u4 : unary ;
+  (* op _#_ : Var Var -> Truth [comm] . 
+     **** equality of variables *)
+  # : infix commutative ;
+  u5 : 2 ;  u6 : 1 ;
+  (* op if : Var Prop Prop -> Prop [ctor] . *)
+  (* op if : Prop Prop Prop -> Prop . *)
+  if : 3; (* if1, if2 ?? *)
+  u7 : 3; u8 : 2; u9 : 1;
+  u10 : 3; u11 : 2; u12 : 1;
+  (* op not : Prop -> Prop . *)
+  not : unary ;
+  u13 : 1; 
+  (* op _or_ : Prop Prop -> Prop . *)
+  or : infix 2;
+  u14 : 2 ; u15 : 1;
+  (* op _and_ : Prop Prop -> Prop .*)
+  and : infix 2;
+  u16 : 2 ; u17 : 1;
+  (* op (_->_) : Prop Prop -> Prop . *)
+  implies : infix 2;
+  u18 : 2 ; u19 : 1;
+  (* op _<->_ : Prop Prop -> Prop . *)
+  equiv : infix 2;
+  u20 : 2 ; u21 : 1;
+  (* 
+  vars N M : Nat .
+  vars P Q R S T : Prop .
+  *)
+  (* eq v(N) # v(N) = t . *)
+  u22 : 1 ;
+  (* eq v(0) # v(s(N)) = f . *)
+  u23 : 1 ;
+  (* eq v(s(N)) # v(s(M)) = v(N) # v(M) . *)
+  u24 : 3; u25 : 3;
+  (* eq if(t,P,Q) = P . *)
+  u26 : 3 ; u27 : 2;
+  (* eq if(f,P,Q) = Q . *)
+  u28 : 2 ; u29 : 2;
+  (* eq if(P,t,f) = P . *)
+  u30 : 2;
+  (* eq if(if(P,Q,R),S,T) = if(P,if(Q,S,T),if(R,S,T)) .*)
+  u31,u32,u33,u34,u35 : 6;
+  (* eq not(P) = if(P,f,t) . *)
+  u36 : 2;
+  (* eq P or Q = if(P,t,Q) . *)
+  u37, u38 : 3;
+  (* eq P and Q = if(P,Q,f) . *)
+  u39,u40 : 3;
+  (* eq P -> Q = if(P,Q,t) .  *)
+  u41,u42 : 3;
+  (* eq P <-> Q = if(P,Q,if(Q,f,t)) . *)
+  u43,u44 : 3;
+  ";
+
+let X_PROP = vars "N M P Q R S T x y z";
+
+
+let R_PROP = HTRS {R_bool} F_PROP X_PROP "
+  (* subsort Truth < Prop . *)
+  isProp(x) -> isTruth(x) ;
+  (* subsort Var < Prop . *)
+  isProp(x) -> isVar(x);
+  (* op t : -> Truth [ctor] . *)
+  isTruth(t) -> True ;
+  (* op f : -> Truth [ctor] . *)
+  isTruth(f) -> True ;
+  (* op 0 : -> Nat [ctor] . *)
+  isNat(0) -> True ;
+  (* op s : Nat -> Nat [ctor] . *)
+  (* isNat(s(x)) -> True if isNat(x) -> True *)
+  isNat(s(x)) -> u3(isNat(x)) ;
+  u3(True) -> True ;
+  (* op v : Nat -> Var [ctor] .         
+     **** variables constructed out of numbers *)
+  (* isVar(v(x)) -> True if isNat(x) -> True *)
+  isVar(v(x)) -> u4(isNat(x)) ;
+  u4(True) -> True ;
+  (* op _#_ : Var Var -> Truth [comm] . 
+     **** equality of variables *)
+  (* isTruth(x # y) -> True if isVar(x) -> True, isVar(y) -> True *)
+  isTruth(x # y) -> u5(isVar(x),y) ;
+  u5(True,y) -> u6(isVar(y)) ;
+  u6(True) -> True ;
+  (* op if : Var Prop Prop -> Prop [ctor] . *)
+  (* isProp(if(x,y,z)) -> True if isVar(x) -> True, 
+                                   isProp(y) -> true; isProp(z) -> True *)
+  isProp(if(x,y,z)) -> u7(isVar(x),y,z) ;
+  u7(True,y,z) -> u8(isProp(y),z) ;
+  u8(True,z) -> u9(isProp(z)) ;
+  u9(True) -> True ;
+  (* op if : Prop Prop Prop -> Prop . *)
+  (* isProp(if(x,y,z)) -> True if isProp(x) -> True, 
+                                   isProp(y) -> true; isProp(z) -> True *)
+  isProp(if(x,y,z)) -> u10(isProp(x),y,z) ;
+  u10(True,y,z) -> u11(isProp(y),z) ;
+  u11(True,z) -> u12(isProp(z)) ;
+  u12(True) -> True ;
+  (* op not : Prop -> Prop . *)
+  (* isProp(not(x)) -> True if isProp(x) -> True *)
+  isProp(not(x)) -> u13(isProp(x)) ;
+  u13(True) -> True ;
+  (* op _or_ : Prop Prop -> Prop . *)
+  (* isProp(x or y) -> True if isProp(x) -> True, isProp(y) -> True *)
+  isProp(x or y) -> u14(isProp(x),y) ;
+  u14(True,y) -> u15(isProp(y)) ;
+  u15(True) -> True ;
+
+  (* op _and_ : Prop Prop -> Prop . *)
+  (* isProp(x and y)) -> True if isProp(x) -> True, isProp(y) -> True *)
+  isProp(x and y) -> u16(isProp(x),y) ;
+  u16(True,y) -> u17(isProp(y)) ;
+  u17(True) -> True ;
+  (* op (_->_) : Prop Prop -> Prop . *)
+  (* isProp(x implies y) -> True if isProp(x) -> True, isProp(y) -> True *)
+  isProp(x implies y) -> u18(isProp(x),y) ;
+  u18(True,y) -> u19(isProp(y)) ;
+  u19(True) -> True ;
+  (* op _<->_ : Prop Prop -> Prop . *)
+  (* isProp(x equiv y) -> True if isProp(x) -> True, isProp(y) -> True *)
+  isProp(x equiv y) -> u20(isProp(x),y) ;
+  u20(True,y) -> u21(isProp(y)) ;
+  u21(True) -> True ;
+  (*
+  vars N M : Nat .
+  vars P Q R S T : Prop .
+  *)
+  (* eq v(N) # v(N) = t . *)
+  (* v(N) # v(N) -> t if isNat(N) -> True *)
+  v(N) # v(N) -> u22(isNat(N)) ;
+  u22(True) -> t ;
+  (* eq v(0) # v(s(N)) = f . *)
+  (* v(0) # v(s(N)) -> f if isNat(N) -> True *)
+  v(0) # v(s(N)) -> u23(isNat(N)) ;
+  u23(True) -> f ;
+  (* eq v(s(N)) # v(s(M)) = v(N) # v(M) . *)
+  (* v(s(N)) # v(s(M)) -> v(N) # v(M) if isNat(N) -> True, isNat(M) -> True *)
+  v(s(N)) # v(s(M)) -> u24(isNat(N),N,M) ;
+  u24(True,N,M) -> u25(isNat(M),N,M) ;
+  u25(True,N,M) -> v(N) # v(M) ;
+  (* eq if(t,P,Q) = P . *)
+  (* if(t,P,Q) -> P if isProp(P) -> True, isProp(Q) -> True *)
+  if(t,P,Q) -> u26(isProp(P),P,Q) ;
+  u26(True,P,Q) -> u27(isProp(Q),P) ;
+  u27(True,P) -> P ;
+  (* eq if(f,P,Q) = Q . *)
+  (* if(f,P,Q) -> Q if isProp(P) -> True, isProp(Q) -> True *)
+  if(f,P,Q) -> u28(isProp(P),Q) ;
+  u28(True,Q) -> u29(isProp(Q),Q) ;
+  u29(True,Q) -> Q ;
+  (* eq if(P,t,f) = P . *)
+  (* if(P,t,f) -> P if isProp(P) -> True *)
+  if(P,t,f) -> u30(isProp(P),P);
+  u30(True,P) -> P;
+  (* eq if(if(P,Q,R),S,T) = if(P,if(Q,S,T),if(R,S,T)) . *)
+  (* if(if(P,Q,R),S,T) -> if(P,if(Q,S,T),if(R,S,T)) if
+     isProp(P) -> True, ..., isProp(T) -> True *) 
+  if(if(P,Q,R),S,T) -> u31(isProp(P),P,Q,R,S,T) ;
+  u31(True,P,Q,R,S,T) -> u32(isProp(Q),P,Q,R,S,T) ;
+  u32(True,P,Q,R,S,T) -> u33(isProp(R),P,Q,R,S,T) ;
+  u33(True,P,Q,R,S,T) -> u34(isProp(S),P,Q,R,S,T) ;
+  u34(True,P,Q,R,S,T) -> u35(isProp(T),P,Q,R,S,T) ;
+  u35(True,P,Q,R,S,T) -> if(P,if(Q,S,T),if(R,S,T)) ;
+  (* eq not(P) = if(P,f,t) . *)
+  (* not(P) -> if(P,f,t) if isProp(P) -> True *)
+  not(P) -> u36(isProp(P),P) ;
+  u36(True,P) -> if(P,f,t) ;
+  (* eq P or Q = if(P,t,Q) . *)
+  P or Q -> u37(isProp(P),P,Q) ;
+  u37(True,P,Q) -> u38(isProp(Q),P,Q) ;
+  u38(True,P,Q) -> if(P,t,Q) ;
+  (* eq P and Q = if(P,Q,f) . *)
+  P and Q -> u39(isProp(P),P,Q) ;
+  u39(True,P,Q) -> u40(isProp(Q),P,Q) ;
+  u40(True,P,Q) -> if(P,Q,f);
+  (* eq P -> Q = if(P,Q,t) . *)
+  P implies Q -> u41(isProp(P),P,Q) ;
+  u41(True,P,Q) -> u42(isProp(Q),P,Q) ;
+  u42(True,P,Q) -> if(P,Q,t);
+  (* eq P <-> Q = if(P,Q,if(Q,f,t)) . *)
+  P equiv Q -> u43(isProp(P),P,Q) ;
+  u43(True,P,Q) -> u44(isProp(Q),P,Q) ;
+  u44(True,P,Q) -> if(P,Q,if(Q,f,t));
+  ";  
+
+termcrit "minimal"; 
+#time on;
+
+
+timelimit "10";
+polyinterpkind{("linear",2);("simple",6)};
+h_termination R_PROP;
+(* Execution time: 5.140000 sec *)
+output_last_proof "";
+
+timelimit "5";
+polyinterpkind{("linear",2);("simple",4)};
+h_termination R_PROP;
+(* Execution time: 10.140000 sec *)
+output_last_proof "";
+
+(*
+fmod PROP-EVAL is
+protecting PROP .
+sorts Map Assign .
+op nil : -> Assign [ctor] .
+op _<-_ : Var Truth -> Map [ctor] .
+op _;_ : Map Assign -> Assign [ctor] .
+op eval : Prop Assign -> Truth .
+op defined : Var Assign -> Truth .
+vars I J : Var .
+var B : Truth .
+var E : Assign .
+vars P Q R S T : Prop .
+eq eval(t,E) = t .
+eq eval(f,E) = f .
+eq eval(I,nil) = f .
+eq eval(I,(J <- B); E) = if(I # J,B,eval(I,E)) .
+eq eval(if(I,Q,R),E) = if(eval(I,E),eval(Q,E),eval(R,E)) .
+eq defined(I,nil) = f .
+eq defined(I,(J <- B); E) = (I # J) or defined(I,E) .
+endfm
+*)
+
+
+
+let F_PROP_EVAL = signature "
+(* sorts Map Assign . *)
+isMap, isAssign : unary;
+(* op nil : -> Assign [ctor] . *)
+nil : 0;
+(* op _<-_ : Var Truth -> Map [ctor] . *)
+mapsto : infix binary ;
+u100 : 2 ; u101 : 1;
+(* op _;_ : Map Assign -> Assign [ctor] . *)
+@ : infix binary;
+u102 :2 ; u103 : 1 ;
+(* op eval : Prop Assign -> Truth . *)
+eval :2 ;
+u104 : 2 ; u105 : 1;
+(* op defined : Var Assign -> Truth . *)
+defined : 2;
+u106 :2 ; u107 : 1 ;
+(*
+vars I J : Var .
+var B : Truth .
+var E : Assign .
+vars P Q R S T : Prop .
+*)
+(* eq eval(t,E) = t . *)
+u108 : 1 ;
+(* eq eval(f,E) = f . *)
+u109 : 1;
+(* eq eval(I,nil) = f . *)
+u110 : 1;
+(* eq eval(I,(J <- B); E) = if(I # J,B,eval(I,E)) . *)
+u111,u112,u113,u114 : 5;
+(* eq eval(if(I,Q,R),E) = if(eval(I,E),eval(Q,E),eval(R,E)) . *)
+u115,u116,u117,u118 : 5;
+(* eq defined(I,nil) = f . *)
+u119 : 1;
+(* eq defined(I,(J <- B); E) = (I # J) or defined(I,E) . *)
+u120,u121,u122,u123 : 4;
+";
+
+let X_PROP_EVAL = vars "I J B E P Q R S T x y z";
+
+let R_PROP_EVAL = HTRS {R_PROP;R_bool} F_PROP_EVAL X_PROP_EVAL "
+(* sorts Map Assign . *)
+(* op nil : -> Assign [ctor] . *)
+isAssign(nil)-> True;
+(* op _<-_ : Var Truth -> Map [ctor] . *)
+(* isMap(x mapsto y) -> True if isVar(x) -> True, isTruth(y) -> True *)
+isMap(x mapsto y) -> u100(isVar(x),y) ;
+u100(True,y) -> u101(isTruth(y)) ;
+u101(True) -> True;
+(* op _;_ : Map Assign -> Assign [ctor] . *)
+(* isAssign(x @ y) -> True if isMap(x) -> True, isAssign(y) -> True *)
+isAssign(x @ y) -> u102(isMap(x),y) ;
+u102(True,y) -> u103(isAssign(y)) ;
+u103(True) -> True;
+(* op eval : Prop Assign -> Truth . *)
+(* isTruth(eval(x,y)) -> True if isProp(x) -> True, isAssign(y) -> True *)
+(* isTruth(eval(x,y)) -> u104(isProp(x),y) ; override ! *)
+u104(True,y) -> u105(isAssign(y)) ;
+u105(True) -> True;
+(* op defined : Var Assign -> Truth . *)
+(* isTruth(defined(x,y)) -> True if isVar(x) -> True, isAssign(y) -> True *)
+(* isTruth(defined(x,y)) -> u106(isVar(x),y) ; override ! *)
+u106(True,y) -> u107(isAssign(y)) ;
+u107(True) -> True;
+(*
+vars I J : Var .
+var B : Truth .
+var E : Assign .
+vars P Q R S T : Prop .
+*)
+(* eq eval(t,E) = t . *)
+(* eval(t,E) -> t if isAssign(E) -> True *)
+eval(t,E) -> u108(isAssign(E)) ;
+u108(True) -> t;
+(* eq eval(f,E) = f . *)
+(* eval(f,E) -> f if isAssign(E) -> True *)
+eval(f,E) -> u109(isAssign(E)) ;
+u109(True) -> t;
+(* eq eval(I,nil) = f . *)
+(* eval(I,nil) -> f if isVar(I) -> True *)
+eval(I,nil) -> u110(isVar(I)) ;
+u110(True) -> t;
+
+(* eq eval(I,(J <- B); E) = if(I # J,B,eval(I,E)) . *)
+(* eval(I,(J mapsto B) @ E)-> if(I # J,B,eval(I,E)) 
+   if isVar(I) -> True, isVar(J), isTruth(B), isAssign(E) *)
+eval(I,(J mapsto B) @ E) -> u111(isVar(I),I,J,B,E) ;
+u111(True,I,J,B,E) -> u112(isVar(J),I,J,B,E) ;
+u112(True,I,J,B,E) -> u113(isTruth(B),I,J,B,E) ;
+u113(True,I,J,B,E) -> u114(isAssign(E),I,J,B,E) ;
+u114(True,I,J,B,E) -> if(I # J,B,eval(I,E)) ;
+(* eq eval(if(I,Q,R),E) = if(eval(I,E),eval(Q,E),eval(R,E)) . *)
+(* eval(if(I,Q,R),E) -> if(eval(I,E),eval(Q,E),eval(R,E))
+   if isVar(I) -> True, isProp(Q), isProp(R), isAssign(E) *)
+eval(if(I,Q,R),E) -> u115(isVar(I),I,Q,R,E) ;
+u115(True,I,Q,R,E) -> u116(isProp(Q),I,Q,R,E) ;
+u116(True,I,Q,R,E) -> u117(isVar(I),I,Q,R,E) ;
+u117(True,I,Q,R,E) -> u118(isVar(I),I,Q,R,E) ;
+u118(True,I,Q,R,E) -> if(eval(I,E),eval(Q,E),eval(R,E)) ;
+(* eq defined(I,nil) = f . *)
+(* defined(I,nil) -> f if isVar(I) *)
+defined(I,nil) -> u119(isVar(I)) ;
+u119(True) -> f;
+(* eq defined(I,(J <- B); E) = (I # J) or defined(I,E) . *)
+(* defined(I,(J mapsto B) @ E) -> (I # J) or defined(I,E)
+  if isVar(I),isVar(J),isTruth(B),isAssign(E) *)
+defined(I,(J mapsto B) @ E) -> u120(isVar(I),I,J,E) ;
+u120(True,I,J,E) -> u121(isVar(J),I,J,E) ;
+u121(True,I,J,E) -> u122(isTruth(B),I,J,E) ;
+u122(True,I,J,E) -> u123(isAssign(E),I,J,E) ;
+u123(True,I,J,E) -> (I # J) or defined(I,E) ;
+";
+
+timelimit "10";
+polyinterpkind{("linear",2);("simple",6)};
+h_termination R_PROP_EVAL;
+
+(* echec... *)
+
+(*
+let F_3 = signature "
+isTautology : 1;
+tautology_check : 2;
+";
+
+let R3 = HTRS {R2} F_3 X "
+isTautology(P) -> tautology_check(P,nil);
+tautology_check(B,E) -> B;
+tautology_check(I,E) -> eval(I,E);
+tautology_check(if(I,P,Q),E) -> 
+  if_test(defined(I,E),
+     if_test(eval(I,E),
+             tautology_check(P,E),
+             tautology_check(Q,E)),
+     and_bool(tautology_check(P,seq(setTruthVal(I,t),E)),
+              tautology_check(Q,seq(setTruthVal(I,f),E))
+     ));
+";
+*)
+
+(* more difficult, should use RPO here... *)
+

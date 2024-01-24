@@ -1,0 +1,52 @@
+let F = signature "
+  0 : constant ;
+  s : unary ;
+  empty : constant ;
+  singl : unary ;
+  union : AC ;
+
+  max : unary ;
+";
+
+let X = vars "x y X Y Z";
+
+let R = TRS F X "
+     empty union X -> X ;
+
+     max(singl(x)) -> x ;
+     max(singl(x) union singl(0)) -> x ;
+     max(singl(s(x)) union singl(s(y))) -> s(max(singl(x) union singl(y))) ;
+     max(singl(x) union Y union Z) -> max(singl(x) union singl(max(Y union Z))) ;
+";
+
+#time on;
+termination R;
+#time off;
+
+termcrit "dp";
+
+#time on;
+termination R;
+#time off;
+
+termcrit "nomarks";
+
+#time on;
+termination R;
+#time off;
+
+termcrit "nograph";
+
+#time on;
+termination R;
+#time off;
+
+
+
+end
+     
+
+
+  
+
+

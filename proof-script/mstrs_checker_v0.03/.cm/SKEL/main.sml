@@ -1,2 +1,0 @@
-Skeleton 5
-d3f2дўOS"дўTerm"ac"MAIN"h0ad"Main"h1bd2aдўL"gp1d"List"aдўU"gp1d"Util"d3bd3aдўMsTrsLrVals"jи±бдўToken"зрІдўLrParser"яЃgp1e"MsTrsLrValsFun"aдўMsTrsLex"jh1aдўTokens"gp2яЃя‚gp1e"MsTrsLexFun"aдўMsTrsParser"jh3aдўParserData"gp2яЃяѓaдўLex"gp1я‚бяЃ(зр±яЃ(зр±еўJoin"f3я‚>дўInt"дўTextIO"bd3aдўFoTrsLrVals"jяЃgp1e"FoTrsLrValsFun"aдўFoTrsLex"jh1aя‚gp2я„я‚gp1e"FoTrsLexFun"aдўFoTrsParser"jh3aяѓgp2я„яѓaяѓ'gp1я…яѓ3яѓ=f3я„я…3я„f4яя	я(я7

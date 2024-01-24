@@ -1,0 +1,31 @@
+let S = word_signature "a b";
+let R1 = SRS S "a ^ 2000 -> ";
+let o = length_lex ( word_precedence S "a < b" );
+let completed = word_completion o R1;
+#quit;
+
+(* UP version *)
+pc8-118: cime/ocaml_src > time ~marche/pc801/cime/ocaml_src/main.opt ../examples/words/many_criticalpairsatonce.cim2
+Welcome to CiME version 1.99 - Built on 30/11/2000 15:37:21
+
+S : word_signature = <word_signature>
+R1 : S SRS = { a^2000 -> (epsilon) } (1 rules)
+o : S word_ordering = <word ordering>
+completed : S SRS = { a^2000 -> (epsilon) } (1 rules)
+
+Quitting.
+207.010u 0.140s 3:35.10 96.3%   0+0k 0+0io 274pf+0w
+
+(* SMP version *)
+pc8-118: cime/ocaml_src > time ./main.opt ../examples/words/many_criticalpairsatonce.cim2
+Welcome to CiME version 1.99 - Built on 04/12/2000 15:56:08
+
+S : word_signature = <word_signature>
+R1 : S SRS = { a^2000 -> (epsilon) } (1 rules)
+o : S word_ordering = <word ordering>
+MULTIPLE(1999)
+completed : S SRS = { a^2000 -> (epsilon) } (1 rules)
+
+Quitting.
+3.140u 0.390s 1:52.15 3.1%      0+0k 0+0io 526pf+0w
+

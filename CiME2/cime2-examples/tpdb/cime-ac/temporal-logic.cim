@@ -1,0 +1,127 @@
+(*
+
+  Hubert Comon, Philippe Schnoebelen
+
+*)
+[u, z, y, x]
+
+AC [or, and]
+
+imp(x,y) -> not(and(not(y),x)) ;
+and(x,x) -> x ;
+not(false) -> true ;
+not(not(x)) -> x ;
+not(true) -> false ;
+and(true,x) -> x ;
+and(false,x) -> false ;
+or(x,y) -> not(and(not(x),not(y))) ;
+S(and(x,y),z) -> and(S(x,z),S(y,z)) ;
+U(x,and(y,z)) -> and(U(x,y),U(x,z)) ;
+U(or(x,y),z) -> or(U(x,z),U(y,z)) ;
+S(x,or(y,z)) -> or(S(x,y),S(x,z)) ;
+S(and(U(y,z),x),u) ->
+or(or(and(and(and(S(x,z),S(x,u)),z),U(y,z)),and(S(x,and(z,u)),y)),S(and(
+                                                                    and(
+                                                                    and(y,u),
+                                                                    S(x,z)),
+                                                                    S(x,u)),u)) ;
+S(x,or(U(z,u),y)) ->
+or(and(and(not(or(and(U(z,u),u),z)),S(x,and(not(and(and(not(z),not(u)),
+                                                  S(and(not(x),not(y)),
+                                                    and(not(x),not(z))))),
+                                          not(x)))),S(and(not(x),not(y)),
+                                                      and(not(x),not(z)))),
+  or(and(or(and(U(z,u),u),z),S(x,and(not(and(and(not(z),not(u)),S(and(
+                                                                    not(x),
+                                                                    not(y)),
+                                                                  and(
+                                                                    not(x),
+                                                                    not(z))))),
+                                   not(x)))),S(x,false))) ;
+S(and(not(U(x,y)),x),u) ->
+or(S(and(not(U(z,true)),x),u),S(and(U(and(not(y),not(z)),not(z)),x),u)) ;
+S(x,or(not(U(z,u)),y)) ->
+and(imp(S(and(not(x),not(y)),and(not(x),u)),not(or(and(U(z,u),u),z))),
+  S(x,and(imp(S(and(not(x),not(y)),and(not(x),u)),not(z)),not(x)))) ;
+S(and(U(y,z),x),or(U(y,z),u)) ->
+or(and(and(not(or(and(U(y,z),z),x)),S(and(S(x,z),y),not(and(and(not(y),
+                                                              not(z)),
+                                                          S(not(u),not(y)))))),
+     not(S(not(u),not(y)))),or(and(or(and(U(y,z),z),x),S(and(S(x,z),y),
+                                                         not(and(and(
+                                                                   not(y),
+                                                                   not(z)),
+                                                               S(not(u),
+                                                                 not(y)))))),
+                              and(or(and(U(y,z),z),y),S(x,z)))) ;
+S(and(not(U(y,z)),x),and(U(y,z),u)) ->
+or(and(and(not(y),S(x,and(not(y),u))),not(U(y,z))),or(and(and(not(y),
+                                                            S(x,and(not(y),u))),
+                                                        not(z)),S(and(
+                                                                    and(
+                                                                    and(
+                                                                    not(y),
+                                                                    not(z)),
+                                                                    or(
+                                                                    U(y,z),u)),
+                                                                    S(x,
+                                                                    and(
+                                                                    not(y),u))),
+                                                                  or(
+                                                                    U(y,z),u)))) ;
+S(and(U(y,z),x),and(not(U(y,z)),u)) ->
+or(and(and(S(x,and(z,u)),z),U(y,z)),or(and(S(x,and(z,u)),y),S(and(and(
+                                                                    or(
+                                                                    not(
+                                                                    U(y,z)),u),y),
+                                                                S(x,and(z,u))),
+                                                              or(not(U(y,z)),u)))) ;
+
+
+(*
+
+let F = signature "
+  and, or : AC ;
+  imp : infix binary ;
+  false, true : constant ;
+  not : unary ;
+  S,U : infix binary ;
+";
+
+let X = vars "x y z u";
+
+let R = HTRS {} F X "
+  x imp y -> not(x and  not(y)) ;
+  x and x -> x ;
+  not(false) -> true;
+  not(not(x)) -> x;
+  not(true) -> false;
+  x and true -> x;
+  x and false -> false;
+  x or y -> not(not(x) and not(y));
+  (x and y) S z -> (x S z) and (y S z);
+  x U (y and z) -> (x U y) and (x U z);
+  (x or y) U z -> (x U z) or (y U z);
+  x S (y or z) -> (x S y) or (x S z);
+  (x and (y U z)) S u -> ((x S u) and (x S z) and z and (y U z)) or (y and (x S (z and u))) or ((y and u and (x S z) and (x S u)) S u);
+
+  x S (y or (z U u)) -> (x S false) or ((z or (u and (z U u))) and (x S (not(x) and not(((not(y) and not(x)) S (not(x) and not(z))) and (not(z) and not(u)))))) or ((not(z or (u and (z U u))) and (x S (not(x) and not(((not(y) and not(x)) S (not(x) and not(z))) and (not(z) and not(u)))))) and ((not(y) and not(x)) S (not(x) and not(z))));
+ 
+ (x and (not(x U y))) S u -> ((x and ( (not(z) and not(y)) U (not(z)) )) S u) or ((x and (not(z U true))) S u);
+
+   x S (y or not(z U u)) -> (x S (not(x) and (((not(y) and not(x)) S (not(x) and u) ) imp not(z)))) and ( ( (not(y) and not(x) ) S (not(x) and u) ) imp (not(z or (u and (z U u))))  ) ;
+
+   (x and (y U z)) S (u or (y U z)) -> ((x S z) and (y or (z and (y U z)))) or (((y and (x S z)) S  not(not(y) and not(z) and (not(u) S not(y)))) and (x or (z and (y U z)))) or (((y and (x S z)) S not(not(y) and not(z) and (not(u) S not(y)))) and not(x or (z and (y U z))) and not(not(u) S not(y))) ;
+
+   (x and not(y U z)) S (u and (y U z)) -> ((x S (not(y) and u)) and not(y) and not(z) ) or ((not(y) and not(z) and (u or (y U z)) and (x S (not(y) and u)) ) S (u or (y U z)) ) or ( (x S (u and not(y))) and not(y) and not(y U z));
+
+   (x and (y U z)) S (u and not(y U z)) ->( (y and (u or not(y U z)) and (x S (z and u))) S (u or not(y U z)) ) or (( x S (z and u) ) and y ) or (( x S (z and u) ) and z and (y U z));
+";
+
+termcrit "nomarks";
+termcrit "minimal";
+timelimit "1";
+polyinterpkind { ("linear",1) ; ("simple",2) } ;
+h_termination R;
+
+*)

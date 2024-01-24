@@ -1,0 +1,17 @@
+operators
+  + : AC
+  0 : constant
+  - : unary
+  a,b,c : constant
+
+theory  AG(+,0,-)
+
+axioms
+  a+a+b+b+b = c ;
+  a+a+a+a = b+b+b+b+b+b+c+c ;
+  a+a+a+a+a+b+b = c+c+c+c+c+c;
+
+order  rpo( c>b>a>->0>+ ; + mul )
+
+end
+

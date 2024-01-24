@@ -1,0 +1,51 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                           %
+%   REMINDER                                                                %
+%                                                                           %
+%   Author : Thomas Arts                                                    %
+%                                                                           %
+%                                                                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+operators
+  0,true,false : constant
+  s  : unary
+  le : binary   
+  if : 3
+  minus : binary
+  mod : binary
+  x,y,z : variable
+
+ 
+problems 
+
+dp_termination (
+
+  le(0,s(y))  -> true ;
+  le(0,0)     -> true ;
+  le(s(x),0)  -> false ;
+  le(s(x),s(y)) -> le(x,y) ;
+
+  minus(x,0)  -> x ;
+  minus(s(x),s(y)) -> minus(x,y) ;
+  mod(0,y)    -> 0 ;
+  mod(s(x),0) -> 0 ;
+  mod(s(x),s(y)) -> if(le(y,x),s(x),s(y)) ;
+
+  if(true,s(x),s(y)) -> mod(minus(x,y),s(y)) ;
+  if(false,s(x),s(y))-> s(x) 
+  );
+
+order
+
+    rps( 
+      rpo( le > true = false , s > 0 );
+      minus(x,y) -> x ; 
+      if (z,x,y) -> x ;
+      mod(x,y)   -> x ;
+      TOP(if)(z,x,y) -> x ;
+      TOP(mod)(x,y)-> x
+      )
+
+end
+

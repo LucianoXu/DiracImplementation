@@ -1,0 +1,64 @@
+(*
+
+  Claude Marché
+
+  List append with auxiliary functions, wrong version
+
+  does NOT terminate:
+
+  append(cons(true,nil),nil) ->
+  ifappend(cons(true,nil),nil,is_empty(cons(true,nil))) ->
+  ifappend(cons(true,nil),nil,false) ->
+  cons(hd(cons(true,nil)),append(tl(cons(true,nil)),nil)) ->
+  cons(hd(cons(true,nil)),append(cons(true,nil),nil)) ->
+  ...  
+
+
+*)
+
+[l2, l1, l, x]
+
+is_empty(nil) -> true ;
+is_empty(cons(x,l)) -> false ;
+hd(cons(x,l)) -> x ;
+tl(cons(x,l)) -> cons(x,l) ;
+append(l1,l2) -> ifappend(l1,l2,is_empty(l1)) ;
+ifappend(l1,l2,true) -> l2 ;
+ifappend(l1,l2,false) -> cons(hd(l1),append(tl(l1),l2)) ;
+
+
+(*
+
+let F = signature "
+  true, false : constant ;
+  nil : constant;
+  cons : binary;
+  is_empty, hd, tl : unary ;
+  append : binary ;
+  ifappend : 3;
+";
+
+
+let X = vars "x y z l l1 l2";
+
+let R = HTRS {} F X "
+  is_empty(nil) -> true ;
+  is_empty(cons(x,l)) -> false ;
+  
+  hd(cons(x,l)) -> x ;
+  tl(cons(x,l)) -> cons(x,l) ;
+
+  append(l1,l2) -> ifappend(l1,l2,is_empty(l1)) ;
+
+  ifappend(l1,l2,true) -> l2 ;
+
+  ifappend(l1,l2,false) -> cons(hd(l1),append(tl(l1),l2)) ;
+";
+
+termcrit "minimal";
+timelimit "10";
+polyinterpkind {("linear",1);("linear",2);("simple-mixed",6)};
+h_termination R;
+
+*)
+

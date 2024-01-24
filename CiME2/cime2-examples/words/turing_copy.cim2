@@ -1,0 +1,62 @@
+
+(* 
+
+  Machine de Turing qui additionne en laissant intact le premier argument 
+
+  cad :
+
+  q0 1^n 0 1^m --->*  1^n 0 q5 1^{n+m}
+
+ *)
+
+let S = word_signature "0 1 h q0 q1 q2 q3 q4 q5";
+
+let R = SRS S "
+      0 q0 0 -> 0 0 q0 ; 
+      0 q0 h -> 0 0 q0 h ; 
+      0 q0 1 -> 0 1 q0 ;
+      1 q0 0 -> 0 0 q1 ; 
+      1 q0 h -> 0 0 q1 h ; 
+      1 q0 1 -> 0 1 q1 ;
+
+      1 q1 0 -> 1 0 q1 ; 
+      1 q1 h -> 1 0 q1 h ; 
+      1 q1 1 -> 1 1 q1 ;
+      0 q1 0 -> 0 0 q2 ; 
+      0 q1 h -> 0 0 q2 h ; 
+      0 q1 1 -> 0 1 q2 ;
+
+      1 q2 0 -> 1 0 q2  ; 
+      1 q2 h -> 1 0 q2 h ; 
+      1 q2 1 -> 1 1 q2 ;
+      0 q2   -> q3 1 ; 
+
+      1 q3   -> q3 1 ; 
+      0 q3   -> q4 0 ; 
+
+      1 q4   -> q4 1 ; 
+      0 q4 0 -> 1 0 q5 ; 
+      0 q4 h -> 1 0 q5 h ; 
+      0 q4 1 -> 1 1 q5 ;
+
+      1 q5 0 -> 0 0 q1 ; 
+      1 q5 h -> 0 0 q1 h ; 
+      1 q5 1 -> 0 1 q1 ;
+
+      h q0   -> h 0 q0 ; 
+      h q1   -> h 0 q1 ; 
+      h q2   -> h 0 q2 ; 
+      h q3   -> h 0 q3 ; 
+      h q4   -> h 0 q4 ; 
+      h q5   -> h 0 q5 ; 
+    ";
+
+let fun test s = word_normalize R (word S s);
+
+test "h q0 1 h" ; 
+test "h 1 q0 1 h" ; 
+test "h q0 0 1 h" ; 
+test "h 1 q0 0 1 h" ; 
+test "h q0 0 0 0 1 1 1 1 1 1 0 1 1 1 1 h" ; 
+test "h q0 0 0 0 1 1 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 h" ; 
+

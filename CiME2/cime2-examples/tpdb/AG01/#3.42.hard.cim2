@@ -1,0 +1,40 @@
+(***************************************************************************)
+(*                                                                         *)
+(*         This file was generated using the testocime tool                *)
+(*                                                                         *)
+(***************************************************************************)
+
+
+let X = vars "x ";
+(* 1 variable defined *)
+
+let F = signature "
+	s: 1;
+	nil: 0;
+	lastbit: 1;
+	half: 1;
+	conv: 1;
+	cons: 2;
+	0: 0;
+";
+(* 7 non-variable symbols defined *)
+
+let R = HTRS {} F X "
+	half(0) -> 0;
+	half(s(0)) -> 0;
+	half(s(s(x))) -> s(half(x));
+	lastbit(0) -> 0;
+	lastbit(s(0)) -> s(0);
+	lastbit(s(s(x))) -> lastbit(x);
+	conv(0) -> cons(nil, 0);
+	conv(s(x)) -> cons(conv(half(s(x))), lastbit(s(x)));
+";
+(* 8 rules *)
+
+termcrit "minimal";
+termcrit "graph";
+polyinterpkind {("linear",2);("simple",2);("simple",6)};
+#time on;
+h_termination R;
+
+#quit;

@@ -1,0 +1,42 @@
+(***************************************************************************)
+(*                                                                         *)
+(*         This file was generated using the testocime tool                *)
+(*                                                                         *)
+(***************************************************************************)
+
+
+let X = vars "z y x ";
+(* 3 variables defined *)
+
+let F = signature "
+	unit: 1;
+	rev: 1;
+	nil: 0;
+	flatten: 1;
+	++: 2;
+";
+(* 5 non-variable symbols defined *)
+
+let R = HTRS {} F X "
+	flatten(nil) -> nil;
+	flatten(unit(x)) -> flatten(x);
+	flatten(++(x, y)) -> ++(flatten(x), flatten(y));
+	flatten(++(unit(x), y)) -> ++(flatten(x), flatten(y));
+	flatten(flatten(x)) -> flatten(x);
+	rev(nil) -> nil;
+	rev(unit(x)) -> unit(x);
+	rev(++(x, y)) -> ++(rev(y), rev(x));
+	rev(rev(x)) -> x;
+	++(x, nil) -> x;
+	++(nil, y) -> y;
+	++(++(x, y), z) -> ++(x, ++(y, z));
+";
+(* 12 rules *)
+
+termcrit "minimal";
+termcrit "graph";
+polyinterpkind {("linear",1);("linear",2);("simple",2)};
+#time on;
+h_termination R;
+
+#quit;

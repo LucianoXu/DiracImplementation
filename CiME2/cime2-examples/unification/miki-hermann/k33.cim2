@@ -1,0 +1,35 @@
+
+%
+% Perfect matching K_3,3 - (3 * K_1,1) graph
+%
+
+let F = signature "
+  +,* : AC;
+  0, 1,  a : constant;
+  f,- : unary;
+  g : 4;
+";
+
+let X = vars "x11  x12  x13  y1 x21  x22  x23  y2 x31  x32  x33  y3";
+
+%unification theory  AG(+,0,-)
+%unification theory  BR(+,0,*,1)
+
+
+let t1 = term F X "g(f(x11), x12, x13, y1)  *
+                   g(x21, f(x22), x23, y2)  *
+                   g(x31, x32, f(x33), y3)";
+let t2 = term F X "g(a, f(a), f(a), f(a)) *
+                   g(f(a), a, f(a), f(f(a))) *
+                   g(f(a), f(a), a, f(f(f(a))))";
+
+ac_unify t1 t2;
+
+let T = theory F "AG(+,0,-)";
+unify T t1 t2;
+
+let T' = theory F "BR(+,0,*,1)";
+unify T' t1 t2;
+
+end
+

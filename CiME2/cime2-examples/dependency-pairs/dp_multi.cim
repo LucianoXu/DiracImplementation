@@ -1,0 +1,59 @@
+operators
+  +,* : AC
+  0 : constant
+  s: unary
+  x,y,z : variable
+
+problems
+
+dp_termination 
+ (
+  x+0 -> x ;  
+  x+s(y) -> s(x+y) ; 
+%
+  x+s(y)+z -> s(x+y)+z ;
+
+  x*0    -> 0 ;
+%
+  x*0*z  -> 0*z ;
+
+  x*s(y) -> x*y+x ;
+%
+  x*s(y)*z -> (x*y+x)*z
+  
+ ) ;
+
+%compare x+0 with x ;
+%compare x+s(y) with s(x+y) ;
+%compare x*0 with 0 ;
+%compare x*s(y) with x*y+x ;
+%compare x+s(y)+z with s(x+y)+z ;
+order 
+
+poly(
+%sans graphe :
+[TOP(*)](x,y)=1.x.y+ 2.(x+y) +2 ;
+
+%avec graphe :
+%[TOP(*)](x,y)= x+y ;
+
+%[TOP(+)](x,y)= x+y;
+
+[TOP(+)](x,y)=1.x.y+2.(x+y)+2 ;
+
+[*](x,y)=1.x.y+1.(x+y)+0 ; 
+
+[+](x,y)=0.x.y + 1.(x+y) + 0 ; 
+
+[s](x)= 1.x+1 ; 
+
+[0] = 1 )
+
+end
+
+
+
+%[*](x,y)=1.x.y + 1.(x+y) + 0 ; 
+%[+](x,y)=0.x.y + 1.(x+y) + 0 ; 
+%[s](x)= 1.x+1 ; 
+%[0] = 2 )  

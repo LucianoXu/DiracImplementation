@@ -1,0 +1,191 @@
+
+Here is the current status of the work done by Xavier and I, and some
+observations.
+
+We've come up with a general transformation scheme to encode sort
+informations into rules, so that when termination rely on sort
+information, like in the second examples sent by José, then the
+transformed TRS is hopefully terminating, whereas it would not be
+terminating if sort information is lost. 
+
+Here is the general scheme. First, Maude declarations are transformed
+into conditional rules, then after conditional rules are transformed
+into standard rules.
+
+1) sort declarations
+
+    sorts Id
+
+induce a unary symbol declaration
+
+    isId : unary
+
+2) subsort declarations
+
+    subsorts Id1 < Id2 
+
+induce a conditional rule
+
+    isId2(x) -> True if isId1(x) -> true
+
+3) operator declaration
+
+    op f : Id1 .. Idn -> Id
+
+induce a symbol declaration :
+
+    f : n ;
+
+(maybe with a 'commutative' or 'AC' declaration, to reflect [comm] or
+[assoc comm] respectively) 
+
+and a conditional rule
+
+    isId(f(x1,..,xn)) -> True if 
+        isId1(x1) -> True, .. , isIdn(xn) -> True
+
+open questions: 
+  . what to do with [ctor] declaration
+  . what to do with overloading 
+(see below)
+
+4) eq declaration
+
+    eq s = t if c
+
+with variables x1 : Id1, .., xn : Idn, induce rule
+
+    s -> t if isId1(x1) -> True, .. isIdn(xn) -> True, c
+
+5) general transformation of CTRS into TRS :
+
+each conditional rule 'l -> r if c' with n conditions
+in c is transformed into n+1 unconditional rules by
+operator U defined by induction on n as follows:
+
+ U(l -> r) = { l -> r }
+
+ U(l -> r if s -> t, c) =  { l -> u(s,X) } + U(u(t,X) -> r if c)
+
+where u is a fresh symbol and 
+  X = Var(l) inter (Var(t) union Var(c) union Var(r))
+
+
+In the joined files, are the results of this tranformation on examples
+given by José. They are only partial, because made by hand, and we
+stopped when the resulting TRSs where not provable terminating by CiME.
+
+Some comments and observations :
+
+1) first, for Salvador in particular: examples given by José contain
+   commutative operators (# in the first one, + and d in the second,
+   at least) What did you do about that when using AProve ? Did you
+   simply forgot the commutative behavior of them ? If yes, then this
+   means you did not proved the termination of the same
+   program. Although, I'm sure it is not a major problem, one way to
+   solve it should be to encode commutativity somewhere, for example,
+   giving for each rule each of its commutative variants. (I hope I am
+   clear...)
+
+2) A major problem is to handle overloading/overriding of
+   operators. In the second example, operator * is declared twice with 
+
+    op _*_ : Nat Nat -> Nat [comm] .
+    op _*_ : NzNat NzNat -> NzNat [comm] .
+
+   could we simply declare a corresponding ternary operator, and two
+   rules
+      isNat(x1 * x2) -> True if isNat(x1) -> True, isNat(x2) -> True
+      isNzNat(x1 * x2) -> True if isNzNat(x1) -> True, isNzNat(x2) -> True
+   (does it have any influence w.r.t termination ?)
+
+   There is a specific problem with 'if' operator in the first
+   example, declared as
+
+    op if : Var Prop Prop -> Prop [ctor] . 
+    op if : Prop Prop Prop -> Prop .
+
+   Again, is declaring only one ternary if operator is enough to
+   encode the program, w.r.t to its termination ? (Does the [ctor]
+   declaration influence the reduction ?)
+   But the specific thing is that in module PROP_EVAL, 'if' is also
+   used specificly on Truth values. That's what I meant in my previous
+   mail about confusion between syntax and semantics: using the same
+   'if' here as the 'if' constructor for formulas makes the
+   termination proof difficult, because CiME does not have the
+   possibility of interpreting differently the 'if' constructor for
+   formulas and the 'if' on Truth values. In the joined files, we've
+   made a variant maude1_bis.cim2 where there are two distinct
+   operators, and with that modification, CiME is able to prove
+   termination for the PROP_EVAL module. I think it is more
+   interesting to focus then on the TAUTOLOGY-CHECKER module which
+   cannot be proved terminating with CiME, but we are currently adding
+   RPO+AFS capabilities and we expect to solve it with them.
+
+   Any comment are welcome on these problems about overloading.
+
+3) There is a technical problem: adding isId(f(...)) -> ... rules when
+   declaring f, adds a new rule for isId, which may break the
+   hierarchical structure of TRS modules: the symbol isId may be
+   already in a defined TRS module. For example, this is what happens
+   in example 1, with operator eval of module PROP_EVAL:
+
+    op eval : Prop Assign -> Truth .
+
+   induces a new rule 
+
+     isTruth(eval(x,y)) -> True if ...
+
+   In other words, the definition of predicate isTruth is not defined
+   (closed in some sense) in the module where Truth is defined: more
+   terms of sort Truth can be introduced later. 
+
+   On that specific problem, I certainly miss information about Maude
+   semantics of sorts. For instance, in example 2, we have the rule 
+
+    ceq quot(N,M') = s quot(d(N,M'),M') if N > M' .
+
+   which terminates only because M' is a NzNat, which implies that M'
+   cannot be 0, hence d(N,M') is less than N. But is it possible that
+   later, some new operators and/or rules added make 0 a NzNat ? For
+   example by adding
+
+    op f : Nat -> NzNat
+
+    eq f(0) = 0
+
+   or something like that ? This would of course break the termination
+   proof above ! So, I guess there are some conditions checked when
+   adding operators and rules in Maude, and those are important for
+   termination proofs. Where should I look for such things ? Also
+   what should I read to know exactly how the reduction engine works,
+   in particular when does it compute sort informations ? 
+
+4) The problem of 'semantic termination'
+
+   This is in fact the hard problem. Again, with the same example as
+   above :
+
+    ceq quot(N,M') = s quot(d(N,M'),M') if N > M' .
+
+   termination relies on the fact that d(N,M') is less that N when N >
+   M' and M' is not 0. This is what I call 'semantic termination',
+   that is a termination proof based on a deep knowledge of properties
+   of d and >. I'm not sure there is any hope of finding termination
+   proof like this only with syntactical tools like we have in CiME or
+   AProve. (If you have any reason to think differently, please tell me!)
+
+   So, if such a termination proof is within our goals, then we should
+   start looking for something more general than only syntactic
+   termination of TRSs. There are some techniques in the literature,
+   for examples on functional programs. Usually one is expected to
+   annotated the rule to give some hint about its termination. I'm
+   working also on programs like Java programs, where again, an
+   explicit annotation is required, but then afterwards an automatic
+   proofs is feasible.
+
+Again, any comments and remarks are welcome !
+
+- Claude
+
+

@@ -1,0 +1,55 @@
+(*
+
+Full theory of booleans.
+(Hsiang, 82), (Ben Cherifa & Lescanne, 87, p. 152), (Hsiang &
+Dershowitz, 83), (Dershowitz 87, p. 102), (Steinbach 91, Example 8.5)
+
+*)
+
+[z, y, x]
+
+xor(x,F) -> x ;
+xor(x,neg(x)) -> F ;
+and(x,T) -> x ;
+and(x,F) -> F ;
+and(x,x) -> x ;
+and(xor(x,y),z) -> xor(and(x,z),and(y,z)) ;
+xor(x,x) -> F ;
+impl(x,y) -> xor(and(x,y),xor(x,T)) ;
+or(x,y) -> xor(and(x,y),xor(x,y)) ;
+equiv(x,y) -> xor(x,xor(y,T)) ;
+neg(x) -> xor(x,T) ;
+
+
+(*
+
+let F = signature "
+T,F : constant ;
+and,xor,impl,or,equiv : binary ;
+neg : unary ;
+";
+
+let X = vars "x y z";
+
+let booleans = HTRS {} F X "
+xor(x, F) -> x ;
+xor(x, neg(x)) -> F ;
+and(x, T) -> x ;
+and(x, F) -> F ;
+and(x, x) -> x ;
+and(xor(x, y), z) -> xor(and(x, z), and(y, z)) ;
+xor(x, x) -> F ;
+impl(x, y) -> xor(and(x, y), xor(x, T)) ;
+or(x, y) -> xor(and(x, y), xor(x, y)) ;
+equiv(x, y) -> xor(x, xor(y, T)) ;
+neg(x) -> xor(x, T) ;
+";
+
+
+termcrit "minimal";
+polyinterpkind {("linear",1)};
+h_termination booleans;
+output_last_proof "";
+
+
+*)

@@ -1,0 +1,27 @@
+(*
+  Binomial Coefficients
+  (Steinbach 91, Example 8.8,
+  Steinbach 92, Example 13)
+*)
+
+let F = signature "
+0 : constant ;
+s : unary ;
+plus,bin : binary ;
+";
+
+let X = vars "x y";
+
+let R = TRS F X "
+bin(x, 0) -> s(0) ;
+bin(0, s(y)) -> 0 ;
+bin(s(x), s(y)) -> plus(bin(x, s(y)), bin(x, y)) ;
+";
+
+#time;
+
+termination R;
+
+
+
+

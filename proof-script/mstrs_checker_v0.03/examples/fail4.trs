@@ -1,7 +1,0 @@
-(SIG
-   (f   A B -> A)
-   (g     A -> B)
-)
-(RULES
-   f(x,y) -> g(x)
-)

@@ -1,0 +1,68 @@
+%
+% System lambda-phi of Lescanne [From lambda-sigma to lambda-upsilon,
+% a journey through calculi of explicit substitutions. POPL'94]  
+%
+% termination using polynomial interpretations
+%
+% Xavier Urbain
+%
+% $Id: lambda_phi.cim,v 1.1 1996/07/16 12:00:33 urbain Exp $
+
+operators
+
+  V,S,lambda,#  : unary
+
+  1,id          : constant
+
+  app,@,.,+     : infix binary
+  phi           : binary
+
+  a,b,s,n,p,q,m : variable
+
+axioms
+
+%Beta
+%     lambda(a) app b = a@(b.id) ;
+  
+%App
+          (a app b)@s = (a@s) app (b@s) ;
+%Lambda
+         lambda(a)@s  = lambda(a@#(s)) ;
+%VarId
+              V(n)@id = V(n);
+%FVarCons
+           V(1)@(a.s) = a ;
+%RVarCons
+        V(S(n))@(a.s) = V(n)@s ;
+%FVarLift
+            V(1)@#(s) = V(1) ;
+%RVarLift
+         V(S(n))@#(s) = V(n)@phi(s,1) ;
+%VarPhiId
+       V(n)@phi(id,p) = V(n+p) ;
+%VarPhiPhi
+ V(n)@phi(phi(s,q),p) = V(n)@phi(s,(q+p)) ;
+%FVarPhiCons
+    V(1)@phi((a.s),p) = a@phi(id,p) ;
+%RVarPhiCons
+ V(S(n))@phi((a.s),p) = V(n)@phi(s,p) ;
+%FVarPhiLift
+     V(1)@phi(#(s),p) = V(S(p)) ;
+%RVarPhiLift
+  V(S(n))@phi(#(s),p) = V(n)@phi(s,S(p)) ;
+
+%Plus1
+                  n+1 = S(n) ;
+%PlusS
+                n+S(m) = S(n+m) ;
+
+
+order
+
+  lexico(
+    poly([V](n)=n; [S](n)=n; [1]=2; [app](a,b)=a+b; [lambda](a)=a+1; [@](a,s)=a.s;
+[.](a,s)=a+s; [id]=2; [#](s)=s; [phi](s,p)=s.(p-1); [+](p,q)=p+q-2);
+    poly([V](n)=n; [S](n)=n+1; [1]=2; [app](a,b)=a+b+1; [lambda](a)=a; [@](a,s)=a.(s+1); [.](a,s)=a+s; [id]=2; [#](s)=4.s; [phi](s,p)=s.(p+1); [+](p,q)=p+2.q))
+
+end
+  

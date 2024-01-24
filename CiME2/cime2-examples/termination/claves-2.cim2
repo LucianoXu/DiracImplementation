@@ -1,0 +1,82 @@
+let F = signature "
+nil : constant;
+append1_out, append2_in, permutation_in, permutation_out : unary;
+u1, append1_in, append2_out, cons : binary;
+u''1 : 3;
+u'1 : 4;
+u2 : 5;
+u3 : 6;
+";
+
+let X = vars "L V H U W T Y X Z";
+
+let R = TRS F X "
+permutation_in(nil) -> permutation_out(nil);
+permutation_in(L) -> u1(append2_in(L), L);
+u1(append2_out(V, cons(H, U)), L) -> u2(append1_in(V, U), L, V, H, U);
+u2(append1_out(W), L, V, H, U) -> u3(permutation_in(W), L, V, H, U, W);
+u3(permutation_out(T), L, V, H, U, W) -> permutation_out(cons(H, T));
+append1_in(nil, Y) -> append1_out(Y);
+append1_in(cons(H, X), Y) -> u'1(append1_in(X, Y), H, X, Y);
+u'1(append1_out(Z), H, X, Y) -> append1_out(cons(H, Z));
+append2_in(Y) -> append2_out(nil, Y);
+append2_in(cons(H, Z)) -> u''1(append2_in(Z), H, Z);
+u''1(append2_out(X, Y), H, Z) -> append2_out(cons(H, X), Y);
+";
+
+termcrit "dp";
+termpolybound 1;
+#time on;
+termination R;
+(*
+Claves :
+
+nil = 0
+cons(x, y) = x + y + 1
+permutation_in(x) = 0
+u1(x, y) = 0
+u2(x, l, v, h, u) = 0
+u3(x, l, v, h, u, w) = 0
+permutation_out(t) = 0
+append1_in(x, y) = x + y
+u'1(z, h, x, y) = z + h + 1
+append1_out(x) = x
+append2_in(y) = y
+u''1(x, h, z) = x + h + 1
+append2_out(x, y) = x + y
+PERMUTATION_IN(l) = l
+U1(x, l) = x
+U2(x, l, v, h, u) = x
+APPEND1_IN(x, y) = x + y
+APPEND2_IN(x) = x
+
+
+CiME :
+
+Search bound of polynomial coefficients is now 1
+Execution time: 0 sec.
+- : unit = ()
+Entering the termination expert. Verbose level = 0
+[nil] = 0;
+[append1_out](X0) = 1*X0;
+[append2_in](X0) = 1*X0;
+[permutation_in](X0) = 0;
+[permutation_out](X0) = 0;
+[u1](X0,X1) = 0;
+[append1_in](X0,X1) = 1*X1 + 1*X0;
+[append2_out](X0,X1) = 1*X1 + 1*X0;
+[cons](X0,X1) = 1*X1 + 1;
+[u''1](X0,X1,X2) = 1*X0 + 1;
+[u'1](X0,X1,X2,X3) = 1*X0 + 1;
+[u2](X0,X1,X2,X3,X4) = 0;
+[u3](X0,X1,X2,X3,X4,X5) = 0;
+['append2_in`](X0) = 1*X0;
+['permutation_in`](X0) = 1*X0;
+['u1`](X0,X1) = 1*X0;
+['append1_in`](X0,X1) = 1*X0;
+['u2`](X0,X1,X2,X3,X4) = 1*X0 + 1;
+
+Termination proof found.
+Execution time: 7.68 sec.
+
+*)

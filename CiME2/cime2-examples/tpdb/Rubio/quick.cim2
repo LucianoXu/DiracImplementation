@@ -1,0 +1,53 @@
+(***************************************************************************)
+(*                                                                         *)
+(*         This file was generated using the testocime tool                *)
+(*                                                                         *)
+(***************************************************************************)
+
+
+let X = vars "Y X N M L ";
+(* 5 variables defined *)
+
+let F = signature "
+	true: 0;
+	s: 1;
+	quicksort: 1;
+	nil: 0;
+	low: 2;
+	le: 2;
+	iflow: 3;
+	ifhigh: 3;
+	high: 2;
+	false: 0;
+	cons: 2;
+	app: 2;
+	0: 0;
+";
+(* 13 non-variable symbols defined *)
+
+let R = HTRS {} F X "
+	le(0, Y) -> true;
+	le(s(X), 0) -> false;
+	le(s(X), s(Y)) -> le(X, Y);
+	app(nil, Y) -> Y;
+	app(cons(N, L), Y) -> cons(N, app(L, Y));
+	low(N, nil) -> nil;
+	low(N, cons(M, L)) -> iflow(le(M, N), N, cons(M, L));
+	iflow(true, N, cons(M, L)) -> cons(M, low(N, L));
+	iflow(false, N, cons(M, L)) -> low(N, L);
+	high(N, nil) -> nil;
+	high(N, cons(M, L)) -> ifhigh(le(M, N), N, cons(M, L));
+	ifhigh(true, N, cons(M, L)) -> high(N, L);
+	ifhigh(false, N, cons(M, L)) -> cons(M, high(N, L));
+	quicksort(nil) -> nil;
+	quicksort(cons(N, L)) -> app(quicksort(low(N, L)), cons(N, quicksort(high(N, L))));
+";
+(* 15 rules *)
+
+termcrit "minimal";
+termcrit "graph";
+polyinterpkind {("linear",2);("simple",2);("simple",6)};
+#time on;
+h_termination R;
+
+#quit;

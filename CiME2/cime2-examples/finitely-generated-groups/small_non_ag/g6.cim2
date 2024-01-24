@@ -1,0 +1,29 @@
+(* Example borrowed from G. Karpilosky, Schur multipliers *)
+(* G6 is isomorphic to A4 *)
+
+let F = word_signature "a b c a' b' c'";
+
+let R = SRS F "
+a^2 -> ;
+b^2 -> ;
+c^3 -> ;
+a b a' b' -> ;
+c a c' -> b;
+c b c' -> a b;
+a a' -> ;
+a' a -> ;
+b b' -> ;
+b' b -> ;
+c c' -> ;
+c' c -> ;
+";
+
+let o = length_lex (word_precedence F "c' > b' > a' > c > b > a");
+
+#time;
+
+let G6 = word_completion o R ;
+
+#mem;
+
+word_counter G6; (* should be 12 *)

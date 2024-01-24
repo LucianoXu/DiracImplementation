@@ -1,0 +1,28 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                           %
+%   LOGARITHM   1                                                           %
+%                                                                           %
+%   Author : Thomas Arts                                                    %
+%                                                                           %
+%                                                                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+operators
+  0 : constant
+  s,half,log : unary
+  x : variable
+
+order
+  rpo( log > s > half )
+ 
+problems
+
+termination(
+  half(0) -> 0 ;
+  half(s(s(x))) -> s(half(x)) ;
+  log(0)  -> 0 ;
+  log(s(s(x))) -> s(log(s(half(x))))
+);
+
+end
+

@@ -1,0 +1,24 @@
+
+sort 
+  mat2x2
+
+operators
+  1 : constant as mat2x2
+  S,T : unary as mat2x2 -> mat2x2
+  x,y : variable as mat2x2
+
+
+axioms
+S(S(x))=x ;
+ T(T(T(T(T(x)))))=x ;
+
+S(T(S(T(S(T(x)))))) = x ;
+%T(T(T(T(S(T(T(T(T(S(T(T(T(T(S(x))))))))))))))) = x ;
+
+order  rpo( S>T>1 )
+
+inductive
+ S(1)=S(S(1)) ;
+
+end
+

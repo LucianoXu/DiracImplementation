@@ -1,0 +1,171 @@
+%
+%            Entiers relatifs, systeme confluent avec 
+%            - addition
+%            - soustraction, oppose
+%            - multiplication
+%            - pgcd
+%
+operators
+  x,y,z,u,v,w : variable
+
+operators
+%constructeurs
+  0 : constant
+  1_z,j_z,0_z : postfix unary
+
+% equations entre constructeurs
+axioms
+ (0)0_z = 0 ;
+
+% addition
+operators 
+  + : AC
+axioms
+  x + 0 = x ;
+  (x)0_z + (y)0_z = (x + y)0_z ;
+  (x)0_z + (y)1_z = (x + y)1_z ;
+  (x)0_z + (y)j_z = (x + y)j_z ;
+  (x)1_z + (y)1_z = (x + y + (0)1_z)j_z ;
+  (x)j_z + (y)j_z = (x + y + (0)j_z)1_z ;
+  (x)1_z + (y)j_z = (x + y)0_z ;
+
+% opposite and minus
+operators
+  - : infix binary
+  opp : unary
+axioms
+  opp(0) = 0 ;
+  opp((x)0_z) = (opp(x))0_z ;
+  opp((x)1_z) = (opp(x))j_z ;
+  opp((x)j_z) = (opp(x))1_z ;
+  x - y = x + opp(y) ;
+
+% multiplication
+operators 
+  . : AC
+axioms
+  x . 0 = 0 ;
+  x . (y)0_z = (x.y)0_z ;
+  x . (y)1_z = (x.y)0_z + x ;
+  x . (y)j_z = (x.y)0_z + opp(x) ;
+
+% valeur absolue
+operators 
+  abs : unary
+  test_abs_pos, test_abs_neg : binary
+axioms
+  abs(x) = test_abs_pos(x,x);
+
+  test_abs_pos(0,x) = x;
+  test_abs_pos((x)0_z,y) = test_abs_pos(x,y);
+  test_abs_pos((x)1_z,y) = test_abs_pos(x,y);
+  test_abs_pos((x)j_z,y) = test_abs_neg(x,y);
+
+  test_abs_neg(0,x) = opp(x);
+  test_abs_neg((x)0_z,y) = test_abs_neg(x,y);
+  test_abs_neg((x)1_z,y) = test_abs_pos(x,y);
+  test_abs_neg((x)j_z,y) = test_abs_neg(x,y);
+
+% signe
+operators 
+  signe, test_signe_pos, test_signe_neg : unary
+axioms
+  signe(0) = 0;
+  signe((x)0_z) = signe(x);
+  signe((x)1_z) = test_signe_pos(x);
+  signe((x)j_z) = test_signe_neg(x);
+
+  test_signe_pos(0) = (0)1_z;
+  test_signe_pos((x)0_z) = test_signe_pos(x);
+  test_signe_pos((x)1_z) = test_signe_pos(x);
+  test_signe_pos((x)j_z) = test_signe_neg(x);
+
+  test_signe_neg(0) = (0)j_z;
+  test_signe_neg((x)0_z) = test_signe_neg(x);
+  test_signe_neg((x)1_z) = test_signe_pos(x);
+  test_signe_neg((x)j_z) = test_signe_neg(x);
+
+% min(x,y) = celui de x ou y qui a la plus petite valeur absolue
+operators 
+  min,min',min'' : binary
+  test_min_pos, test_min_neg : 3
+axioms
+%  min(x,y) = test_min_pos(opp(test_abs_pos(x,x)) + test_abs_pos(y,y),x,y);
+
+  min(x,y) = test_min_pos(abs(y)-abs(x),x,y);
+  min'(x,y) = test_min_pos(abs((y)1_z)-abs((x)1_z),x,y);
+  min''(x,y) = test_min_pos(abs((y)j_z)-abs((x)j_z),x,y);
+
+  test_min_pos(0,x,y) = x;
+  test_min_pos((x)0_z,y,z) = test_min_pos(x,y,z);
+  test_min_pos((x)1_z,y,z) = test_min_pos(x,y,z);
+  test_min_pos((x)j_z,y,z) = test_min_neg(x,y,z);
+
+  test_min_neg(0,x,y) = y;
+  test_min_neg((x)0_z,y,z) = test_min_neg(x,y,z);
+  test_min_neg((x)1_z,y,z) = test_min_pos(x,y,z);
+  test_min_neg((x)j_z,y,z) = test_min_neg(x,y,z);
+
+% f(x,y) = x/pgcd(x,y)
+operators 
+  f : binary
+axioms
+  f(0,x) = 0;
+  f(x,0) = signe(x);
+
+  f((x)0_z,(y)0_z) = f(x,y);
+  f((x)0_z,(y)1_z) = (f(x,(y)1_z))0_z;
+  f((x)0_z,(y)j_z) = (f(x,(y)j_z))0_z;
+
+  f((x)1_z,(y)0_z) = f((x)1_z,y);
+
+  f((x)1_z,(y)1_z) =
+    (f(x - min'(x,y), (y)1_z))0_z + f(min((x)1_z,(y)1_z), x - y);
+
+  f((x)1_z,(y)j_z) = 
+    (f(x + min''(opp(x),y), (y)j_z))0_z + f(min((x)1_z,(opp(y))1_z), x + y);
+
+  f((x)j_z,(y)0_z) = f((x)j_z,y);
+
+  f((x)j_z,(y)1_z) =
+    (f(x + min'(opp(x),y), (y)1_z))0_z + f(min((x)j_z,(opp(y))j_z), x + y);
+
+  f((x)j_z,(y)j_z) =
+    (f(x - min''(x,y), (y)j_z))0_z + f(min((x)j_z,(y)j_z), x - y);
+
+operators
+  rat, irred : binary
+  # : commutative
+  * : commutative
+
+axioms
+
+  rat(x,y) = irred(signe(y).f(x,y),signe(y).f(y,x));
+ 
+  irred(x,y) # irred(u,v) = irred((x.v) + (u.y),y.v);
+
+  irred(x,y) * irred(u,v) = rat(x.u,y.v);
+
+problems
+
+%  reduce rat(0,((0)1_z)j_z);
+
+% reduce irred((0)1_z,((0)1_z)j_z) * irred((0)1_z,(0)1_z) ;
+
+%  reduce (((((((((((((((((((((((((((((((((((((((((((0)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z) . (((((((((((((((((((((((((((((((((((((((((0)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z)1_z) ;
+
+%  reduce irred(  (((0)1_z)j_z)1_z , ((0)1_z)0_z ) #
+%         irred(  ((0)j_z)1_z  , (((0)1_z)j_z)j_z ) ;
+
+%  reduce irred(  ((((0)1_z)j_z)1_z)1_z , (((0)1_z)0_z)0_z ) *
+%         irred(  (((0)j_z)1_z)j_z  , ((((0)1_z)0_z)1_z)1_z ) ;
+
+  reduce irred(  (0)j_z , (((0)1_z)j_z)0_z ) #
+         irred(  ((0)1_z)0_z  , (((0)1_z)0_z)1_z ) ;
+
+end
+
+
+
+
+

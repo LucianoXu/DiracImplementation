@@ -1,0 +1,59 @@
+(*
+
+AC rewrite system for addition and multiplication of integers, in
+ternary representation (Contejean, Marche & Rabehasaina, RTA'97). 
+
+*)
+
+
+let F = signature "
+     # : constant;
+     0,1,j : postfix unary;
+     opp : unary;
+     - : infix binary;
+     +,* : AC;
+";
+
+let X = vars "x y";
+
+let R = TRS F X "
+     (#)0 -> #;
+     # + x -> x;
+     (x)0 + (y)0 -> (x+y)0;
+     (x)0 + (y)1 -> (x+y)1;
+     (x)0 + (y)j -> (x+y)j;
+     (x)1 + (y)1 -> (x+y+(#)1)j;
+     (x)j + (y)j -> (x+y+(#)j)1;
+     (x)1 + (y)j -> (x+y)0;
+     opp(#) -> # ;
+     opp((x)0) -> (opp(x))0 ;
+     opp((x)1) -> (opp(x))j ;
+     opp((x)j) -> (opp(x))1 ;
+     x - y -> x+opp(y) ;
+     # * x -> #;
+     (x)0 * y -> (x*y)0;
+     (x)1 * y -> (x*y)0 + y;
+     (x)j * y -> (x*y)0 - y;
+";
+
+
+termcrit "standard";
+let c = termination_constraint_without_marks R;
+let prec = precedence F "* > - > + , opp > 0, opp > j, opp > 1, - > opp,
++ > 0, + > 1, + > j";
+let o = ACRPO prec;
+check_termination_constraint c o;
+
+termcrit "dp";
+termcrit "graph";
+termcrit "nomarks";
+let c = termination_constraint_without_marks R;
+let prec = precedence F "* > - > + , opp > 0, opp > j, opp > 1, - > opp,
++ > 0, + > 1, + > j";
+let o = ACRPO prec;
+check_termination_constraint c o;
+
+#verbose 1;
+#time on;
+
+termination R;

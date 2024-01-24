@@ -1,0 +1,30 @@
+(*
+
+Classical Arts & Giesl example of a non-simply terminating system,
+that can be proved terminating automatically by dependency pair
+criterion. 
+
+*)
+
+let F = signature "
+  0 : constant;
+  s : unary;
+  minus : binary;
+  quot : binary;
+";
+
+let X =vars "x y";
+
+let quotient = TRS F X "
+  minus(x,0) -> x ;
+  minus(s(x),s(y)) -> minus(x,y) ;
+  quot(0,s(y)) -> 0 ;
+  quot(s(x),s(y)) -> s(quot(minus(x,y),s(y))) ;
+";
+
+termcrit "dp";
+termpolybound 6;
+
+#time on;
+termination quotient;
+

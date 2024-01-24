@@ -1,0 +1,22 @@
+sort
+  nat 
+
+operators
+   s : 1 as nat -> nat 
+   0 : 0 as nat 
+   + : infix 2 as nat -> nat -> nat 
+   x,y : variable as nat 
+
+axioms
+x+0 = x;
+x+s(y) = s(x+y);
+
+conjectures 
+  0+x=x;
+
+order
+  rpo(+>s>0;+ lrlex)
+
+inductive
+  0+x=x;
+end

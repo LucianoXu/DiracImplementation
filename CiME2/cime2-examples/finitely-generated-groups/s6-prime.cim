@@ -1,0 +1,44 @@
+%***************************************************************************
+%
+%
+% Comple'tion du groupe $S_6$
+%
+%
+%***************************************************************************
+
+operators
+  . : infix binary
+  I : unary
+  e : constant
+  x,y,z : variable
+  a,b,a',b' : constant
+
+axioms
+  x.(y.z) = (x.y).z;
+  x.e = x;
+  e.x = x;
+  x.I(x) = e;
+  I(x).x = e;
+  a.a = e;
+  b.b.b.b.b.b = e;
+  a.b.a'.b'.a.b.a'.b'.a.b.a'.b' = e;
+  a.a' = e;
+  b.b' = e;
+  a'.a = e;
+  b'.b = e;
+  a.b.a.b.a.b.a.b.a.b = e;
+
+order
+  lexico( rpo( I>a'>.>a>e , a=b<a'=b' ; . lrlex) ;
+          poly( [.](x,y) = x+y ; [a] = 1 ; [b] = 1);
+          poly( [.](x,y) = x ; [a] = 1 ; [b] = 0);
+          interactive )
+
+end
+
+result : 
+(regles filtrees par grep -v "x\|'\|I")
+
+
+
+

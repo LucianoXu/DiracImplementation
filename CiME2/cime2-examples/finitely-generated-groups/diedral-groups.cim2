@@ -1,0 +1,160 @@
+(*
+
+Comple'tion d'un groupe diedral (ordre 5) modulo rien
+
+*)
+
+
+let F = word_signature "a b";
+
+let o = length_lex (word_precedence F "b<a");
+
+let R3 = SRS F "
+  a a -> ;
+  b b b -> ;
+  a b -> b b a;
+";
+
+word_completion o R3;
+
+let R4 = SRS F "
+  a a -> ;
+  b b b b -> ;
+  a b -> b b b a;
+";
+
+word_completion o R4;
+
+
+
+let R5 = SRS F "
+  a a -> ;
+  b b b b b -> ;
+  a b -> b b b b a;
+";
+
+word_completion o R5;
+
+let R6 = SRS F "
+  a a -> ;
+  b b b b b b -> ;
+  a b -> b b b b b a;
+";
+
+word_completion o R6;
+
+
+let R7 = SRS F "
+  a a -> ;
+  b b b b b b b -> ;
+  a b -> b b b b b b a;
+";
+
+word_completion o R7;
+
+
+let R8 = SRS F "
+  a a -> ;
+  b ^ 8 -> ;
+  a b -> b ^ 7 a;
+";
+
+word_completion o R8;
+
+let R9 = SRS F "
+  a a -> ;
+  b ^ 9 -> ;
+  a b -> b ^ 8 a;
+";
+
+word_completion o R9;
+
+
+let R20 = SRS F "
+  a a -> ;
+  b ^ 20 -> ;
+  a b -> b ^ 19 a;
+";
+
+word_completion o R20;
+
+
+
+let R21 = SRS F "
+  a a -> ;
+  b ^ 21 -> ;
+  a b -> b ^ 20 a;
+";
+
+word_completion o R21;
+
+let R100 = SRS F "
+  a a -> ;
+  b ^ 100 -> ;
+  a b -> b ^ 99 a;
+";
+
+#time on;
+word_completion o R100;
+
+
+let R200 = SRS F "
+  a a -> ;
+  b ^ 200 -> ;
+  a b -> b ^ 199 a;
+";
+
+word_completion o R200;
+
+let R300 = SRS F "
+  a a -> ;
+  b ^ 300 -> ;
+  a b -> b ^ 299 a;
+";
+
+word_completion o R300;
+
+let R400 = SRS F "
+  a a -> ;
+  b ^ 400 -> ;
+  a b -> b ^ 399 a;
+";
+
+word_completion o R400;
+
+
+let R500 = SRS F"
+  a^2 -> ;
+  b a b -> a ;
+  b^501 -> a b ^ 499 a ;
+  b^500 a -> a b ^ 500;";
+let R500bis = SRS F"
+  a^2 -> ;
+  b a b -> a ;
+  b^500 -> ;
+  ";
+word_completion o R500;
+
+let R501 = SRS F"
+  a^2 -> ;
+  b a b -> a ;
+  b ^ 501 -> ;
+";
+ 
+  b^501 -> a b ^ 499 a ;
+  b^500 a -> a b ^ 500;";
+word_completion o R500;
+
+
+(* (* This takes time...*)
+
+let R10000 = SRS F "
+  a^2 -> ;
+  b a b -> a ;
+  b^10001 -> a b ^ 99999 a ;
+  b^10000 a -> a b ^ 10000;";
+word_completion o R10000;
+*)
+
+
+

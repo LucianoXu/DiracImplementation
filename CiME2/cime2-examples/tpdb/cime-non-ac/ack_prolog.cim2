@@ -1,0 +1,51 @@
+(*
+
+  This example is a translation of a logic program for Ackermann's
+  function, built by TALP.
+
+    http://bibiserv.techfak.uni-bielefeld.de/talp/
+
+  Enno Ohlebusch, Claus Claves, and Claude Marché
+
+*)
+
+[m, n]
+
+ack_in(0,n) -> ack_out(s(n)) ;
+ack_in(s(m),0) -> u11(ack_in(m,s(0))) ;
+u11(ack_out(n)) -> ack_out(n) ;
+ack_in(s(m),s(n)) -> u21(ack_in(s(m),n),m) ;
+u21(ack_out(n),m) -> u22(ack_in(m,n)) ;
+u22(ack_out(n)) -> ack_out(n) ;
+
+
+(*
+
+let F = signature "
+0 : constant;
+s : unary;
+ack_in : binary;
+ack_out : unary;
+u21 : binary;
+u11, u22 : unary;
+";
+
+let X = vars "n m";
+
+let R = HTRS {} F X "
+ack_in(0,n) -> ack_out(s(n))  ;
+ack_in(s(m),0) -> u11(ack_in(m,s(0))) ; 
+u11(ack_out(n)) -> ack_out(n) ;
+ack_in(s(m), s(n)) -> u21(ack_in(s(m), n), m) ;
+u21(ack_out(n),m) -> u22(ack_in(m,n)) ;
+u22(ack_out(n)) -> ack_out(n) ;
+";
+
+termcrit "minimal";
+polyinterpkind {("linear",1);("linear",2)};
+h_termination R;
+output_last_proof "";
+
+
+
+*)

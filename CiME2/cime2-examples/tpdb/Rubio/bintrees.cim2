@@ -1,0 +1,36 @@
+(***************************************************************************)
+(*                                                                         *)
+(*         This file was generated using the testocime tool                *)
+(*                                                                         *)
+(***************************************************************************)
+
+
+let X = vars "Z Y X W V U ";
+(* 6 variables defined *)
+
+let F = signature "
+	true: 0;
+	lessleaves: 2;
+	leaf: 0;
+	false: 0;
+	cons: 2;
+	concat: 2;
+";
+(* 6 non-variable symbols defined *)
+
+let R = HTRS {} F X "
+	concat(leaf, Y) -> Y;
+	concat(cons(U, V), Y) -> cons(U, concat(V, Y));
+	lessleaves(X, leaf) -> false;
+	lessleaves(leaf, cons(W, Z)) -> true;
+	lessleaves(cons(U, V), cons(W, Z)) -> lessleaves(concat(U, V), concat(W, Z));
+";
+(* 5 rules *)
+
+termcrit "minimal";
+termcrit "graph";
+polyinterpkind {("linear",2);("simple",2);("simple",6)};
+#time on;
+h_termination R;
+
+#quit;

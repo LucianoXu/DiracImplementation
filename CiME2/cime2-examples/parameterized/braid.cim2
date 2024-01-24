@@ -1,0 +1,112 @@
+(* Artin's Braid group *)
+
+let N = parameters "n";
+
+let S = pword_signature N 
+	"t{i} | {1<= i <= n-1 };
+	 T{i} | {1<= i <= n-1 };" ;
+
+let R = psrs S 
+	"
+	T{i} t{i} -> | { 1<= i <= n-1};
+	t{i} T{i} -> | { 1<= i <= n-1};	
+	t{i} t{j} -> t{j} t{i} | { 1 <= i <= n-1 /\ 1<= j <= n-1 
+				  /\ (i-j > 1 \/ i-j < -1)};
+	t{i} t{i+1} t{i} -> t{i+1} t{i} t{i+1} | { 1 <= i <= n-2};	
+	";
+
+(* This is the same one but more rule and less constraints.*)
+let Rbis = psrs S 
+	"
+	T{i} t{i} -> | { 1<= i <= n-1};
+	t{i} T{i} -> | { 1<= i <= n-1};	
+	
+	t{i} t{j} -> t{j} t{i} | { 1 <= i <= n-1 /\ 1<= j <= n-1 
+				  /\ i-j > 1};
+	t{i} t{j} -> t{j} t{i} | { 1 <= i <= n-1 /\ 1<= j <= n-1 
+				  /\ i-j < -1};
+	
+	t{i} t{i+1} t{i} -> t{i+1} t{i} t{i+1} | { 1 <= i <= n-2};	
+	";
+(* Rbis is not confluent *)
+
+
+let Rcomplete = psrs S 
+	"
+	T{i} t{i} -> | { 1<= i <= n-1};
+	t{i} T{i} -> | { 1<= i <= n-1};	
+	t{i} t{j} -> t{j} t{i} | { 1 <= i <= n-1 /\ 1<= j <= n-1 
+				  /\ (i-j > 1 \/ i-j < -1)};
+	t{i} t{i+1} t{i} -> t{i+1} t{i} t{i+1} | { 1 <= i <= n-2};	
+
+	T{i} t{j} -> t{j} t{i} T{j} T{i} | {1 <= i <= n-1 /\ 1<= j <= n-1 
+				  		/\ (i-j = 1 \/ i-j = -1)};
+	
+	T{i} t{j} -> t{j} T{i} | {1 <= i <= n-1 /\ 1<= j <= n-1 
+				  /\ (i-j > 1 \/ i-j < -1)};
+	";
+
+let Rcompletebis = psrs S 
+	"
+	T{i} t{i} -> | { 1<= i <= n-1};
+	t{i} T{i} -> | { 1<= i <= n-1};	
+	t{i} t{j} -> t{j} t{i} | { 1 <= i <= n-1 /\ 1<= j <= n-1 
+				  /\ (i-j > 1)};
+	t{i} t{j} -> t{j} t{i} | { 1 <= i <= n-1 /\ 1<= j <= n-1 
+				  /\ i-j < -1};
+
+	t{i} t{i+1} t{i} -> t{i+1} t{i} t{i+1} | { 1 <= i <= n-2};	
+
+	T{i} t{j} -> t{j} t{i} T{j} T{i} | {1 <= i <= n-1 /\ 1<= j <= n-1 
+				  		/\ i-j = 1 };
+	
+	T{i} t{j} -> t{j} t{i} T{j} T{i} | {1 <= i <= n-1 /\ 1<= j <= n-1 
+				  		/\ i-j = -1};
+
+	T{i} t{j} -> t{j} T{i} | {1 <= i <= n-1 /\ 1<= j <= n-1 
+				  /\ i-j > 1 };
+	T{i} t{j} -> t{j} T{i} | {1 <= i <= n-1 /\ 1<= j <= n-1 
+				  /\ i-j < -1};
+	";
+
+(* Cannot check its confluence because it does not terminate *)
+
+
+let u = pword S "t{i} t{j} |{ 1 <= i <= n-1 
+			     /\ 1 <= j <= n-1 
+			     /\ i-j> 1}";
+preducible S Rbis u ;
+preducible S Rcompletebis u ;
+
+
+let natte =
+	pword S
+	"
+	t{k} T{k+1} t{k} T{k+1} | { 1 <= k <= n-2 }";
+
+preducible S Rcompletebis natte;
+pnormalize S Rcompletebis natte;
+
+
+let natte2 =
+	pword S
+	"
+	t{k} T{k+1} t{k} T{k+1} 	
+	t{k} T{k+1} t{k} T{k+1}	
+	t{k} T{k+1} t{k} T{k+1}	
+	t{k} T{k+1} t{k} T{k+1}	
+	t{k} T{k+1} t{k} T{k+1}	
+	t{k} T{k+1} t{k} T{k+1}	
+	t{k} T{k+1} t{k} T{k+1}	
+	t{k} T{k+1} t{k} T{k+1}	
+	t{k} T{k+1} t{k} T{k+1}	
+	t{k} T{k+1} t{k} T{k+1} 	
+	t{k} T{k+1} t{k} T{k+1}
+	| { 1 <= k <= n-2 }";
+
+preducible S Rcompletebis natte2;
+pnormalize S Rcompletebis natte2;
+
+#mem;
+#time;
+#quit;

@@ -1,0 +1,101 @@
+(* Addition and multiplication of natural numbers, in a binary notation. *)
+
+let F = signature "
+  # : constant;
+0,1 : postfix unary;
++,* : AC;
+";
+
+let X = vars "x y z";
+
+let R = TRS F X "
+  (#)0 -> #;
+  # + x -> x;
+  (x)0 + (y)0 -> (x+y)0;
+  (x)0 + (y)1 -> (x+y)1;
+  (x)1 + (y)1 -> (x+y+(#)1)0;
+  # * x -> #;
+  (x)0 * y -> (x*y)0;
+  (x)1 * y -> (x*y)0 + y;
+";
+
+
+
+
+let p = precedence F " * > + > 0, + > 1, + > #";
+let s = status F "";
+
+let o = ACRPO s p;
+
+let c = all_decrease_termination_constraints R;
+
+check_termination_constraint c o;
+
+
+#time on;
+
+termination R;
+
+(* result :
+
+[#] = 0;
+[0](X0) = X0 + 1;
+[1](X0) = X0 + 3;
+[+](X0,X1) = X1 + X0 + 1;
+[*](X0,X1) = 2*X1*X0 + 2*X1 + 2*X0 + 1;
+Execution time: 0.160000 sec
+
+*)
+
+(* Now with dependency pairs *)
+
+termcrit "dp";
+termcrit "nograph";
+termcrit "nomarks";
+termination R;
+
+(* result :
+
+[#] = 0;
+[0](X0) = X0 + 1;
+[1](X0) = X0 + 2;
+[+](X0,X1) = X1 + X0;
+[*](X0,X1) = 2*X1*X0 + 2*X1 + 2*X0 + 1;
+Execution time: 1.270000 sec
+
+*)
+
+termcrit "graph";
+termination R;
+
+(* result :
+
+25 pairs
+2 strongly-connected components
+
+component 1:
+[#] = 0;
+[0](X0) = X0 + 1;
+[1](X0) = X0 + 2;
+[+](X0,X1) = X1 + X0;
+[*](X0,X1) = X1*X0 + X1 + X0;
+
+component 2:
+no answer after 2mn
+
+*)
+
+termcrit "nograph";
+termcrit "marks";
+termination R;
+
+(* result :
+
+363 pairs
+
+*)
+
+termcrit "graph";
+termcrit "marks";
+termination R;
+

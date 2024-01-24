@@ -1,0 +1,33 @@
+%***************************************************************************
+%
+% Problemes des cameleons
+%
+% $Id: probleme-des-cameleons.cim,v 1.1 1997/07/01 16:15:15 marche Exp $
+%
+%***************************************************************************
+
+operators
+  + : AC
+  Rouge,Vert,Bleu : constant
+
+axioms
+  Rouge + Bleu = Vert + Vert;
+  Rouge + Vert = Bleu + Bleu;
+  Vert + Bleu = Rouge + Rouge;
+
+order 
+  rpo( Rouge > Bleu > Vert )
+
+conjectures
+
+  Rouge + Rouge + Rouge + Rouge + Bleu + Bleu + Bleu + Vert + Vert =
+  Rouge + Rouge + Rouge + Rouge + Rouge + Rouge + Rouge + Rouge + Rouge;
+
+  Rouge + Rouge + Rouge + Rouge + Bleu + Bleu + Bleu + Vert + Vert =
+  Bleu + Bleu + Bleu + Bleu + Bleu + Bleu + Bleu + Bleu + Bleu;
+
+  Rouge + Rouge + Rouge + Rouge + Bleu + Bleu + Bleu + Vert + Vert =
+  Vert + Vert + Vert + Vert + Vert + Vert + Vert + Vert + Vert;
+
+end
+

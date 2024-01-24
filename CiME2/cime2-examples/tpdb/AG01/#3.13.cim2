@@ -1,0 +1,52 @@
+(***************************************************************************)
+(*                                                                         *)
+(*         This file was generated using the testocime tool                *)
+(*                                                                         *)
+(***************************************************************************)
+
+
+let X = vars "y x v u i h ";
+(* 6 variables defined *)
+
+let F = signature "
+	union: 2;
+	true: 0;
+	s: 1;
+	reach: 4;
+	or: 2;
+	if_reach_2: 5;
+	if_reach_1: 5;
+	false: 0;
+	eq: 2;
+	empty: 0;
+	edge: 3;
+	0: 0;
+";
+(* 12 non-variable symbols defined *)
+
+let R = HTRS {} F X "
+	eq(0, 0) -> true;
+	eq(0, s(x)) -> false;
+	eq(s(x), 0) -> false;
+	eq(s(x), s(y)) -> eq(x, y);
+	or(true, y) -> true;
+	or(false, y) -> y;
+	union(empty, h) -> h;
+	union(edge(x, y, i), h) -> edge(x, y, union(i, h));
+	reach(x, y, empty, h) -> false;
+	reach(x, y, edge(u, v, i), h) -> if_reach_1(eq(x, u), x, y, edge(u, v, i), h);
+	if_reach_1(true, x, y, edge(u, v, i), h) -> if_reach_2(eq(y, v), x, y, edge(u, v, i), h);
+	if_reach_2(true, x, y, edge(u, v, i), h) -> true;
+	if_reach_2(false, x, y, edge(u, v, i), h) -> or(reach(x, y, i, h), reach(v, y, union(i, h), empty));
+	if_reach_1(false, x, y, edge(u, v, i), h) -> reach(x, y, i, edge(u, v, h));
+";
+(* 14 rules *)
+
+termcrit "minimal";
+termcrit "graph";
+timelimit "0.205";
+polyinterpkind {("linear",1)};
+#time on;
+h_termination R;
+
+#quit;

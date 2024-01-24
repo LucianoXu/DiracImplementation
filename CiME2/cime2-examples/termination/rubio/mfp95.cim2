@@ -1,0 +1,17 @@
+let V = vars "X Y" ;
+
+let F = signature "
+  h,s : 1;
+  f : 2;
+";
+
+let R = HTRS {} F V "
+f(s(X),Y) -> h(s(f(h(Y),X)));
+";
+
+termcrit "minimal";
+polyinterpkind {("linear",1)};
+#time on;
+h_termination R;
+
+#quit;

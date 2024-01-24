@@ -1,0 +1,28 @@
+(***************************************************************************)
+(*                                                                         *)
+(*         This file was generated using the testocime tool                *)
+(*                                                                         *)
+(***************************************************************************)
+
+
+let X = vars "x ";
+(* 1 variable defined *)
+
+let F = signature "
+	b: 1;
+	a: 1;
+";
+(* 2 non-variable symbols defined *)
+
+let R = HTRS {} F X "
+	a(a(x)) -> a(b(a(x)));
+";
+(* 1 rule *)
+
+termcrit "minimal";
+termcrit "graph";
+polyinterpkind {("linear",1);("linear",2);("simple",2)};
+#time on;
+h_termination R;
+
+#quit;

@@ -1,0 +1,26 @@
+
+operators
+  + : AC
+  0 : constant
+  s : unary
+  fib : unary
+  x,y : variable
+
+theory ACU(+,0)
+
+axioms
+  fib(0) = s(0);
+  fib(s(0)) = s(0);
+  fib(s(s(x))) = fib(s(x)) + fib(x);
+  x + s(y) = s(x+y);
+
+
+problems
+
+%  -(0) = -(-(0)+0) ;
+%  -(-(x)) = x ;
+
+  reduce fib(fib(s(s(s(s(s(s(0))))))));
+  
+end
+

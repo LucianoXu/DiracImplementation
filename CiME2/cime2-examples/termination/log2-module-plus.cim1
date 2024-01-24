@@ -1,0 +1,38 @@
+
+operators
+  # : constant  
+0,1 : postfix unary 
++ : infix binary 
+x,y,z : variable
+
+order
+  poly([#] = 0;
+[0](x) = x + 1 ;  
+[1](x) = x + 2;
+[+](x,y) = x + 2.y + 1
+)
+
+problems
+
+compare    (#)0 with #;
+
+compare      # + x with x;
+compare      x + # with x;
+compare      (x)0 + (y)0 with (x+y)0;
+compare      (x)0 + (y)1 with (x+y)1;
+compare      (x)1 + (y)0 with (x+y)1;
+compare      (x)1 + (y)1 with ((x+y)+(#)1)0;
+compare      x + (y + z) with (x + y) + z;
+
+compare      (x)0 + (y)0 with x+y;
+compare      (x)0 + (y)1 with x+y;
+compare      (x)1 + (y)0 with x+y;
+compare      (x)1 + (y)1 with x+y;
+compare      (x)1 + (y)1 with (x+y)+(#)1;
+compare      x + (y + z) with x + y;
+compare      x + (y + z) with (x + y) + z;
+
+
+end
+
+

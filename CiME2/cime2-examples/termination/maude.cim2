@@ -1,0 +1,180 @@
+
+
+(************************************************************************)
+(* Symbol overlapping *)
+(* Firstly we try to prove termination of modules separately (each module 
+   extends nothing), no interest: just for sport *)
+
+
+let X = vars "F C J P Q R N M S T E I B";
+
+
+let F = signature "
+0, t, f : 0;
+v, s, not : 1;
+eqVar, or, and, implies, equiv : 2;
+if : 3;
+
+nil : 0;
+eval, setTruthVal, seq, eqVar, defined : 2;
+isTautology : 1;
+tautology_check : 2;
+
+fail : 0;
+falsify : 1;
+eq2, falsify_aux : 2;
+";
+
+let R1 = HTRS {} F X "
+eqVar(v(N),v(N)) -> t;
+eqVar(v(0),v(s(N))) -> f;
+eqVar(v(s(N)),v(s(M))) -> eqVar(v(N),v(M));
+if(t,P,Q) -> P;
+if(f,P,Q) -> Q;
+if(P,t,f) -> P;
+if(if(P,Q,R),S,T) -> if(P,if(Q,S,T),if(R,S,T));
+not(P) -> if(P,f,t);
+or(P,Q) -> if(P,t,Q);
+and(P,Q) -> if(P,Q,f);
+implies(P,Q) -> if(P,Q,t); 
+equiv(P,Q) -> if(P,Q,if(Q,f,t));
+";
+
+let R2 = HTRS {} F X "
+eval(t,E) -> t;
+eval(f,E) -> f;
+eval(I,nil) -> f;
+eval(I,seq(setTruthVal(J,B),E)) -> if(eqVar(I,J),B,eval(I,E));
+eval(if(I,Q,R),E) -> if(eval(I,E),eval(Q,E),eval(R,E));
+defined(I,nil) -> f;
+defined(I,seq(setTruthVal(J,B),E)) -> or(eqVar(I,J),defined(I,E));
+";
+
+let R3 = HTRS {} F X "
+isTautology(P) -> tautology_check(P,nil);
+tautology_check(B,E) -> B;
+tautology_check(I,E) -> eval(I,E);
+tautology_check(if(I,P,Q),E) -> if(defined(I,E),if(eval(I,E),tautology_check(P,E),tautology_check(Q,E)),and(tautology_check(P,seq(setTruthVal(I,t),E)),tautology_check(Q,seq(setTruthVal(I,f),E))));
+";
+
+let R4 = HTRS {} F X "
+eq2(E,E) -> t;
+eq2(fail,E) -> f;
+eq2(nil,seq(setTruthVal(I,B),E)) -> f;
+eq2(seq(setTruthVal(I,B),E),seq(setTruthVal(J,C),F)) -> and(eq2(I,J),and(equiv(B,C),eq2(E,F)));
+falsify(P) -> falsify_aux(P,nil);
+falsify_aux(t,E) -> fail;
+falsify_aux(f,E) -> E;
+falsify_aux(I,E) -> if(eval(I,E),fail,seq(setTruthVal(I,f),E));
+falsify_aux(if(I,P,Q),E) -> if(defined(I,E),if(eval(I,E),falsify_aux(P,E),falsify_aux(Q,E)),if(eq2(falsify_aux(P,seq(setTruthVal(I,t),E)),fail),falsify_aux(Q,seq(setTruthVal(I,f),E)),falsify_aux(P,seq(setTruthVal(I,t),E))));
+";
+
+termcrit "minimal";
+#time on;
+
+(* disjoint *)
+polyinterpkind {("linear", 1); ("simple", 2)};
+h_termination R1;
+(* 0.31s *)
+
+polyinterpkind {("linear", 1); ("simple", 2)};
+h_termination R2;
+(* 0.15s *)
+
+polyinterpkind {("linear", 2)};
+h_termination R3;
+(* 0.06s *)
+  
+
+
+(************************************************************************)
+(* Secondly, we write well-typed modules and try to prove termination
+   of their union. *)
+
+let F_bool = signature " 
+  or_bool, and_bool : 2;
+  if_test : 3;
+  True, False : 0;
+  ";
+
+let R_bool = HTRS {} F_bool X "
+  if_test(True,P,Q) -> P;
+  if_test(False,P,Q) -> Q; 
+  or_bool(True,Q) -> True;
+  or_bool(False,Q) -> Q;
+  and_bool(True,Q) -> Q;
+  and_bool(False,Q) -> False;
+";  
+
+termcrit "minimal";
+polyinterpkind{("linear",1)};
+h_termination R_bool;
+
+
+let F_1 = signature "
+0, t, f : 0;
+v, s, not : 1;
+eqVar, or, and, implies, equiv : 2;
+if : 3;
+";
+
+let R1 = HTRS {R_bool} F_1 X "
+eqVar(v(N),v(N)) -> True;
+eqVar(v(0),v(s(N))) -> False;
+eqVar(v(s(N)),v(s(M))) -> eqVar(v(N),v(M));
+if(t,P,Q) -> P;
+if(f,P,Q) -> Q;
+if(P,t,f) -> P;
+if(if(P,Q,R),S,T) -> if(P,if(Q,S,T),if(R,S,T));
+not(P) -> if(P,f,t);
+or(P,Q) -> if(P,t,Q);
+and(P,Q) -> if(P,Q,f);
+implies(P,Q) -> if(P,Q,t); 
+equiv(P,Q) -> if(P,Q,if(Q,f,t));
+";
+polyinterpkind{("linear",1);("simple",2)};
+h_termination R1;
+
+let F_2 = signature "
+nil : 0;
+eval, setTruthVal, seq, eqVar, defined : 2;
+";
+
+let R2 = HTRS {R1} F_2 X "
+eval(t,E) -> True;
+eval(f,E) -> False;
+eval(I,nil) -> False;
+eval(I,seq(setTruthVal(J,B),E)) -> if_test(eqVar(I,J),B,eval(I,E));
+eval(if(I,Q,R),E) -> if_test(eval(I,E),eval(Q,E),eval(R,E));
+defined(I,nil) -> False;
+defined(I,seq(setTruthVal(J,B),E)) -> or_bool(eqVar(I,J),defined(I,E));
+";
+
+polyinterpkind{("linear",1);("simple",2)};
+h_termination R2;
+
+(* so far so good, Rbool U R1 U R2 is proven terminating in no time *)
+
+
+
+let F_3 = signature "
+isTautology : 1;
+tautology_check : 2;
+";
+
+let R3 = HTRS {R2} F_3 X "
+isTautology(P) -> tautology_check(P,nil);
+tautology_check(B,E) -> B;
+tautology_check(I,E) -> eval(I,E);
+tautology_check(if(I,P,Q),E) -> 
+  if_test(defined(I,E),
+     if_test(eval(I,E),
+             tautology_check(P,E),
+             tautology_check(Q,E)),
+     and_bool(tautology_check(P,seq(setTruthVal(I,t),E)),
+              tautology_check(Q,seq(setTruthVal(I,f),E))
+     ));
+";
+
+(* more difficult, should use RPO here... *)
+

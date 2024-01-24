@@ -1,0 +1,40 @@
+(***************************************************************************)
+(*                                                                         *)
+(*         This file was generated using the testocime tool                *)
+(*                                                                         *)
+(***************************************************************************)
+
+
+let X = vars "z y x ";
+(* 3 variables defined *)
+
+let F = signature "
+	true: 0;
+	or: 2;
+	false: 0;
+	and: 2;
+";
+(* 4 non-variable symbols defined *)
+
+let R = HTRS {} F X "
+	and(x, or(y, z)) -> or(and(x, y), and(x, z));
+	and(x, and(y, y)) -> and(x, y);
+	or(or(x, y), and(y, z)) -> or(x, y);
+	or(x, and(x, y)) -> x;
+	or(true, y) -> true;
+	or(x, false) -> x;
+	or(x, x) -> x;
+	or(x, or(y, y)) -> or(x, y);
+	and(x, true) -> x;
+	and(false, y) -> false;
+	and(x, x) -> x;
+";
+(* 11 rules *)
+
+termcrit "minimal";
+termcrit "graph";
+polyinterpkind {("linear",1);("linear",2);("simple",2)};
+#time on;
+h_termination R;
+
+#quit;

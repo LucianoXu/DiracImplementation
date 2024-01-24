@@ -1,0 +1,65 @@
+(*
+
+  Claude Marché
+
+  Formal differentiation.
+
+  + and * are AC.
+
+  (currently CiME fails)
+
+*)
+
+[g, f]
+
+AC [*, +]
+
+dx(X) -> 1 ;
+dx(0) -> 0 ;
+dx(1) -> 0 ;
+dx(a) -> 0 ;
+dx(+(f,g)) -> +(dx(f),dx(g)) ;
+dx(*(f,g)) -> +(*(dx(f),g),*(dx(g),f)) ;
+dx(-(f,g)) -> -(dx(f),dx(g)) ;
+dx(neg(f)) -> neg(dx(f)) ;
+dx(/(f,g)) -> -(/(dx(f),g),/(*(dx(g),f),exp(g,2))) ;
+dx(ln(f)) -> /(dx(f),f) ;
+dx(exp(f,g)) -> +(*(dx(f),*(exp(f,-(g,1)),g)),*(dx(g),*(exp(f,g),ln(f)))) ;
+
+
+(*
+
+let F = signature "
+dx:unary; 
++,* : AC ; 
+0,1,2,X,a : constant;
+-,/ : infix binary;
+exp : binary;
+ln,neg : unary;
+";
+
+let X = vars "f g";
+
+let R = HTRS {} F X "
+dx(X) -> 1 ;
+dx(0) -> 0 ;
+dx(1) -> 0 ;
+dx(a) -> 0 ;
+dx(f+g) -> dx(f) + dx(g) ;
+dx(f*g) -> (g * dx(f)) + (f * dx(g)) ;
+dx(f-g) -> dx(f) - dx(g) ;
+dx(neg(f)) -> neg(dx(f)) ;
+dx(f/g) -> (dx(f)/g) - ((f * dx(g)) / exp(g,2)) ;
+dx(ln(f)) -> dx(f) / f ;
+dx(exp(f,g)) -> (g * exp(f,g-1) * dx(f)) + (exp(f,g) * ln(f) * dx(g))
+";
+
+
+termcrit "minimal";
+termcrit "nomarks";
+polyinterpkind {("linear",1);("simple",3)};
+h_termination R;
+output_last_proof "";
+
+
+*)

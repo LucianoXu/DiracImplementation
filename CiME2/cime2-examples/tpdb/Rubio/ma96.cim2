@@ -1,0 +1,58 @@
+(***************************************************************************)
+(*                                                                         *)
+(*         This file was generated using the testocime tool                *)
+(*                                                                         *)
+(***************************************************************************)
+
+
+let X = vars "Z Y Xp X Tp T Sp S Lp L K ";
+(* 11 variables defined *)
+
+let F = signature "
+	var: 1;
+	true: 0;
+	ren: 3;
+	nil: 0;
+	lambda: 2;
+	if: 3;
+	false: 0;
+	eq: 2;
+	cons: 2;
+	apply: 2;
+	and: 2;
+";
+(* 11 non-variable symbols defined *)
+
+let R = HTRS {} F X "
+	and(false, false) -> false;
+	and(true, false) -> false;
+	and(false, true) -> false;
+	and(true, true) -> true;
+	eq(nil, nil) -> true;
+	eq(cons(T, L), nil) -> false;
+	eq(nil, cons(T, L)) -> false;
+	eq(cons(T, L), cons(Tp, Lp)) -> and(eq(T, Tp), eq(L, Lp));
+	eq(var(L), var(Lp)) -> eq(L, Lp);
+	eq(var(L), apply(T, S)) -> false;
+	eq(var(L), lambda(X, T)) -> false;
+	eq(apply(T, S), var(L)) -> false;
+	eq(apply(T, S), apply(Tp, Sp)) -> and(eq(T, Tp), eq(S, Sp));
+	eq(apply(T, S), lambda(X, Tp)) -> false;
+	eq(lambda(X, T), var(L)) -> false;
+	eq(lambda(X, T), apply(Tp, Sp)) -> false;
+	eq(lambda(X, T), lambda(Xp, Tp)) -> and(eq(T, Tp), eq(X, Xp));
+	if(true, var(K), var(L)) -> var(K);
+	if(false, var(K), var(L)) -> var(L);
+	ren(var(L), var(K), var(Lp)) -> if(eq(L, Lp), var(K), var(Lp));
+	ren(X, Y, apply(T, S)) -> apply(ren(X, Y, T), ren(X, Y, S));
+	ren(X, Y, lambda(Z, T)) -> lambda(var(cons(X, cons(Y, cons(lambda(Z, T), nil)))), ren(X, Y, ren(Z, var(cons(X, cons(Y, cons(lambda(Z, T), nil)))), T)));
+";
+(* 22 rules *)
+
+termcrit "minimal";
+termcrit "graph";
+polyinterpkind {("linear",2);("simple",2);("simple",6)};
+#time on;
+h_termination R;
+
+#quit;

@@ -1,0 +1,29 @@
+(*
+
+Commutative ring theory
+
+*)
+
+let F_ring = signature "
+  +,. : AC;
+  0,1 : constant;
+  -   : unary;
+";
+
+let X = vars "x y z";
+
+let R_ring = TRS F_ring X "
+  x+0 -> x;
+  x.1 -> x;
+  x+-(x) -> 0;
+  x.(y+z) -> (x.y)+(x.z);
+  -(0) -> 0;
+  x.0 -> 0;
+  x.-(y) -> -(x.y);
+  -(-(x)) -> x;
+  -(x+y) -> -(x)+-(y);
+";
+
+#time;
+
+termination R_ring;

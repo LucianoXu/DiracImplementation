@@ -1,0 +1,10 @@
+operators
+  f : binary
+  a : constant
+  x,y,z : variable
+
+order
+  rps(rpo(f);
+    f(x,x) -> a)
+
+end

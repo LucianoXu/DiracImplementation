@@ -1,0 +1,55 @@
+#time on;
+
+let constr0 = dioph_constraint "x = y+1 /\ x = z" ;
+dioph_solve 10 constr0;
+
+let constr0' = dioph_constraint "x = y+1 /\ x = y" ;
+dioph_solve 10 constr0';
+
+(*
+
+test1 : xy = 6  x+y =5
+
+*)
+
+let constr1 = dioph_constraint "x.y = 6 /\ x+y = 5" ;
+
+dioph_solve 10 constr1;
+
+(*
+
+ test 2 : xy = 66048, x+y = 514 
+
+*)
+
+let constr2 = dioph_constraint "x.y = 66048 /\ x+y = 514";
+dioph_solve 1000 constr2;
+
+(*
+
+ test 3 : x^3+xy^2 = 62935530, x^2y+x+y = 28166807
+
+*)
+
+let constr3 = 
+  dioph_constraint "x^3 + x.y^2 = 62935530 /\ x^2.y + x + y = 28166807";
+dioph_solve 1000 constr3;
+
+
+let constr4 = dioph_constraint "x^2 + y^2 = z^2 /\ x > 0 /\ y > 0 /\ z > 0";
+dioph_solve 100 constr4;
+
+let constr5 = dioph_constraint "x^3 + y^3 = z^3 /\ x > 0 /\ y > 0 /\ z > 0";
+dioph_solve 100 constr5;
+
+let constr6 = dioph_constraint "x - y - 1 >= 0";
+dioph_solve 100 constr6;
+
+let constr7 = dioph_constraint "2.x + y = 3.z + 1  /\ 3.x + 4.z = 5.y + 3";
+dioph_solve 100 constr7;
+
+let constr8 = dioph_constraint "x.y.x.y = 1225  /\ x > 1  /\ y > 1";
+dioph_solve 100 constr8;
+
+let constr_bug = dioph_constraint "-1 >= 0";
+dioph_solve 100 constr_bug;

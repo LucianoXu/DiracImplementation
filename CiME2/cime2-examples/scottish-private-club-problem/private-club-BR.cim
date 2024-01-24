@@ -1,0 +1,83 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% The classical example of the Scottish private club puzzle
+%
+% - every non-scottish members wear red socks
+%
+% - every member wears a kilt or doesn't wear socks
+%
+% - the married members don't go out on sunday
+%
+% - a member goes out on sunday if and only if he is scottish
+%
+% - every member who wears a kilt is scottish and married
+%
+% - every scottish member wears a kilt
+%
+% problem: prove that there is nobody in this club !
+%
+% $Id: private-club-BR.cim,v 1.1 1996/07/16 10:02:59 marche Exp $
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+operators
+
+  and,xor    : AC 
+  true,false : constant
+  implies    : infix binary
+  not        : unary
+  or,iff     : AC
+  x,y,z      : variable
+
+% theory of Boolean ring
+
+theory  BR(xor,false,and,true)
+
+% definitions of other logical connectives
+
+axioms
+
+  x or y = x xor y xor (x and y) ;
+  not(x) = x xor true ;
+  x implies y = not(x) or y ;
+  x iff y = not(x xor y) ;
+
+operators
+
+  is_scottish        : unary 
+  wears_red_socks    : unary 
+  wears_kilt         : unary 
+  is_married         : unary 
+  goes_out_on_sunday : unary 
+
+axioms
+
+  not(is_scottish(x)) implies wears_red_socks(x) = true ;
+  wears_kilt(x) or not(wears_red_socks(x)) = true ;
+  is_married(x) implies not(goes_out_on_sunday(x)) = true ;
+  goes_out_on_sunday(x) iff is_scottish(x) = true ;
+  wears_kilt(x) implies (is_scottish(x) and is_married(x)) = true ;
+  is_scottish(x) implies wears_kilt(x) = true ;
+
+conjectures
+
+  true = false ;
+
+order
+  rpo (or >  true > and > xor > false,
+       not > true,
+       implies > true,
+       iff > true,
+       is_scottish > 
+       wears_red_socks > 
+       wears_kilt > is_married > goes_out_on_sunday > true)
+
+end
+
+
+
+
+
+
+
+

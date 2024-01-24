@@ -1,0 +1,34 @@
+
+
+
+operators
+
+ f : binary
+ i,g : unary
+ h : 3
+ a,b : constant
+
+ x,y : variable
+
+
+order
+
+ poly( 2;
+  [a] = 8 ;
+  [b] = 2 ;
+  [g](x) = x.x ;
+  [i](x) = 4.x ;
+  [f](x,y) = x+y ;
+  [h](x,y,z) = 2.x.y+z 
+  )
+
+problems
+  
+termination (
+ f(x,y) -> x ;
+ g(a) -> h(a,b,a) ;
+ i(x) -> f(x,x) ;
+ h(x,x,y) -> g(x) 
+);
+
+end

@@ -1,0 +1,74 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   Specification of integer-lists. Use Lemma to prove theorems
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+sort
+  nat,list
+
+operators
+
+% integers
+  0 : constant as nat
+  s : unary as nat -> nat
+  + : infix binary as nat -> nat -> nat
+  x,y,z : variable as nat
+
+% lists
+  nil : constant as list
+  . : infix 2 as nat -> list -> list
+% list length
+  L : unary as list -> nat  
+% reverse
+  rev : unary as list -> list
+% concatenation
+  @ : infix binary as list -> list -> list
+
+  l1,l2,l3 : variable as list 
+
+axioms
+  x+0 = x;
+  x+s(y) = s(x+y);
+
+  nil@l1 = l1;
+  (x.l1)@l2 = x.(l1@l2);
+
+  L(nil) = 0;
+  L(x.l1) = s(L(l1));
+
+  rev(nil) = nil;
+  rev(x.l1) = (rev(l1)@(x.nil));
+
+order rpo( L>+>s>0 ,
+           rev>@>.>nil; @ lrlex, + lrlex)
+
+inductive 
+
+
+% this one does not need any lemma
+%  l1@nil = l1;
+
+% lemmas for associativity
+   0+x = x ; 
+   s(x)+y = s(x+y) ;
+
+% associativity
+%   x+(y+z) = (x+y)+z ; 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  rev(rev(x)) =x; %Lemma 1
+%  l1@(l2@l3)=(l1@l2)@l3 ; %Lemma 2
+%  rev(l1@l2) = (rev(l2))@(rev(l1)); %Lemma 3
+%  l1@(x.l2) = (rev(x.rev(l1)))@l2 ; %Theorem
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  L(l1@l2) = (L(l1))+(L(l2)) ; %Lemma
+  L(rev(l1)) = L(l1) ; %Theorem
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  l1@(l2@l3)=(l1@l2)@l3 ; %lemma
+%  rev(l1@l2) = (rev(l2))@(rev(l1)); %Theorem 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+end

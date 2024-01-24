@@ -1,0 +1,16 @@
+operators
+  + : AC
+  a,b,c : constant
+  x,y,z : variable
+
+problems
+
+dp_termination( a+a+x -> a+b+c ; b+b+x -> a+b+c );
+
+dp_termination( 
+  a+a+x -> a+b+c ; 
+  b+b+x -> a+b+c ;
+  a+a+x+y -> a+b+c+y ; 
+  b+b+x+y -> a+b+c+y );
+
+end

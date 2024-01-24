@@ -1,0 +1,42 @@
+(***************************************************************************)
+(*                                                                         *)
+(*         This file was generated using the testocime tool                *)
+(*                                                                         *)
+(***************************************************************************)
+
+
+let X = vars "z y x ";
+(* 3 variables defined *)
+
+let F = signature "
+	true: 0;
+	rev: 1;
+	null: 1;
+	nil: 0;
+	false: 0;
+	cdr: 1;
+	car: 1;
+	.: 2;
+	++: 2;
+";
+(* 9 non-variable symbols defined *)
+
+let R = HTRS {} F X "
+	rev(nil) -> nil;
+	rev(.(x, y)) -> ++(rev(y), .(x, nil));
+	car(.(x, y)) -> x;
+	cdr(.(x, y)) -> y;
+	null(nil) -> true;
+	null(.(x, y)) -> false;
+	++(nil, y) -> y;
+	++(.(x, y), z) -> .(x, ++(y, z));
+";
+(* 8 rules *)
+
+termcrit "minimal";
+termcrit "graph";
+polyinterpkind {("linear",1);("linear",2);("simple",2)};
+#time on;
+h_termination R;
+
+#quit;

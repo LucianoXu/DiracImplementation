@@ -1,0 +1,23 @@
+let F = signature "
+  nil : constant;
+  cons : binary;
+  last, butlast : unary ;
+  append : binary ;
+";
+
+
+let X = vars "x y z l l1 l2";
+
+let R = TRS F X "
+  is_empty(nil) -> true ;
+  is_empty(cons(x,l)) -> false ;
+  
+  last(cons(x,nil)) -> x ;
+  last(cons(x,cons(y,l))) -> last(cons(y,l)) ;
+
+  butlast(cons(x,nil)) -> nil ;
+  butlast(cons(x,cons(y,l))) -> cons(x,butlast(cons(y,l))) ;
+
+  append(l1,l2) -> ifappend(l1,l2,l2) ;
+
+  ifappend(l1,l2,nil) -> 

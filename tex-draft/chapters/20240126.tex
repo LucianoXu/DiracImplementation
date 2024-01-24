@@ -1,0 +1,523 @@
+\chapter{20240126}
+
+\newcommand*{\unit}{\texttt{unit}}
+\newcommand*{\utt}{\texttt{tt}}
+\newcommand*{\fst}{\texttt{fst}}
+\newcommand*{\snd}{\texttt{snd}}
+\newcommand*{\reduce}{\ \triangleright\ }
+\newcommand*{\reducefrom}{\ \triangleleft\ }
+
+\newcommand*{\zeroK}[1]{\mathbf{0}_{\mathcal{K}(#1)}}
+\newcommand*{\zeroB}[1]{\mathbf{0}_{\mathcal{B}(#1)}}
+\newcommand*{\zeroO}[1]{\mathbf{0}_{\mathcal{O}(#1)}}
+
+\section{Dirac Notation}
+
+We want to study the theory of Dirac notations modulo the scalars. This idea is inspired by the Lineal paper \cite{Arrighi2017}.
+
+\begin{definition}[complex scalar rewrite system]
+  A \textbf{complex scalar rewriting system} is a rewrite system $S$ on a language containing at least the symbols $0, 1, +, \times, *$, such that:
+  \begin{itemize}
+    \item $S$ is terminating and ground confluent,
+    \item $+$ and $\times$ are AC-symbols,
+    \item for all closed terms $\alpha$, $\beta$ and $\gamma$, the pair of terms
+      \begin{itemize}
+        \item $0 + \alpha$ and $\alpha$
+        \item $0 \times \alpha$ and $0$,
+        \item $1 \times \alpha$ and $\alpha$,
+        \item $\alpha \times (\beta + \gamma)$ and $\alpha \times \beta + \alpha \times \gamma$,
+        \item $(\alpha + \beta)^*$ and $\alpha^* + \beta^*$,
+        \item $(\alpha \times \beta)^*$ and $\alpha^* \times \beta^*$,
+        \item $(\alpha^*)^*$ and $\alpha$,
+      \end{itemize}
+      have the same normal forms,
+    \item $0$ and $1$ are normal terms.
+  \end{itemize}
+\end{definition}
+
+We can give a smallest instantiation $S_0$ of a complext scalar rewriting system. This will help in the proof of confluence of the Dirac notation rewriting system by the avatar lamma.
+
+\begin{definition}[The rewrite system $S_0$]
+  The system $S_0$ is defined by the following rules:
+  \begin{gather*}
+    0 + \alpha \reduce \alpha\\
+    0 \times \alpha \reduce 0\\
+    1 \times \alpha \reduce \alpha\\
+    \alpha \times (\beta + \gamma) \reduce \alpha \times \beta + \alpha \times \gamma\\
+    0^* \reduce 0 \\
+    1^* \reduce 1 \\
+    (\alpha + \beta)^* \reduce \alpha^* + \beta^*\\
+    (\alpha \times \beta)^* \reduce \alpha^* \times \beta^*\\
+    (\alpha^*)^* \reduce \alpha
+  \end{gather*}
+  where $+$ and $\times$ are AC-symbols.
+\end{definition}
+
+\yx{But this extension seems still not sufficient for tool checking. I believe that's because the tools do not support AC-rewriting.}
+
+\begin{definition}[$S_{0ext}$]
+  The system $S_{0ext}$ is formed by the rules in $S_0$ and the rule
+  \begin{align*}
+    & (0 + \alpha) + \chi \reduce \alpha + \chi \\
+    & (0 \times \alpha) \times \chi \reduce 0 \times \chi \\
+    & (1 \times \alpha) \times \chi \reduce \alpha \times \chi \\
+    & (\alpha \times (\beta + \gamma)) \times \chi \reduce (\alpha \times \beta + \alpha \times \gamma) \times \chi \\
+  \end{align*}
+\end{definition}
+
+
+The Dirac notation theory is also studied modulo the types and terms for the atomic basis of Hilbert spaces, which are defined by basis rewrite systems.
+
+\begin{definition}[atomic basis rewrite system]
+  An \textbf{atomic basis rewrite system} $B$ is a terminating and ground confluent rewrite system.
+\end{definition}
+
+\subsection{Syntax and Typing}
+
+Assume we are given a complex scalar rewrite system $S$ and an atomic basis rewrite system $B$ in the following.
+
+\begin{definition}[language of scalars]
+  The \textbf{language of scalars} is a first order language containing all the symbols in $S$.
+\end{definition}
+
+
+\begin{definition}[language of atomic basis]
+  The \textbf{language of atomic basis} is a first order language containing all the symbols in $B$.
+\end{definition}
+
+
+\begin{definition}[term and type of basis]
+  The \textbf{term of basis} with pairing is defined:
+  \begin{align*}
+    t ::= x\ |\ b\ |\ (t, t)\ |\ \fst\ t\ |\ \snd\ t
+  \end{align*}
+  Here $b$ is an atomic basis and $x$ is a variable. The \textbf{type of basis} is defined by
+  \begin{align*}
+    \tau ::= T\ |\ (\tau * \tau)
+  \end{align*}
+  Here $T$ is the type for atomic bases.
+\end{definition}
+
+\begin{definition}[typing rules]
+  A typing assumption has the form $x : \tau$, meaning variable $x$ has the type $\tau$. A typing context $\Gamma$ consists of typing assumptions and each variable appears only once.
+
+  A typing judgement $\Gamma \vdash e : \sigma$ indicates that $e$ is a term of type $\sigma$ in context $\Gamma$. The well-typed terms are defined by the following rules:
+  \begin{gather*}
+    \frac{x : \sigma \in \Gamma}{\Gamma \vdash x : \sigma}
+    \qquad 
+    \Gamma \vdash b : T\\
+    \\
+    \frac{\Gamma \vdash t_1 : \tau \qquad \Gamma \vdash t_2 : \sigma}{\Gamma \vdash (t_1, t_2) : ( \tau * \sigma )} \\
+    \\
+    \frac{\Gamma \vdash t : ( \tau * \sigma )}{\Gamma \vdash \fst\ t : \tau}
+    \qquad
+    \frac{\Gamma \vdash t : ( \tau * \sigma )}{\Gamma \vdash \snd\ t : \sigma}
+  \end{gather*}
+
+
+\begin{definition}[language of Scalar]
+  \begin{align*}
+    S ::= x\ |\ C(\alpha)\ |\ \delta_{t, t}\ |\ S + S\ |\ S \times S\ |\ S^*\ |\ B \cdot K
+  \end{align*}
+  Here $+$ and $\times$ are AC-symbols, and $\alpha$ is a complex scalar.
+\end{definition}
+
+\begin{definition}[typing rules for Scalar]
+  \begin{gather*}
+    \frac{x : \mathcal{S} \in \Gamma}{\Gamma \vdash x : \mathcal{S}}
+    \qquad 
+    \Gamma \vdash C(\alpha) : \mathcal{S}
+    \qquad
+    \frac{\Gamma \vdash s : \tau \qquad \Gamma \vdash t : \tau}{\Gamma \vdash \delta_{s, t} : \mathcal{S}} \\
+    \\
+    \frac{\Gamma \vdash S_1 : \mathcal{S} \qquad \Gamma \vdash S_2 : \mathcal{S}}{\Gamma \vdash S_1 + S_2 : \mathcal{S}}
+    \qquad
+    \frac{\Gamma \vdash S_1 : \mathcal{S} \qquad \Gamma \vdash S_2 : \mathcal{S}}{\Gamma \vdash S_1 \times S_2 : \mathcal{S}} \\
+    \\
+    \frac{\Gamma \vdash S : \mathcal{S}}{\Gamma \vdash S^* : \mathcal{S}} \\
+    \\
+    \frac{\Gamma \vdash B : \mathcal{B}(\tau) \qquad \Gamma \vdash K : \mathcal{K}(\tau)}{\Gamma \vdash B \cdot K : \mathcal{S}}
+  \end{gather*}
+\end{definition}
+
+
+\begin{definition}[language of Ket]
+  \begin{align*}
+    K ::= x\ |\ \zeroK{\tau}\ |\ \ket{t}\ |\ B^\dagger\ |\ S.K\ |\ K + K\ |\ O \cdot K\ |\ K \otimes K
+  \end{align*}
+  Here $+$ is AC-symbol.
+\end{definition}
+
+\yx{Symmetricity!}
+
+\begin{definition}[typing rules for Ket]
+  \begin{gather*}
+    \frac{x : \mathcal{K}(\tau) \in \Gamma}{\Gamma \vdash x : \mathcal{K}(\tau)}
+    \qquad
+    \Gamma \vdash \zeroK{\tau} : \mathcal{K}(\tau)
+    \qquad
+    \frac{\Gamma \vdash t : \tau}{\Gamma \vdash \ket{t} : \mathcal{K}(\tau)} \\
+    \\
+    \frac{\Gamma \vdash B : \mathcal{B}(\tau)}{\Gamma \vdash B^\dagger : \mathcal{K}(\tau)}
+    \qquad
+    \frac{\Gamma \vdash S : \mathcal{S} \qquad \Gamma \vdash K : \mathcal{K}(\tau)}{\Gamma \vdash S.K : \mathcal{K}(\tau)} \\
+    \\
+    \frac{\Gamma \vdash K_1 : \mathcal{K}(\tau) \qquad \Gamma \vdash K_2 : \mathcal{K}(\tau)}{\Gamma \vdash K_1 + K_2 : \mathcal{K}(\tau)} \\
+    \\
+    \frac{\Gamma \vdash O : \mathcal{O}(\tau, \sigma) \qquad \Gamma \vdash K : \mathcal{K}(\sigma)}{\Gamma \vdash O \cdot K : \mathcal{K}(\tau)} \\
+    \\
+    \frac{\Gamma \vdash K_1 : \mathcal{K}(\tau_1) \qquad \Gamma \vdash K_2 : \mathcal{K}(\tau_2)}{\Gamma \vdash K_1 \otimes K_2 : \mathcal{K}(\tau_1 * \tau_2)}
+  \end{gather*}
+\end{definition}
+
+
+\begin{definition}[language of Bra]
+  \begin{align*}
+    B ::= x\ |\ \zeroB{\tau}\ |\ \bra{t}\ |\ B^\dagger\ |\ S.B\ |\ B + B\ |\ B \cdot O\ |\ B \otimes B
+  \end{align*}
+  Here $+$ is AC-symbol.
+\end{definition}
+
+
+\begin{definition}[typing rules for Bra]
+  \begin{gather*}
+    \frac{x : \mathcal{B}(\tau) \in \Gamma}{\Gamma \vdash x : \mathcal{B}(\tau)}
+    \qquad
+    \Gamma \vdash \zeroB{\tau} : \mathcal{B}(\tau)
+    \qquad
+    \frac{\Gamma \vdash t : \tau}{\Gamma \vdash \bra{t} : \mathcal{B}(\tau)} \\
+    \\
+    \frac{\Gamma \vdash K : \mathcal{K}(\tau)}{\Gamma \vdash K^\dagger : \mathcal{B}(\tau)}
+    \qquad
+    \frac{\Gamma \vdash S : \mathcal{S} \qquad \Gamma \vdash B : \mathcal{B}(\tau)}{\Gamma \vdash S.B : \mathcal{B}(\tau)} \\
+    \\
+    \frac{\Gamma \vdash B_1 : \mathcal{B}(\tau) \qquad \Gamma \vdash B_2 : \mathcal{B}(\tau)}{\Gamma \vdash B_1 + B_2 : \mathcal{B}(\tau)} \\
+    \\
+    \frac{\Gamma \vdash B : \mathcal{B}(\tau) \qquad \Gamma \vdash O : \mathcal{O}(\tau, \sigma)}{\Gamma \vdash B \cdot O : \mathcal{B}(\sigma)} \\
+    \\
+    \frac{\Gamma \vdash B_1 : \mathcal{B}(\tau_1) \qquad \Gamma \vdash B_2 : \mathcal{B}(\tau_2)}{\Gamma \vdash B_1 \otimes B_2 : \mathcal{B}(\tau_1 * \tau_2)}
+  \end{gather*}
+\end{definition}
+
+
+\begin{definition}[language of Operators]
+  \begin{align*}
+    O ::= x\ |\ \zeroO{\tau, \sigma}\ |\ K \otimes B\ |\ O^\dagger\ |\ S.O\ |\ O + O\ |\ O \cdot O\ |\ O \otimes O
+  \end{align*}
+  Here $+$ is AC-symbol.
+\end{definition}
+
+\begin{gather*}
+  \frac{x : \mathcal{O}(\tau, \sigma) \in \Gamma}{\Gamma \vdash x : \mathcal{O}(\tau, \sigma)}
+  \qquad
+  \Gamma \vdash \zeroO{\tau, \sigma} : \mathcal{O}(\tau, \sigma) 
+  \qquad
+  \frac{\Gamma \vdash K : \mathcal{K}(\tau) \qquad \Gamma \vdash B : \mathcal{B}(\sigma)}{\Gamma \vdash K \otimes B : \mathcal{O}(\tau, \sigma)} \\
+  \\
+  \frac{\Gamma \vdash O : \mathcal{O}(\tau, \sigma)}{\Gamma \vdash O^\dagger : \mathcal{O}(\sigma, \tau)}
+  \qquad
+  \frac{\Gamma \vdash S : \mathcal{S} \qquad \Gamma \vdash O : \mathcal{O}(\tau, \sigma)}{\Gamma \vdash S.O : \mathcal{O}(\tau, \sigma)} \\
+  \\
+  \frac{\Gamma \vdash O_1 : \mathcal{O}(\tau, \sigma) \qquad \Gamma \vdash O_2 : \mathcal{O}(\tau, \sigma)}{\Gamma \vdash O_1 + O_2 : \mathcal{O}(\tau, \sigma)} \\
+  \\
+  \frac{\Gamma \vdash O_1 : \mathcal{O}(\tau, \sigma) \qquad \Gamma \vdash O_2 : \mathcal{O}(\sigma, \rho)}{\Gamma \vdash O_1 \cdot O_2 : \mathcal{O}(\tau, \rho)} \\
+  \\
+  \frac{\Gamma \vdash O_1 : \mathcal{O}(\tau_1, \sigma_1) \qquad \Gamma \vdash O_2 : \mathcal{O}(\tau_2, \sigma_2)}{\Gamma \vdash O_1 \cdot O_2 : \mathcal{O}(\tau_1 * \tau_2, \rho_1 * \rho_2)}
+\end{gather*}
+
+
+
+\yx{Types determines how to overload the operators. The essence of Dirac notation is to decide the type of the term and then overload the operators.}
+
+\end{definition}
+
+% \begin{claim}
+%   For any term $e$ of Dirac lambda calculus in any context $\Gamma$, there exists at most one type $\tau$ that satisfies $\Gamma \vdash e : \tau$. The types of all terms are computable (if exist).
+% \end{claim}
+
+\subsection{Equational Theory for Delta Operator}
+
+$$
+  \frac{(\bigwedge_i s_i =_\textsf{BASIC} t_i) \leftrightarrow (\bigwedge_i s_i' =_\textsf{BASIC} t_i') \textrm{ is valid}}{\prod_i \delta_{s_i, t_i} = \prod_i \delta_{s_i', t_i'}}
+$$
+
+\subsection{Reduction Rules}
+
+\subsubsection*{\textsf{BASIS}}
+\begin{align*}
+    & \textsc{(Proj1)} && \Gamma \vdash \fst\ (e_1, e_2) \reduce e_1
+    && \textsc{(Proj2)} && \Gamma \vdash \snd\ (e_1, e_2) \reduce e_2  \\
+    \\
+    & \textsc{(Pair)} && \Gamma \vdash (\fst\ e, \snd\ e)\reduce e
+\end{align*}
+
+
+\subsubsection*{\textsf{SCAL-DELTA}}
+\begin{align*}
+  & \textsc{(Delta1)} && 
+  \frac{\bigwedge_i s_i =_\textsf{BASIC} t_i \textrm{ is valid}}{\Gamma \vdash \prod_i \delta_{s_i, t_i} \reduce 1}
+  \\
+  \\
+  & \textsc{(Delta0)} && 
+  \frac{\bigwedge_i s_i =_\textsf{BASIS} t_i \textrm{ is not satisfiable}}{\Gamma \vdash \prod_i \delta_{s_i, t_i} \reduce 0}
+\end{align*}
+
+
+\subsubsection*{\textsf{SCAL}}
+\begin{align*}
+  & \Gamma \vdash C(0) + S \reduce S \\
+  & \Gamma \vdash C(\alpha) + C(\beta) \reduce C(\alpha + \beta) \\
+  & \Gamma \vdash S + S \reduce C(1 + 1) \times S \\
+  & \Gamma \vdash C(\alpha) \times S + S \reduce C(\alpha + 1) \times S \\
+  & \Gamma \vdash C(\alpha) \times S + C(\beta) \times S \reduce C(\alpha + \beta) \times S \\
+  \\
+  & \Gamma \vdash C(0) \times S \reduce C(0) \\
+  & \Gamma \vdash C(1) \times S \reduce S \\
+  & \Gamma \vdash C(\alpha) \times C(\beta) \reduce C(\alpha \times \beta) \\
+  & \Gamma \vdash S_1 \times (S_2 + S_3) \reduce S_1 \times S_2 + S_1 \times S_3\\
+  \\
+  & \Gamma \vdash C(\alpha)^* \reduce C(\alpha^*) \\
+  & \Gamma \vdash \delta_{s, t}^* \reduce \delta_{s, t} \\
+  & \Gamma \vdash (S_1 + S_2)^* \reduce S_1^* + S_2^* \\
+  & \Gamma \vdash (S_1 \times S_2)^* \reduce S_1^* \times S_2^* \\
+  & \Gamma \vdash (S^*)^* \reduce S \\
+  & \Gamma \vdash (B \cdot K)^* \reduce K^\dagger \cdot B^\dagger \\
+  \\
+  & \Gamma \vdash \mathbf{0}_\mathcal{B} \cdot K \reduce C(0) \\
+  & \Gamma \vdash B \cdot \mathbf{0}_\mathcal{K} \reduce C(0) \\
+  & \Gamma \vdash (S.B) \cdot K \reduce S \times (B \cdot K) \\
+  & \Gamma \vdash B \cdot (S.K) \reduce S \times (B \cdot K) \\
+  & \Gamma \vdash (B_1 + B_2) \cdot K \reduce B_1 \cdot K + B_2 \cdot K \\
+  & \Gamma \vdash B \cdot (K_1 + K_2) \reduce B \cdot K_1 + B \cdot K_2 \\
+  & \Gamma \vdash \bra{s} \cdot \ket{t} \reduce \delta_{s, t} \\
+  & \textcolor{blue}{\Gamma \vdash \bra{s} \cdot \ket{(t_1, t_2)} \reduce (\bra{\fst\ s} \cdot \ket{t_1}) \times (\bra{\snd\ s} \cdot \ket{t_2})} \\
+  & \textcolor{blue}{\Gamma \vdash \bra{(s_1, s_2)} \cdot \ket{t} \reduce (\bra{s_1} \cdot \ket{\fst\ t}) \times (\bra{s_2} \cdot \ket{\snd\ t})} \\
+  & \textcolor{blue}{\text{(Can be reduced to delta operators directly)}}
+  \\
+  & \Gamma \vdash (B_1 \otimes B_2) \cdot \ket{t} \reduce (B_1 \cdot \ket{\fst\ t}) \times (B_2 \cdot \ket{\snd\ t}) \\
+  & \Gamma \vdash \bra{t} \cdot (K_1 \otimes K_2) \reduce (\bra{\fst\ t} \cdot K_1) \times (\bra{\snd\ t} \cdot K_2) \\
+  & \Gamma \vdash (B_1 \otimes B_2) \cdot (K_1 \otimes K_2) \reduce (B_1 \cdot K_1) \times (B_2 \cdot K_2) \\
+  \\
+  & \Gamma \vdash (B \cdot O) \cdot K \reduce B \cdot (O \cdot K) \\
+  & \Gamma \vdash B_1 \cdot ((K_1 \otimes B_2) \cdot K_2) \reduce (B_1 \cdot K_1) \times (B_2 \cdot K_2) \\
+  & \Gamma \vdash \bra{s} \cdot ((O_1 \otimes O_2) \cdot K) \reduce ((\bra{\fst\ s} \cdot O_1) \otimes (\bra{\snd\ t} \cdot O_2)) \cdot K \\
+  & \Gamma \vdash (B_1 \otimes B_2) \cdot ((O_1 \otimes O_2) \cdot K) \reduce ((B_1 \cdot O_1) \otimes (B_2 \cdot O_2)) \cdot K \\
+\end{align*}
+
+\textbf{Remark:} Notice that we don't consider $\Gamma \vdash (S.B) \cdot K \reduce (S^*).(B \cdot K)$. Inner product is linear (not conjugate linear) on $B$, because $B$ is already in the dual space.
+
+\yx{$\delta_{i,j}\times \delta_{j, k} = \delta_{i, j} \times \delta_{i, k}$? This is really troublesome.}
+
+\yx{I believe there should be some problem about transpose: consider the critical pair $(K_1^\top \cdot K_2, K_2^\top, \cdot K_1)$.}
+
+\yx{I believe the best way is consider it as a proposition. But how to deal with $\sum_i \delta_{i, j}$ then? -- It should be summing on the set that satisfies the proposition.}
+
+\yx{At least we should draw a line between what can be decided and what can't, on this delta operator.}
+
+
+\subsection{Reduction Rules for Ket}
+
+\subsubsection*{\textsf{KET-CT}}
+\begin{align*}
+  & \textsc{(ZeroT)} && \Gamma \vdash \zeroB{\tau}^\dagger \reduce \zeroK{\tau} \\
+  & \textsc{(BraT)} && \Gamma \vdash \bra{t}^\dagger \reduce \ket{t}\\
+  & \textsc{(DoubleT)} && \Gamma \vdash (K^\dagger)^\dagger \reduce K \\
+  & \textsc{(ScrT)} && \Gamma \vdash (S.B)^\dagger \reduce (S^*).(B^\dagger) \\
+  & \textsc{(AddT)} && \Gamma \vdash (B_1 + B_2)^\dagger \reduce B_1^\dagger + B_2^\dagger\\
+  & \textsc{(MulT)} && \Gamma \vdash (B \cdot O)^\dagger \reduce O^\dagger \cdot B^\dagger \\
+  & \textsc{(TsrT)} && \Gamma \vdash (B_1 \otimes B_2)^\dagger \reduce B_1^\dagger \otimes B_2^\dagger
+\end{align*}
+
+\subsubsection*{\textsf{KET-SCAL}}
+\begin{align*}
+  & \textsc{(Scr0)} && \Gamma \vdash 0.K \reduce \textbf{0}_{\mathcal{K}}
+  \qquad
+  \textcolor{red}{\Gamma \vdash 0.K \reduce \zeroK{\tau}\ \textrm{(where $\Gamma \vdash K : \mathcal{K}(\tau)$)}} \\
+  & \textsc{(Scr1)} && \Gamma \vdash 1.K \reduce K \\
+  & \textsc{(ScrZero)} && \Gamma \vdash S.\zeroK{\tau} \reduce \zeroK{\tau} \\
+  & \textsc{(ScrScr)} && \Gamma \vdash S_1.(S_2.K) \reduce (S_1 \times S_2).K \\
+  & \textsc{(ScrDist)} && \Gamma \vdash S.(K_1 + K_2) \reduce S.K_1 + S.K_2
+\end{align*}
+
+\subsubsection*{\textsf{KET-ADD}}
+\begin{align*}
+  & \textsc{(AddZero)} && \Gamma \vdash K + \zeroK{\tau} \reduce K \\
+  & \textsc{(Fac0)} && \Gamma \vdash K + K \reduce (1 + 1).K \\
+  & \textsc{(Fac1)} && \Gamma \vdash S.K + K \reduce (S + 1).K \\
+  & \textsc{(Fac2)} && \Gamma \vdash S_1.K + S_2.K \reduce (S_1 + S_2).K
+\end{align*}
+
+\subsubsection*{\textsf{KET-MUL}}
+\begin{align*}
+  & \textsc{(MulZeroL)} && \Gamma \vdash \zeroO{\tau, \sigma} \cdot K \reduce \zeroK{\tau} \\
+  & \textsc{(MulZeroR)} && 
+  \Gamma \vdash O \cdot \mathbf{0}_{\mathcal{K}} \reduce \mathbf{0}_{\mathcal{K}}
+  \qquad
+  \textcolor{red}{{\Gamma \vdash O \cdot \zeroK{\sigma} \reduce \zeroK{\tau}}\ \textrm{(where $\Gamma \vdash O : \mathcal{O}(\tau, \sigma)$)}} \\
+  & \textsc{(MulScrL)} && \Gamma \vdash (S.O) \cdot K \reduce S.(O \cdot K) \\
+  & \textsc{(MulScrR)} && \Gamma \vdash O \cdot (S.K) \reduce S.(O \cdot K) \\
+  & \textsc{(MulDistL)} && \Gamma \vdash (O_1 + O_2) \cdot K \reduce O_1 \cdot K + O_2 \cdot K \\
+  & \textsc{(MulDistR)} && \Gamma \vdash O \cdot (K_1 + K_2) \reduce O \cdot K_1 + O \cdot K_2 \\
+  & \textsc{(MulReFac)} && \Gamma \vdash (K_1 \otimes B) \cdot K_2 \reduce (B \cdot K_2).K_1 \\
+  & \textsc{(MulAssoc)} && \Gamma \vdash (O_1 \cdot O_2) \cdot K \reduce O_1 \cdot (O_2 \cdot K) \\
+  & \textsc{(MulAssoc2)} && \Gamma \vdash (O_1 \otimes O_2) \cdot ((O_1' \otimes O_2') \cdot K) \reduce ((O_1 \cdot O_1') \otimes (O_2 \cdot O_2')) \cdot K \\
+  & \textsc{(MulReFac)} && \Gamma \vdash (O_1 \otimes O_2) \cdot \ket{t} \reduce (O_1 \cdot \ket{\fst\ t}) \otimes (O_2 \cdot \ket{\snd\ t}) \\
+  & \textsc{(MulReFac)} && \Gamma \vdash (O_1 \otimes O_2) \cdot (K_1 \otimes K_2) \reduce (O_1 \cdot K_1) \otimes (O_2 \cdot K_2) \\
+\end{align*}
+
+\textbf{Remark:} The \textsc{(MulAssoc2)} rule is for completion.
+
+\subsubsection*{\textsf{KET-TSR}}
+\begin{align*}
+  & \textsc{(TsrZero)} && \Gamma \vdash \mathbf{0}_\mathcal{K} \otimes K \reduce \mathbf{0}_\mathcal{K}
+  \qquad
+  \textcolor{red}{\Gamma \vdash \zeroK{\tau} \otimes K \reduce \zeroK{\tau * \sigma}\ \textrm{(where $\Gamma \vdash K : \mathcal{K}(\sigma)$)}}\\
+  & \textsc{(TsrZero)} && \Gamma \vdash K \otimes \mathbf{0}_\mathcal{K} \reduce \mathbf{0}_\mathcal{K}
+  \qquad
+  \textcolor{red}{\Gamma \vdash K \otimes \zeroK{\sigma} \reduce \zeroK{\tau * \sigma}\ \textrm{(where $\Gamma \vdash K : \mathcal{K}(\tau)$)}} \\
+  & \textsc{(KetPair)} && \Gamma \vdash \ket{s} \otimes \ket{t}\reduce\ket{(s, t)} \\
+  & \textsc{(TsrScrL)} && \Gamma \vdash (S.K_1) \otimes K_2 \reduce S.(K_1 \otimes K_2) \\
+  & \textsc{(TsrScrR)} && \Gamma \vdash K_1 \otimes (S.K_2) \reduce S.(K_1 \otimes K_2) \\
+  & \textsc{(TsrDistL)} && \Gamma \vdash (K_1 + K_2) \otimes K_3 \reduce K_1 \otimes K_3 + K_2 \otimes K_3 \\
+  & \textsc{(TsrDistR)} && \Gamma \vdash K_1 \otimes (K_2 + K_3) \reduce K_1 \otimes K_2 + K_1 \otimes K_3 \\
+\end{align*}
+
+\subsection{Reduction Rules for Operator}
+
+\subsubsection*{\textsf{OPT-OUTER}}
+\begin{align*}
+  & \textsc{(TsrZero)} && \Gamma \vdash \mathbf{0}_\mathcal{K} \otimes B \reduce \mathbf{0}_\mathcal{O}
+  \qquad
+  \textcolor{red}{\Gamma \vdash \zeroK{\tau} \otimes B \reduce \zeroO{\tau, \sigma}\ \textrm{(where $\Gamma \vdash B : \mathcal{B}(\sigma)$)}}\\
+  & \textsc{(TsrZero)} && \Gamma \vdash K \otimes \mathbf{0}_\mathcal{B} \reduce \mathbf{0}_\mathcal{O} 
+  \qquad
+  \textcolor{red}{\Gamma \vdash K \otimes \zeroB{\sigma} \reduce \zeroO{\tau, \sigma}\ \textrm{(where $\Gamma \vdash K : \mathcal{K}(\tau)$)}}\\
+  & \textsc{(TsrScrL)} && \Gamma \vdash (S.K) \otimes B \reduce S.(K \otimes B) \\
+  & \textsc{(TsrScrR)} && \Gamma \vdash K \otimes (S.B) \reduce S.(K \otimes B) \\
+  & \textsc{(TsrDistL)} && \Gamma \vdash (K_1 + K_2) \otimes B \reduce K_1 \otimes B + K_2 \otimes B \\
+  & \textsc{(TsrDistR)} && \Gamma \vdash K \otimes (B_1 + B_2) \reduce K \otimes B_1 + K \otimes B_2 \\
+\end{align*}
+
+
+\subsubsection*{\textsf{OPT-CT}}
+\begin{align*}
+  & \textsc{(ZeroT)} && \Gamma \vdash \zeroO{\tau, \sigma}^\dagger \reduce \zeroO{\sigma, \tau} \\
+  & \textsc{(OuterT)} && \Gamma \vdash (K \otimes B)^\dagger \reduce B^\dagger \otimes K^\dagger \\
+  & \textsc{(DoubleT)} && \Gamma \vdash (O^\dagger)^\dagger \reduce O \\
+  & \textsc{(ScrT)} && \Gamma \vdash (S.O)^\dagger \reduce (S^*).(O^\dagger) \\
+  & \textsc{(AddT)} && \Gamma \vdash (O_1 + O_2)^\dagger \reduce O_1^\dagger + O_2^\dagger\\
+  & \textsc{(MulT)} && \Gamma \vdash (O_1 \cdot O_2)^\dagger \reduce O_2^\dagger \cdot O_1^\dagger \\
+  & \textsc{(TsrT)} && \Gamma \vdash (O_1 \otimes O_2)^\dagger \reduce O_1^\dagger \otimes O_2^\dagger
+\end{align*}
+
+\subsubsection*{\textsf{OPT-SCAL}}
+\begin{align*}
+  & \textsc{(Scr0)} && \Gamma \vdash 0.O \reduce \mathbf{0}_\mathcal{O}
+  \qquad
+  \textcolor{red}{\Gamma \vdash 0.O \reduce \zeroO{\tau, \sigma}\ \textrm{(where $\Gamma \vdash O : \mathcal{O}(\tau, \sigma)$)}} \\
+  & \textsc{(Scr1)} && \Gamma \vdash 1.O \reduce O \\
+  & \textsc{(ScrZero)} && \Gamma \vdash S.\zeroO{\tau, \sigma} \reduce \zeroO{\tau, \sigma} \\
+  & \textsc{(ScrScr)} && \Gamma \vdash S_1.(S_2.O) \reduce (S_1 \times S_2).O \\
+  & \textsc{(ScrDist)} && \Gamma \vdash S.(O_1 + O_2) \reduce S.O_1 + S.O_2
+\end{align*}
+
+\subsubsection*{\textsf{OPT-ADD}}
+\begin{align*}
+  & \textsc{(AddZero)} && \Gamma \vdash O + \mathbf{0}_\mathcal{O} \reduce O 
+  \qquad 
+  \textcolor{red}{\Gamma \vdash O + \zeroO{\tau, \sigma} \reduce \zeroO{\tau, \sigma}\ \textrm{(where $\Gamma \vdash O : \mathcal{O}(\tau, \sigma)$)}} \\
+  & \textsc{(Fac0)} && \Gamma \vdash O + O \reduce (1 + 1).O \\
+  & \textsc{(Fac1)} && \Gamma \vdash S.O + O \reduce (S + 1).O \\
+  & \textsc{(Fac2)} && \Gamma \vdash S_1.O + S_2.O \reduce (S_1 + S_2).O
+\end{align*}
+
+\subsubsection*{\textsf{OPT-MUL}}
+\begin{align*}
+  & \textsc{(MulZeroL)} &&
+  \Gamma \vdash \mathbf{0}_\mathcal{O} \cdot O \reduce \mathbf{0}_\mathcal{O}
+  \qquad
+  \textcolor{red}{\Gamma \vdash \zeroO{\tau, \sigma} \cdot O \reduce \zeroO{\tau, \rho}\ \textrm{(where $\Gamma \vdash O : \mathcal{O}(\sigma, \rho)$)}} \\
+  & \textsc{(MulZeroR)} && 
+  \Gamma \vdash O \cdot \mathbf{0}_\mathcal{O} \reduce \mathbf{0}_\mathcal{O}
+  \qquad
+  \textcolor{red}{\Gamma \vdash O \cdot \zeroO{\sigma, \rho} \reduce \zeroO{\tau, \rho}\ \textrm{(where $\Gamma \vdash O : \mathcal{O}(\tau, \sigma)$)}} \\
+  & \textsc{(REFFF)} && \Gamma \vdash (K \otimes B) \cdot O \reduce K \otimes (B \cdot O)\\
+  & \textsc{(REFFF)} && \Gamma \vdash O \cdot (K \otimes B) \reduce (O \cdot K) \otimes B\\
+  & \textsc{(MulScrL)} && \Gamma \vdash (S.O_1) \cdot O_2 \reduce S.(O_1 \cdot O_2) \\
+  & \textsc{(MulScrR)} && \Gamma \vdash O_1 \cdot (S.O_2) \reduce S.(O_1 \cdot O_2) \\
+  & \textsc{(MulDistL)} && \Gamma \vdash (O_1 + O_2) \cdot O_3 \reduce O_1 \cdot O_3 + O_2 \cdot O_3 \\
+  & \textsc{(MulDistR)} && \Gamma \vdash O_1 \cdot (O_2 + O_3) \reduce O_1 \cdot O_2 + O_1 \cdot O_3 \\
+  & \textsc{(MulAssoc)} && \Gamma \vdash (O_1 \cdot O_2) \cdot O_3 \reduce O_1 \cdot (O_2 \cdot O_3) \\
+  & \textsc{(ReFac2)} && \Gamma \vdash (O_1 \otimes O_2) \cdot (O_1' \otimes O_2') \reduce (O_1 \cdot O_1') \otimes (O_2 \cdot O_2') \\
+  & \textsc{(MulAssoc2)} && \Gamma \vdash (O_1 \otimes O_2) \cdot ((O_1' \otimes O_2') \cdot O_3) \reduce ((O_1 \cdot O_1') \otimes (O_2 \cdot O_2')) \cdot O_3 \\
+\end{align*}
+
+\textbf{Remark:} The \textsc{(MulAssoc2)} rule is for completion.
+
+
+\subsubsection*{\textsf{OPT-TSR}}
+\begin{align*}
+  & \textsc{(TsrZero)} && \Gamma \vdash \mathbf{0}_\mathcal{O} \otimes O \reduce \mathbf{0}_\mathcal{O}
+  \qquad
+  \textcolor{red}{\Gamma \vdash \zeroO{\tau, \sigma} \otimes O \reduce \zeroO{\tau * \tau', \sigma * \sigma'}\ \textrm{(where $\Gamma \vdash O : \mathcal{O}(\tau', \sigma')$)}} \\
+  & \textsc{(TsrZero)} && \Gamma \vdash O \otimes \mathbf{0}_\mathcal{O} \reduce \mathbf{0}_\mathcal{O}
+  \qquad
+  \textcolor{red}{\Gamma \vdash O \otimes \zeroO{\tau', \sigma'} \reduce \zeroO{\tau * \tau', \sigma * \sigma'}\ \textrm{(where $\Gamma \vdash O : \mathcal{O}(\tau, \sigma)$)}}\\
+  & \textsc{(TsrOuter)} && \Gamma \vdash (K_1 \otimes B_1) \otimes (K_2 \otimes B_2) \reduce (K_1 \otimes K_2) \otimes (B_1 \otimes B_2) \\
+  & \textsc{(TsrScrL)} && \Gamma \vdash (S.O_1) \otimes O_2 \reduce S.(O_1 \otimes O_2) \\
+  & \textsc{(TsrScrR)} && \Gamma \vdash O_1 \otimes (S.O_2) \reduce S.(O_1 \otimes O_2) \\
+  & \textsc{(TsrDistL)} && \Gamma \vdash (O_1 + O_2) \otimes O_3 \reduce O_1 \otimes O_3 + O_2 \otimes O_3 \\
+  & \textsc{(TsrDistR)} && \Gamma \vdash O_1 \otimes (O_2 + O_3) \reduce O_1 \otimes O_2 + O_1 \otimes O_3 \\
+\end{align*}
+
+
+
+
+
+
+\begin{lemma}[preservation of Dirac types]
+  For any context $\Gamma$ and terms $e, e'$, if $\Gamma \vdash e : \tau$ and $\Gamma \vdash e \reduce e'$, we have
+  $ \Gamma \vdash e' : \tau $. 
+\end{lemma}
+\begin{proof} TO BE PROVED
+\end{proof}
+
+
+\subsection{Termination and Confluence}
+
+\begin{proposition}
+  The rules of \textsf{BASIS} are terminating and confluent.
+\end{proposition}
+\begin{proof}
+  The three rules follow the simplification order, therefore are terminating. For confluence, the only critical pairs are
+  \begin{gather*}
+  (t_1, \snd\ (t_1, t_2)) \reducefrom (\fst\ (t_1, t_2), \snd\ (t_1, t_2)) \reduce (t_1, t_2) \\
+  (\fst\ (t_1, t_2), t_2) \reducefrom (\fst\ (t_1, t_2), \snd\ (t_1, t_2)) \reduce (t_1, t_2) 
+  \end{gather*}
+  which are both joinable.
+\end{proof}
+
+
+\subsection{Refinement of the Reduction Rules}
+
+\subsubsection*{\textsf{SCAL-DELTA*}}
+\begin{align*}
+  & \textsc{(DeltaDcp)} && 
+  \Gamma \vdash \delta_{u, (s, t)} \reduce \delta_{\fst\ u, s} \times \delta_{\snd\ u, t} \\
+  & \textsc{(DeltaPair)} &&
+  \Gamma \vdash \delta_{\fst\ u, \fst\ v}\times\delta_{\snd\ u, \snd\ v} \reduce \delta_{u, v}\\
+  \\ 
+  & \textsc{(Delta1)} && 
+  \Gamma \vdash \delta_{s, s} \reduce 1
+  \\
+  \\
+  & \textsc{(Delta0)} && 
+  \frac{\bigwedge_i s_i =_\textsf{BASIS} t_i \textrm{ is not satisfiable}}{\Gamma \vdash \prod_i \delta_{s_i, t_i} \reduce 0}
+\end{align*}
+
+
+\section{Tools}
+
+Confluence tool: CocoWeb, CiME3
+
+Termination tool: see \url{https://link.springer.com/chapter/10.1007/978-3-030-17502-3_10}

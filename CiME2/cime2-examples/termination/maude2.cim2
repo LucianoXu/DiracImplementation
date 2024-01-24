@@ -1,0 +1,119 @@
+(*
+  fmod PEANO-NAT is
+    sorts Nat NzNat .
+    subsorts NzNat < Nat .
+    op 0 : -> Nat .
+    ops 1 2 3 4 5 6 7 : -> NzNat .
+    op s_ : Nat -> NzNat .
+    op p_ : NzNat -> Nat .
+    op _+_ : Nat Nat -> Nat [comm] .
+    op _*_ : Nat Nat -> Nat [comm] .
+    op _*_ : NzNat NzNat -> NzNat [comm] .
+    op _>_ : Nat Nat -> Bool .
+    op _<_ : Nat Nat -> Bool .
+    op d : Nat Nat -> Nat [comm] .
+    op quot : Nat NzNat -> Nat .
+    op gcd : Nat Nat -> Nat [comm] .
+    op gcd : NzNat NzNat -> NzNat [comm] .
+    vars N M : Nat .  
+    vars N' M' : NzNat .
+    eq p s N = N .
+    eq N + 0 = N .
+    eq (s N) + (s M) = s s (N + M) .
+    eq N * 0 = 0 .
+    eq (s N) * (s M) = s (N + (M + (N * M))) .
+    eq 0 > M = false .
+    eq N' > 0 = true .
+    eq s N > s M = N > M .
+    eq N < M = M > N .
+    eq d(0,N) = N .
+    eq d(s N, s M) = d(N,M) .
+    ceq quot(N,M') = s quot(d(N,M'),M') if N > M' .
+    eq quot(M',M') = s 0 .
+    ceq quot(N,M') = 0 if M' > N .
+    eq gcd(0,N) = 0 .
+    eq gcd(N',N') = N' .
+    ceq gcd(N',M') =  gcd(d(N',M'),M') if N' > M' .
+    eq 1 = s 0 .
+    eq 2 = s s 0 .
+    eq 3 = s s s 0 .
+    eq 4 = s s s s 0 .
+    eq 5 = s s s s s 0 .
+    eq 6 = s s s s s s 0 .
+    eq 7 = s s s s s s s 0 .
+   endfm
+*)
+
+
+let X = vars "N M N' M'";
+
+let F_peano = signature "
+  0,1,2,3,4,5,6,7 : 0;
+  True, False : 0;
+  is_NzNat : 1;
+  s,p : 1;
+  +,* : infix commutative ;
+  gt, lt : infix binary ; 
+  d,gcd : commutative ;
+  quot : binary ;
+
+  u_01, u_2, u_4 : 1;
+  u_02 : 2;
+  u_1, u_11, u_21, u_3 : 3;
+  u_31 : 4;
+  
+";
+
+let R_peano = HTRS {} F_peano X "
+  p(s(N)) -> N;
+  N + 0 -> N;
+  s(N) + s(M) -> s(s(N + M));
+  N * 0 -> 0;
+  s(N) * s(M) -> s(N + (M + (N * M)));
+  0 gt M -> False;
+
+  (* is_NzNat(N') |*) N' gt 0 -> u_4(is_NzNat(N'));
+  u_4(True) ->  True; 
+  is_NzNat(0) -> False;
+  is_NzNat(s(N)) -> True;
+
+
+  s(N) gt s(M) -> N gt M;
+
+
+  N lt M -> M gt N;
+  d(0,N) -> N;
+  d(s(N),s(M)) -> d(N,M);
+
+  (* N gt M' | *)  quot(N,M') -> u_11(is_NzNat(M'),N,M');
+  u_11(True,N,M') -> u_1(N gt M',N,M');
+  u_1(True,N,M') -> s(quot(d(N,M'),M'));
+
+  quot(M',M') -> u_01(is_NzNat(M'));
+  u_01(True) -> s(0);
+
+  (* M' gt N | *) quot(N, M') -> u_21(is_NzNat(M'),M',N);
+  u_21(True,M',N) -> u_2(M' gt N);
+  u_2(True) -> 0;
+
+  gcd(0,N) -> 0;
+  gcd(M',M') -> u_02(is_NzNat(M'),M');
+  u_02(True,M') -> M';
+
+  (* N' gt M' | *) gcd(N',M') -> u_31(is_NzNat(N'),is_NzNat(M'),N',M');
+  u_31(True,True,N',M') -> u_3(N' gt M',N',M');
+  u_3(True,N',M') -> gcd(d(N',M'),M'); 
+  ";
+
+termcrit "minimal";
+polyinterpkind {("simple",6)};
+#time on;
+h_termination R_peano;
+(* output_last_proof "";*)
+(* ok in 0.26s *)
+
+
+
+
+
+

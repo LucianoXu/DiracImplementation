@@ -1,0 +1,17 @@
+operators
+  + : AC
+  0 : constant
+  s : unary
+  x,y :variable
+
+order
+  poly([0]=0 ; [s](x)=x+1 ; [+](x,y)=x.y+2.(x+y)+2 )
+
+axioms
+  
+  x+0 = x ;
+  x+s(y) = s(x+y) ;
+
+end
+
+

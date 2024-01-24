@@ -1,0 +1,20 @@
+let F = signature "
+s : unary;
+f,g,h : binary;
+";
+
+let X = vars "x y";
+
+let R = TRS F X "
+f(s(x),y) -> g(x,s(y));
+g(s(x),y) -> f(x,s(y));
+f(x,s(y)) -> h(s(x),y);
+h(x,s(y)) -> f(s(x),y);
+";
+
+termcrit "dp";
+(* polyinterpkind "linear"; *)
+termpolybound 5;
+#verbose ;
+#time on;
+termination R;

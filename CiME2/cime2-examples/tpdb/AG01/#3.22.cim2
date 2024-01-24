@@ -1,0 +1,34 @@
+(***************************************************************************)
+(*                                                                         *)
+(*         This file was generated using the testocime tool                *)
+(*                                                                         *)
+(***************************************************************************)
+
+
+let X = vars "z y x ";
+(* 3 variables defined *)
+
+let F = signature "
+	times: 2;
+	s: 1;
+	plus: 2;
+	0: 0;
+";
+(* 4 non-variable symbols defined *)
+
+let R = HTRS {} F X "
+	times(x, plus(y, s(z))) -> plus(times(x, plus(y, times(s(z), 0))), times(x, s(z)));
+	times(x, 0) -> 0;
+	times(x, s(y)) -> plus(times(x, y), x);
+	plus(x, 0) -> x;
+	plus(x, s(y)) -> s(plus(x, y));
+";
+(* 5 rules *)
+
+termcrit "minimal";
+termcrit "graph";
+polyinterpkind {("simple",1)};
+#time on;
+h_termination R;
+
+#quit;

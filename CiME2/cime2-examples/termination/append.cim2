@@ -1,0 +1,32 @@
+let F = signature "
+  true, false : constant ;
+  nil : constant;
+  cons : binary;
+  is_empty, hd, tl : unary ;
+  append : binary ;
+  ifappend : 3;
+";
+
+
+let X = vars "x y z l l1 l2";
+
+let R = TRS F X "
+  is_empty(nil) -> true ;
+  is_empty(cons(x,l)) -> false ;
+  
+  hd(cons(x,l)) -> x ;
+  tl(cons(x,l)) -> l ;
+
+  append(l1,l2) -> ifappend(l1,l2,is_empty(l1)) ;
+
+  ifappend(l1,l2,true) -> l2 ;
+
+  ifappend(l1,l2,false) -> cons(hd(l1),append(tl(l1),l2)) ;
+";
+
+#verbose;
+
+termcrit "dp";
+
+termination R;
+

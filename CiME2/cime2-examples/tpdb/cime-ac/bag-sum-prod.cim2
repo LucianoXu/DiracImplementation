@@ -1,0 +1,65 @@
+(*
+
+  Claude Marché
+
+  Sum and product of a bag of integers
+
+  Peano notation
+
+*)
+
+[b, y, x]
+
+AC [U, *, +]
+
++(0,x) -> x ;
++(s(x),s(y)) -> s(s(+(x,y))) ;
+*(0,x) -> 0 ;
+*(s(x),s(y)) -> s(+(+(x,y),*(x,y))) ;
+U(empty,b) -> b ;
+sum(empty) -> 0 ;
+sum(singl(x)) -> x ;
+sum(U(x,y)) -> +(sum(x),sum(y)) ;
+prod(empty) -> s(0) ;
+prod(singl(x)) -> x ;
+prod(U(x,y)) -> *(prod(x),prod(y)) ;
+
+
+(*
+
+let X = vars "x y z l b";
+
+let F = signature "
+  0   : constant ; 
+  s : unary ;
+  + : AC ;
+  * : AC ;
+  empty : constant ; 
+  singl : unary ; 
+  U : AC ;
+  sum : unary ;
+  prod : unary ;
+";
+
+let R = HTRS {} F X "
+  x + 0 -> x;
+  s(x) + s(y) -> s(s(x+y));
+  x * 0 -> 0;
+  s(x) * s(y) -> s((x*y)+(x+y));
+  empty U b -> b;
+  sum(empty) -> 0;
+  sum(singl(x)) -> x;
+  sum(x U y) -> sum(x) + sum(y);
+  prod(empty) -> s(0);
+  prod(singl(x)) -> x;
+  prod(x U y) -> prod(x) * prod(y);
+  ";
+
+termcrit "minimal";
+termcrit "nomarks";
+polyinterpkind {("linear",1)};
+h_termination R;
+output_last_proof "";
+
+
+*)

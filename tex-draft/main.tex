@@ -1,0 +1,72 @@
+\documentclass{book}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=0.8in]{geometry}
+%\usepackage{natbib}
+%\usepackage{graphicx}
+\usepackage{color}
+\usepackage{amsmath}
+%\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{amsthm}
+\usepackage{stmaryrd}
+\usepackage[all]{xy}
+\usepackage{multirow}
+\usepackage{paralist}
+\usepackage{hhline}
+\usepackage{bm}
+\usepackage{listings,lstcoq}
+\definecolor{ltblue}{rgb}{0,0.4,0.4}
+\definecolor{dkblue}{rgb}{0,0.1,0.6}
+\definecolor{dkgreen}{rgb}{0,0.35,0}
+\definecolor{dkviolet}{rgb}{0.3,0,0.5}
+\definecolor{dkred}{rgb}{0.5,0,0}
+\lstset{language=Coq}
+\usepackage{pmboxdraw}
+\usepackage{pifont}% http://ctan.org/pkg/pifont
+\newcommand{\cmark}{\CIRCLE}%
+\newcommand{\xmark}{\Circle}%
+\newcommand{\hmark}{\LEFTcircle}%
+\renewcommand{\matrix}[1]{\begin{bmatrix}#1\end{bmatrix}}
+\usepackage{wasysym}
+\usepackage{extarrows}
+\usepackage{tikz}
+\usetikzlibrary{positioning, shapes.geometric, graphs}
+\usepackage{wrapfig}
+\usepackage{dsfont}
+
+\input{notations}
+
+\newcommand{\gb}[1]{\textit{\color{green}[GB] : #1}}
+\newcommand{\py}[1]{\textit{\color{red}[PY] : #1}}
+\newcommand{\lz}[1]{\textit{\color{blue}[LZ] : #1}}
+\newcommand{\jl}[1]{\textit{\color{blue}[JL] : #1}}
+\newcommand{\yx}[1]{\textit{\color{blue}[YX] : #1}}
+
+\newcommand{\modify}[1]{{\color{red}#1}}
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{stmaryrd}
+\usepackage{hyperref}
+
+\usepackage{braket}
+
+
+\title{\textbf{Dirac Notation Theories}\\ 
+\Large{Infrastructure for Quantum Formal Systems}}
+\author{}
+
+\begin{document}
+
+% \maketitle
+
+% \tableofcontents
+
+% \clearpage
+
+\input{chapters/20240126.tex}
+
+\bibliographystyle{plain}
+\bibliography{ref}
+
+\end{document}

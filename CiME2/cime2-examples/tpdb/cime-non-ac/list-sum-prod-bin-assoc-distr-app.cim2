@@ -1,0 +1,87 @@
+(*
+
+  Claude Marché
+
+  Sum and product of a list of integers
+
+  Binary notation, + and * associative, * distributes over +, append
+
+*)
+[l2, l1, l, z, y, x]
+
+0(#) -> # ;
++(x,#) -> x ;
++(#,x) -> x ;
++(0(x),0(y)) -> 0(+(x,y)) ;
++(0(x),1(y)) -> 1(+(x,y)) ;
++(1(x),0(y)) -> 1(+(x,y)) ;
++(1(x),1(y)) -> 0(+(+(x,y),1(#))) ;
++(+(x,y),z) -> +(x,+(y,z)) ;
+*(#,x) -> # ;
+*(0(x),y) -> 0(*(x,y)) ;
+*(1(x),y) -> +(0(*(x,y)),y) ;
+*(*(x,y),z) -> *(x,*(y,z)) ;
+*(x,+(y,z)) -> +(*(x,y),*(x,z)) ;
+app(nil,l) -> l ;
+app(cons(x,l1),l2) -> cons(x,app(l1,l2)) ;
+sum(nil) -> 0(#) ;
+sum(cons(x,l)) -> +(x,sum(l)) ;
+sum(app(l1,l2)) -> +(sum(l1),sum(l2)) ;
+prod(nil) -> 1(#) ;
+prod(cons(x,l)) -> *(x,prod(l)) ;
+prod(app(l1,l2)) -> *(prod(l1),prod(l2)) ;
+
+(*
+
+let X = vars "x y z l l1 l2";
+
+let F = signature "
+  #   : constant ; 
+  0,1 : postfix unary ;
+  +,* : infix binary;
+  nil : constant ; 
+  cons,app : binary ; 
+  sum,prod : unary ;
+";
+
+
+
+let R = HTRS {} F X "
+  (#)0 -> #;
+
+  x + # -> x;
+  # + x -> x;
+  (x)0 + (y)0 -> (x+y)0;
+  (x)0 + (y)1 -> (x+y)1;
+  (x)1 + (y)0 -> (x+y)1;
+  (x)1 + (y)1 -> (x+y+(#)1)0;
+  (x+y)+z -> x+(y+z) ;
+
+  # * x -> #;
+  (x)0 * y -> (x*y)0;
+  (x)1 * y -> (x*y)0 + y;
+  (x*y)*z -> x*(y*z) ;
+  x*(y+z) -> (x*y)+(x*z);
+
+  app(nil,l) -> l ;
+  app(cons(x,l1),l2) -> cons(x,app(l1,l2)) ;
+
+  sum(nil) -> #0;
+  sum(cons(x,l)) -> x + sum(l);
+  sum(app(l1,l2)) -> sum(l1) + sum(l2);
+
+  prod(nil) -> #1;
+  prod(cons(x,l)) -> x * prod(l);
+  prod(app(l1,l2)) -> prod(l1) * prod(l2);
+";
+
+
+termcrit "minimal";
+termcrit "nomarks";
+polyinterpkind {("linear",1);("simple",2);("simple",3)};
+h_termination R;
+output_last_proof "";
+
+
+*)
+

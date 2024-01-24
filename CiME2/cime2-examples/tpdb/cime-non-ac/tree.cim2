@@ -1,0 +1,127 @@
+(*
+
+  Xavier Urbain. Modular & Incremental Automated Termination
+  Proofs. Journal of Automated Reasoning
+
+*)
+
+[z, y, x]
+
+0(#) -> # ;
++(x,#) -> x ;
++(#,x) -> x ;
++(0(x),0(y)) -> 0(+(x,y)) ;
++(0(x),1(y)) -> 1(+(x,y)) ;
++(1(x),0(y)) -> 1(+(x,y)) ;
++(1(x),1(y)) -> 0(+(+(x,y),1(#))) ;
++(x,+(y,z)) -> +(+(x,y),z) ;
+-(x,#) -> x ;
+-(#,x) -> # ;
+-(0(x),0(y)) -> 0(-(x,y)) ;
+-(0(x),1(y)) -> 1(-(-(x,y),1(#))) ;
+-(1(x),0(y)) -> 1(-(x,y)) ;
+-(1(x),1(y)) -> 0(-(x,y)) ;
+not(false) -> true ;
+not(true) -> false ;
+and(x,true) -> x ;
+and(x,false) -> false ;
+if(true,x,y) -> x ;
+if(false,x,y) -> y ;
+ge(0(x),0(y)) -> ge(x,y) ;
+ge(0(x),1(y)) -> not(ge(y,x)) ;
+ge(1(x),0(y)) -> ge(x,y) ;
+ge(1(x),1(y)) -> ge(x,y) ;
+ge(x,#) -> true ;
+ge(#,1(x)) -> false ;
+ge(#,0(x)) -> ge(#,x) ;
+val(l(x)) -> x ;
+val(n(x,y,z)) -> x ;
+min(l(x)) -> x ;
+min(n(x,y,z)) -> min(y) ;
+max(l(x)) -> x ;
+max(n(x,y,z)) -> max(z) ;
+bs(l(x)) -> true ;
+bs(n(x,y,z)) -> and(and(ge(x,max(y)),ge(min(z),x)),and(bs(y),bs(z))) ;
+size(l(x)) -> 1(#) ;
+size(n(x,y,z)) -> +(+(size(x),size(y)),1(#)) ;
+wb(l(x)) -> true ;
+wb(n(x,y,z)) ->
+and(if(ge(size(y),size(z)),ge(1(#),-(size(y),size(z))),ge(1(#),-(size(z),
+                                                                 size(y)))),
+  and(wb(y),wb(z))) ;
+
+
+(*
+let X = vars "x y z";
+
+let F = signature "
+# : constant ; 
+0,1 : postfix unary ;
++ : infix binary;
+- : infix binary;
+true, false : constant; 
+not : unary; 
+and :infix binary; 
+if : 3;
+ge: binary;
+l, val : unary; n : 3;
+bs, min, max : unary;
+size,wb :unary;
+";
+
+let R = HTRS {} F X "
+     (#)0 -> #;
+       x + # -> x ; 
+       # + x -> x; 
+       (x)0 + (y)0 -> (x + y)0;
+       (x)0 + (y)1 -> (x + y)1;
+       (x)1 + (y)0 -> (x + y)1;
+       (x)1 + (y)1 -> ((x + y) + (#)1)0;
+       x + (y + z) -> (x + y) + z;
+     x - # -> x; 
+     # - x -> #; 
+     (x)0 - (y)0 -> (x - y)0;
+     (x)0 - (y)1 -> ((x - y) - (#)1)1;
+     (x)1 - (y)0 -> (x - y)1;
+     (x)1 - (y)1 -> (x - y)0;
+       not(false) -> true ; 
+       not(true) -> false ; 
+       x and true -> x;
+       x and false -> false;
+       if(true,x,y) -> x ; 
+       if(false,x,y) -> y;
+     ge((x)0,(y)0) -> ge(x,y);
+     ge((x)0,(y)1) -> not(ge(y,x));
+     ge((x)1,(y)0) -> ge(x,y);
+     ge((x)1,(y)1) -> ge(x,y);
+     ge(x,#)   -> true;
+     ge(#,(x)1)  -> false;
+     ge(#,(x)0)  -> ge(#,x);
+       val(l(x)) -> x;
+       val(n(x,y,z)) -> x;
+     min(l(x)) -> x;
+     min(n(x,y,z)) -> min(y);
+     max(l(x)) -> x;
+     max(n(x,y,z)) -> max(z);
+     bs(l(x)) -> true;
+     bs(n(x,y,z)) -> 
+     ((ge(x,max(y))) and (ge(min(z),x))) and ((bs(y)) and (bs(z)));
+       size(l(x)) -> (#)1;
+       size(n(x,y,z)) -> ((size(x)) + (size(y))) + ((#)1);
+       wb(l(x)) -> true;
+       wb(n(x,y,z)) -> (if (ge((size(y)),(size(z))), 
+                           ge(((#)1),(size(y)) - (size(z))),
+                           ge(((#)1),((size(z)) - (size(y))))))
+		        and
+		        ((wb(y)) and (wb(z)));
+";
+
+
+termcrit "minimal";
+polyinterpkind { ("linear",1) } ; 
+h_termination R;
+output_last_proof "";
+export_htrs R;
+
+*)
+

@@ -1,0 +1,15 @@
+let P = parameters "k";
+
+let S = pword_signature P "s_{i} | {k>i>=1}" ;
+
+let R = psrs S "s_{k}^{i} s_{k}^{i} -> | {k>i>=1};
+		s_{k}^{i-1} s_{k}^{i} 
+		s_{k}^{i-1} s_{k}^{i}
+		s_{k}^{i-1} s_{k}^{i} -> | {k>i>1};
+		";
+
+
+pword_completion R;
+
+
+

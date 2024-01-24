@@ -1,0 +1,46 @@
+let F = signature "
+0, gt_out, le_out, nil : constant;
+merge_out, mergesort_in, mergesort_out, s, split_in : unary;
+cons, gt_in, le_in, merge_in, split_out : binary;
+U'''''1, U''''1, U'''1 : 3;
+U1 : 4;
+U''1, U''2, U'1, U'2 : 5;
+U2 : 6;
+U3 : 7;
+U4 : 8;
+";
+
+let X = vars "E F U W Y X Z V A B";
+
+let R = TRS F X "
+mergesort_in(nil) -> mergesort_out(nil);
+mergesort_in(cons(E, nil)) -> mergesort_out(cons(E, nil));
+mergesort_in(cons(E, cons(F, U))) -> U1(split_in(cons(E, cons(F, U))), E, F, U);
+U1(split_out(W, Y), E, F, U) -> U2(mergesort_in(W), E, F, U, W, Y);
+U2(mergesort_out(X), E, F, U, W, Y) -> U3(mergesort_in(Y), E, F, U, W, Y, X);
+U3(mergesort_out(Z), E, F, U, W, Y, X) -> U4(merge_in(X, Z), E, F, U, W, Y, X, Z);
+U4(merge_out(V), E, F, U, W, Y, X, Z) -> mergesort_out(V);
+merge_in(X, nil) -> merge_out(X);
+merge_in(nil, X) -> merge_out(X);
+merge_in(cons(A, X), cons(B, Y)) -> U'1(le_in(A, B), A, X, B, Y);
+U'1(le_out, A, X, B, Y) -> U'2(merge_in(X, cons(B, Y)), A, X, B, Y);
+U'2(merge_out(Z), A, X, B, Y) -> merge_out(cons(A, Z));
+merge_in(cons(A, X), cons(B, Y)) -> U''1(gt_in(A, B), A, X, B, Y);
+U''1(gt_out, A, X, B, Y) -> U''2(merge_in(cons(A, X), Y), A, X, B, Y);
+U''2(merge_out(Z), A, X, B, Y) -> merge_out(cons(B, Z));
+split_in(nil) -> split_out(nil, nil);
+split_in(cons(E, U)) -> U'''1(split_in(U), E, U);
+U'''1(split_out(W, V), E, U) -> split_out(cons(E, V), W);
+gt_in(s(X), s(Y)) -> U''''1(gt_in(X, Y), X, Y);
+U''''1(gt_out, X, Y) -> gt_out;
+gt_in(s(X), 0) -> gt_out;
+le_in(s(X), s(Y)) -> U'''''1(le_in(X, Y), X, Y);
+U'''''1(le_out, X, Y) -> le_out;
+le_in(0, s(Y)) -> le_out;
+le_in(0, 0) -> le_out;
+";
+
+termcrit "dp";
+termpolybound 1;
+#time on;
+termination R;

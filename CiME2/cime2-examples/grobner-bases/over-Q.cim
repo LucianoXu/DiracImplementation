@@ -1,0 +1,193 @@
+
+operators
+
+%constructeurs
+
+  0 : constant
+  1_z,j_z,0_z : postfix unary
+
+%operateurs
+
+  +_z  : AC
+  -_z : infix binary
+  opp : unary
+  *_z  : AC
+
+% abreviations
+
+  zero_z,un_z,deux_z,trois_z,moins_un_z : constant
+
+%variables
+
+  x,y,z,u,v,w : variable
+
+
+axioms
+
+  (0)0_z = 0 ;
+  x +_z 0 = x ;
+  (x)0_z +_z (y)0_z = (x +_z y)0_z ;
+  (x)0_z +_z (y)1_z = (x +_z y)1_z ;
+  (x)0_z +_z (y)j_z = (x +_z y)j_z ;
+  (x)1_z +_z (y)1_z = (x +_z y +_z (0)1_z)j_z ;
+  (x)j_z +_z (y)j_z = (x +_z y +_z (0)j_z)1_z ;
+  (x)1_z +_z (y)j_z = (x +_z y)0_z ;
+  opp(0) = 0 ;
+  opp((x)0_z) = (opp(x))0_z ;
+  opp((x)1_z) = (opp(x))j_z ;
+  opp((x)j_z) = (opp(x))1_z ;
+  x -_z y = x +_z opp(y) ;
+  x *_z 0 = 0 ;
+  x *_z (y)0_z = (x*_z y)0_z ;
+  x *_z (y)1_z = (x*_z y)0_z +_z x ;
+  x *_z (y)j_z = (x*_z y)0_z +_z opp(x) ;
+
+  zero_z = 0 ;
+  un_z = (0)1_z ;
+  deux_z = ((0)1_z)j_z ;
+  trois_z = ((0)1_z)0_z ;
+  moins_un_z = (0)j_z ;
+
+operators
+
+  abs : unary
+  test_abs, test_abs_pos, test_abs_neg : binary
+  signe, test_signe_pos, test_signe_neg : unary
+  min : binary
+  test_min, test_min_pos, test_min_neg : 3
+  f : binary
+
+axioms
+  
+  abs(x) = test_abs_pos(x,x);
+
+  test_abs_pos(0,x) = x;
+  test_abs_pos((x)0_z,y) = test_abs_pos(x,y);
+  test_abs_pos((x)1_z,y) = test_abs_pos(x,y);
+  test_abs_pos((x)j_z,y) = test_abs_neg(x,y);
+
+  test_abs_neg(0,x) = opp(x);
+  test_abs_neg((x)0_z,y) = test_abs_neg(x,y);
+  test_abs_neg((x)1_z,y) = test_abs_pos(x,y);
+  test_abs_neg((x)j_z,y) = test_abs_neg(x,y);
+
+  signe(0) = 0;
+  signe((x)0_z) = signe(x);
+  signe((x)1_z) = test_signe_pos(x);
+  signe((x)j_z) = test_signe_neg(x);
+
+  test_signe_pos(0) = (0)1_z;
+  test_signe_pos((x)0_z) = test_signe_pos(x);
+  test_signe_pos((x)1_z) = test_signe_pos(x);
+  test_signe_pos((x)j_z) = test_signe_neg(x);
+
+  test_signe_neg(0) = (0)j_z;
+  test_signe_neg((x)0_z) = test_signe_neg(x);
+  test_signe_neg((x)1_z) = test_signe_pos(x);
+  test_signe_neg((x)j_z) = test_signe_neg(x);
+
+  min(x,y) = test_min_pos(abs(y) -_z abs(x),x,y);
+
+  test_min_pos(0,x,y) = x;
+  test_min_pos((x)0_z,y,z) = test_min_pos(x,y,z);
+  test_min_pos((x)1_z,y,z) = test_min_pos(x,y,z);
+  test_min_pos((x)j_z,y,z) = test_min_neg(x,y,z);
+
+  test_min_neg(0,x,y) = y;
+  test_min_neg((x)0_z,y,z) = test_min_neg(x,y,z);
+  test_min_neg((x)1_z,y,z) = test_min_pos(x,y,z);
+  test_min_neg((x)j_z,y,z) = test_min_neg(x,y,z);
+
+  f(0,x) = 0;
+  f(x,0) = signe(x);
+
+  f((x)0_z,(y)0_z) = f(x,y);
+  f((x)0_z,(y)1_z) = (f(x,(y)1_z))0_z;
+  f((x)0_z,(y)j_z) = (f(x,(y)j_z))0_z;
+
+  f((x)1_z,(y)0_z) = f((x)1_z,y);
+
+  f((x)1_z,(y)1_z) =
+    (f(x -_z min(x,y), (y)1_z))0_z +_z f(min((x)1_z,(y)1_z), x -_z y);
+
+  f((x)1_z,(y)j_z) =
+    (f(x +_z min(opp(x),y), (opp(y))1_z))0_z +_z f(min((x)1_z,(opp(y))1_z),x +_z y);
+
+  f((x)j_z,(y)0_z) = f((x)j_z,y);
+
+  f((x)j_z,(y)1_z) =
+    (f(x +_z min(opp(x),y), (opp(y))j_z))0_z +_z f(min((x)j_z,(opp(y))j_z), x +_z y);
+
+  f((x)j_z,(y)j_z) =
+    (f(x -_z min(x,y), (y)j_z))0_z +_z f(min((x)j_z,(y)j_z), x -_z y) ;
+
+operators
+
+  rat, irred : binary
+  +_q : commutative
+  *_q : AC
+  opp_q : unary
+
+  un_q,zero_q : constant
+  moins_un_q, deux_q,trois_q : constant
+
+
+axioms
+
+   rat(x,y) = irred(signe(y) *_z f(x,y),signe(y) *_z f(y,x));
+ 
+   irred(x,y) +_q irred(u,v) = rat((x *_z v) +_z (u *_z y),y *_z v);
+
+   irred(x,y) *_q irred(u,v) = rat(x *_z u,y *_z v) ;
+
+   x *_q (y +_q z) = (x *_q y)  +_q  (x *_q z);
+   opp_q(x +_q y) = opp_q(x) +_q  opp_q(y);
+   x  +_q  opp_q(x) = 0;
+   opp_q(opp_q(x)) = x;
+   x *_q opp_q(y) = opp_q(x *_q y);
+
+   opp_q(irred(x,y)) = irred(opp(x),y) ;
+   zero_q = irred(zero_z,un_z) ;
+   un_q = irred(un_z,un_z) ;
+   deux_q = irred(deux_z,un_z) ;
+   trois_q = irred(trois_z,un_z) ;
+   moins_un_q = irred(moins_un_z,un_z) ;
+
+
+% polynomes
+
+operators
+  0_p, 1_p : constant
+  +_p, *_p : AC
+  -_p : unary
+  Coef : unary
+
+  X,Y : constant
+
+  P,Q,R : variable
+
+axioms
+  P +_p 0_p = P;
+  P +_p -_p(P) = 0_p;
+  -_p(0_p) = 0_p;
+  -_p(-_p(P)) = P;
+  -_p(P +_p Q) = -_p(P) +_p -_p(Q) ;
+  P *_p 1_p = P ; 
+  P *_p 0_p = 0_p;
+  P *_p (Q +_p R) = (P *_p Q) +_p (P *_p R);
+  P *_p -_p(Q) = -_p(P *_p Q);
+   
+  0_p = Coef(irred(0,(0)1_z));
+  1_p = Coef(un_q);
+  -_p(P) = P *_p Coef(moins_un_q) ;
+  Coef(x) +_p Coef(y) = Coef(x +_q y) ;
+  Coef(x) *_p Coef(y) = Coef(x *_q y) ;
+  Coef(irred(0,(0)1_z)) +_p P = P ;
+  Coef(irred(0,(0)1_z)) *_p P = Coef(irred(0,(0)1_z)) ;
+  Coef(un_q) *_p P = P ;
+  P +_p P = Coef(deux_q) *_p P;
+  (Coef(x) *_p P) +_p P = Coef(x +_q un_q) *_p P;
+  (Coef(x) *_p P) +_p (Coef(y) *_p P) = Coef(x +_q y) *_p P ;
+
+
+end

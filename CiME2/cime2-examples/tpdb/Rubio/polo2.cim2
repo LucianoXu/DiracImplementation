@@ -1,0 +1,46 @@
+(***************************************************************************)
+(*                                                                         *)
+(*         This file was generated using the testocime tool                *)
+(*                                                                         *)
+(***************************************************************************)
+
+
+let X = vars "X BETA ALPHA ";
+(* 3 variables defined *)
+
+let F = signature "
+	zero: 0;
+	two: 0;
+	times: 2;
+	plus: 2;
+	one: 0;
+	neg: 1;
+	minus: 2;
+	ln: 1;
+	exp: 2;
+	dx: 1;
+	div: 2;
+	a: 0;
+";
+(* 12 non-variable symbols defined *)
+
+let R = HTRS {} F X "
+	dx(X) -> one;
+	dx(a) -> zero;
+	dx(plus(ALPHA, BETA)) -> plus(dx(ALPHA), dx(BETA));
+	dx(times(ALPHA, BETA)) -> plus(times(BETA, dx(ALPHA)), times(ALPHA, dx(BETA)));
+	dx(minus(ALPHA, BETA)) -> minus(dx(ALPHA), dx(BETA));
+	dx(neg(ALPHA)) -> neg(dx(ALPHA));
+	dx(div(ALPHA, BETA)) -> minus(div(dx(ALPHA), BETA), times(ALPHA, div(dx(BETA), exp(BETA, two))));
+	dx(ln(ALPHA)) -> div(dx(ALPHA), ALPHA);
+	dx(exp(ALPHA, BETA)) -> plus(times(BETA, times(exp(ALPHA, minus(BETA, one)), dx(ALPHA))), times(exp(ALPHA, BETA), times(ln(ALPHA), dx(BETA))));
+";
+(* 9 rules *)
+
+termcrit "minimal";
+termcrit "graph";
+polyinterpkind {("linear",2);("simple",2);("simple",6)};
+#time on;
+h_termination R;
+
+#quit;

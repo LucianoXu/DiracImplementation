@@ -1,0 +1,18 @@
+let F = signature "a,b,A,B : unary ;";
+
+let X = vars "x";
+
+let braid = TRS F X "
+A(b(x)) -> b(a(B(A(x)))) ;
+B(a(x)) -> a(b(A(B(x)))) ;
+A(a(x)) -> x ;
+B(b(x)) -> x ;
+";
+
+#time;
+
+termcrit "dp";
+
+termination braid;
+
+ 

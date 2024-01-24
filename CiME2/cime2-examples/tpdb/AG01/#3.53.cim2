@@ -1,0 +1,55 @@
+(***************************************************************************)
+(*                                                                         *)
+(*         This file was generated using the testocime tool                *)
+(*                                                                         *)
+(***************************************************************************)
+
+
+let X = vars "z y x w v u n ";
+(* 7 variables defined *)
+
+let F = signature "
+	true: 0;
+	shuffle: 1;
+	s: 1;
+	reverse: 1;
+	quot: 2;
+	nil: 0;
+	minus: 2;
+	less_leaves: 2;
+	leaf: 0;
+	false: 0;
+	cons: 2;
+	concat: 2;
+	app: 2;
+	add: 2;
+	0: 0;
+";
+(* 15 non-variable symbols defined *)
+
+let R = HTRS {} F X "
+	minus(x, 0) -> x;
+	minus(s(x), s(y)) -> minus(x, y);
+	quot(0, s(y)) -> 0;
+	quot(s(x), s(y)) -> s(quot(minus(x, y), s(y)));
+	app(nil, y) -> y;
+	app(add(n, x), y) -> add(n, app(x, y));
+	reverse(nil) -> nil;
+	reverse(add(n, x)) -> app(reverse(x), add(n, nil));
+	shuffle(nil) -> nil;
+	shuffle(add(n, x)) -> add(n, shuffle(reverse(x)));
+	concat(leaf, y) -> y;
+	concat(cons(u, v), y) -> cons(u, concat(v, y));
+	less_leaves(x, leaf) -> false;
+	less_leaves(leaf, cons(w, z)) -> true;
+	less_leaves(cons(u, v), cons(w, z)) -> less_leaves(concat(u, v), concat(w, z));
+";
+(* 15 rules *)
+
+termcrit "minimal";
+termcrit "graph";
+polyinterpkind {("linear",2);("simple",2);("simple",6)};
+#time on;
+h_termination R;
+
+#quit;

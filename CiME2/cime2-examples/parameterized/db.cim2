@@ -1,0 +1,84 @@
+let N = parameters "n";
+
+let S = pword_signature N "s | {n>=2}; r | {n>=2}" ;
+
+let w1 = pword S "  s  ( r  )^{ n + - 1}s r  ( r  )^{ q_56} | {((q_56 >= 0 and
+                                                               q_53 = 0 and
+                                                               p_55 >= 0 and
+                                                               p_55 + -1 = 0 and
+                                                               p_55 + q_56 +
+                                                               1 = n + 1 and
+                                                               p_55 > 0 and
+                                                               q_53 >= 0 and
+                                                               n >= 2 and
+                                                               p_52 >= 0 and
+                                                               p_52 + q_53 +
+                                                               1 = n + 1) or
+                                                              (p_52 + q_53 +
+                                                               1 = n + 1 and
+                                                              q_56 >= 0 and
+                                                              p_52 >= 0 and
+                                                              not (p_55 + -1 =
+                                                                   0) and
+                                                              n >= 2 and
+                                                              p_55 >= 0 and
+                                                              q_53 >= 0 and
+                                                              p_55 + -1 =
+                                                              q_53 and
+                                                              p_55 > 0 and
+                                                              p_55 + q_56 + 1 =
+                                                              n + 1) or
+                                                              (p_55 + q_56 +
+                                                               1 = n + 1 and
+                                                              p_52 + q_53 + 1 =
+                                                              n + 1 and
+                                                              p_55 > 0 and
+                                                              q_56 >= 0 and
+                                                              q_53 = 0 and
+                                                              p_52 >= 0 and
+                                                              q_53 >= 0 and
+                                                              p_55 + -1 = 0 and
+                                                              p_55 >= 0 and
+                                                              n >= 2))}";
+
+
+let w2 = pword S "( r  )^{ p_52}s  ( r  )^{ n + - 1}s  | {((q_56 >= 0 and
+                                                               q_53 = 0 and
+                                                               p_55 >= 0 and
+                                                               p_55 + -1 = 0 and
+                                                               p_55 + q_56 +
+                                                               1 = n + 1 and
+                                                               p_55 > 0 and
+                                                               q_53 >= 0 and
+                                                               n >= 2 and
+                                                               p_52 >= 0 and
+                                                               p_52 + q_53 +
+                                                               1 = n + 1) or
+                                                              (p_52 + q_53 +
+                                                               1 = n + 1 and
+                                                              q_56 >= 0 and
+                                                              p_52 >= 0 and
+                                                              not (p_55 + -1 =
+                                                                   0) and
+                                                              n >= 2 and
+                                                              p_55 >= 0 and
+                                                              q_53 >= 0 and
+                                                              p_55 + -1 =
+                                                              q_53 and
+                                                              p_55 > 0 and
+                                                              p_55 + q_56 + 1 =
+                                                              n + 1) or
+                                                              (p_55 + q_56 +
+                                                               1 = n + 1 and
+                                                              p_52 + q_53 + 1 =
+                                                              n + 1 and
+                                                              p_55 > 0 and
+                                                              q_56 >= 0 and
+                                                              q_53 = 0 and
+                                                              p_52 >= 0 and
+                                                              q_53 >= 0 and
+                                                              p_55 + -1 = 0 and
+                                                              p_55 >= 0 and
+                                                              n >= 2))} ";
+
+psim w1 w2;

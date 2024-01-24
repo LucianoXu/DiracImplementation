@@ -1,0 +1,25 @@
+let Var = vars "X Y Z";
+
+let F = signature "
+  0 : 0;
+  s : 1;
+  plus, min, quot : 2;
+";
+
+let R = HTRS {} F Var "
+plus(0,Y) -> Y;
+plus(s(X),Y) -> s(plus(X,Y));
+min(X,0) -> X;
+min(s(X),s(Y)) -> min(X,Y);
+min(min(X,Y),Z) -> min(X,plus(Y,Z));
+quot(0,s(Y)) -> 0;
+quot(s(X),s(Y)) -> s(quot(min(X,Y),s(Y)));
+";
+
+termcrit "dp" ; 
+termcrit "minimal" ; 
+polyinterpkind {("linear",1)} ;
+#time on;
+h_termination R;
+
+#quit;

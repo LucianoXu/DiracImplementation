@@ -1,0 +1,16 @@
+(* A stupid algorithm to sort list of bounded integers.*)
+
+let N = parameters "";
+
+let S = pword_signature N "a{i} | {0<= i} " ;
+
+let R1 = psrs S "a{i} a{j} -> a{j} a{i} | { 0 <= i /\ i < j }";
+
+#time on;
+
+pconfluent R1;
+
+#quit;
+
+
+

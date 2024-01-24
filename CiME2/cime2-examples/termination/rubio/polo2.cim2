@@ -1,0 +1,31 @@
+let V = vars "ALPHA BETA X" ;
+
+let F = signature "
+  a, two, one, zero : 0;
+  dx, neg, ln : 1;
+  plus, times, minus, div, exp : 2;
+";
+
+let R = HTRS {} F V "
+dx(X) -> one;
+dx(a) -> zero;
+dx(plus(ALPHA, BETA)) -> plus(dx(ALPHA), dx(BETA));
+dx(times(ALPHA, BETA)) -> plus(times(BETA, dx(ALPHA)), times(ALPHA, dx(BETA)));
+dx(minus(ALPHA, BETA)) -> minus(dx(ALPHA), dx(BETA));
+dx(neg(ALPHA)) -> neg(dx(ALPHA));
+dx(div(ALPHA, BETA)) -> 
+     minus(div(dx(ALPHA), BETA), times(ALPHA, div(dx(BETA), exp(BETA,two))));
+dx(ln(ALPHA)) -> div(dx(ALPHA), ALPHA);
+dx(exp(ALPHA, BETA)) -> 
+    plus(times(BETA, times(exp(ALPHA, minus(BETA, one)), dx(ALPHA))), 
+           times(exp(ALPHA, BETA), times(ln(ALPHA), dx(BETA))));
+
+";
+
+
+termcrit "minimal";
+polyinterpkind {("linear",1)};
+#time on;
+h_termination R;
+
+#quit;

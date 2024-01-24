@@ -1,0 +1,39 @@
+let Var = vars "K T L Tp Lp S Sp X Xp Y Z" ;
+let F = signature "
+  true,false,nil : 0;
+  min, selsort : 1;
+  le, eq, cons, ifmin, ifselsort  : 2;
+  replace : 3;
+  ifreplace : 4";
+
+let R = HTRS {} F Var "
+eq(0,0) -> true;
+eq(0,s(Y)) -> false;
+eq(s(X),0) -> false;
+eq(s(X),s(Y)) -> eq(X,Y);
+le(0,Y) -> true;
+le(s(X),0) -> false;
+le(s(X),s(Y)) -> le(X,Y);
+min(cons(0,nil)) -> 0;
+min(cons(s(N),nil)) -> s(N);
+min(cons(N,cons(M,L))) -> ifmin(le(N,M),cons(N,cons(M,L)));
+ifmin(true,cons(N,cons(M,L))) -> min(cons(N,L));
+ifmin(false,cons(N,cons(M,L))) -> min(cons(M,L));
+replace(N,M,nil) -> nil;
+replace(N,M,cons(K,L)) -> ifrepl(eq(N,K),N,M,cons(K,L));
+ifrepl(true,N,M,cons(K,L)) -> cons(M,L);
+ifrepl(false,N,M,cons(K,L)) -> cons(K,replace(N,M,L));
+selsort(nil) -> nil;
+selsort(cons(N,L)) -> ifselsort(eq(N,min(cons(N,L))),cons(N,L));
+ifselsort(true,cons(N,L)) -> cons(N,selsort(L));
+ifselsort(false,cons(N,L)) -> cons(min(cons(N,L)),selsort(replace(min(cons(N,L))
+,N,L)));
+";
+
+termcrit "dp" ; 
+termcrit "minimal" ; 
+polyinterpkind {("linear",1)} ;
+#time on;
+h_termination R;
+
+#quit;

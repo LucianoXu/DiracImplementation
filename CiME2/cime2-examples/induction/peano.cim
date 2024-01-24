@@ -1,0 +1,28 @@
+operators
+  + : AC % infix binary
+  * : infix binary
+  0 : constant
+  s : unary
+  x,y : variable
+
+theory ACU (+,0)
+
+axioms
+  0*x = 0;
+  s(x)*y = y+(x*y);
+  s(x)+y = s(x+y);
+
+order rpo( *>+>s>0 ;+ mul, * lrlex)
+
+problems
+  x*s(0) = x;
+  x*0 = 0;
+  x+x = s(s(0))*x;
+
+inductive
+%  x*s(0) = x+0;
+%  (x+0)*0 = 0;
+  x+x = x*s(s(0));
+%  x*y = y*x;
+  
+end

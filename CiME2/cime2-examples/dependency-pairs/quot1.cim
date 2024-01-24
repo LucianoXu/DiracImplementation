@@ -1,0 +1,35 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                           %
+%   DIVISION 1                                                              %
+%                                                                           %
+%   Author : Thomas Arts                                                    %
+%                                                                           %
+%                                                                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+operators
+  0 : constant
+  s : unary
+  minus : binary
+  quot : binary
+  x,y,z : variable
+
+ 
+problems
+
+ dp_termination (
+  minus(x,0) -> x ;
+  minus(s(x),s(y)) ->  minus(x,y) ;
+  quot(0,s(y)) -> 0 ;
+  quot(s(x),s(y)) -> s(quot(minus(x,y),s(y))) 
+);
+
+order
+
+    rps( 
+      rpo( quot > s ; quot lrlex );
+      minus(x,y) -> x 
+      )
+
+end
+

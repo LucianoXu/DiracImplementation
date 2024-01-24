@@ -1,0 +1,26 @@
+(* 
+  This example is from Giesl & Ohlebusch (FroCoS'98).
+  It provides a system which is DP-Quasi Simply Terminating
+  but *not* DP-Simply Terminating.
+
+*)
+let X = vars "x";
+
+let F = signature "
+  f,g,c,d : unary;
+  0,1 : constant;
+";
+
+let R = HTRS {} F X "
+  f(f(x)) -> f(c(f(x)));
+  f(f(x)) -> f(d(f(x)));
+  
+  g(c(x)) -> x;
+  g(d(x)) -> x;
+  
+  g(c(0)) -> g(d(1));
+  g(c(1)) -> g(d(0));
+";
+
+termcrit "minimal";
+h_termination_with {("linear",1)} R;

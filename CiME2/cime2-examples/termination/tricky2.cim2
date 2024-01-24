@@ -1,0 +1,13 @@
+let F =signature "
+a,b,c : constant;
+f : unary;
++ : AC;
+";
+
+let X =vars "x";
+
+let R = TRS F X "
+f(x) -> x+a;
+c+a -> f(b+c);
+";
+

@@ -1,0 +1,120 @@
+%
+%
+%  base grobner de 2X^2Y-Y, 3XY^2-X sur Z
+%
+%  a executer avec
+%
+%  cime -ground -inner -rew-bound 5000 over-Z-1.cim
+
+
+operators
+
+%constructeurs
+
+  0 : constant
+  1_z,j_z,0_z : postfix unary
+
+%operateurs
+
+  +_z  : AC
+  -_z : infix binary
+  opp : unary
+  *_z  : AC
+
+% abreviations
+
+  zero_z,un_z,deux_z,trois_z,moins_un_z : constant
+
+%variables
+
+  x,y,z,u,v,w : variable
+
+
+theory
+  USER(
+  (0)0_z -> 0 ;
+  x +_z 0 -> x ;
+  (x)0_z +_z (y)0_z -> (x +_z y)0_z ;
+  (x)0_z +_z (y)1_z -> (x +_z y)1_z ;
+  (x)0_z +_z (y)j_z -> (x +_z y)j_z ;
+  (x)1_z +_z (y)1_z -> (x +_z y +_z (0)1_z)j_z ;
+  (x)j_z +_z (y)j_z -> (x +_z y +_z (0)j_z)1_z ;
+  (x)1_z +_z (y)j_z -> (x +_z y)0_z ;
+  opp(0) -> 0 ;
+  opp((x)0_z) -> (opp(x))0_z ;
+  opp((x)1_z) -> (opp(x))j_z ;
+  opp((x)j_z) -> (opp(x))1_z ;
+  x -_z y -> x +_z opp(y) ;
+  x *_z 0 -> 0 ;
+  x *_z (y)0_z -> (x*_z y)0_z ;
+  x *_z (y)1_z -> (x*_z y)0_z +_z x ;
+  x *_z (y)j_z -> (x*_z y)0_z +_z opp(x) ;
+
+%   x *_z (y +_z z) -> (x *_z y)  +_z  (x *_z z);
+%   opp(x +_z y) -> opp(x) +_z  opp(y);
+%   x  +_z  opp(x) -> 0;
+%   opp(opp(x)) -> x;
+%   x *_z opp(y) -> opp(x *_z y);
+%   x +_z x -> (x)0_z  +_z opp(x);
+
+  zero_z -> 0 ;
+  un_z -> (0)1_z ;
+  deux_z -> ((0)1_z)j_z ;
+  trois_z -> ((0)1_z)0_z ;
+  moins_un_z -> (0)j_z )
+
+% polynomes
+
+operators
+  0_p, 1_p : constant
+  +_p, *_p : AC
+  -_p : unary
+  Coef : unary
+
+  X,Y : constant
+
+  P,Q,R : variable
+
+%axioms
+%  P +_p 0_p = P;
+%  P +_p -_p(P) = 0_p;
+%  -_p(0_p) = 0_p;
+%  -_p(-_p(P)) = P;
+%  -_p(P +_p Q) = -_p(P) +_p -_p(Q) ;
+%   P *_p 1_p = P ; 
+%   P *_p 0_p = 0_p;
+%   P *_p (Q +_p R) = (P *_p Q) +_p (P *_p R);
+%   P *_p -_p(Q) = -_p(P *_p Q);
+   
+theory 
+  Int(+_z,Coef,+_p,0_p,-_p,*_p,1_p)
+  USER(0_p -> Coef(0);
+       1_p -> Coef((0)1_z);
+       -_p(P) -> P *_p Coef((0)j_z) ;
+       Coef(x) +_p Coef(y) -> Coef(x +_z y) ;
+       Coef(x) *_p Coef(y) -> Coef(x *_z y) ;
+       Coef(0) +_p P -> P ;
+       Coef(0) *_p P -> Coef(0) ;
+       Coef((0)1_z) *_p P -> P ;
+       P +_p P -> Coef(((0)1_z)j_z) *_p P;
+       (Coef(x) *_p P) +_p P -> Coef(x +_z (0)1_z) *_p P;
+       (Coef(x) *_p P) +_p (Coef(y) *_p P) -> Coef(x +_z y) *_p P
+       )
+
+
+axioms
+%  Coef(x) +_p Coef(y) = Coef(x +_z y) ;
+%  (Coef(x) *_p P) +_p (Coef(y) *_p P) = Coef(x +_z y) *_p P;
+%  Coef(x) *_p Coef(y) = Coef(x *_z y);
+%  Coef(0) = 0_p;
+%  -_p(Coef(x)) = Coef(opp(x)) ;
+%  -_p(P *_p Coef(x)) = P *_p Coef(opp(x)) ;
+
+  (Coef(deux_z) *_p X *_p X *_p Y) +_p -_p(Y) = 0_p;
+  (Coef(trois_z) *_p X *_p Y *_p Y) +_p -_p(X) = 0_p;
+  
+order  rpo( Y>X>*_p>+_p, X>Coef=0=0_z=1_z=j_z  )
+
+
+end
+

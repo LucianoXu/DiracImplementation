@@ -1,0 +1,36 @@
+%***************************************************************************
+%
+% Comple'tion modulo CR de la th\'eorie d'un morphisme d'anneaux
+% commutatifs
+%
+% $Id: morphisme-anneaux-commutatifs-CR.cim,v 1.2 1997/12/01 09:17:01 demons Exp $
+%
+%***************************************************************************
+
+operators
+  +,*,plus, fois : AC
+  0,1,zero,un  : constant
+  -,moins,H          : unary
+  x,y,z,t,u      : variable
+
+theory
+  CR(+,0,-,*,1)
+  CR(plus,zero,moins,fois,un)
+
+unification theory ACU(+,0) ACU(*,1) ACU(plus,zero) ACU(fois,un)
+
+axioms 
+
+  H(x+y) = H(x)  plus  H(y); 
+  H(x*y) = H(x)  fois H(y);  
+  
+order  rpo( H>1>*>- >+>0, H>un> fois>moins> plus >zero  )
+
+conjectures
+
+  H(0) = zero ;
+  H(-(x)) = moins(H(x)) ;
+  H(1) = un;
+
+end
+

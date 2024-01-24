@@ -1,0 +1,81 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% L'exemple classique du probleme du club prive ecossais
+%
+% - tous les membres non-ecossais portent des chaussettes rouges
+%
+% - tous les membres portent un kilt ou ne portent pas de chaussettes rouges 
+%
+% - les membres maries ne sortent pas le dimanche
+%
+% - un membre sort le dimanche si et seulement s'il est ecossais
+%
+% - tous les mebres qui portent un kilt sont ecossais et maries
+%
+% - tous les membres ecossais portent un kilt
+%
+% montrer que personne ne peut etre membre de ce club !
+%
+% $Id: club-prive-BR.cim,v 1.1 1997/11/26 13:07:02 marche Exp $
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+operators
+
+  and,xor    : AC 
+  true,false : constant
+  implies    : infix binary
+  not        : unary
+  or,iff     : AC
+  x,y,z      : variable
+
+theory BR(xor,false,and,true)
+
+axioms
+
+  x or y = x xor y xor (x and y) ;
+  not(x) = x xor true ;
+  x implies y = not(x) or y ;
+  x iff y = not(x xor y) ;
+
+operators
+
+  est_ecossais         : unary 
+  a_chaussettes_rouges : unary 
+  porte_un_kilt        : unary 
+  est_marie            : unary 
+  sort_le_dimanche     : unary 
+  est_au_club          : unary
+
+axioms
+
+  (est_au_club(x) and not(est_ecossais(x))) implies a_chaussettes_rouges(x) = true ;
+  est_au_club(x) implies (porte_un_kilt(x) or not(a_chaussettes_rouges(x))) = true ;
+  (est_au_club(x) and est_marie(x)) implies not(sort_le_dimanche(x)) = true ;
+  est_au_club(x) implies (sort_le_dimanche(x) iff est_ecossais(x)) = true ;
+  (est_au_club(x) and porte_un_kilt(x)) implies (est_ecossais(x) and est_marie(x)) = true ;
+  (est_au_club(x) and est_ecossais(x)) implies porte_un_kilt(x) = true ;
+
+conjectures
+
+  est_au_club(x) = false ;
+
+order
+  rpo (or >  true > and > xor > false,
+       not > true,
+       implies > true,
+       iff > true,
+       est_au_club > est_ecossais > 
+       a_chaussettes_rouges > 
+       porte_un_kilt > est_marie > sort_le_dimanche > true)
+
+end
+
+
+
+
+
+
+
+

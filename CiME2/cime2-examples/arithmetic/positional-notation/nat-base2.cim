@@ -1,0 +1,61 @@
+operators
+
+% constructors
+
+  0 : constant
+  0_n,1_n : postfix unary
+
+% operators
+
+  +, . : AC
+
+% variables
+
+  x,y : variable
+
+axioms
+
+  (0)0_n = 0;
+
+  x+0 = x;
+  (x)0_n+(y)0_n = (x+y)0_n;
+  (x)0_n+(y)1_n = (x+y)1_n;
+
+  (x)1_n+(y)1_n = (x+y+(0)1_n)0_n;
+
+  x.0 = 0;
+  x.(y)0_n = (x.y)0_n;
+  x.(y)1_n = x+(x.y)0_n;
+
+
+order
+lexico(
+  poly( 2;
+[0] = 2 ;
+[0_n](x) = x ;
+[1_n](x) = x + 1 ;
+[+](x,y) = x + y - 2;
+[.](x,y) = x.y);
+  poly( 2;
+[0] = 2 ;
+[0_n](x) = x + 1 ;
+[1_n](x) = x + 1 ;
+[+](x,y) = x + y ;
+[.](x,y) = x.y);
+interactive)
+
+end
+
+%order
+
+%lexico( rpo (1 = 2 = 0_n = 1_n = 2_n  < + < . ; . mul, + mul);
+%        rpo (0_n < 1_n < 2_n , 1 < 2) )
+
+
+%problems
+
+%  reduce ((((((1)0_n)1_n)1_n)0_n)0_n)1_n . ((((((1)0_n)0_n)1_n)1_n)0_n)1_n ;
+
+
+ 
+

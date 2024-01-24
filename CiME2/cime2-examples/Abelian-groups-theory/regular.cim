@@ -1,0 +1,29 @@
+%***************************************************************************
+%
+% Abelian groups theory modulo AC
+%
+% $Id: regular.cim,v 1.1 1997/03/14 13:39:14 marche Exp $
+% 
+%***************************************************************************
+
+operators
+  + : AC
+  0 : constant
+  - : unary
+  x,y : variable
+  a,b,c : constant
+
+axioms
+  x+0    = x;
+  x+-(x) = 0;
+  a+b=a+c ;
+
+order 
+  rpo( a>b>c > - > 0 > + ; + mul)
+%  interactive
+
+conjectures
+  b=c;
+
+end
+

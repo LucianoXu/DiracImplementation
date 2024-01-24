@@ -1,0 +1,69 @@
+let F = signature "
+0 : constant;
+s : unary;
++,* : infix binary;
+";
+
+let X = vars "x y z";
+
+
+
+
+let prec = precedence F "* > + > s > 0";
+let order = MPO prec;
+
+let c1 = order_constraint F X "x + 0 >= x /\ x+s(y) > x+y /\ x+s(y) >= s(x+y)";
+
+check_order_constraint order c1;
+
+
+
+
+
+let R = TRS F X "
+x+ 0 -> x ;
+x+s(y) -> s(x+y) ;
+x*0 -> 0;
+x*s(y) -> (x*y)+x;
+";
+
+
+
+
+
+let c = all_decrease_termination_constraints R;
+
+
+let prec = precedence F "* > + > s > 0";
+let order = MPO prec;
+check_termination_constraint c order;
+poly_solve_termination_constraint 10 c;
+
+let c = order_constraint F X "
+x + 0 >= x /\
+x + s(y) >= s(x + y) /\
+x * 0 >= 0 and
+x * s(y) >= (x * y) + x and
+x + s(y) > x + y and
+x * s(y) > x * y and
+";
+
+
+let F_AC = signature "
+0 : constant;
+s : unary;
++,* : AC;
+";
+
+let R_AC = TRS F_AC X "
+x+ 0 -> x ;
+x+s(y) -> s(x+y) ;
+x*0 -> 0;
+x*s(y) -> (x*y)+x;
+";
+
+let c = all_decrease_termination_constraints R_AC;
+
+let prec = precedence F_AC "* > + > s > 0";
+let order_AC = ACRPO prec;
+check_termination_constraint c order_AC;

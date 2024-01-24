@@ -1,0 +1,59 @@
+(***************************************************************************)
+(*                                                                         *)
+(*         This file was generated using the testocime tool                *)
+(*                                                                         *)
+(***************************************************************************)
+
+
+let X = vars "Y X N M L K ";
+(* 6 variables defined *)
+
+let F = signature "
+	true: 0;
+	selsort: 1;
+	s: 1;
+	replace: 3;
+	nil: 0;
+	min: 1;
+	le: 2;
+	ifselsort: 2;
+	ifrepl: 4;
+	ifmin: 2;
+	false: 0;
+	eq: 2;
+	cons: 2;
+	0: 0;
+";
+(* 14 non-variable symbols defined *)
+
+let R = HTRS {} F X "
+	eq(0, 0) -> true;
+	eq(0, s(Y)) -> false;
+	eq(s(X), 0) -> false;
+	eq(s(X), s(Y)) -> eq(X, Y);
+	le(0, Y) -> true;
+	le(s(X), 0) -> false;
+	le(s(X), s(Y)) -> le(X, Y);
+	min(cons(0, nil)) -> 0;
+	min(cons(s(N), nil)) -> s(N);
+	min(cons(N, cons(M, L))) -> ifmin(le(N, M), cons(N, cons(M, L)));
+	ifmin(true, cons(N, cons(M, L))) -> min(cons(N, L));
+	ifmin(false, cons(N, cons(M, L))) -> min(cons(M, L));
+	replace(N, M, nil) -> nil;
+	replace(N, M, cons(K, L)) -> ifrepl(eq(N, K), N, M, cons(K, L));
+	ifrepl(true, N, M, cons(K, L)) -> cons(M, L);
+	ifrepl(false, N, M, cons(K, L)) -> cons(K, replace(N, M, L));
+	selsort(nil) -> nil;
+	selsort(cons(N, L)) -> ifselsort(eq(N, min(cons(N, L))), cons(N, L));
+	ifselsort(true, cons(N, L)) -> cons(N, selsort(L));
+	ifselsort(false, cons(N, L)) -> cons(min(cons(N, L)), selsort(replace(min(cons(N, L)), N, L)));
+";
+(* 20 rules *)
+
+termcrit "minimal";
+termcrit "graph";
+polyinterpkind {("linear",2);("simple",2);("simple",6)};
+#time on;
+h_termination R;
+
+#quit;

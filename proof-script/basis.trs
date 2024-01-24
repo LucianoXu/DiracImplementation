@@ -1,6 +1,0 @@
-(VAR t1 t2 t)
-(RULES
-   fst(pair(t1,t2)) -> t1
-   snd(pair(t1,t2)) -> t2
-   pair(fst(t),snd(t)) -> t
-)

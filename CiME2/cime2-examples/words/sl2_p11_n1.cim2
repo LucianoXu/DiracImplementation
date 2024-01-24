@@ -1,0 +1,38 @@
+
+
+let S = word_signature "S T";
+
+let sl2_Z = " S^2 ->  ; (S T)^3 ->   ; " ;
+
+let sl2_z_2_1 = SRS S (sl2_Z ^ " T^2 ->  ;");
+
+let sl2_z_3_1 = SRS S (sl2_Z ^ " T^3 ->  ;");
+
+let sl2_z_5_1 = SRS S (sl2_Z ^ " (T^4 S) ^3 -> ; T^5 ->  ;");
+
+let test = SRS S "
+S S ->  ;
+S S T  -> T S S  ;
+S T S T S T  -> S S  ;
+T T T T T        ->  ;
+
+
+"; (*
+S S T T S T T T S T T S S              -> S S S T T T S T T S T T T S  ;
+S S T T S T T T S T T S               -> S S T T T S T T S T T T S   ;
+" ;
+*)
+let o = length_lex ( word_precedence S "S<T" );
+let completion = word_completion o test ;
+let completion = word_completion o test ;
+let completion = word_completion o test ;
+let completion = word_completion o test ;
+let completion = word_completion o test ;
+let completion = word_completion o test ;
+let completion = word_completion o test ;
+let completion = word_completion o test ;
+let completion = word_completion o test ;
+let completion = word_completion o test ;
+let completion = word_completion o test ;
+#mem;
+#quit;

@@ -1,0 +1,42 @@
+(*
+
+Complétion d'un groupe diedral 
+
+*)
+
+
+let F = word_signature "a b";
+
+let o1 = length_lex (word_precedence F "b<a");
+let o2 = length_lex (word_precedence F "b>a");
+let o3 = multi_lex (word_precedence F "b>a");
+let o4 = multi_lex (word_precedence F "b<a");
+
+
+let R100 = SRS F"
+  a^2 -> ;
+  b a b -> a ;
+  b^100 -> ;
+  ";
+
+let R101 = SRS F"
+  a^2 -> ;
+  b a b -> a ;
+  b ^ 101 -> ;
+";
+
+
+
+let R100_1 = word_completion o1 R100;
+let R101_1 = word_completion o1 R101;
+
+let R100_2 = word_completion o2 R100;
+let R101_2 = word_completion o2 R101;
+
+let R100_3 = word_completion o3 R100;
+let R101_3 = word_completion o3 R101;
+
+let R100_4 = word_completion o4 R100;
+let R101_4 = word_completion o4 R101;
+
+

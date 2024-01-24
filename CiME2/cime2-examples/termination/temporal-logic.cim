@@ -1,0 +1,45 @@
+let F = signature "
+  and, or : AC ;
+  imp : infix binary ;
+  false, true : constant ;
+  not : unary ;
+  S,U : infix binary ;
+";
+
+let X = vars "x y z u";
+
+let R = HTRS {} F X "
+  x imp y -> not(x and  not(y)) ;
+  x and x -> x ;
+  not(false) -> true;
+  not(not(x)) -> x;
+  not(true) -> false;
+  x and true -> x;
+  x and false -> false;
+  x or y -> not(not(x) and not(y));
+  (x and y) S z -> (x S z) and (y S z);
+  x U (y and z) -> (x U y) and (x U z);
+  (x or y) U z -> (x U z) or (y U z);
+  x S (y or z) -> (x S y) or (x S z);
+  (x and (y U z)) S u -> ((x S u) and (x S z) and z and (y U z)) or (y and (x S (z and u))) or ((y and u and (x S z) and (x S u)) S u);
+
+  x S (y or (z U u)) -> (x S false) or ((z or (u and (z U u))) and (x S (not(x) and not(((not(y) and not(x)) S (not(x) and not(z))) and (not(z) and not(u)))))) or ((not(z or (u and (z U u))) and (x S (not(x) and not(((not(y) and not(x)) S (not(x) and not(z))) and (not(z) and not(u)))))) and ((not(y) and not(x)) S (not(x) and not(z))));
+ 
+ (x and (not(x U y))) S u -> ((x and ( (not(z) and not(y)) U (not(z)) )) S u) or ((x and (not(z U true))) S u);
+
+   x S (y or not(z U u)) -> (x S (not(x) and (((not(y) and not(x)) S (not(x) and u) ) imp not(z)))) and ( ( (not(y) and not(x) ) S (not(x) and u) ) imp (not(z or (u and (z U u))))  ) ;
+
+   (x and (y U z)) S (u or (y U z)) -> ((x S z) and (y or (z and (y U z)))) or (((y and (x S z)) S  not(not(y) and not(z) and (not(u) S not(y)))) and (x or (z and (y U z)))) or (((y and (x S z)) S not(not(y) and not(z) and (not(u) S not(y)))) and not(x or (z and (y U z))) and not(not(u) S not(y))) ;
+
+   (x and not(y U z)) S (u and (y U z)) -> ((x S (not(y) and u)) and not(y) and not(z) ) or ((not(y) and not(z) and (u or (y U z)) and (x S (not(y) and u)) ) S (u or (y U z)) ) or ( (x S (u and not(y))) and not(y) and not(y U z));
+
+   (x and (y U z)) S (u and not(y U z)) ->( (y and (u or not(y U z)) and (x S (z and u))) S (u or not(y U z)) ) or (( x S (z and u) ) and y ) or (( x S (z and u) ) and z and (y U z));
+";
+
+termcrit "dp";
+termcrit "nomarks";
+termcrit "minimal";
+timelimit "1";
+polyinterpkind { ("linear",1) ; ("simple",2) } ;
+#time on;
+h_termination R;

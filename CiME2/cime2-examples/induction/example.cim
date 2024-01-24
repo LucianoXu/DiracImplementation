@@ -1,0 +1,21 @@
+operators
+  + : infix binary
+  s : unary
+  0 : constant
+  x,y,z : variable
+
+axioms
+  x+0 = x;
+  x+s(y) = s(x+y);
+
+order
+  rpo(+>s>0;+ lrlex)
+
+inductive
+%  0+x = x;
+  x+y = y+x;
+  s(x)+y = s(x+y);
+  x+(y+z) = (x+y)+z ;
+%  s(x) = 0;
+%  x+y = y+x;
+end

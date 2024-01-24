@@ -1,0 +1,88 @@
+%***************************************************************************
+%
+%
+% Comple'tion des booleens 
+% modulo AC
+%
+%
+% Project:                Cime
+% Author(s):             Claude March\'e
+%
+% File name:        booleens.nc
+% Created on:              05 nov 93
+% Last modified on: 05 nov 93
+%
+%***************************************************************************
+
+operators
+  union : AC
+  inter : AC
+  mkset : unary
+  empty_set : constant
+
+  and : AC
+  if_then_else : 3
+  true, false : constant
+
+  eq : commutative
+
+  eqq : AC 
+
+  f : 2
+  g : 1
+  a,b : constant
+
+  x,y,z,u,v : variable
+
+axioms
+  
+  x union empty_set = x;
+  x inter empty_set = empty_set;
+  x union x = x;
+  (x union y) inter z = (x inter z) union (y inter z);
+  mkset(x) inter mkset(y) = if_then_else(x eq y,mkset(x eqq y),empty_set);
+  mkset(x) inter if_then_else(y,mkset(z),empty_set) = 
+    if_then_else(y and (x eq z),mkset(x eqq z),empty_set);
+
+  if_then_else(true,x,y) = x;
+  if_then_else(false,x,y) = y;
+  true and x = x;
+  false and x = false;
+
+  x eq (y eqq z) = (x eq y) and (x eq z);
+
+  f(x,y) eq f(u,v) = (x eq u) and (y eq v);
+  g(x) eq g(u) = x eq u;
+  a eq a = true;
+  b eq b = true;
+
+  f(x,y) eq g(u) = false;
+  f(x,y) eq a = false;
+  f(x,y) eq b = false;
+
+  g(u) eq a = false;
+  g(u) eq b = false;
+
+  a eq b = false;
+  
+  a eqq a = a;
+  b eqq b = b;
+  f(x,y) eqq f(u,v) = f(x eqq u,y eqq v);
+  g(x) eqq g(u) = g(x eqq u);
+
+order 
+  rpo(
+  inter > if_then_else, 
+  and > eq > true = false, 
+  eqq > f, eqq > g, eqq > a=b,
+  eq > eqq,
+  inter > union;
+  inter mul, union mul, eq mul, eqq mul, and mul,
+  if_then_else lrlex) 
+
+end
+
+
+
+
+

@@ -1,0 +1,10 @@
+operators
+  + : AC
+
+order
+  
+  poly ([+](x,x)=x+y+2 ) 
+   
+end
+
+

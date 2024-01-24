@@ -1,0 +1,56 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                           %
+%   PGCD                                                                    %
+%                                                                           %
+%   Author : Thomas Arts                                                    %
+%                                                                           %
+%                                                                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+operators
+  0,true,false : constant
+  s,pred : unary
+  le : binary   
+  if : 3
+  minus : binary
+  pgcd : binary
+  x,y,z : variable
+
+ 
+problems 
+
+dp_termination (
+
+  le(0,s(y))  -> true ;
+  le(0,0)     -> true ;
+  le(s(x),0)  -> false ;
+  le(s(x),s(y)) -> le(x,y) ;
+
+  pred(s(x))  -> x ;
+
+  minus(x,0)  -> x ;
+  minus(x,s(y)) -> pred(minus(x,y)) ;
+  pgcd(0,y)    -> 0 ;
+  pgcd(s(x),0) -> 0 ;
+  pgcd(s(x),s(y)) -> if(le(y,x),s(x),s(y)) ;
+
+  if(true,s(x),s(y)) -> pgcd(minus(x,y),s(y)) ;
+  if(false,s(x),s(y))-> pgcd(minus(y,x),s(x)) 
+  );
+
+operators
+if',f : binary
+
+order
+
+    rps( 
+      rpo( le > true = false , pgcd = if' );
+      pred(x) -> x ;
+      minus(x,y) -> x ; 
+      if (z,x,y) -> if'(x,y) ;
+      TOP(if)(z,x,y) -> f(x,y) ;
+      TOP(pgcd)(x,y)-> f(x,y)
+      )
+
+end
+

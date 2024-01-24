@@ -1,0 +1,134 @@
+(*
+
+ Peano system for natural numbers, presented by 0 and successor
+
+*)
+
+
+(*
+
+the classical one 
+
+*)
+
+let F_peano = signature "
+0 : constant;
+s : unary;
+m,p : binary;
+";
+
+let X = vars "x y z";
+
+let R_peano = TRS F_peano X "
+p(x,0) -> x;
+p(x,s(y)) -> s(p(x,y));
+m(x,0) -> 0;
+m(x,s(y)) -> p(m(x,y),x);
+";
+
+let t = term F_peano X "m(s(s(s(0))),s(s(0)))";
+normalize R_peano t;
+
+#time on;
+termination R_peano;
+termcrit "dp";
+termination R_peano;
+termcrit "nograph";
+termination R_peano;
+termcrit "nomarks";
+termination R_peano;
+termcrit "graph";
+termination R_peano;
+#time off;
+
+
+
+
+(*
+
+The same, but with AC symbols
+
+*)
+
+let F_peano_AC = signature "
+0 : constant;
+s : unary;
++,* : AC;
+";
+
+let R_peano_AC = TRS F_peano_AC X "
+x+0 -> x;
+x+s(y) -> s(x+y);
+x*0 -> 0;
+x*s(y) -> (x*y) + x;
+";
+
+
+
+let t = term F_peano_AC X "s(s(s(0))) * s(s(0))";
+normalize R_peano_AC t;
+let t = term F_peano_AC X "s(0) + s(0) + s(0)";
+normalize R_peano_AC t;
+
+
+#time;
+termination R_peano_AC;
+#time;
+
+
+(*
+
+With AC symbols, and symmetrical rules
+
+*)
+
+let R_peano_AC_sym = TRS F_peano_AC X "
+x+0 -> x;
+s(x)+s(y) -> s(s(x+y));
+x*0 -> 0;
+s(x)*s(y) -> s((x*y) + x + y);
+";
+
+let t = term F_peano_AC X "s(s(s(0))) * s(s(0))";
+normalize R_peano_AC_sym t;
+
+
+termcrit "standard";
+let c = termination_constraint_without_marks R_peano_AC_sym;
+let prec = precedence F_peano_AC "*>+>s>0";
+(* wrong ! MPO is not AC compatible *)
+let o1 = MPO prec;
+check_termination_constraint c o1;
+(* this is ok *)
+let o2 = ACRPO prec;
+check_termination_constraint c o2;
+
+termcrit "dp";
+termcrit "nomarks";
+termcrit "nograph";
+let c = termination_constraint_without_marks R_peano_AC_sym; 
+check_termination_constraint c o1;
+check_termination_constraint c o2;
+
+#verbose;
+polyinterpkind "simple-mixed";
+
+termcrit "dp";
+termcrit "nomarks";
+termcrit "graph";
+termpolybound 12;
+#time;
+termination R_peano_AC_sym;
+#time;
+
+termcrit "dp";
+termcrit "marks";
+termcrit "graph";
+termpolybound 10;
+#time;
+termination R_peano_AC_sym;
+#time;
+
+
+
+

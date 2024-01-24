@@ -1,0 +1,259 @@
+
+#time;
+(* #verbose 1; *)
+
+
+
+
+let X = vars "x y z l b";
+
+(* Entiers en binaire 
+let Fpeano = signature "
+    0   : constant ; 
+    s : unary ;
+   ";
+
+let Mbin = HTRS {} Fbin X "
+  (#)0 -> #;
+  ";
+
+h_termination Mbin;
+
+
+ Addition *)
+let Fadd = signature " 
+    0   : constant ; 
+    s : unary ;
+   + : AC
+";
+
+let Madd = HTRS {} Fadd X "
+     x + 0 -> x;
+     s(x) + s(y) -> s(s(x+y));
+";
+
+(*
+polyinterpkind "linear";
+termpolybound 1;
+*)
+h_termination Madd;
+
+
+(* Multiplication *)
+let Fmult = signature " 
+  * : AC
+";
+
+let Mmult = HTRS {Madd} Fmult X "
+     x * 0 -> 0;
+     s(x) * s(y) -> s((x*y)+(x+y));
+";
+
+(*
+polyinterpkind "simple";
+termpolybound 2;
+*)
+
+h_termination Mmult;
+
+(*polyinterpkind "simple";*)
+
+
+(* Multiensembles et union AC *)
+let Fbag = signature " 
+  empty : constant ; 
+  singl : unary ; 
+  U : AC";
+
+let Mbag = HTRS {} Fbag X "
+  empty U b -> b;
+";
+
+h_termination Mbag;
+
+
+(* Somme des éléments d'un
+   multiensemble d'entiers *)
+let Fsum = signature " sum : unary ";
+
+let Msumbag = HTRS {Mbag ; Madd} 
+                   Fsum X
+"
+  sum(empty) -> 0;
+  sum(singl(x)) -> x;
+  sum(x U y) -> sum(x) + sum(y);
+";
+(*
+polyinterpkind "linear";
+termpolybound 1;
+*)
+h_termination Msumbag;
+
+(* Produit des éléments d'un
+   multiensemble d'entiers *)
+let Fprod = signature " prod : unary ";
+
+let Mprodbag = HTRS {Mbag ; Mmult} 
+                   Fprod X
+"
+  prod(empty) -> s(0);
+  prod(singl(x)) -> x;
+  prod(x U y) -> prod(x) * prod(y);
+";
+
+(*
+polyinterpkind "linear";
+termpolybound 1;
+*)
+h_termination Mprodbag;
+
+
+
+
+
+
+
+
+
+
+
+(* trying ACRPO *)
+
+
+let Fall = signature "
+    0   : constant ; 
+    s : unary ;
+    + : AC ;
+    * : AC ;
+  empty : constant ; 
+  singl : unary ; 
+  U : AC ;
+ sum : unary ;
+ prod : unary ;
+    ";
+
+let Rall = TRS Fall X "
+     x + 0 -> x;
+     s(x) + s(y) -> s(s(x+y));
+     x * 0 -> 0;
+     s(x) * s(y) -> s((x*y)+(x+y));
+     empty U b -> b;
+  sum(empty) -> 0;
+  sum(singl(x)) -> x;
+  sum(x U y) -> sum(x) + sum(y);
+  prod(empty) -> s(0);
+  prod(singl(x)) -> x;
+  prod(x U y) -> prod(x) * prod(y);
+  ";
+
+
+
+let p = precedence Fall "prod > * , sum > + , * > + > s > 0";
+let o = ACRPO p;
+
+let c = all_decrease_termination_constraints Rall;
+
+check_termination_constraint c o;
+
+
+
+(***************************************************binaire********)
+
+(* Arithmétique des entiers codés 
+   en binaire 
+
+   Addition, multiplication et listes,
+
+   Modules.
+*)
+
+
+polyinterpkind "linear";
+
+let X = vars "x y z l b";
+
+(* Entiers en binaire *)
+let Fbin = signature "
+    #   : constant ; 
+    0,1 : postfix unary ;
+   ";
+
+let Mbin = HTRS {} Fbin X "
+  (#)0 -> #;
+  ";
+
+h_termination Mbin;
+
+
+(* Addition *)
+let Fadd = signature " 
+   + : AC
+";
+
+let Madd = HTRS {Mbin} Fadd X "
+     x + # -> x;
+     (x)0 + (y)0 -> (x+y)0;
+     (x)0 + (y)1 -> (x+y)1;
+     (x)1 + (y)1 -> (x+y+(#)1)0;
+";
+
+h_termination Madd;
+
+
+(* Multiplication *)
+let Fmult = signature " 
+  * : AC
+";
+
+let Mmult = HTRS {Madd} Fmult X "
+     x * # -> #;
+     (x)0 * y -> (x*y)0;
+     (x)1 * y -> (x*y)0 + y;
+";
+
+h_termination Mmult;
+
+polyinterpkind "simple";
+
+h_termination Mmult;
+
+(* Multiensembles et union AC *)
+let Fbag = signature " 
+  empty : constant ; 
+  singl : unary ; 
+  U : AC";
+
+let Mbag = HTRS {} Fbag X "
+  empty U b -> b;
+";
+
+h_termination Mbag;
+
+
+(* Somme des éléments d'un
+   multiensemble d'entiers *)
+let Fsum = signature " sum : unary ";
+let Msumbag = HTRS {Mbag ; Madd} 
+                   Fsum X
+"
+  sum(empty) -> (#)0;
+  sum(singl(x)) -> x;
+  sum(x U y) -> sum(x) + sum(y);
+";
+
+h_termination Msumbag;
+
+(* Produit des éléments d'un
+   multiensemble d'entiers *)
+let Fprod = signature " prod : unary ";
+
+let Mprodbag = HTRS {Mbag ; Mmult} 
+                   Fprod X
+"
+  prod(empty) -> (#)1;
+  prod(singl(x)) -> x;
+  prod(x U y) -> prod(x) * prod(y);
+";
+
+
+h_termination Mprodbag;

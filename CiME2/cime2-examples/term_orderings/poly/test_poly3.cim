@@ -1,0 +1,23 @@
+operators
+  +,* : AC
+  0 : constant
+  s : unary
+  x,y,z : variable
+
+axioms
+  
+  x+0 = x ;
+  s(x)+y = s(x+y) ;
+  0*x = 0 ;
+  s(x)*y = (x*y)+y ;
+  x*(y+z) = (x*y)+(x*z) ;
+
+order
+  lexico( 
+    poly(2;[0]=2; [s](x)=x+2; [+](x,y)=x+y+1; [*](x,y)=x.y ) ;
+    poly(2;[0]=2; [s](x)=x+1; [+](x,y)=x.y;   [*](x,y)=x.y ) )
+
+
+end
+
+

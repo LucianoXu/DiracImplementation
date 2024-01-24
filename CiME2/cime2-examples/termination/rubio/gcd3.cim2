@@ -1,0 +1,30 @@
+let Var  = vars "X Y";
+
+let F = signature "
+0, true, false : 0;
+s, pred : 1;
+le, minus, gcd : 2;
+if : 3;
+";
+
+let R = HTRS {} F Var "
+minus(X,s(Y)) -> pred(minus(X,Y));
+minus(X,0) -> X;
+pred(s(X)) -> X;
+le(s(X),s(Y)) -> le(X,Y);
+le(s(X),0) -> false;
+le(0,Y) -> true;
+gcd(0,Y) -> 0;
+gcd(s(X),0) -> s(X);
+gcd(s(X),s(Y)) -> if(le(Y,X),s(X),s(Y));
+if(true,s(X),s(Y)) -> gcd(minus(X,Y),s(Y));
+if(false,s(X),s(Y)) -> gcd(minus(Y,X),s(X));
+";
+
+
+termcrit "minimal";
+polyinterpkind {("linear",1)};
+#time on;
+h_termination R;
+
+#quit;

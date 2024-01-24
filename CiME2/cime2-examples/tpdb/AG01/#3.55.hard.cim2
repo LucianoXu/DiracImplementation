@@ -1,0 +1,60 @@
+(***************************************************************************)
+(*                                                                         *)
+(*         This file was generated using the testocime tool                *)
+(*                                                                         *)
+(***************************************************************************)
+
+
+let X = vars "y x n m ";
+(* 4 variables defined *)
+
+let F = signature "
+	true: 0;
+	s: 1;
+	quot: 2;
+	quicksort: 1;
+	nil: 0;
+	minus: 2;
+	low: 2;
+	le: 2;
+	if_low: 3;
+	if_high: 3;
+	high: 2;
+	false: 0;
+	app: 2;
+	add: 2;
+	0: 0;
+";
+(* 15 non-variable symbols defined *)
+
+let R = HTRS {} F X "
+	minus(x, 0) -> x;
+	minus(s(x), s(y)) -> minus(x, y);
+	quot(0, s(y)) -> 0;
+	quot(s(x), s(y)) -> s(quot(minus(x, y), s(y)));
+	le(0, y) -> true;
+	le(s(x), 0) -> false;
+	le(s(x), s(y)) -> le(x, y);
+	app(nil, y) -> y;
+	app(add(n, x), y) -> add(n, app(x, y));
+	low(n, nil) -> nil;
+	low(n, add(m, x)) -> if_low(le(m, n), n, add(m, x));
+	if_low(true, n, add(m, x)) -> add(m, low(n, x));
+	if_low(false, n, add(m, x)) -> low(n, x);
+	high(n, nil) -> nil;
+	high(n, add(m, x)) -> if_high(le(m, n), n, add(m, x));
+	if_high(true, n, add(m, x)) -> high(n, x);
+	if_high(false, n, add(m, x)) -> add(m, high(n, x));
+	quicksort(nil) -> nil;
+	quicksort(add(n, x)) -> app(quicksort(low(n, x)), add(n, quicksort(high(n, x))));
+";
+(* 19 rules *)
+
+termcrit "minimal";
+termcrit "graph";
+timelimit "300";
+polyinterpkind {("linear",2);("simple",2);("simple",6)};
+#time on;
+h_termination R;
+
+#quit;

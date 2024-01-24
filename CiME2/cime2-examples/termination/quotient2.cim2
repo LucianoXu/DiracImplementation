@@ -1,0 +1,31 @@
+(*
+
+Quotient 
+
+*)
+
+let F = signature "
+  0 : constant;
+  s : unary;
+  q : binary;
+  q':3;
+";
+
+let X =vars "x y z";
+
+let quotient = TRS F X "
+  q(0,s(y)) -> 0 ;
+  q(s(x),s(y)) -> q'(x,y,s(y)) ;
+  q'(x,0,z) -> s(q(x,z)) ;
+  q'(0,s(y),z) -> 0 ;
+  q'(s(x),s(y),z) -> q'(x,y,z) ;
+";
+
+termcrit "dp";
+termcrit "nomarks";
+
+#time on;
+#verbose 2;
+
+termination quotient;
+

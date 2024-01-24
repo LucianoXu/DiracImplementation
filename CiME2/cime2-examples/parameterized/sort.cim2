@@ -1,0 +1,79 @@
+(* A stupid algorithm to sort list of N integers.*)
+
+let N = parameters "N";
+
+let S = pword_signature N "a{i} | {0<= i /\ i<=N } " ;
+
+let R = psrs S "a{i} a{j} -> a{j} a{i} | { 0 <= i /\ i<j /\ j<= N}";
+
+
+let u = pword S " a{2} a{9} a{5} a{i} | { j=i /\ N >= 9 /\ i < 0}";
+let v = pword S " a{2} a{9} a{5} a{j} | { j=i /\ N >= 9 /\ i < 0}";
+psim u v ;
+ptest_sim u v ;
+
+let u = pword S " a{2} a{9} a{5} a{i1} | { j1=i1 /\ N >= 9 /\ i1 < 0}";
+let v = pword S " a{2} a{9} a{5} a{j2} | { j2=i2 /\ N >= 9 /\ i2 < 0}";
+psim u v ;
+ptest_sim u v ;
+
+
+
+let u = pword S " a{2} a{9} a{5} a{i} | { exists k, (9<= k<= N /\ j=i /\ N >= 9 /\ i < 0)}";
+let v = pword S " a{2} a{9} a{5} a{j} | { j=i /\ N >= 9 /\ i < 0}";
+psim u v ;
+ptest_sim u v ;
+
+
+let u = pword S " a{i} a{j} | {i+j>0}";
+let v = pword S " a{j} a{i} | {k+l>0}";
+psim u v ;
+ptest_sim u v ;
+
+
+let u0 = pword S " a{7} a{2} | { N >= 10 }";
+preducible S R u0;
+
+let u1 = pword S " a{2} a{7} | { N >= 10 }";
+preducible S R u1;
+pnormalize S R u1;
+
+let uu = pword S " a{i0} a{j0} | { i0=7 and j0=2 and N >= 10} " ;
+preducible S R uu;
+
+
+let u2 = pword S " a{4} a{2} a{3} | { N >= 10 }";
+pnormalize S R u2;
+
+let u3 = pword S " a{2} a{3} a{4} | { N >= 10 }";
+pnormalize S R u3;
+
+let u3 = pword S " a{2} a{3} a{4} a{5} a{6} a{7} a{8} a{9} a{10} a{11} a{12} a{13} | { N >= 15 }";
+pnormalize S R u3;
+
+
+
+
+let u4 = pword S "  a{i+5} a{i+4} a{i+5} a{i+10} | 
+			{ N >= 0 /\ 0<= i+4 /\ i+10 <= N }";
+pnormalize S R u4;
+
+
+pconfluent R;
+
+
+let P = parameters "";
+
+let S' = pword_signature P "a{i} | {0<= i} " ;
+
+let R' = psrs S' "a{i} a{j} -> a{j} a{i} | { 0 <= i /\ i<j}";
+
+pconfluent R';
+
+
+let u3 = pword S' "a{2} a{3} a{4} a{5} a{6} a{7} ";
+pnormalize S' R' u3;
+
+
+let u3 = pword S' "a{2} a{3} a{4} a{5} a{6} a{7} a{8} a{9} a{10} a{11} a{12} a{13} ";
+pnormalize S' R' u3;

@@ -1,0 +1,24 @@
+
+operators
+  + : AC
+  0 : constant
+  - : unary
+  x,y : variable
+
+theory ACU(+,0)
+unification theory ACU(+,0)
+
+axioms
+  x+-(x) = 0 ;
+
+order
+  rpo( - > + > 0)
+
+problems
+
+%  -(0) = -(-(0)+0) ;
+%  -(-(x)) = x ;
+  -(-(-(x))) = x;
+  
+end
+

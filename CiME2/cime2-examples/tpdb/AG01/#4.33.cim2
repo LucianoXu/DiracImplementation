@@ -1,0 +1,36 @@
+(***************************************************************************)
+(*                                                                         *)
+(*         This file was generated using the testocime tool                *)
+(*                                                                         *)
+(***************************************************************************)
+
+
+let X = vars "y x n m ";
+(* 4 variables defined *)
+
+let F = signature "
+	weight: 1;
+	sum: 2;
+	s: 1;
+	nil: 0;
+	cons: 2;
+	0: 0;
+";
+(* 6 non-variable symbols defined *)
+
+let R = HTRS {} F X "
+	sum(cons(s(n), x), cons(m, y)) -> sum(cons(n, x), cons(s(m), y));
+	sum(cons(0, x), y) -> sum(x, y);
+	sum(nil, y) -> y;
+	weight(cons(n, cons(m, x))) -> weight(sum(cons(n, cons(m, x)), cons(0, x)));
+	weight(cons(n, nil)) -> n;
+";
+(* 5 rules *)
+
+termcrit "minimal";
+termcrit "graph";
+polyinterpkind {("linear",2);("simple",2);("simple",6)};
+#time on;
+h_termination R;
+
+#quit;

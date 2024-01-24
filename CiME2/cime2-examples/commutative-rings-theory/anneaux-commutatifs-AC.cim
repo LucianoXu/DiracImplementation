@@ -1,0 +1,36 @@
+%***************************************************************************
+%
+% Commutative rings theory modulo AC(+) and AC(*)
+%
+% Author(s):     Claude Marche'
+% 
+%***************************************************************************
+
+operators
+  +,* : AC
+  0,1 : constant
+  -   : unary
+  x,y,z : variable
+
+  dbl,sqr : unary
+
+axioms
+  x+0 = x;
+  x+-(x) = 0;
+  x*1 = x;
+  x*(y+z) = (x*y)+(x*z);
+
+  dbl(x) = x+x;
+  sqr(x) = x*x;
+
+order  
+  rpo( *>- >+>0 , sqr > *, dbl > + )
+
+conjectures 
+
+  sqr(x+y) = sqr(x) + dbl(x*y) + sqr(y) ;
+  sqr(x+-(y)) = sqr(x) + -(dbl(x*y)) + sqr(y) ;
+  (x+y)*(x+-(y)) = sqr(x) + -(sqr(y)) ;
+
+end
+

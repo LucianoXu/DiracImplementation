@@ -1,0 +1,23 @@
+let F = signature "
+0 : constant;
+ack'iio'out, s, u'1'1, u'2'2 : unary;
+ack'iio'in, u'2'1 : binary;
+";
+
+let X = vars "A A1 M N";
+
+let R = TRS F X "
+ack'iio'in(0, N) -> ack'iio'out(s(N));
+ack'iio'in(s(M), 0) -> u'1'1(ack'iio'in(M, s(0)));
+u'1'1(ack'iio'out(A)) -> ack'iio'out(A);
+ack'iio'in(s(M), s(N)) -> u'2'1(ack'iio'in(s(M), N), M);
+u'2'1(ack'iio'out(A1), M) -> u'2'2(ack'iio'in(M, A1));
+u'2'2(ack'iio'out(A)) -> ack'iio'out(A);
+";
+
+termcrit "dp";
+(* polyinterpkind "linear"; *)
+termpolybound 5;
+#verbose ;
+#time on;
+termination R;

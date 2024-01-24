@@ -1,0 +1,73 @@
+(*
+
+  Claude Marché
+
+  Sum and product of a list of integers
+
+  Binary notation
+
+*)
+
+[l, y, x]
+
+0(#) -> # ;
++(x,#) -> x ;
++(#,x) -> x ;
++(0(x),0(y)) -> 0(+(x,y)) ;
++(0(x),1(y)) -> 1(+(x,y)) ;
++(1(x),0(y)) -> 1(+(x,y)) ;
++(1(x),1(y)) -> 0(+(+(x,y),1(#))) ;
+*(#,x) -> # ;
+*(0(x),y) -> 0(*(x,y)) ;
+*(1(x),y) -> +(0(*(x,y)),y) ;
+sum(nil) -> 0(#) ;
+sum(cons(x,l)) -> +(x,sum(l)) ;
+prod(nil) -> 1(#) ;
+prod(cons(x,l)) -> *(x,prod(l)) ;
+
+(*
+
+let X = vars "x y z l l1 l2";
+
+let F = signature "
+  #   : constant ; 
+  0,1 : postfix unary ;
+  +,* : infix binary;
+  nil : constant ; 
+  cons : binary ; 
+  sum,prod : unary ;
+";
+
+
+
+let R = HTRS {} F X "
+  (#)0 -> #;
+
+  x + # -> x;
+  # + x -> x;
+  (x)0 + (y)0 -> (x+y)0;
+  (x)0 + (y)1 -> (x+y)1;
+  (x)1 + (y)0 -> (x+y)1;
+  (x)1 + (y)1 -> (x+y+(#)1)0;
+
+  # * x -> #;
+  (x)0 * y -> (x*y)0;
+  (x)1 * y -> (x*y)0 + y;
+
+  sum(nil) -> #0;
+  sum(cons(x,l)) -> x + sum(l);
+
+  prod(nil) -> #1;
+  prod(cons(x,l)) -> x * prod(l);
+";
+
+
+termcrit "minimal";
+termcrit "nomarks";
+polyinterpkind {("linear",1);("simple",1)};
+h_termination R;
+output_last_proof "";
+
+
+*)
+

@@ -1,0 +1,49 @@
+(***************************************************************************)
+(*                                                                         *)
+(*         This file was generated using the testocime tool                *)
+(*                                                                         *)
+(***************************************************************************)
+
+
+let X = vars "z y x u ";
+(* 4 variables defined *)
+
+let F = signature "
+	true: 0;
+	or: 2;
+	null: 1;
+	not: 1;
+	nil: 0;
+	mem: 2;
+	max': 2;
+	max: 1;
+	g: 2;
+	false: 0;
+	f: 2;
+	=: 2;
+	++: 2;
+";
+(* 13 non-variable symbols defined *)
+
+let R = HTRS {} F X "
+	f(x, nil) -> g(nil, x);
+	f(x, g(y, z)) -> g(f(x, y), z);
+	++(x, nil) -> x;
+	++(x, g(y, z)) -> g(++(x, y), z);
+	null(nil) -> true;
+	null(g(x, y)) -> false;
+	mem(nil, y) -> false;
+	mem(g(x, y), z) -> or(=(y, z), mem(x, z));
+	mem(x, max(x)) -> not(null(x));
+	max(g(g(nil, x), y)) -> max'(x, y);
+	max(g(g(g(x, y), z), u)) -> max'(max(g(g(x, y), z)), u);
+";
+(* 11 rules *)
+
+termcrit "minimal";
+termcrit "graph";
+polyinterpkind {("linear",1);("linear",2);("simple",2)};
+#time on;
+h_termination R;
+
+#quit;

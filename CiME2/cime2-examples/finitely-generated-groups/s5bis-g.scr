@@ -1,0 +1,42 @@
+Result:
+{[45] a3' -> a3,
+[50] a2' -> a2,
+[55] a1' -> a1,
+[60] a4' -> a4,
+[8] I(a1) -> a1,
+[6] I(a2) -> a2,
+[4] I(a3) -> a3,
+[2] I(a4) -> a4,
+[57] a4.a4 -> e,
+[52] a1.a1 -> e,
+[47] a2.a2 -> e,
+[42] a3.a3 -> e,
+[68] a1.a4 -> a4.a1,
+[65] a2.a4 -> a4.a2,
+[62] a1.a3 -> a3.a1,
+[41] a3.(a3.x) -> x,
+[51] a1.(a1.x) -> x,
+[56] a4.(a4.x) -> x,
+[46] a2.(a2.x) -> x,
+[61] a1.(a3.x) -> a3.(a1.x),
+[67] a1.(a4.x) -> a4.(a1.x),
+[64] a2.(a4.x) -> a4.(a2.x),
+[110] a2.(a3.a2) -> a3.(a2.a3),
+[98] a3.(a4.a3) -> a4.(a3.a4),
+[80] a1.(a2.a1) -> a2.(a1.a2),
+[79] a1.(a2.(a1.x)) -> a2.(a1.(a2.x)),
+[97] a3.(a4.(a3.x)) -> a4.(a3.(a4.x)),
+[109] a2.(a3.(a2.x)) -> a3.(a2.(a3.x)),
+[83] a1.(a2.(a3.a1)) -> a2.(a1.(a2.a3)),
+[112] a2.(a3.(a4.(a2.x))) -> a3.(a2.(a3.(a4.x))),
+[82] a1.(a2.(a3.(a1.x))) -> a2.(a1.(a2.(a3.x))),
+[86] a1.(a2.(a3.(a4.a1))) -> a2.(a1.(a2.(a3.a4))),
+[85] a1.(a2.(a3.(a4.(a1.x)))) -> a2.(a1.(a2.(a3.(a4.x)))),
+[113] a2.(a3.(a4.a2)) -> a3.(a2.(a3.a4))} (34 rules)
+
+Number of calls to AC matching     : 90359
+Number of successful calls         : 801 (0%)
+Number of calls to AC unification  : 1777
+Number of critical pairs generated : 258 (0.15 average)
+User time   : 78.317 s  (1 mn 18 s)
+System time : 0.433 s

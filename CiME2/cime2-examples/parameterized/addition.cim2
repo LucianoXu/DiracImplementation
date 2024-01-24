@@ -1,0 +1,26 @@
+(* Addition of integers *)
+
+"File : addition.cim2";
+
+let N = parameters "";
+
+let S = pword_signature N "a{i}" ;
+
+let R = psrs S "a{i} a{j} -> a{i+j} ;";
+
+
+let u = pword S "a{0} a{1}";
+preducible S R u ;
+pnormalize S R u;
+
+let u = pword S "a{0} a{1} a{2}a{3}";
+preducible S R u ;
+pnormalize S R u;
+
+let u = pword S "a{0} a{1} a{2} a{3} a{3} a{3} a{3} a{3} a{3} a{3}";
+preducible S R u ;
+pnormalize S R u;
+
+pconfluent R;
+
+#quit ;

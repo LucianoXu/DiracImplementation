@@ -1,0 +1,39 @@
+(***************************************************************************)
+(*                                                                         *)
+(*         This file was generated using the testocime tool                *)
+(*                                                                         *)
+(***************************************************************************)
+
+
+let X = vars "z y x ";
+(* 3 variables defined *)
+
+let F = signature "
+	qsort: 1;
+	nil: 0;
+	lowers: 2;
+	if: 3;
+	greaters: 2;
+	<=: 2;
+	.: 2;
+	++: 2;
+";
+(* 8 non-variable symbols defined *)
+
+let R = HTRS {} F X "
+	qsort(nil) -> nil;
+	qsort(.(x, y)) -> ++(qsort(lowers(x, y)), .(x, qsort(greaters(x, y))));
+	lowers(x, nil) -> nil;
+	lowers(x, .(y, z)) -> if(<=(y, x), .(y, lowers(x, z)), lowers(x, z));
+	greaters(x, nil) -> nil;
+	greaters(x, .(y, z)) -> if(<=(y, x), greaters(x, z), .(y, greaters(x, z)));
+";
+(* 6 rules *)
+
+termcrit "minimal";
+termcrit "graph";
+polyinterpkind {("linear",1);("linear",2);("simple",2)};
+#time on;
+h_termination R;
+
+#quit;

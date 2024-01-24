@@ -1,0 +1,39 @@
+let Var = vars "K T L Tp Lp S Sp X Xp Y Z" ;
+let F = signature "
+  true,false,nil : 0;
+  var : 1;
+  and, eq, cons, lambda, apply  : 2;
+  if,ren : 3";
+
+let R = HTRS {} F Var "
+and(false,false) -> false;
+and(true,false) -> false ;
+and(false,true) -> false;
+and(true,true) -> true ;
+eq(nil,nil) -> true;
+eq(cons(T,L),nil) -> false;
+eq(nil,cons(T,L)) -> false;
+eq(cons(T,L),cons(Tp,Lp)) -> and(eq(T,Tp),eq(L,Lp));
+eq(var(L),var(Lp)) -> eq(L,Lp);
+eq(var(L),apply(T,S)) -> false;
+eq(var(L),lambda(X,T)) -> false;
+eq(apply(T,S),var(L)) -> false;
+eq(apply(T,S),apply(Tp,Sp)) -> and(eq(T,Tp),eq(S,Sp));
+eq(apply(T,S),lambda(X,Tp)) -> false;
+eq(lambda(X,T),var(L)) -> false;
+eq(lambda(X,T),apply(Tp,Sp)) -> false;
+eq(lambda(X,T),lambda(Xp,Tp)) -> and(eq(T,Tp),eq(X,Xp));
+if(true,var(K),var(L)) -> var(K);
+if(false,var(K),var(L)) -> var(L);
+ren(var(L),var(K),var(Lp)) -> if(eq(L,Lp),var(K),var(Lp));
+ren(X,Y,apply(T,S)) -> apply(ren(X,Y,T),ren(X,Y,S));
+ren(X,Y,lambda(Z,T)) -> lambda(var(cons(X,cons(Y,cons(lambda(Z,T),nil)))), 
+           ren(X,Y,ren(Z,var(cons(X,cons(Y,cons(lambda(Z,T),nil)))),T)));
+";
+
+termcrit "minimal";
+polyinterpkind {("linear",1)};
+#time on;
+h_termination R;
+
+#quit;

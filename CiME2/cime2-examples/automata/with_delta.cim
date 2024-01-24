@@ -1,0 +1,15 @@
+sort
+  int
+operators
+  0 : constant as int ;
+  f : 2 as int -> int -> int ; 
+  s : unary as int->int ; 
+  p : unary as int -> int ;
+  x,y : variable as int ;
+axioms
+  p(f(x,0)) = x ;
+  s(f(0,y)) = y ;
+  
+inductive
+  f(x,y)=0 ;
+end

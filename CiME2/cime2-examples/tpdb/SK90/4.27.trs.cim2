@@ -1,0 +1,37 @@
+(***************************************************************************)
+(*                                                                         *)
+(*         This file was generated using the testocime tool                *)
+(*                                                                         *)
+(***************************************************************************)
+
+
+let X = vars "y x ";
+(* 2 variables defined *)
+
+let F = signature "
+	s: 1;
+	nil: 0;
+	int_list: 1;
+	int: 2;
+	0: 0;
+	.: 2;
+";
+(* 6 non-variable symbols defined *)
+
+let R = HTRS {} F X "
+	int(0, 0) -> .(0, nil);
+	int(0, s(y)) -> .(0, int(s(0), s(y)));
+	int(s(x), 0) -> nil;
+	int(s(x), s(y)) -> int_list(int(x, y));
+	int_list(nil) -> nil;
+	int_list(.(x, y)) -> .(s(x), int_list(y));
+";
+(* 6 rules *)
+
+termcrit "minimal";
+termcrit "graph";
+polyinterpkind {("linear",1);("linear",2);("simple",2)};
+#time on;
+h_termination R;
+
+#quit;

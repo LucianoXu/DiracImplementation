@@ -1,0 +1,40 @@
+(***************************************************************************)
+(*                                                                         *)
+(*         This file was generated using the testocime tool                *)
+(*                                                                         *)
+(***************************************************************************)
+
+
+let X = vars "z y x v u ";
+(* 5 variables defined *)
+
+let F = signature "
+	true: 0;
+	nil: 0;
+	merge: 2;
+	if: 3;
+	false: 0;
+	<: 2;
+	.: 2;
+	++: 2;
+";
+(* 8 non-variable symbols defined *)
+
+let R = HTRS {} F X "
+	merge(nil, y) -> y;
+	merge(x, nil) -> x;
+	merge(.(x, y), .(u, v)) -> if(<(x, u), .(x, merge(y, .(u, v))), .(u, merge(.(x, y), v)));
+	++(nil, y) -> y;
+	++(.(x, y), z) -> .(x, ++(y, z));
+	if(true, x, y) -> x;
+	if(false, x, y) -> x;
+";
+(* 7 rules *)
+
+termcrit "minimal";
+termcrit "graph";
+polyinterpkind {("linear",1);("linear",2);("simple",2)};
+#time on;
+h_termination R;
+
+#quit;

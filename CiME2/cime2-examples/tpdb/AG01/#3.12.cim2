@@ -1,0 +1,36 @@
+(***************************************************************************)
+(*                                                                         *)
+(*         This file was generated using the testocime tool                *)
+(*                                                                         *)
+(***************************************************************************)
+
+
+let X = vars "y x n ";
+(* 3 variables defined *)
+
+let F = signature "
+	shuffle: 1;
+	reverse: 1;
+	nil: 0;
+	app: 2;
+	add: 2;
+";
+(* 5 non-variable symbols defined *)
+
+let R = HTRS {} F X "
+	app(nil, y) -> y;
+	app(add(n, x), y) -> add(n, app(x, y));
+	reverse(nil) -> nil;
+	reverse(add(n, x)) -> app(reverse(x), add(n, nil));
+	shuffle(nil) -> nil;
+	shuffle(add(n, x)) -> add(n, shuffle(reverse(x)));
+";
+(* 6 rules *)
+
+termcrit "minimal";
+termcrit "graph";
+polyinterpkind {("linear",1)};
+#time on;
+h_termination R;
+
+#quit;

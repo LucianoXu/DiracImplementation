@@ -1,0 +1,20 @@
+sort
+  nat
+operators
+  + : infix binary as nat -> nat -> nat
+  s : unary as nat -> nat
+  0 : constant as nat
+  x,y,z : variable as nat
+
+axioms
+  x+0 = x;
+  x+s(y) = s(x+y);
+
+order
+  rpo(+>s>0;+ lrlex)
+
+inductive
+  0+x = x;
+  s(x)+y = s(x+y);
+  x+(y+z) = (x+y)+z ;
+end

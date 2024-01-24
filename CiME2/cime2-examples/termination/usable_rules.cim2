@@ -1,0 +1,26 @@
+(*
+
+  these one is really tricky. To be able to prove its termination, you need :
+
+  . the graph criterion
+  . the innermost termination + usable rules criterion
+  . some interpretation that are not monotonic on every argument. 
+
+  (Arts & Giesl, RTA'97)
+
+*)
+
+let S3=signature "0:constant; quot:3; s:unary;";
+
+let X3=vars"x y z";
+
+let R3=TRS S3 X3 "
+quot(0   , s(y), s(z)) -> 0;
+quot(s(x), s(y), z   ) -> quot(x, y, z);
+quot(x   ,    0, s(z)) -> s(quot(x, s(z), s(z)));
+";
+
+termcrit "dp";
+
+termination R3;
+

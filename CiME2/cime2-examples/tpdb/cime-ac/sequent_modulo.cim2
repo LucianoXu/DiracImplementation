@@ -1,0 +1,203 @@
+
+(* 
+
+Sequent calculus modulo, by Éric Deplagne 
+   (based on ESSLLI student session 2000)
+
+*)
+[b, a, g, f, u, t, s, y, x]
+
+AC [*, virg]
+
+substt(ef(x),y) -> ef(substt(x,y)) ;
+substf(Pe(x),y) -> Pe(substt(x,y)) ;
+substf(neg(f),s) -> neg(substf(f,s)) ;
+substf(and(f,g),s) -> and(substf(f,s),substf(g,s)) ;
+substf(or(f,g),s) -> or(substf(f,s),substf(g,s)) ;
+substf(imp(f,g),s) -> imp(substf(f,s),substf(g,s)) ;
+substf(forall(f),s) -> forall(substf(f,.(1,ron(s,shift)))) ;
+substf(exists(f),s) -> exists(substf(f,.(1,ron(s,shift)))) ;
+substt(x,id) -> x ;
+substf(f,id) -> f ;
+substt(substt(x,s),t) -> substt(x,ron(s,t)) ;
+substf(substf(f,s),t) -> substf(f,ron(s,t)) ;
+substt(1,.(x,s)) -> x ;
+ron(id,s) -> s ;
+ron(shift,.(x,s)) -> s ;
+ron(ron(s,t),u) -> ron(s,ron(t,u)) ;
+ron(.(x,s),t) -> .(substt(x,t),ron(s,t)) ;
+ron(s,id) -> s ;
+.(1,shift) -> id ;
+.(substt(1,s),ron(shift,s)) -> s ;
+virg(emptyfset,a) -> a ;
+virg(a,a) -> a ;
+*(emptysset,a) -> a ;
+*(a,a) -> a ;
+neg(neg(f)) -> f ;
+and(f,f) -> f ;
+or(f,f) -> f ;
+imp(f,g) -> or(neg(f),g) ;
+exists(f) -> neg(forall(neg(f))) ;
+sequent(virg(convf(neg(f)),a),b) -> sequent(a,virg(convf(f),b)) ;
+sequent(convf(neg(f)),b) -> sequent(emptyfset,virg(convf(f),b)) ;
+sequent(a,virg(convf(neg(f)),b)) -> sequent(virg(convf(f),a),b) ;
+sequent(a,convf(neg(f))) -> sequent(virg(convf(f),a),emptyfset) ;
+sequent(virg(convf(and(f,g)),a),b) ->
+sequent(virg(convf(g),virg(convf(f),a)),b) ;
+sequent(convf(and(f,g)),b) -> sequent(virg(convf(f),convf(g)),b) ;
+sequent(a,virg(convf(or(f,g)),b)) ->
+sequent(a,virg(virg(convf(f),convf(g)),b)) ;
+sequent(a,convf(or(f,g))) -> sequent(a,virg(convf(f),convf(g))) ;
+convs(sequent(a,virg(convf(and(f,g)),b))) ->
+*(convs(sequent(a,virg(convf(f),b))),convs(sequent(a,virg(convf(g),b)))) ;
+convs(sequent(a,convf(and(f,g)))) ->
+*(convs(sequent(a,convf(f))),convs(sequent(a,convf(g)))) ;
+convs(sequent(virg(convf(or(f,g)),a),b)) ->
+*(convs(sequent(virg(convf(f),a),b)),convs(sequent(virg(convf(g),a),b))) ;
+convs(sequent(convf(or(f,g)),b)) ->
+*(convs(sequent(convf(f),b)),convs(sequent(convf(g),b))) ;
+convs(sequent(virg(convf(f),a),virg(convf(f),b))) -> emptysset ;
+convs(sequent(virg(convf(f),a),convf(f))) -> emptysset ;
+convs(sequent(convf(f),virg(convf(f),b))) -> emptysset ;
+convs(sequent(convf(f),convf(f))) -> emptysset ;
+*(convs(sequent(virg(f,a),virg(g,b))),convs(sequent(a,b))) ->
+convs(sequent(a,b)) ;
+*(convs(sequent(virg(f,a),b)),convs(sequent(a,b))) -> convs(sequent(a,b)) ;
+*(convs(sequent(a,virg(f,b))),convs(sequent(a,b))) -> convs(sequent(a,b)) ;
+*(convs(sequent(virg(f,a),b)),convs(sequent(a,emptyfset))) ->
+convs(sequent(a,emptyfset)) ;
+*(convs(sequent(emptyfset,b)),convs(sequent(a,virg(f,b)))) ->
+convs(sequent(emptyfset,b)) ;
+*(convs(sequent(emptyfset,b)),convs(sequent(a,b))) ->
+convs(sequent(emptyfset,b)) ;
+*(convs(sequent(a,emptyfset)),convs(sequent(a,b))) ->
+convs(sequent(a,emptyfset)) ;
+*(convs(sequent(emptyfset,emptyfset)),convs(sequent(a,b))) ->
+convs(sequent(emptyfset,emptyfset)) ;
+
+(*
+
+let F = signature "
+  ef : unary ;
+  Pe : unary;
+  1 : constant;
+  id : constant;
+  shift : constant;
+  . : infix binary;
+  ron : infix binary;
+  substt : infix binary;
+  convaf : unary;
+  neg : unary;
+  and : infix binary;
+  or : infix  binary;
+  imp : infix binary;
+  forall : unary;
+  exists : unary;
+  substf : infix binary;
+  emptyfset : constant;
+  convf : unary;
+  virg : AC;
+  emptysset : constant;
+  convs : unary;
+  sequent : infix binary;
+  * : AC ;
+";
+
+let X = vars "x y s t u f g a b";
+
+
+let R = HTRS {} F X "
+  ef(x) substt y -> ef(x substt y);
+  Pe(x) substf y -> Pe(x substt y);
+
+  neg(f) substf s -> neg(f substf s);
+  (f and g) substf s -> (f substf s) and (g substf s);
+  (f or g) substf s -> (f substf s) or (g substf s);
+  (f imp g) substf s -> (f substf s) imp (g substf s);
+
+  forall(f) substf s -> forall(f substf (1.(s ron shift)));
+  exists(f) substf s -> exists(f substf (1.(s ron shift)));
+
+  x substt id -> x;
+  f substf id -> f;
+  (x substt s) substt t -> x substt (s ron t);
+  (f substf s) substf t -> f substf (s ron t);
+
+  1 substt (x.s) -> x;
+
+  id ron s -> s;
+  shift ron (x.s) -> s;
+  (s ron t) ron u -> s ron (t ron u);
+  (x.s) ron t -> (x substt t).(s ron t);
+  s ron id -> s;
+  1.shift -> id;
+  (1 substt s).(shift ron s) -> s;
+
+  a virg emptyfset -> a;
+  a virg a -> a;
+  a*emptysset -> a;
+
+  a*a -> a;
+
+  neg(neg(f)) -> f;
+  f and f -> f;
+  f or f -> f;
+  f imp g -> neg(f) or g;
+  exists(f) -> neg(forall(neg(f)));
+
+  (a virg convf(neg(f))) sequent b -> a sequent (convf(f) virg b);
+  convf(neg(f)) sequent b -> emptyfset sequent (b virg convf(f));
+
+  a sequent (convf(neg(f)) virg b) -> (a virg convf(f)) sequent b;
+  a sequent convf(neg(f)) -> (a virg convf(f)) sequent emptyfset;
+
+  (a virg convf(f and g)) sequent b -> 
+  (a virg convf(f) virg convf(g)) sequent b;
+  convf(f and g) sequent b -> (convf(f) virg convf(g)) sequent b;
+
+  a sequent (convf(f or g) virg b) -> 
+  a sequent (convf(f) virg convf(g) virg b);
+  a sequent convf(f or g) -> a sequent (convf(f) virg convf(g));
+
+  convs(a sequent (convf(f and g) virg b)) -> 
+  convs(a sequent (convf(f) virg b))*convs(a sequent (convf(g) virg b));
+  convs(a sequent convf(f and g)) -> 
+  convs(a sequent convf(f))*convs(a sequent convf(g));
+
+  convs((a virg convf(f or g)) sequent b) -> 
+  convs((a virg convf(f)) sequent b)*convs((a virg convf(g)) sequent b);
+  convs(convf(f or g) sequent b) -> 
+  convs(convf(f) sequent b)*convs(convf(g) sequent b);
+
+  convs((a virg convf(f)) sequent (convf(f) virg b)) -> emptysset;
+  convs((a virg convf(f)) sequent convf(f)) -> emptysset;
+  convs(convf(f) sequent (b virg convf(f))) -> emptysset;
+  convs(convf(f) sequent convf(f)) -> emptysset;
+
+  convs(a sequent b)*convs((a virg f) sequent (g virg b)) -> 
+  convs(a sequent b);
+  convs(a sequent b)*convs((a virg f) sequent b) -> convs(a sequent b);
+  convs(a sequent b)*convs(a sequent (b virg f)) -> convs(a sequent b);
+  convs(a sequent emptyfset)*convs((a virg f) sequent b) -> 
+  convs(a sequent emptyfset);
+  convs(a sequent (b virg f))*convs(emptyfset sequent b) -> 
+  convs(emptyfset sequent b);
+  convs(a sequent b)*convs(emptyfset sequent b) -> 
+  convs(emptyfset sequent b);
+  convs(a sequent b)*convs(a sequent emptyfset) -> 
+  convs(a sequent emptyfset);
+  convs(a sequent b)*convs(emptyfset sequent emptyfset) -> 
+  convs(emptyfset sequent emptyfset);
+
+";
+
+termcrit "minimal";
+termcrit "nomarks";
+polyinterpkind { ("linear",1) ; ("simple",3) };
+h_termination R;
+output_last_proof "";
+export_htrs R;
+
+*)
+
+

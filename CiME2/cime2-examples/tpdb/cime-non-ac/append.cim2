@@ -1,0 +1,53 @@
+(*
+
+  Claude Marché
+
+  List append with auxiliary functions
+
+*)
+
+
+[l2, l1, l, x]
+
+is_empty(nil) -> true ;
+is_empty(cons(x,l)) -> false ;
+hd(cons(x,l)) -> x ;
+tl(cons(x,l)) -> l ;
+append(l1,l2) -> ifappend(l1,l2,l1) ;
+ifappend(l1,l2,nil) -> l2 ;
+ifappend(l1,l2,cons(x,l)) -> cons(x,append(l,l2)) ;
+ 
+(*
+
+let F = signature "
+  true, false : constant ;
+  nil : constant;
+  cons : binary;
+  is_empty, hd, tl : unary ;
+  append : binary ;
+  ifappend : 3;
+";
+
+
+let X = vars "x y z l l1 l2";
+
+let R = HTRS {} F X "
+  is_empty(nil) -> true ;
+  is_empty(cons(x,l)) -> false ;
+  
+  hd(cons(x,l)) -> x ;
+  tl(cons(x,l)) -> l ;
+
+  append(l1,l2) -> ifappend(l1,l2,l1) ;
+
+  ifappend(l1,l2,nil) -> l2 ;
+
+  ifappend(l1,l2,cons(x,l)) -> cons(x,append(l,l2)) ;
+";
+
+termcrit "minimal";
+polyinterpkind {("linear",1)};
+h_termination R;
+
+*)
+

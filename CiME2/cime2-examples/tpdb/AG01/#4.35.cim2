@@ -1,0 +1,56 @@
+(***************************************************************************)
+(*                                                                         *)
+(*         This file was generated using the testocime tool                *)
+(*                                                                         *)
+(***************************************************************************)
+
+
+let X = vars "z y x' x t' t s' s l' l k ";
+(* 11 variables defined *)
+
+let F = signature "
+	var: 1;
+	true: 0;
+	ren: 3;
+	nil: 0;
+	lambda: 2;
+	if: 3;
+	false: 0;
+	eq: 2;
+	cons: 2;
+	apply: 2;
+	and: 2;
+";
+(* 11 non-variable symbols defined *)
+
+let R = HTRS {} F X "
+	and(true, y) -> y;
+	and(false, y) -> false;
+	eq(nil, nil) -> true;
+	eq(cons(t, l), nil) -> false;
+	eq(nil, cons(t, l)) -> false;
+	eq(cons(t, l), cons(t', l')) -> and(eq(t, t'), eq(l, l'));
+	eq(var(l), var(l')) -> eq(l, l');
+	eq(var(l), apply(t, s)) -> false;
+	eq(var(l), lambda(x, t)) -> false;
+	eq(apply(t, s), var(l)) -> false;
+	eq(apply(t, s), apply(t', s')) -> and(eq(t, t'), eq(s, s'));
+	eq(apply(t, s), lambda(x, t)) -> false;
+	eq(lambda(x, t), var(l)) -> false;
+	eq(lambda(x, t), apply(t, s)) -> false;
+	eq(lambda(x, t), lambda(x', t')) -> and(eq(x, x'), eq(t, t'));
+	if(true, var(k), var(l')) -> var(k);
+	if(false, var(k), var(l')) -> var(l');
+	ren(var(l), var(k), var(l')) -> if(eq(l, l'), var(k), var(l'));
+	ren(x, y, apply(t, s)) -> apply(ren(x, y, t), ren(x, y, s));
+	ren(x, y, lambda(z, t)) -> lambda(var(cons(x, cons(y, cons(lambda(z, t), nil)))), ren(x, y, ren(z, var(cons(x, cons(y, cons(lambda(z, t), nil)))), t)));
+";
+(* 20 rules *)
+
+termcrit "minimal";
+termcrit "graph";
+polyinterpkind {("linear",2);("simple",2);("simple",6)};
+#time on;
+h_termination R;
+
+#quit;

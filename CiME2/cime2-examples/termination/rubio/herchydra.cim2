@@ -1,0 +1,23 @@
+let Var = vars "X Y Z" ;
+let F = signature "
+  0 : 0;
+  c,e : 1;
+  d,g,h : 2;";
+
+let R = HTRS {} F Var "
+h(Z,e(X)) -> h(c(Z),d(Z,X));
+d(Z,g(0,0)) -> e(0);
+d(Z,g(X,Y)) -> g(e(X),d(X,Y));
+d(c(Z),g(g(X,Y),0)) -> g(d(c(Z),g(X,Y)),d(Z,g(X,Y)));
+g(e(X),e(Y)) -> e(g(X,Y));";
+
+
+
+
+
+termcrit "minimal";
+polyinterpkind {("linear",1);("simple-mixed",10)};
+#time on;
+h_termination R;
+
+#quit;

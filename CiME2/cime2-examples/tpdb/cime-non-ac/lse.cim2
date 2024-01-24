@@ -1,0 +1,82 @@
+(*
+
+  Julien Forest
+
+  A Weak Calculus with Explicit Operators for Pattern Matching and
+  Substitution 
+
+  RTA'2002, LNCS 2378
+
+
+*)
+[k, psi, y, x, u, t, s, n, xi, m]
+
+Term_sub(Case(m,xi,n),s) -> Frozen(m,Sum_sub(xi,s),n,s) ;
+Frozen(m,Sum_constant(Left),n,s) -> Term_sub(m,s) ;
+Frozen(m,Sum_constant(Right),n,s) -> Term_sub(n,s) ;
+Frozen(m,Sum_term_var(xi),n,s) -> Case(Term_sub(m,s),xi,Term_sub(n,s)) ;
+Term_sub(Term_app(m,n),s) -> Term_app(Term_sub(m,s),Term_sub(n,s)) ;
+Term_sub(Term_pair(m,n),s) -> Term_pair(Term_sub(m,s),Term_sub(n,s)) ;
+Term_sub(Term_inl(m),s) -> Term_inl(Term_sub(m,s)) ;
+Term_sub(Term_inr(m),s) -> Term_inr(Term_sub(m,s)) ;
+Term_sub(Term_var(x),Id) -> Term_var(x) ;
+Term_sub(Term_var(x),Cons_usual(y,m,s)) -> m ;
+Term_sub(Term_var(x),Cons_usual(y,m,s)) -> Term_sub(Term_var(x),s) ;
+Term_sub(Term_var(x),Cons_sum(xi,k,s)) -> Term_sub(Term_var(x),s) ;
+Term_sub(Term_sub(m,s),t) -> Term_sub(m,Concat(s,t)) ;
+Sum_sub(xi,Id) -> Sum_term_var(xi) ;
+Sum_sub(xi,Cons_sum(psi,k,s)) -> Sum_constant(k) ;
+Sum_sub(xi,Cons_sum(psi,k,s)) -> Sum_sub(xi,s) ;
+Sum_sub(xi,Cons_usual(y,m,s)) -> Sum_sub(xi,s) ;
+Concat(Concat(s,t),u) -> Concat(s,Concat(t,u)) ;
+Concat(Cons_usual(x,m,s),t) -> Cons_usual(x,Term_sub(m,t),Concat(s,t)) ;
+Concat(Cons_sum(xi,k,s),t) -> Cons_sum(xi,k,Concat(s,t)) ;
+Concat(Id,s) -> s ;
+
+(*
+
+let X = vars "m xi n s t u v x y psi k";
+
+let F = signature "
+Left,Right : constant;
+Id: constant;
+Cons_usual: 3;
+Cons_sum : 3;
+Concat: binary;
+Sum_term_var: unary;
+Sum_constant: unary;
+Sum_sub: binary;
+Term_var,Term_inl,Term_inr: unary;
+Term_pair,Term_app: binary;
+Case: 3;
+Frozen: 4;
+Term_sub: binary;
+";
+
+let lse = TRS F X " 
+     Term_sub(Case(m,xi,n),s) -> Frozen(m,Sum_sub(xi,s),n,s);
+     Frozen(m,Sum_constant(Left),n,s) -> Term_sub(m,s);
+     Frozen(m,Sum_constant(Right),n,s) -> Term_sub(n,s);
+     Frozen(m,Sum_term_var(xi),n,s) -> Case(Term_sub(m,s),xi,Term_sub(n,s));
+     Term_sub(Term_app(m,n),s) -> Term_app(Term_sub(m,s),Term_sub(n,s));
+     Term_sub(Term_pair(m,n),s) -> Term_pair(Term_sub(m,s),Term_sub(n,s));
+     Term_sub(Term_inl(m),s) -> Term_inl(Term_sub(m,s));
+     Term_sub(Term_inr(m),s) -> Term_inr(Term_sub(m,s));
+     Term_sub(Term_var(x),Id) -> Term_var(x);
+     Term_sub(Term_var(x),Cons_usual(y,m,s)) -> m;
+     Term_sub(Term_var(x),Cons_usual(y,m,s)) -> Term_sub(Term_var(x),s);
+     Term_sub(Term_var(x),Cons_sum(xi,k,s)) -> Term_sub(Term_var(x),s);
+     Term_sub(Term_sub(m,s),t) -> Term_sub(m,Concat(s,t));
+     Sum_sub(xi,Id) -> Sum_term_var(xi);
+     Sum_sub(xi,Cons_sum(psi,k,s)) -> Sum_constant(k);
+     Sum_sub(xi,Cons_sum(psi,k,s)) -> Sum_sub(xi,s);
+     Sum_sub(xi,Cons_usual(y,m,s)) -> Sum_sub(xi,s);
+     Concat(Concat(s,t),u) -> Concat(s,Concat(t,u));
+     Concat(Cons_usual(x,m,s),t) -> Cons_usual(x,Term_sub(m,t),Concat(s,t))   ;
+     Concat(Cons_sum(xi,k,s),t) -> Cons_sum(xi,k,Concat(s,t))   ;
+     Concat(Id,s) -> s;
+";
+
+termination lse;
+*)
+

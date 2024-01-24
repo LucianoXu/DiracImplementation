@@ -1,0 +1,44 @@
+let F = signature "
+  0,true,false : constant ;
+  s : unary ;
+  ge : binary ;
+  +,-,* : infix binary ;
+  fact : unary ;
+  iffact : binary ;
+"
+;
+
+let X = vars "x y z ";
+
+let R1 = "
+ x+0 -> x ;
+ x+s(y) -> s(x+y) ;
+ 
+ x*0 -> 0 ;
+ x*s(y) -> (x*y) + x ;
+
+ ge(x,0) -> true ;
+ ge(0,s(y)) -> false ; 
+ ge(s(x),s(y)) -> ge(x,y) ;
+
+ x - 0 -> x ;
+ s(x) - s(y) -> x - y ;
+";
+
+let R2 = "
+ fact(x) -> iffact(x,ge(x,s(s(0)))) ;
+ iffact(x,true) -> x * fact(x - s(0)) ;
+ iffact(x,false) -> s(0) ;
+";
+
+
+let TRS1 = TRS F X R1;
+let TRS2 = TRS F X (R1 ^ R2);
+
+termcrit "dp";
+
+termination TRS1;
+
+#verbose 1;
+
+termination TRS2;

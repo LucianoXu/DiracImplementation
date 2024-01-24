@@ -1,0 +1,32 @@
+(***************************************************************************)
+(*                                                                         *)
+(*         This file was generated using the testocime tool                *)
+(*                                                                         *)
+(***************************************************************************)
+
+
+let X = vars "z y x v u ";
+(* 5 variables defined *)
+
+let F = signature "
+	true: 0;
+	if: 3;
+	false: 0;
+";
+(* 3 non-variable symbols defined *)
+
+let R = HTRS {} F X "
+	if(true, x, y) -> x;
+	if(false, x, y) -> y;
+	if(x, y, y) -> y;
+	if(if(x, y, z), u, v) -> if(x, if(y, u, v), if(z, u, v));
+";
+(* 4 rules *)
+
+termcrit "minimal";
+termcrit "graph";
+polyinterpkind {("linear",1);("linear",2);("simple",2)};
+#time on;
+h_termination R;
+
+#quit;

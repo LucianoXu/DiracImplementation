@@ -1,0 +1,13 @@
+operators
+  f : binary
+  g : unary
+  a : constant
+  x,y,z : variable
+
+order
+  rps(rpo(f);
+    f(x,y) -> g(x);
+    g(x) -> a
+    )
+
+end

@@ -1,0 +1,17 @@
+let F = signature "+ : AC ; g : unary ; a : constant";
+
+let X = vars "x y x1 x2 x3 x4 x5 x6";
+
+let R1 = TRS F X "g(x) + g(y) -> g(x + y + g(a))";
+
+termcrit "dp";
+termcrit "nograph";
+#verbose 1;
+
+termcrit "marks";
+termpolybound 10;
+termination R1;
+
+termcrit "nomarks";
+termpolybound 20;
+termination R1;

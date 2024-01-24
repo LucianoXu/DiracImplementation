@@ -1,0 +1,41 @@
+% a executer avec l'option -confl
+sort
+  int
+
+operators
+  +,* : AC as int -> int -> int % infix binary
+  Z : 0 as int
+  s,p,- : unary as int -> int
+  x,y,z : variable as int
+
+theory ACU (+,Z)
+
+axioms
+  s(p(x)) = x;
+  p(s(x)) = x;
+  s(x)+y = s(x+y);
+  p(x)+y = p(x+y);
+  -(Z) = Z;
+  -(s(x)) = p(-(x));
+  -(p(x)) = s(-(x));
+  Z*x = Z;
+  p(x)*y = -(y)+(x*y);
+  s(x)*y = y+(x*y);
+  -(-(x)) = x;
+  -(x+y) = -(x)+-(y) ;
+  x+-(x) = Z ;
+
+ order rpo( *>- > + > s=p >Z ;+ mul, * mul)
+
+problems
+  (x+y)*z = (x*z)+(y*z);
+  -(x)*y = -(x*y);
+
+inductive
+  (x+y)*z = (x*z)+(y*z);
+  -(x)*y = -(x*y);
+%  x * x = x;
+%  -(y) = y;
+end
+
+

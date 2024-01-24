@@ -1,0 +1,24 @@
+let V = vars "X" ;
+
+let F = signature "
+  a,b : 0;
+  f,g,c,e,d : 1;
+";
+
+let R = HTRS {} F V "
+f(a) -> f(c(a));
+f(c(X)) -> X;
+f(c(a)) -> f(d(b));
+f(a) -> f(d(a));
+f(d(X)) -> X;
+f(c(b)) -> f(d(a));
+e(g(X)) -> e(X);
+";
+
+
+termcrit "minimal";
+polyinterpkind {("linear",1)};
+#time on;
+h_termination R;
+
+#quit;

@@ -1,0 +1,23 @@
+sort
+  int
+operators
+   0 : 0 as int;
+   s : 1 as int->int; 
+   p : 1 as int -> int;
+   f : 2 as int -> int -> int;
+   x,y : variable as int;
+axioms
+
+  s(p(x)) = x ;
+  p(s(x)) = x ;
+
+  f(p(x),s(s(y))) = x ;
+  f(p(p(x)),s(y)) = x ;
+
+inductive
+  f(x,y)=x ;
+
+order
+  rpo(f>s>0;f lrlex)
+
+end

@@ -1,0 +1,45 @@
+(***************************************************************************)
+(*                                                                         *)
+(*         This file was generated using the testocime tool                *)
+(*                                                                         *)
+(***************************************************************************)
+
+
+let X = vars "z y x ";
+(* 3 variables defined *)
+
+let F = signature "
+	nil: 0;
+	last: 1;
+	if: 3;
+	butlast: 1;
+	bubble: 1;
+	bsort: 1;
+	<=: 2;
+	0: 0;
+	.: 2;
+";
+(* 9 non-variable symbols defined *)
+
+let R = HTRS {} F X "
+	bsort(nil) -> nil;
+	bsort(.(x, y)) -> .(last(bubble(.(x, y))), bsort(butlast(bubble(.(x, y)))));
+	bubble(nil) -> nil;
+	bubble(.(x, nil)) -> .(x, nil);
+	bubble(.(x, .(y, z))) -> if(<=(x, y), .(y, bubble(.(x, z))), .(x, bubble(.(y, z))));
+	last(nil) -> 0;
+	last(.(x, nil)) -> x;
+	last(.(x, .(y, z))) -> last(.(y, z));
+	butlast(nil) -> nil;
+	butlast(.(x, nil)) -> nil;
+	butlast(.(x, .(y, z))) -> .(x, butlast(.(y, z)));
+";
+(* 11 rules *)
+
+termcrit "minimal";
+termcrit "graph";
+polyinterpkind {("linear",1);("linear",2);("simple",2)};
+#time on;
+h_termination R;
+
+#quit;

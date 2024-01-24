@@ -1,0 +1,57 @@
+(***************************************************************************)
+(*                                                                         *)
+(*         This file was generated using the testocime tool                *)
+(*                                                                         *)
+(***************************************************************************)
+
+
+let X = vars "y x ";
+(* 2 variables defined *)
+
+let F = signature "
+	times: 2;
+	t: 0;
+	square: 1;
+	plus: 2;
+	minus: 2;
+	ln: 1;
+	i: 1;
+	exp: 2;
+	div: 2;
+	c: 0;
+	D: 1;
+	1: 0;
+	0: 0;
+";
+(* 13 non-variable symbols defined *)
+
+let R = TRS F X "
+	D(t) -> 1;
+	D(c) -> 0;
+	D(plus(x, y)) -> plus(D(x), D(y));
+	D(times(x, y)) -> plus(times(y, D(x)), times(x, D(y)));
+	D(minus(x, y)) -> minus(D(x), D(y));
+	D(i(x)) -> i(D(x));
+	D(div(x, y)) -> minus(div(D(x), y), div(times(x, D(y)), square(y)));
+	D(ln(x)) -> div(D(x), x);
+	D(exp(x, y)) -> plus(times(y, times(exp(x, minus(y, 1)), D(x))), times(exp(x, y), times(ln(x), D(y))));
+";
+(* 9 rules *)
+
+
+let c = all_decrease_termination_constraints R;
+
+let p = precedence F 
+  "D > div, D > ln, D > exp, D > square, D > i, D > plus, D > times, D > 1, D > 0, D > minus";
+let o = MPO p;
+
+check_termination_constraint c o;
+
+
+termcrit "minimal";
+termcrit "graph";
+polyinterpkind {("linear",2);("simple",2);("simple",6)};
+#time on;
+h_termination R;
+
+#quit;

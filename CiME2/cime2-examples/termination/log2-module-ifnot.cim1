@@ -1,0 +1,25 @@
+
+operators
+true,false : constant 
+not : unary 
+if : 3 
+x,y,z : variable
+
+order
+  poly([not](x) = 0;
+[true] = 0;
+[false] = 0;
+[if](x,y,z) = y + z
+)
+
+problems
+
+compare       not(true) with false ;
+compare       not(false) with true ;
+
+compare   if(true,x,y) with x;
+compare   if(false,x,y) with y;
+
+end
+
+

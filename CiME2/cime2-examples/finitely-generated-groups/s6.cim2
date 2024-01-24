@@ -1,0 +1,74 @@
+(* Completion of S6 *)
+
+(* The transpositions *)
+
+let F = word_signature "a1 a2 a3 a4 a5 ";
+
+(* An order *)
+let o1 = multi_lex (word_precedence F "a1<a2<a3<a4<a5");
+let o2 = length_lex (word_precedence F "a1<a2<a3<a4<a5");
+
+(* The string rewriting system *)
+
+let R = SRS F "
+  a1 ^2 ->;
+  a2 ^2 ->;
+  a3 ^2 ->;
+  a4 ^2 ->;  
+  a5 ^2 ->;
+  (a1 a2) ^ 3 -> ;
+  (a2 a3) ^ 3 -> ;
+  (a3 a4) ^ 3 -> ;
+  (a4 a5) ^ 3 -> ;
+  a1 a3 -> a3 a1;
+  a1 a4 -> a4 a1;
+  a1 a5 -> a5 a1;
+  a2 a4 -> a4 a2;
+  a2 a5 -> a5 a2;
+  a3 a5 -> a5 a3;
+";
+(*
+let R = SRS F "
+  a1 ^2 ->;
+  a2 ^2 ->;
+  a3 ^2 ->;
+  a4 ^2 ->;  
+  a5 ^2 ->;
+  a1 a3 -> a3 a1;
+  a1 a4 -> a4 a1;
+  a1 a5 -> a5 a1;
+  a2 a4 -> a4 a2;
+  a2 a5 -> a5 a2;
+  a3 a5 -> a5 a3;
+";
+*)
+
+(* The completion *)
+
+let S6_1 = word_completion o1 R ;
+let S6_2 = word_completion o2 R ;
+
+(*
+
+cas general : 
+
+let Fn = pword_signature "a[i] | 1<= i and i <= n-1 ";
+
+
+Rn =
+
+   a[i] ^ 2 ->            | 1 <= i and i <= n-1 ;
+   (a[i] a[i+1])^ 3 ->    | 1 <= i and i <= n-2 ;
+   a[j] a[i] -> a[i] a[j] | 1 <= i and i+1 < j and j < n ;
+
+Rn_complet_conjecture =
+
+   a[i] ^ 2 ->            | 1 <= i and i <= n-1 ;
+   (a[i] a[i+1])^ 3 ->    | 1 <= i and i <= n-2 ;
+   a[j] a[i] -> a[i] a[j] | 1 <= i and i+1 < j and j < n ;
+   a[i] a[i-1] ... a[j] a[i] -> a[i-1] a[i] a[i-1] ... a[j]
+                          | i > j, 
+
+*)
+
+

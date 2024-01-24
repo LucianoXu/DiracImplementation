@@ -1,0 +1,31 @@
+sort
+  int
+
+operators
+  a,b,e : constant as int
+  x,y,z : variable as int
+  * : AC as int -> int -> int
+  I : unary as int -> int
+
+axioms
+  I(e) = e;
+  I(a) = a*a;
+%  e*x = x;
+  x*e = x;
+%  I(I(x)) = x;
+  I(x)*x = e;
+  x*I(x) = e;
+  I(x*y) = I(x)*I(y);
+%  (x*y)*z = x*(y*z);
+  a*(a*a) = e;
+  I(x)*(x*z) = z;
+  x*(I(x)*z) = z;
+  a*(a*(a*z)) = z;
+  b*b = e;
+
+order rpo(I>*>a>b>e; * mul)
+
+inductive
+  a*a*x = a*a*a*a*a*x ;
+
+end

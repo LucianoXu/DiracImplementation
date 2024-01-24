@@ -1,0 +1,23 @@
+sort
+  int
+
+operators
+  + : infix binary as int -> int -> int
+  Z : constant as int
+  s : unary as int -> int
+  x,y,z : variable as int
+
+axioms
+  x+Z = x;
+  x+s(y) = s(x+y);
+  s(s(Z)) = Z ;
+
+order rpo( +>s>Z ;+ lrlex)
+
+inductive
+  x+x = Z ;
+  s(s(x)) = x ;
+  x+s(Z) = s(x) ;
+  s(x)+x = s(Z) ;
+
+end

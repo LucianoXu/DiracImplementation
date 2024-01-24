@@ -1,0 +1,56 @@
+
+
+operators
+  # : constant
+0,1 : postfix unary
++,- : infix binary
+x, y, z : variable
+ge : binary
+true,false : constant
+not : unary
+
+order
+  poly([#] = 0;
+[0](x) = x + 1 ;  
+[1](x) = x + 1;
+[+](x,y) = x + y;
+[-](x,y) = x ;
+[not](x) = 0;
+[true] = 0;
+[false] = 0;
+[ge](x,y) = 0
+)
+
+problems
+
+compare (#)0 with #;
+
+compare   # + x with x;
+compare   x + # with x;
+compare   (x)0 + (y)0 with (x+y)0;
+compare   (x)0 + (y)1 with (x+y)1;
+compare   (x)1 + (y)0 with (x+y)1;
+compare   (x)1 + (y)1 with (x+y+(#)1)0;
+
+compare  # - x with #;
+compare   x - # with x;
+compare   (x)0 - (y)0 with (x-y)0;
+compare   (x)0 - (y)1 with ((x-y)-(#)1)1;
+compare   (x)1 + (y)0 with (x-y)1;
+compare   (x)1 + (y)1 with (x-y)0;
+
+compare not(true) with false ;
+compare not(false) with true ;
+
+compare ge((x)0,(y)0) with ge(x,y) ;
+compare ge((x)0,(y)1) with not(ge(y,x)) ;
+compare ge((x)1,(y)0) with ge(x,y) ;
+compare ge((x)1,(y)1) with ge(x,y) ;
+compare ge(x,#) with true ;
+compare ge(#,(x)0) with ge(#,x) ;
+compare ge(#,(x)1) with false ;
+
+
+end
+
+

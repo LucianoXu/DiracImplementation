@@ -1,0 +1,11 @@
+operators
+ 
+  c : constant
+
+order
+  
+  poly ( [c]= -1 ) 
+   
+end
+
+

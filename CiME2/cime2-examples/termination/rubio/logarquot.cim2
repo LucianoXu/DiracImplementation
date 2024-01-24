@@ -1,0 +1,24 @@
+let V = vars "X Y";
+
+let F = signature "
+  0 : 0;
+  s, log : 1;
+  min, quot : 2;";
+
+let R = HTRS {} F V "
+min(X,0) -> X;
+min(s(X),s(Y)) -> min(X,Y);
+quot(0,s(Y)) -> 0;
+quot(s(X),s(Y)) -> s(quot(min(X,Y),s(Y)));
+log(s(0)) -> 0;
+log(s(s(X))) -> s(log(s(quot(X,s(s(0))))));
+";
+
+
+termcrit "minimal";
+polyinterpkind {("linear",1)};
+#time on;
+h_termination R;
+
+#quit;
+

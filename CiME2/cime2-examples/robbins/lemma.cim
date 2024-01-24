@@ -1,0 +1,26 @@
+%***************************************************************************
+%
+% Winker lemma
+%
+% $Id: lemma.cim,v 1.1 1997/11/26 14:06:23 contejea Exp $
+% 
+%***************************************************************************
+
+operators
+  +   : AC
+  c,d : constant
+  not   : 1
+  x,y,z : variable
+
+axioms
+  not(not(not(x)+y)+not(x+y)) = y;
+  c+d = c;
+
+conjectures
+  not(not(x)+not(y)) + not(x+not(y)) = y;
+
+%order  
+%  rpo( .>- >+>0 , .>1 ; . lrlex )
+%  interactive
+end
+

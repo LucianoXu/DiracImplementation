@@ -1,0 +1,43 @@
+(***************************************************************************)
+(*                                                                         *)
+(*         This file was generated using the testocime tool                *)
+(*                                                                         *)
+(***************************************************************************)
+
+
+let X = vars "y x ";
+(* 2 variables defined *)
+
+let F = signature "
+	true: 0;
+	or: 2;
+	not: 1;
+	implies: 2;
+	if: 3;
+	false: 0;
+	and: 2;
+	=: 2;
+";
+(* 8 non-variable symbols defined *)
+
+let R = HTRS {} F X "
+	not(x) -> if(x, false, true);
+	and(x, y) -> if(x, y, false);
+	or(x, y) -> if(x, true, y);
+	implies(x, y) -> if(x, y, true);
+	=(x, x) -> true;
+	=(x, y) -> if(x, y, not(y));
+	if(true, x, y) -> x;
+	if(false, x, y) -> y;
+	if(x, x, if(x, false, true)) -> true;
+	=(x, y) -> if(x, y, if(y, false, true));
+";
+(* 10 rules *)
+
+termcrit "minimal";
+termcrit "graph";
+polyinterpkind {("linear",1);("linear",2);("simple",2)};
+#time on;
+h_termination R;
+
+#quit;

@@ -1,0 +1,36 @@
+(***************************************************************************)
+(*                                                                         *)
+(*         This file was generated using the testocime tool                *)
+(*                                                                         *)
+(***************************************************************************)
+
+
+let X = vars "y x ";
+(* 2 variables defined *)
+
+let F = signature "
+	mult: 2;
+	i: 1;
+	1: 0;
+";
+(* 3 non-variable symbols defined *)
+
+let R = HTRS {} F X "
+	mult(1, x) -> x;
+	mult(x, 1) -> x;
+	mult(i(x), x) -> 1;
+	mult(x, i(x)) -> 1;
+	i(1) -> 1;
+	i(i(x)) -> x;
+	mult(i(x), mult(x, y)) -> y;
+	mult(x, mult(i(x), y)) -> y;
+";
+(* 8 rules *)
+
+termcrit "minimal";
+termcrit "graph";
+polyinterpkind {("linear",2);("simple",2);("simple",6)};
+#time on;
+h_termination R;
+
+#quit;

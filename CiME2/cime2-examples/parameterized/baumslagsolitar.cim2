@@ -1,0 +1,25 @@
+(* Baumslag Solitar group *)
+(* y x^p y^-1 x^-q = epsilon *)
+
+"File : baumslagsolitar.cim2";
+
+let N = parameters "p q";
+
+let S = pword_signature N "x ; X ; y ; Y" ;
+
+let R = psrs S "
+X x -> ;
+x X -> ;
+Y y -> ;
+y Y -> ;
+X y -> x {q-1} y X ^{p} | {p>= 2 /\ q >= 2 /\ p<> q};
+x^{p} Y -> Y x^{q} | {p>= 2 /\ q >= 2 /\ p<> q };
+X Y -> x^{p-1} Y X ^{q} | {p>= 2 /\ q >= 2 /\ p<> q};
+";
+
+#time on;
+
+pconfluent R;
+
+#mem;
+#quit;

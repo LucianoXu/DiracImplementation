@@ -1,0 +1,26 @@
+operators
+
+  0 : constant 
+  s : unary
+  +,- : infix binary
+  q : binary
+
+  x,y,z : variable
+
+axioms
+
+  x+0 = x ;
+  x+s(y) = s(x+y);
+  
+%  q(0,s(y)) = 0;
+  q(x,x+s(y)) = 0 ;
+  q(x+s(y),s(y)) = s(q(x,s(y))) ;
+
+order
+
+% lexico ( rpo( opp > + > s=p > 0, append > . ; + lrlex ) ; interactive)
+ interactive
+
+
+end
+

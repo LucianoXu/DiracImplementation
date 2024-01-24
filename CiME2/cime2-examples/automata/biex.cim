@@ -1,0 +1,16 @@
+sort
+  int
+
+operators
+   0 : 0 as int;
+   s : 1 as int -> int;
+   f : 2 as int -> int -> int;
+   x,y : variable as int;
+
+axioms
+
+s(f(x,0)) = x ;
+s(f(0,y)) = y ;
+
+
+end

@@ -1,0 +1,39 @@
+(* This a confluent presentation for the diedral group of order $2\pi /{2.N+1}$
+*)
+
+let N = parameters "N";
+
+let S = pword_signature N "s | {N>=2}; r | {N>=2}" ;
+
+let R = psrs S "s s -> | {N>=2};
+		r s r -> s | {N>=2};
+		r^{N+1} -> s r^{N} s | {N>=2};"
+	;
+
+let Rnorm1 = psrs S "
+			r^{N} s r^{k} -> r^{N-k} s | {N >= k > 0 /\ N >= 2};
+			r^{k} s r^{N} -> s r^{N-k} | {N >= k > 0 /\ N >= 2};"
+	;	
+
+
+pconfluent_ext R Rnorm1;
+
+#mem;
+#quit;
+
+(* This would not be enough : *)
+
+let R' = psrs S "s s -> | {N>=2};
+		r s r -> s | {N>=2};
+		r^{N+1} -> s r^{N} s | {N>=2};
+		r^{N} s r^{k} -> r^{N-k} s | {N >= k > 0 /\ N >= 2};
+		r^{k} s r^{N} -> s r^{N-k} | {N >= k > 0 /\ N >= 2};"
+	;		
+
+pconfluent R'; (* this is not true *)
+
+(* The problem comes from the new useless cp which are not uniformly 
+   joinable. *)
+ 
+
+

@@ -1,0 +1,91 @@
+(***************************************************************************)
+(*                                                                         *)
+(*         This file was generated using the testocime tool                *)
+(*                                                                         *)
+(***************************************************************************)
+
+
+let X = vars "y x n m ";
+(* 4 variables defined *)
+
+let F = signature "
+	true: 0;
+	s: 1;
+	quicksort: 1;
+	nil: 0;
+	low: 2;
+	le: 2;
+	if_low: 3;
+	if_high: 3;
+	high: 2;
+	false: 0;
+	app: 2;
+	add: 2;
+	0: 0;
+";
+(* 13 non-variable symbols defined *)
+
+let R = HTRS {} F X "
+	le(0, y) -> true;
+	le(s(x), 0) -> false;
+	le(s(x), s(y)) -> le(x, y);
+	app(nil, y) -> y;
+	app(add(n, x), y) -> add(n, app(x, y));
+	low(n, nil) -> nil;
+	low(n, add(m, x)) -> if_low(le(m, n), n, add(m, x));
+	if_low(true, n, add(m, x)) -> add(m, low(n, x));
+	if_low(false, n, add(m, x)) -> low(n, x);
+	high(n, nil) -> nil;
+	high(n, add(m, x)) -> if_high(le(m, n), n, add(m, x));
+	if_high(true, n, add(m, x)) -> high(n, x);
+	if_high(false, n, add(m, x)) -> add(m, high(n, x));
+	quicksort(nil) -> nil;
+	quicksort(add(n, x)) -> app(quicksort(low(n, x)), add(n, quicksort(high(n, x))));
+";
+(* 15 rules *)
+
+termcrit "minimal";
+termcrit "graph";
+timelimit "300";
+polyinterpkind {("linear",1);("quadratic",2)};
+#time on;
+h_termination R;
+
+#quit;
+
+let c = order_constraint F X "
+quicksort(add(n,y)) >= app(quicksort(low(n,y)),add(n,quicksort(high(n,y))))
+/\ quicksort(nil) >= nil
+/\ if_high(true,n,add(m,y)) >= high(n,y) 
+/\ if_high(false,n,add(m,y)) >= add(m,high(n,y))
+/\ low(n,add(m,y)) >= if_low(le(m,n),n,add(m,y))
+/\ low(n,nil) >= nil
+/\ app(add(n,y),x) >= add(n,app(y,x)) ";
+
+app(nil,x) >= x /\
+le(s(y),s(x)) >= le(y,x) /\
+le(s(y),0) >= false /\
+le(0,x) >= true /\
+high(n,add(m,y)) >= if_high(le(m,n),n,add(m,y)) /\
+high(n,nil) >= nil /\
+quicksort(add(n,y)) > quicksort(low(n,y)) /\
+quicksort(add(n,y)) > quicksort(high(n,y)) /\
+if_low(true,n,add(m,y)) >= add(m,low(n,y)) /\
+if_low(false,n,add(m,y)) >= low(n,y) 
+";
+
+let o = POLY F "
+[add](x,y) = x+y+1;
+[quicksort](x) = x;
+[high](x,y) = x+y;
+[low](x,y) = x+y;
+[if_high](z,x,y) = x+y;
+[if_low](z,x,y) = x+y;
+[app](x,y) = x+y;
+";
+
+check_order_constraint o c;
+
+
+
+

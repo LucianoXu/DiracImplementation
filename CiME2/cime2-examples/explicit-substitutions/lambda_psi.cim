@@ -1,0 +1,78 @@
+%
+% System lambda-psi of Rios [Contributions a l'etude des
+% lambda-calculs avec des substitutions explicites, These de doctorat,
+% Univ. Paris VII, 1993     
+%
+%   
+% termination using polynomial interpretations
+%
+% Xavier Urbain
+%
+% $Id: lambda_psi.cim,v 1.1 1996/07/16 12:00:34 urbain Exp $
+
+operators
+
+  V,S,lambda,#  : unary
+  psi,/       : unary
+
+  1             : constant
+
+  app,@,+       : infix binary
+  phi           : binary
+
+  a,b,s,n,p,q,m : variable
+
+axioms
+
+%Beta
+%     lambda(a) app b = a@/(b) ;
+  
+%App
+          (a app b)@s = (a@s) app (b@s) ;
+%Lambda
+         lambda(a)@s  = lambda(a@#(s)) ;
+
+%FVar
+            V(1)@/(a) = a ;
+%Rvar
+         V(S(n))@/(a) = V(n) ;
+
+%FVarLift
+            V(1)@#(s) = V(1) ;
+%RVarLift
+         V(S(n))@#(s) = V(n)@phi(s,1) ;
+
+%FVarPhiSI
+       V(1)@phi(/(a),p) = a@psi(p) ;
+%RVarPhiSI
+    V(S(n))@phi(/(a),p) = V(S(n+p)) ;
+
+%FVarPhiLift
+     V(1)@phi(#(s),p) = V(S(p)) ;
+%RVarPhiLift
+  V(S(n))@phi(#(s),p) = V(n)@phi(s,S(p)) ;
+
+
+%VarPhiPhi
+ V(n)@phi(phi(s,q),p) = V(n)@phi(s,(q+p)) ;
+%VarPhiPsi
+   V(n)@phi(psi(q),p) = V((n+q)+p) ;
+
+%VarPsi
+          V(n)@psi(p) = V(n+p) ;
+
+%Plus1
+                  n+1 = S(n) ;
+%PlusS
+                n+S(m) = S(n+m) ;
+
+
+order
+
+  lexico(
+    poly([V](n)=n; [S](n)=n; [1]=2; [app](a,b)=a+b; [lambda](a)=a+1; [@](a,s)=a.s;
+[#](s)=s; [phi](s,p)=s.(p-1); [+](p,q)=p+q-2; [psi](p)=p; [/](a)=a+1) ;
+    poly([V](n)=n; [S](n)=n+1; [1]=2; [app](a,b)=a+b+1; [lambda](a)=a; [@](a,s)=a.(s+1); [#](s)=4.s; [phi](s,p)=s.(p+1); [+](p,q)=p+2.q; [psi](p)=p; [/](a)=a))
+
+end
+  

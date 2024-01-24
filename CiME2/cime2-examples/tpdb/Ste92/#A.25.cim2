@@ -1,0 +1,35 @@
+(***************************************************************************)
+(*                                                                         *)
+(*         This file was generated using the testocime tool                *)
+(*                                                                         *)
+(***************************************************************************)
+
+
+let X = vars "y x l ";
+(* 3 variables defined *)
+
+let F = signature "
+	remove: 2;
+	purge: 1;
+	nil: 0;
+	if: 3;
+	eq: 2;
+	cons: 2;
+";
+(* 6 non-variable symbols defined *)
+
+let R = HTRS {} F X "
+	purge(nil) -> nil;
+	purge(cons(x, l)) -> cons(x, purge(remove(x, l)));
+	remove(x, nil) -> nil;
+	remove(x, cons(y, l)) -> if(eq(x, y), remove(x, l), cons(y, remove(x, l)));
+";
+(* 4 rules *)
+
+termcrit "minimal";
+termcrit "graph";
+polyinterpkind {("linear",2);("simple",2);("simple",6)};
+#time on;
+h_termination R;
+
+#quit;
