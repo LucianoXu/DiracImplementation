@@ -20,6 +20,7 @@ let F = signature
   ^* : postfix unary ;
 
   (* -------- types -------- *)
+  T : constant ;
   PROD : infix binary ;
 
   Base : binary ;
@@ -74,6 +75,10 @@ let F = signature
 
   (* universal application *)
   @ : infix binary ;
+
+  (* otimes and cdot *)
+  OTIMES : infix binary ;
+  CDOT : infix binary ;
 
 
   (* -------- internal langauge -------- *)
@@ -178,6 +183,17 @@ let R = TRS F X "
   O(O0, T1, T2) @ K(K0, T2) -> K(O0 MLTK K0, T1) ;
   O(O1, T1, T2) @ O(O2, T2, T3) -> O(O1 MLTO O2, T1, T3) ;
 
+  (* -------- overload of otimes and cdot -------- *)
+  K(K1, T1) OTIMES K(K2, T2) -> K(K1 TSRK K2, T1 PROD T2) ;
+  B(B1, T1) OTIMES B(B2, T2) -> B(B1 TSRB B2, T1 PROD T2) ;
+  K(K0, T1) OTIMES B(B0, T2) -> O(K0 OUTER B0, T1, T2) ;
+  O(O1, T1, T2) OTIMES O(O2, T3, T4) -> O(O1 TSRO O2, T1 PROD T3, T2 PROD T4) ;
+
+  B(B0, T1) CDOT O(O0, T1, T2) -> B(B0 MLTB O0, T2) ;
+  O(O0, T1, T2) CDOT K(K0, T2) -> K(O0 MLTK K0, T1) ;
+  B(B0, T1) CDOT K(K0, T1) -> S(B0 DOT K0) ;
+  O(O1, T1, T2) CDOT O(O2, T2, T3) -> O(O1 MLTO O2, T1, T3) ;
+
 
 
 
@@ -243,14 +259,11 @@ let R = TRS F X "
   (B1 ADDB B2) DOT K0 -> (B1 DOT K0) ADDS (B2 DOT K0) ;
   B0 DOT (K1 ADDK K2) -> (B0 DOT K1) ADDS (B0 DOT K2) ;
   bra(s) DOT ket(t) -> delta(s, t) ;
-  bra(s) DOT ket(pair(t1, t2)) -> (bra(fst(s)) DOT ket(t1)) MLTS (bra(snd(s)) DOT ket(t2)) ;
-  bra(pair(s1, s2)) DOT ket(t) -> (bra(s1) DOT ket(fst(t))) MLTS (bra(s2) DOT ket(snd(t))) ;
   (B1 TSRB B2) DOT ket(t) -> (B1 DOT ket(fst(t))) MLTS (B2 DOT ket(snd(t))) ;
   bra(t) DOT (K1 TSRK K2) -> (bra(fst(t)) DOT K1) MLTS (bra(snd(t)) DOT K2) ;
   (B1 TSRB B2) DOT (K1 TSRK K2) -> (B1 DOT K1) MLTS (B2 DOT K2) ;
 
   (B0 MLTB O0) DOT K0 -> B0 DOT (O0 MLTK K0) ;
-  B1 DOT ((K1 OUTER B2) MLTK K2) -> (B1 DOT K1) MLTS (B2 DOT K2) ;
   bra(s) DOT ((O1 TSRO O2) MLTK K0) -> ((bra(fst(s)) MLTB O1) TSRB (bra(snd(s)) MLTB O2)) DOT K0 ;
   (B1 TSRB B2) DOT ((O1 TSRO O2) MLTK K0) -> ((B1 MLTB O1) TSRB (B2 MLTB O2)) DOT K0 ;
 
@@ -426,6 +439,11 @@ let R = TRS F X "
   (K0 ADDK K0) ADDK x -> (C(1 + 1) SCRK K0) ADDK x ;
   ((S0 SCRK K0) ADDK K0) ADDK x -> ((S0 ADDS C(1)) SCRK K0) ADDK x ;
   ((S1 SCRK K0) ADDK (S2 SCRK K0)) ADDK x -> ((S1 ADDS S2) SCRK K0) ADDK x ;
+
+  (B0 ADDB 0B) ADDB x -> B0 ADDB x ;
+  (B0 ADDB B0) ADDB x -> (C(1 + 1) SCRB B0) ADDB x ;
+  ((S0 SCRB B0) ADDB B0) ADDB x -> ((S0 ADDS C(1)) SCRB B0) ADDB x ;
+  ((S1 SCRB B0) ADDB (S2 SCRB B0)) ADDB x -> ((S1 ADDS S2) SCRB B0) ADDB x ;
 
   (O0 ADDO 0O) ADDO x -> O0 ADDO x ;
   (O0 ADDO O0) ADDO x -> (C(1 + 1) SCRO O0) ADDO x ;
