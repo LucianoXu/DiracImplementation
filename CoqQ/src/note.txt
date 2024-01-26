@@ -1,0 +1,29 @@
+addrN x - x = 0
+addNr -x + x = 0
+addrK x + y - y = x
+addKr -y + (y + x) = x
+addrNK/subrK x - y + y = x
+addNKr y + (-y + x) = x
+subKr y - (y - x) = x
+
+
+mcaextra
+mcextra
+notation
+cpo
+extnum
+cmxtopology
+mxpred
+hermitian
+prodvect
+tensor
+lfundef
+quantum
+orthomodular
+hspace
+inhabited
+qwhile
+qtype
+qhl
+example
+
