@@ -8,4 +8,7 @@
 *.synctex.gz
 *.toc
 
+_opam
+_build
+
 main.pdf
