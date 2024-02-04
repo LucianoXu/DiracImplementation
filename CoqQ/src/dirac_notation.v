@@ -353,7 +353,7 @@ Lemma SCR_DOT_2 T (B : B_bra T) :
 Proof. by rewrite/= dotp0. Qed.
 Lemma SCR_DOT_3 T (S : S_scalar) (B : B_bra T) (K : K_ket T) :
   BK_inner (B_scale S B) K =s S_mul S (BK_inner B K).
-Proof. Admitted.
+Proof. by rewrite/= dotpZl conjCK. Qed.
 Lemma SCR_DOT_4 T (S : S_scalar) (B : B_bra T) (K : K_ket T) :
   BK_inner B (K_scale S K) =s S_mul S (BK_inner B K).
 Proof. by rewrite/= dotpZr. Qed.
@@ -529,7 +529,7 @@ Lemma OPT_OUTER_3 T1 T2 (S : S_scalar) (K : K_ket T1) (B : B_bra T2) :
 Proof. by rewrite/= outpZl. Qed.
 Lemma OPT_OUTER_4 T1 T2 (S : S_scalar) (K : K_ket T1) (B : B_bra T2) :
   KB_outer K (B_scale S B) =o O_scale S (KB_outer K B).
-Proof. Admitted.
+Proof. by rewrite/= outpZr conjCK. Qed.
 Lemma OPT_OUTER_5 T1 T2 (K1 K2 : K_ket T1) (B : B_bra T2) :
   KB_outer (K_add K1 K2) B =o O_add (KB_outer K1 B) (KB_outer K2 B).
 Proof. by rewrite/= outpDl. Qed.
@@ -654,7 +654,7 @@ Proof. by rewrite/= tentfDr. Qed.
 
 Lemma test1 T (K : K_ket T) (S : S_scalar) :
   K_adj (K_scale S K) =b B_scale (S_conj S) (K_adj K).
-Proof. Admitted.
+Proof. by rewrite/= conjCK. Qed.
 Lemma test2 T1 T2 (B : B_bra T1) (O : O_opt T2 T1) (S : S_scalar) :
   B_apply (O_scale S O) B =b B_scale S (B_apply O B).
 Proof. by rewrite/= adjfZ lfunE. Qed.
