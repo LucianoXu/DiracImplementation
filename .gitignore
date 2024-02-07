@@ -11,4 +11,6 @@
 _opam
 _build
 
+.DS_Store
+
 main.pdf

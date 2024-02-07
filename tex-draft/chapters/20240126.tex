@@ -1,4 +1,4 @@
-\chapter{20240126}
+\chapter{20240209}
 
 \newcommand*{\unit}{\texttt{unit}}
 \newcommand*{\utt}{\texttt{tt}}
@@ -11,6 +11,15 @@
 \newcommand*{\zeroB}[1]{\mathbf{0}_{\mathcal{B}(#1)}}
 \newcommand*{\zeroO}[1]{\mathbf{0}_{\mathcal{O}(#1)}}
 
+
+\section{Problem: axiom of inner product}
+We have an axiom in the Dirac notation algebra: $B \cdot K = (K^\top)^* \cdot (B^\top)^*$. To make our TRS complete, the two sides of the equation should have the same canonical form, but I have problem achieving this.
+
+The problem comes from $(x^\top)^\top = (x^*)^* = x$. Consider the critical pair: $((K_1^\top)^* \cdot K_2, (K_2^\top)^* \cdot K_1)$: they should be equivalent according to the axiom, but the only differrence between the two expression is the variable name, therefore neither of them can is the suitable canonical form.
+
+\yx{Now I believe there is no syntactic solution to this problem. We have to make use of E-TRS.}
+
+
 \section{The langauge of Dirac Notation}
 
 \begin{definition} [atomic basis signature]
@@ -18,23 +27,23 @@
 \end{definition}
 
 \begin{definition} [complex scalar signature]
-  The \textbf{complex scalar signature} $\Sigma_\mathcal{S}$ contains constant symbols $0, 1$, a unary symbol $*$ and binary symbols $+, \times$.
+  The \textbf{complex scalar signature} $\Sigma_\mathcal{S}$ contains constant symbols $0, 1, \text{½}$, a unary symbol $*$ and binary symbols $+, \times$.
 \end{definition}
 
 \begin{definition}[language of Dirac Notation]
   The \textbf{language of Dirac Notation}, denoted as $\mathcal{DN}(\Sigma_\mathcal{B}, \Sigma_\mathcal{S})$, has five sorts defined as follows:
   \begin{align*}
     & \mathcal{A} \textrm{(base)} && t ::= x\ |\ b\ |\ (t, t)\ |\ \fst\ t\ |\ \snd\ t \\
-    & \mathcal{S} \textrm{(scalar)} && S ::= x\ |\ C(\alpha)\ |\ \delta_{t, t}\ |\ S + S\ |\ S \times S\ |\ S^*\ |\ B \cdot K \\
+    & \mathcal{S} \textrm{(scalar)} && S ::= x\ |\ C(\alpha)\ |\ \delta_{t, t}\ |\ S + S\ |\ S \times S\ |\ S^*\ |\ B \cdot K\ |\ B \odot K \\
     & \mathcal{K} \textrm{(ket)} && K ::= x\ |\ \mathbf{0}_\mathcal{K}\ |\ \ket{t}\ |\ B^\dagger\ |\ S.K\ |\ K + K\ |\ O \cdot K\ |\ K \otimes K \\
     & \mathcal{B} \textrm{(bra)} && B ::= x\ |\ \mathbf{0}_\mathcal{B}\ |\ \bra{t}\ |\ K^\dagger\ |\ S.B\ |\ B + B\ |\ B \cdot O\ |\ B \otimes B \\
-    & \mathcal{O} \textrm{(operator)} && O ::= x\ |\ \mathbf{0}_\mathcal{O}\ |\ K \otimes B\ |\ O^\dagger\ |\ S.O\ |\ O + O\ |\ O \cdot O\ |\ O \otimes O
+    & \mathcal{O} \textrm{(operator)} && O ::= x\ |\ \mathbf{0}_\mathcal{O}\ |\ \mathbf{1}_\mathcal{O}\ |\ K \otimes B\ |\ O^\dagger\ |\ S.O\ |\ O + O\ |\ O \cdot O\ |\ O \otimes O
   \end{align*}
-  Here $x$ is a variable, $b$ is a ground term of $\Sigma_\mathcal{B}$ and $\alpha$ is a ground term of $\Sigma_\mathcal{S}$.
+  Here $x$ is a variable, $b$ is a closed term of $\Sigma_\mathcal{B}$ and $\alpha$ is a closed term of $\Sigma_\mathcal{S}$.
 
 \end{definition}
 
-\textbf{Remark: } Although we use the same symbol in different sorts ($B \cdot K$ and $O \cdot K$, for example), they are actually different funtions and can be easily distinguished by the context. This is also reflected in the \texttt{CiME} script. Therefore we avoid any possible ambiguity.
+\textbf{Remark: } Although we use the same symbol in different sorts ($B \cdot K$ and $O \cdot K$, for example), they are actually different funtions and can be easily distinguished by the context. This is also reflected in the \texttt{CiME} script.
 
 
 \yx{I encountered some confluence problem for conjugate and transpose, and the natural solution is to consider them as a whole ($\dagger$), which is also more common in quantum computing.}
@@ -73,6 +82,8 @@ With the language $\mathcal{DN}(\Sigma_\mathcal{B}, \Sigma_\mathcal{S})$, we wan
 \yx{Do we really need such an algebra? It seems that the algebra will not be much simpler than the TRS.}
 
 
+\section{Semantics}
+Constructed in CoqQ.
 
 \section{Module Theories}
 
@@ -105,6 +116,12 @@ We want to study the theory of Dirac notations modulo the scalars and classical 
 
 
 \section{Untyped Dirac Notation}
+
+\begin{definition}[internal language]
+  
+\end{definition}
+
+
 We first present the untyped Dirac Notation rewrite system. This is the internal langauge with no ambiguity.
 
 
@@ -188,16 +205,15 @@ We first present the untyped Dirac Notation rewrite system. This is the internal
   & \vdash (B_1 \otimes B_2) \cdot ((O_1 \otimes O_2) \cdot K) \reduce ((B_1 \cdot O_1) \otimes (B_2 \cdot O_2)) \cdot K \\
 \end{align*}
 
+
 \textbf{Remark: } The first rule sorts the multiplication to the right, which breaks the symmetry of ket and bra. The remaining three rules are for completion.
 
-
-
-\subsubsection*{\textsf{KET-CT}}
+\subsubsection*{\textsf{KET-ADJ}}
 \begin{align*}
   & \vdash \textbf{0}_\mathcal{B}^\dagger \reduce \textbf{0}_\mathcal{K} \\
   & \vdash \bra{t}^\dagger \reduce \ket{t}\\
   & \vdash (K^\dagger)^\dagger \reduce K \\
-  & \vdash (S.B)^\dagger \reduce (S^*).(B^\dagger) \\
+  & \vdash (S.B)^\dagger \reduce S^*.(B^\dagger) \\
   & \vdash (B_1 + B_2)^\dagger \reduce B_1^\dagger + B_2^\dagger\\
   & \vdash (B \cdot O)^\dagger \reduce O^\dagger \cdot B^\dagger \\
   & \vdash (B_1 \otimes B_2)^\dagger \reduce B_1^\dagger \otimes B_2^\dagger
@@ -205,8 +221,8 @@ We first present the untyped Dirac Notation rewrite system. This is the internal
 
 \subsubsection*{\textsf{KET-SCAL}}
 \begin{align*}
-  & \vdash 0.K \reduce \textbf{0}_{\mathcal{K}}\\
-  & \vdash 1.K \reduce K \\
+  & \vdash C(0).K \reduce \textbf{0}_{\mathcal{K}}\\
+  & \vdash C(1).K \reduce K \\
   & \vdash S.\textbf{0}_\mathcal{K} \reduce \textbf{0}_\mathcal{K} \\
   & \vdash S_1.(S_2.K) \reduce (S_1 \times S_2).K \\
   & \vdash S.(K_1 + K_2) \reduce S.K_1 + S.K_2
@@ -215,8 +231,8 @@ We first present the untyped Dirac Notation rewrite system. This is the internal
 \subsubsection*{\textsf{KET-ADD}}
 \begin{align*}
   & \vdash K + \textbf{0}_\mathcal{K} \reduce K \\
-  & \vdash K + K \reduce (1 + 1).K \\
-  & \vdash S.K + K \reduce (S + 1).K \\
+  & \vdash K + K \reduce C(1 + 1).K \\
+  & \vdash S.K + K \reduce (S + C(1)).K \\
   & \vdash S_1.K + S_2.K \reduce (S_1 + S_2).K
 \end{align*}
 
@@ -224,13 +240,14 @@ We first present the untyped Dirac Notation rewrite system. This is the internal
 \begin{align*}
   & \vdash \textbf{0}_\mathcal{O} \cdot K \reduce \textbf{0}_\mathcal{K} \\
   & \vdash O \cdot \mathbf{0}_{\mathcal{K}} \reduce \mathbf{0}_{\mathcal{K}} \\
+  & \vdash \textbf{1}_\mathcal{O} \cdot K \reduce K \\
   & \vdash (S.O) \cdot K \reduce S.(O \cdot K) \\
   & \vdash O \cdot (S.K) \reduce S.(O \cdot K) \\
   & \vdash (O_1 + O_2) \cdot K \reduce O_1 \cdot K + O_2 \cdot K \\
   & \vdash O \cdot (K_1 + K_2) \reduce O \cdot K_1 + O \cdot K_2 \\
-  & \vdash (K_1 \otimes B) \cdot K_2 \reduce (B \cdot K_2).K_1 \\
-  & \vdash (O_1 \cdot O_2) \cdot K \reduce O_1 \cdot (O_2 \cdot K) \\
-  & \vdash (O_1 \otimes O_2) \cdot ((O_1' \otimes O_2') \cdot K) \reduce ((O_1 \cdot O_1') \otimes (O_2 \cdot O_2')) \cdot K \\
+  & \textcolor{red}{\vdash (K_1 \otimes B) \cdot K_2 \reduce (B \cdot K_2).K_1} \\
+  & \textcolor{red}{\vdash (O_1 \cdot O_2) \cdot K \reduce O_1 \cdot (O_2 \cdot K)} \\
+  & \textcolor{red}{\vdash (O_1 \otimes O_2) \cdot ((O_1' \otimes O_2') \cdot K) \reduce ((O_1 \cdot O_1') \otimes (O_2 \cdot O_2')) \cdot K} \\
   & \vdash (O_1 \otimes O_2) \cdot \ket{t} \reduce (O_1 \cdot \ket{\fst\ t}) \otimes (O_2 \cdot \ket{\snd\ t}) \\
   & \vdash (O_1 \otimes O_2) \cdot (K_1 \otimes K_2) \reduce (O_1 \cdot K_1) \otimes (O_2 \cdot K_2)
 \end{align*}
@@ -249,7 +266,13 @@ We first present the untyped Dirac Notation rewrite system. This is the internal
   & \vdash K_1 \otimes (K_2 + K_3) \reduce K_1 \otimes K_2 + K_1 \otimes K_3
 \end{align*}
 
-\textbf{Remark: } The rules for bra are completely symmetric to the rules for ket, so we omit them here.
+\textbf{Remark: } The rules for bra are symmetric to the rules for ket. Only the correspondence of rules in red are different:
+
+\begin{align*}
+  & \textcolor{red}{\vdash B_1 \cdot (K \otimes B_2) \reduce (B_1 \cdot K).B_2} \\
+  & \textcolor{red}{\vdash B \cdot (O_1 \cdot O_2) \reduce (B \cdot O_1) \cdot O_2} \\
+  & \textcolor{red}{\vdash (B \cdot (O_1 \otimes O_2)) \cdot (O_1' \otimes O_2') \reduce B \cdot ((O_1 \cdot O_1') \otimes (O_2 \cdot O_2'))}
+\end{align*}
 
 \subsubsection*{\textsf{OPT-OUTER}}
 \begin{align*}
@@ -262,12 +285,13 @@ We first present the untyped Dirac Notation rewrite system. This is the internal
 \end{align*}
 
 
-\subsubsection*{\textsf{OPT-CT}}
+\subsubsection*{\textsf{OPT-ADJ}}
 \begin{align*}
   & \vdash \textbf{0}_\mathcal{O}^\dagger \reduce \textbf{0}_\mathcal{O} \\
+  & \vdash \textbf{1}_\mathcal{O}^\dagger \reduce \textbf{1}_\mathcal{O} \\
   & \vdash (K \otimes B)^\dagger \reduce B^\dagger \otimes K^\dagger \\
   & \vdash (O^\dagger)^\dagger \reduce O \\
-  & \vdash (S.O)^\dagger \reduce (S^*).(O^\dagger) \\
+  & \vdash (S.O)^\dagger \reduce S^*.(O^\dagger) \\
   & \vdash (O_1 + O_2)^\dagger \reduce O_1^\dagger + O_2^\dagger\\
   & \vdash (O_1 \cdot O_2)^\dagger \reduce O_2^\dagger \cdot O_1^\dagger \\
   & \vdash (O_1 \otimes O_2)^\dagger \reduce O_1^\dagger \otimes O_2^\dagger
@@ -275,8 +299,8 @@ We first present the untyped Dirac Notation rewrite system. This is the internal
 
 \subsubsection*{\textsf{OPT-SCAL}}
 \begin{align*}
-  & \vdash 0.O \reduce \mathbf{0}_\mathcal{O} \\
-  & \vdash 1.O \reduce O \\
+  & \vdash C(0).O \reduce \mathbf{0}_\mathcal{O} \\
+  & \vdash C(1).O \reduce O \\
   & \vdash S.\textbf{0}_\mathcal{O} \reduce \textbf{0}_\mathcal{O} \\
   & \vdash S_1.(S_2.O) \reduce (S_1 \times S_2).O \\
   & \vdash S.(O_1 + O_2) \reduce S.O_1 + S.O_2
@@ -285,8 +309,8 @@ We first present the untyped Dirac Notation rewrite system. This is the internal
 \subsubsection*{\textsf{OPT-ADD}}
 \begin{align*}
   & \vdash O + \mathbf{0}_\mathcal{O} \reduce O \\
-  & \vdash O + O \reduce (1 + 1).O \\
-  & \vdash S.O + O \reduce (S + 1).O \\
+  & \vdash O + O \reduce C(1 + 1).O \\
+  & \vdash S.O + O \reduce (S + C(1)).O \\
   & \vdash S_1.O + S_2.O \reduce (S_1 + S_2).O
 \end{align*}
 
@@ -294,6 +318,8 @@ We first present the untyped Dirac Notation rewrite system. This is the internal
 \begin{align*}
   & \vdash \mathbf{0}_\mathcal{O} \cdot O \reduce \mathbf{0}_\mathcal{O} \\
   & \vdash O \cdot \mathbf{0}_\mathcal{O} \reduce \mathbf{0}_\mathcal{O} \\
+  & \vdash \mathbf{1}_\mathcal{O} \cdot O \reduce O \\
+  & \vdash O \cdot \mathbf{1}_\mathcal{O} \reduce O \\
   & \vdash (K \otimes B) \cdot O \reduce K \otimes (B \cdot O)\\
   & \vdash O \cdot (K \otimes B) \reduce (O \cdot K) \otimes B\\
   & \vdash (S.O_1) \cdot O_2 \reduce S.(O_1 \cdot O_2) \\
@@ -454,6 +480,8 @@ Similar to the universal application symbol $\circ$, we also use $A \otimes B$ a
   \frac{x : \mathcal{O}(\tau, \sigma) \in \Gamma}{\vdash x : \mathcal{O}(\tau, \sigma)}
   \qquad
   \vdash \zeroO{\tau, \sigma} : \mathcal{O}(\tau, \sigma) 
+  \qquad
+  \vdash \textbf{1}_{\mathcal{O}(\tau)} : \mathcal{O}(\tau, \tau) 
   \qquad
   \frac{\vdash K : \mathcal{K}(\tau) \qquad \vdash B : \mathcal{B}(\sigma)}{\vdash K \otimes B : \mathcal{O}(\tau, \sigma)} \\
   \\
