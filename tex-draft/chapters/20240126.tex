@@ -709,3 +709,49 @@ We can use a SMT solver to check the conditions for the equality \textbf{DeltaEQ
 \yx{At least we should draw a line between what can be decided and what can't, about this Delta operator.}
 
 \yx{How to deal with $\sum_i \delta_{i, j}$ then? -- It should be summing on the set that satisfies the proposition.}
+
+
+
+\section{Dirac with Big-operator}
+We extend the language of Dirac notation with the sort $\mathcal{S}_\tau$ for sets of type $\tau$, and the following syntax for terms:
+$$
+t ::= \sum_{x \in S} t
+$$
+
+Here $\sum_{x : \tau} t$ can be considered as a special abstraction, where $x$ is the bound variable for index with type $S$.
+
+\begin{definition}[typing rule]
+  The typing rule for the big operator is similar to the one for abstraction.
+
+  $$
+  \frac{\Gamma \vdash S : \mathcal{S}_\tau\qquad \Gamma::(x : \tau) \vdash e : \sigma}{\Gamma \vdash \sum_{x \in S} e : \sigma}
+  $$
+  
+\end{definition}
+
+\begin{definition}[The system Sum]
+    \begin{align*}
+        & \Gamma \vdash \sum_{x \in S} \mathbf{0}_{\sigma, \rho} \ \triangleright\ \mathbf{0}_{\sigma, \rho} \\
+        & \Gamma \vdash e \otimes \sum_{x \in S} u \ \triangleright\ \sum_{x \in S} e \otimes u \\
+        &\Gamma \vdash e\cdot \sum_{x \in S} v \ \triangleright \sum_{x \in S} (e\cdot v)
+        \qquad 
+        \Gamma \vdash (\sum_{x \in S} v) \cdot e\ \triangleright \sum_{x \in S} (v \cdot e)\\        
+        & \Gamma \vdash \sum_{x \in S} u + \sum_{x \in S} v  \ \triangleright\ \sum_{x \in S} (u + v) \\
+        \tag{**}
+        & \sum_{x \in S} \sum_{y \in S'} u = \sum_{y \in S'} \sum_{x \in S} u
+    \end{align*}
+(**)\ Requires that $\sigma$ is not dependent on $x$, which is always the case in the simply typed situation.
+
+And sum is not considered as a base vector.
+\end{definition}
+
+\yx{A serious problem: How to deal with the summation over a set of index? And how can we decide
+$$
+\sum_{i \in \mathbb{B}} \ket{i} = \ket{0} + \ket{1}
+$$}
+
+\yx{Maybe we can consider the set to be expressed in the form of the enumeration by a list or array.
+$$
+\Gamma \vdash \sum_{i \in \{i_0, \dots, i_n\}} e \ \triangleright\ e[i_0/i] + \cdots + e[i_n/i]
+$$
+}
