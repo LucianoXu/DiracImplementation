@@ -1,0 +1,266 @@
+(* 
+
+    Language and Term Rewriting System for "Typed Dirac Notation"
+
+    This language can be used in two levels: deal with the internal untyped language directly,
+    or use the typed syntax with type polymorphism.
+
+    Yingte Xu, 2024
+
+*)
+
+let F = signature
+"
+
+  (* complex number *)
+  + : AC ;
+  * : AC ;
+  0 : constant ;
+  1 : constant ;
+  ^* : postfix unary ;
+
+  (* -------- types -------- *)
+  T : constant ;
+  PROD : infix binary ;
+
+  Base : binary ;
+  S : unary ;
+  K : binary ;
+  B : binary ;
+  O : 3 ;
+  
+
+  (* -------- syntax symbols -------- *)
+  (* The external language. Will be be transformed in to the internal langauge during type checking. *)
+
+  (* Basis *)
+  PAIR_S : binary ;
+  FST_S : unary ;
+  SND_S : unary ;
+
+  (* Scalar *)
+  C_S : unary ;
+  DELTA_S : binary ;
+  ADDS_S : infix binary ;
+  MLTS_S : infix binary ;
+  CONJS_S : unary ;
+  DOT_S : infix binary ;
+
+  (* Ket *)
+  0K_S : unary ;
+  KET_S : unary ;
+  ADJK_S : unary ;
+  SCRK_S : infix binary ;
+  ADDK_S : infix binary ;
+  MLTK_S : infix binary ;
+  TSRK_S : infix binary ;
+
+  (* Bra *)
+  0B_S : unary ;
+  BRA_S : unary ;
+  ADJB_S : unary ;
+  SCRB_S : infix binary ;
+  ADDB_S : infix binary ;
+  MLTB_S : infix binary ;
+  TSRB_S : infix binary ;
+
+  (* Operator *)
+  0O_S : binary ;
+  1O_S : unary ;
+  OUTER_S : infix binary ;
+  ADJO_S : unary ;
+  SCRO_S : infix binary ;
+  ADDO_S : infix binary ;
+  MLTO_S : infix binary ;
+  TSRO_S : infix binary ;
+
+  (* universal application *)
+  @ : infix binary ;
+
+  (* otimes and cdot *)
+  OTIMES : infix binary ;
+  CDOT : infix binary ;
+
+
+  (* -------- internal langauge -------- *)
+
+  (* Basis *)
+  PAIR : binary ;
+  FST : unary ;
+  SND : unary ;
+
+  (* Scalar *)
+  C : unary ;
+  DELTA : commutative ;
+  ADDS : AC ;
+  MLTS : AC ;
+  CONJS : unary ;
+  DOT : infix binary ;
+
+  (* Ket *)
+  0K : constant ;
+  KET : unary ;
+  ADJK : unary ;
+  SCRK : infix binary ;
+  ADDK : AC ;
+  MLTK : infix binary ;
+  TSRK : infix binary ;
+
+  (* Bra *)
+  0B : constant ;
+  BRA : unary ;
+  ADJB : unary ;
+  SCRB : infix binary ;
+  ADDB : AC ;
+  MLTB : infix binary ;
+  TSRB : infix binary ;
+
+  (* Operator *)
+  0O : constant ;
+  1O : constant ;
+  OUTER : infix binary ;
+  ADJO : unary ;
+  SCRO : infix binary ;
+  ADDO : AC ;
+  MLTO : infix binary ;
+  TSRO : infix binary ;
+
+";
+
+let X = vars "a b c x S0 S1 S2 S3 s s1 s2 t t1 t2 B0 B1 B2 K0 K1 K2 O0 O1 O2 O1' O2' T1 T2 T3 T4 O1_ O2_ O3";
+
+let R = TRS F X "
+
+  (* ######################## TYPE CHECKING ############################ *)
+  C_S(a) -> S(C(a)) ;
+  DELTA_S(Base(s, T1), Base(t, T1)) -> S(DELTA(s, t)) ;
+  S(a) ADDS_S S(b) -> S(a ADDS b) ;
+  S(a) MLTS_S S(b) -> S(a MLTS b) ;
+  CONJS_S(S(a)) -> S(CONJS(a)) ;
+  B(B0, T1) DOT_S K(K0, T1) -> S(B0 DOT K0) ;
+
+  (* Ket *)
+  0K_S(T1) -> K(0K, T1) ;
+  KET_S(Base(s, T1)) -> K(KET(s), T1) ;
+  ADJK_S(B(B0, T1)) -> K(ADJK(B0), T1) ;
+  S(S0) SCRK_S K(K0, T1) -> K(S0 SCRK K0, T1) ;
+  K(K1, T1) ADDK_S K(K2, T1) -> K(K1 ADDK K2, T1) ;
+  O(O0, T1, T2) MLTK_S K(K0, T2) -> K(O0 MLTK K0, T1) ;
+  K(K1, T1) TSRK_S K(K2, T2) -> K(K1 TSRK K2, T1 PROD T2) ;
+
+  (* Bra *)
+  0B_S(T1) -> B(0B, T1) ;
+  BRA_S(Base(s, T1)) -> B(BRA(s), T1) ;
+  ADJB_S(K(K0, T1)) -> B(ADJB(K0), T1) ;
+  S(S0) SCRB_S B(B0, T1) -> B(S0 SCRB B0, T1) ;
+  B(B1, T1) ADDB_S B(B2, T1) -> B(B1 ADDB B2, T1) ;
+  B(B0, T1) MLTB_S O(O0, T1, T2) -> B(B0 MLTB O0, T2) ;
+  B(B1, T1) TSRB_S B(B2, T2) -> B(B1 TSRB B2, T1 PROD T2) ;
+
+  (* Operator *)
+  0O_S(T1, T2) -> O(0O, T1, T2) ;
+  1O_S(T1) -> O(1O, T1, T1) ;
+  K(K0, T1) OUTER_S B(B0, T2) -> O(K0 OUTER B0, T1, T2) ;
+  ADJO_S(O(O0, T1, T2)) -> O(ADJO(O0), T2, T1) ;
+  S(S0) SCRO_S O(O0, T1, T2) -> O(S0 SCRO O0, T1, T2) ;
+  O(O1, T1, T2) ADDO_S O(O2, T1, T2) -> O(O1 ADDO O2, T1, T2) ;
+  O(O1, T1, T2) MLTO_S O(O2, T2, T3) -> O(O1 MLTO O2, T1, T3) ;
+  O(O1, T1, T2) TSRO_S O(O2, T3, T4) -> O(O1 TSRO O2, T1 PROD T3, T2 PROD T4) ;
+
+  (* -------- overload the universal application --------- *)
+  S(S1) @ S(S2) -> S(S1 MLTS S2) ;
+  S(S0) @ K(K0, T1) -> K(S0 SCRK K0, T1) ;
+  S(S0) @ B(B0, T1) -> B(S0 SCRB B0, T1) ;
+
+  S(S0) @ O(O0, T1, T2) -> O(S0 SCRO O0, T1, T2) ;
+  K(K0, T1) @ S(S0) -> K(S0 SCRK K0, T1) ;
+  K(K1, T1) @ K(K2, T2) -> K(K1 TSRK K2, T1 PROD T2) ;
+  K(K0, T1) @ B(B0, T2) -> O(K0 OUTER B0, T1, T2) ;
+
+  B(B0, T1) @ S(S0) -> B(S0 SCRB B0, T1) ;
+  B(B0, T1) @ K(K0, T1) -> S(B0 DOT K0) ;
+  B(B1, T1) @ B(B2, T2) -> B(B1 TSRB B2, T1 PROD T2) ;
+  B(B0, T1) @ O(O0, T1, T2) -> B(B0 MLTB O0, T2) ;
+
+  O(O0, T1, T2) @ S(S0) -> O(S0 SCRO O0, T1, T2) ;
+  O(O0, T1, T2) @ K(K0, T2) -> K(O0 MLTK K0, T1) ;
+  O(O1, T1, T2) @ O(O2, T2, T3) -> O(O1 MLTO O2, T1, T3) ;
+
+  (* -------- overload of otimes and cdot -------- *)
+  K(K1, T1) OTIMES K(K2, T2) -> K(K1 TSRK K2, T1 PROD T2) ;
+  B(B1, T1) OTIMES B(B2, T2) -> B(B1 TSRB B2, T1 PROD T2) ;
+  K(K0, T1) OTIMES B(B0, T2) -> O(K0 OUTER B0, T1, T2) ;
+  O(O1, T1, T2) OTIMES O(O2, T3, T4) -> O(O1 TSRO O2, T1 PROD T3, T2 PROD T4) ;
+
+  B(B0, T1) CDOT O(O0, T1, T2) -> B(B0 MLTB O0, T2) ;
+  O(O0, T1, T2) CDOT K(K0, T2) -> K(O0 MLTK K0, T1) ;
+  B(B0, T1) CDOT K(K0, T1) -> S(B0 DOT K0) ;
+  O(O1, T1, T2) CDOT O(O2, T2, T3) -> O(O1 MLTO O2, T1, T3) ;
+
+
+
+
+  (* ############# REDUCTION RULES FOR INTERNAL LANGUAGE ############### *)
+
+  (********************************************)
+  (*           complex number (avatar)        *)
+  (********************************************)
+
+  0 + a -> a ;
+  0 * a -> 0 ;
+  1 * a -> a ;
+  a * (b + c) -> (a * b) + (a * c) ;
+  0 ^* -> 0 ;
+  1 ^* -> 1 ;
+  (a + b) ^* -> (a ^*) + (b ^*) ;
+  (a * b) ^* -> (a ^*) * (b ^*) ;
+  (a ^*) ^* -> a ;
+
+(* >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> *)
+(* PUT PYTHON CIME OUTPUT IN BETWEEN *)
+
+(* PUT PYTHON CIME OUTPUT IN BETWEEN *)
+(* <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< *)
+  
+  (* ################# extension rules for AC symbols ################## *)
+
+  (* To prove the confluence of a system with AC symbols, we need to check the critical pairs of an extended system. *)
+
+  (0 + a) + x -> a + x ;
+  (0 * a) * x -> 0 * x ;
+  (1 * a) * x -> a * x ;
+  (a * (b + c)) * x -> ((a * b) + (a * c)) * x ;
+
+  (C(0) ADDS a) ADDS x -> a ADDS x ;
+  (C(a) ADDS C(b)) ADDS x -> C(a + b) ADDS x ;
+  (S0 ADDS S0) ADDS x -> (C(1 + 1) MLTS S0) ADDS x ;
+  ((C(a) MLTS S0) ADDS S0) ADDS x -> (C(a + 1) MLTS S0) ADDS x ;
+  ((C(a) MLTS S0) ADDS (C(b) MLTS S0)) ADDS x -> (C(a + b) MLTS S0) ADDS x ;
+
+  (C(0) MLTS a) MLTS x -> C(0) MLTS x ;
+  (C(1) MLTS a) MLTS x -> a MLTS x ;
+  (C(a) MLTS C(b)) MLTS x -> C(a * b) MLTS x ;
+  (S1 MLTS (S2 ADDS S3)) MLTS x -> ((S1 MLTS S2) ADDS (S1 MLTS S3)) MLTS x ;
+
+  (K0 ADDK 0K) ADDK x -> K0 ADDK x ;
+  (K0 ADDK K0) ADDK x -> (C(1 + 1) SCRK K0) ADDK x ;
+  ((S0 SCRK K0) ADDK K0) ADDK x -> ((S0 ADDS C(1)) SCRK K0) ADDK x ;
+  ((S1 SCRK K0) ADDK (S2 SCRK K0)) ADDK x -> ((S1 ADDS S2) SCRK K0) ADDK x ;
+
+  (B0 ADDB 0B) ADDB x -> B0 ADDB x ;
+  (B0 ADDB B0) ADDB x -> (C(1 + 1) SCRB B0) ADDB x ;
+  ((S0 SCRB B0) ADDB B0) ADDB x -> ((S0 ADDS C(1)) SCRB B0) ADDB x ;
+  ((S1 SCRB B0) ADDB (S2 SCRB B0)) ADDB x -> ((S1 ADDS S2) SCRB B0) ADDB x ;
+
+  (O0 ADDO 0O) ADDO x -> O0 ADDO x ;
+  (O0 ADDO O0) ADDO x -> (C(1 + 1) SCRO O0) ADDO x ;
+  ((S0 SCRO O0) ADDO O0) ADDO x -> ((S0 ADDS C(1)) SCRO O0) ADDO x ;
+  ((S1 SCRO O0) ADDO (S2 SCRO O0)) ADDO x -> ((S1 ADDS S2) SCRO O0) ADDO x ;
+  
+";
+
+(* optional : 
+
+  DELTA(s, s) -> C(1) ;
+
+*)
