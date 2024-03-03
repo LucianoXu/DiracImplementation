@@ -1,4 +1,4 @@
-\chapter{20240301}
+\chapter{20240308}
 
 \newcommand*{\unit}{\texttt{unit}}
 \newcommand*{\utt}{\texttt{tt}}
@@ -27,11 +27,12 @@ The core language DN consists of limited symbols for Dirac notation, and its ter
 \begin{definition}[language of Dirac Notation]
   The \textbf{language of Dirac Notation}, denoted as $\mathfrak{DN}(\Sigma_\mathcal{B}, \Sigma_\mathcal{S})$, has five sorts defined as follows:
   \begin{align*}
-    & \mathcal{A} \textrm{(base)} && t ::= x\ |\ b\ |\ (t, t)\ |\ \fst\ t\ |\ \snd\ t \\
-    & \mathcal{S} \textrm{(scalar)} && S ::= x\ |\ C(\alpha)\ |\ \delta_{t, t}\ |\ S + S\ |\ S \times S\ |\ S^*\ |\ B \cdot K \\
-    & \mathcal{K} \textrm{(ket)} && K ::= x\ |\ \mathbf{0}_\mathcal{K}\ |\ \ket{t}\ |\ B^\dagger\ |\ S.K\ |\ K + K\ |\ O \cdot K\ |\ K \otimes K \\
-    & \mathcal{B} \textrm{(bra)} && B ::= x\ |\ \mathbf{0}_\mathcal{B}\ |\ \bra{t}\ |\ K^\dagger\ |\ S.B\ |\ B + B\ |\ B \cdot O\ |\ B \otimes B \\
-    & \mathcal{O} \textrm{(operator)} && O ::= x\ |\ \mathbf{0}_\mathcal{O}\ |\ \mathbf{1}_\mathcal{O}\ |\ K \otimes B\ |\ O^\dagger\ |\ S.O\ |\ O + O\ |\ O \cdot O\ |\ O \otimes O
+    & \mathcal{A} \textrm{(base)} && t ::= && x\ |\ b\ |\ (t, t)\ |\ \fst\ t\ |\ \snd\ t \\
+    & \mathcal{S} \textrm{(scalar)} && S ::= && x\ |\ C(\alpha)\ |\ \delta_{t, t}\ |\ S + S\ |\ S \times S\ |\ S^*\ |\ B \cdot K \\
+    & \mathcal{D} \textrm{(Dirac notation)} && D ::= && x\ |\ \mathbf{0}\ |\ D^\dagger\ |\ S.D\ |\ D + D \\
+    & && && |\ \ket{s}\ |\ D \cdot_{K} D\ |\ D \otimes_{K} D \\
+    & && && |\ \bra{s}\ |\ D \cdot_{B} D\ |\ D \otimes_{B} D \\
+    & && && |\ \mathbf{1}_\mathcal{O}\ |\ D \otimes_P D\ |\ D \cdot_{O} D\ |\ D \otimes_{O} D
   \end{align*}
   Here $x$ is a variable, $b$ is a term of $\Sigma_\mathcal{B}$ and $\alpha$ is a term of $\Sigma_\mathcal{S}$.
 
@@ -164,8 +165,8 @@ We want to study the theory of Dirac notations modulo the scalars and classical 
 
 \subsubsection*{\textsf{SCR-DOT}}
 \begin{align*}
-  & \vdash \mathbf{0}_\mathcal{B} \cdot K \reduce C(0) \\
-  & \vdash B \cdot \mathbf{0}_\mathcal{K} \reduce C(0) \\
+  & \vdash \mathbf{0} \cdot K \reduce C(0) \\
+  & \vdash B \cdot \mathbf{0} \reduce C(0) \\
   & \vdash (S.B) \cdot K \reduce S \times (B \cdot K) \\
   & \vdash B \cdot (S.K) \reduce S \times (B \cdot K) \\
   & \vdash (B_1 + B_2) \cdot K \reduce B_1 \cdot K + B_2 \cdot K \\
@@ -193,38 +194,56 @@ We want to study the theory of Dirac notations modulo the scalars and classical 
 
 \textbf{Remark: } The first rule sorts the multiplication to the right, which breaks the symmetry of ket and bra. The remaining three rules are for completion.
 
-\subsubsection*{\textsf{KET-ADJ}}
+\subsubsection*{\textsf{ADJ-UNI}}
 \begin{align*}
-  & \vdash \textbf{0}_\mathcal{B}^\dagger \reduce \textbf{0}_\mathcal{K} \\
+  & \vdash \textbf{0}^\dagger \reduce \textbf{0} \\
+  & \vdash (X^\dagger)^\dagger \reduce X \\
+  & \vdash (S.X)^\dagger \reduce S^*.(X^\dagger) \\
+  & \vdash (X_1 + X_2)^\dagger \reduce X_1^\dagger + X_2^\dagger\\
+\end{align*}
+
+\subsubsection*{\textsf{ADJ-KET}}
+\begin{align*}
   & \vdash \bra{t}^\dagger \reduce \ket{t}\\
-  & \vdash (K^\dagger)^\dagger \reduce K \\
-  & \vdash (S.B)^\dagger \reduce S^*.(B^\dagger) \\
-  & \vdash (B_1 + B_2)^\dagger \reduce B_1^\dagger + B_2^\dagger\\
   & \vdash (B \cdot O)^\dagger \reduce O^\dagger \cdot B^\dagger \\
   & \vdash (B_1 \otimes B_2)^\dagger \reduce B_1^\dagger \otimes B_2^\dagger
 \end{align*}
 
-\subsubsection*{\textsf{KET-SCR}}
+\subsubsection*{\textsf{ADJ-BRA}}
 \begin{align*}
-  & \vdash C(0).K \reduce \textbf{0}_{\mathcal{K}}\\
-  & \vdash C(1).K \reduce K \\
-  & \vdash S.\textbf{0}_\mathcal{K} \reduce \textbf{0}_\mathcal{K} \\
-  & \vdash S_1.(S_2.K) \reduce (S_1 \times S_2).K \\
-  & \vdash S.(K_1 + K_2) \reduce S.K_1 + S.K_2
+  & \vdash \ket{t}^\dagger \reduce \bra{t}\\
+  & \vdash (O \cdot K)^\dagger \reduce K^\dagger \cdot O^\dagger \\
+  & \vdash (K_1 \otimes K_2)^\dagger \reduce K_1^\dagger \otimes K_2^\dagger
 \end{align*}
 
-\subsubsection*{\textsf{KET-ADD}}
+\subsubsection*{\textsf{ADJ-OPT}}
 \begin{align*}
-  & \vdash K + \textbf{0}_\mathcal{K} \reduce K \\
-  & \vdash K + K \reduce C(1 + 1).K \\
-  & \vdash S.K + K \reduce (S + C(1)).K \\
-  & \vdash S_1.K + S_2.K \reduce (S_1 + S_2).K
+  & \vdash \mathbf{1}_\mathcal{O}^\dagger \reduce \mathbf{1}_\mathcal{O}\\
+  & \vdash (O_1 \cdot O_2)^\dagger \reduce O_1^\dagger \cdot O_2^\dagger \\
+  & \vdash (O_1 \otimes O_2)^\dagger \reduce O_1^\dagger \otimes O_2^\dagger
+\end{align*}
+
+\subsubsection*{\textsf{SCR}}
+\begin{align*}
+  & \vdash C(0).X \reduce \mathbf{0}\\
+  & \vdash C(1).X \reduce X \\
+  & \vdash S.\mathbf{0} \reduce \mathbf{0} \\
+  & \vdash S_1.(S_2.X) \reduce (S_1 \times S_2).X \\
+  & \vdash S.(X_1 + X_2) \reduce S.X_1 + S.X_2
+\end{align*}
+
+\subsubsection*{\textsf{ADD}}
+\begin{align*}
+  & \vdash X + \mathbf{0} \reduce X \\
+  & \vdash X + X \reduce C(1 + 1).X \\
+  & \vdash S.X + X \reduce (S + C(1)).X \\
+  & \vdash S_1.X + S_2.X \reduce (S_1 + S_2).X
 \end{align*}
 
 \subsubsection*{\textsf{KET-MLT}}
 \begin{align*}
-  & \vdash \textbf{0}_\mathcal{O} \cdot K \reduce \textbf{0}_\mathcal{K} \\
-  & \vdash O \cdot \mathbf{0}_{\mathcal{K}} \reduce \mathbf{0}_{\mathcal{K}} \\
+  & \vdash \textbf{0} \cdot K \reduce \textbf{0} \\
+  & \vdash O \cdot \mathbf{0} \reduce \mathbf{0} \\
   & \vdash \textbf{1}_\mathcal{O} \cdot K \reduce K \\
   & \vdash (S.O) \cdot K \reduce S.(O \cdot K) \\
   & \vdash O \cdot (S.K) \reduce S.(O \cdot K) \\
@@ -242,8 +261,8 @@ We want to study the theory of Dirac notations modulo the scalars and classical 
 
 \subsubsection*{\textsf{KET-TSR}}
 \begin{align*}
-  & \vdash \mathbf{0}_\mathcal{K} \otimes K \reduce \mathbf{0}_\mathcal{K} \\
-  & \vdash K \otimes \mathbf{0}_\mathcal{K} \reduce \mathbf{0}_\mathcal{K} \\
+  & \vdash \mathbf{0} \otimes K \reduce \mathbf{0} \\
+  & \vdash K \otimes \mathbf{0} \reduce \mathbf{0} \\
   & \vdash \ket{s} \otimes \ket{t}\reduce\ket{(s, t)} \\
   & \vdash (S.K_1) \otimes K_2 \reduce S.(K_1 \otimes K_2) \\
   & \vdash K_1 \otimes (S.K_2) \reduce S.(K_1 \otimes K_2) \\
@@ -259,52 +278,20 @@ We want to study the theory of Dirac notations modulo the scalars and classical 
   & \textcolor{red}{\vdash (B \cdot (O_1 \otimes O_2)) \cdot (O_1' \otimes O_2') \reduce B \cdot ((O_1 \cdot O_1') \otimes (O_2 \cdot O_2'))}
 \end{align*}
 
-\yx{There seems to be some problem about the $\mathbf{1}_\mathcal{O}$ symbol. For example, should we expect $\mathbf{1}_\mathcal{O} \otimes O_0 = O_0$? }
-
 \subsubsection*{\textsf{OPT-OUTER}}
 \begin{align*}
-  & \vdash \mathbf{0}_\mathcal{K} \otimes B \reduce \mathbf{0}_\mathcal{O} \\
-  & \vdash K \otimes \mathbf{0}_\mathcal{B} \reduce \mathbf{0}_\mathcal{O} \\
+  & \vdash \mathbf{0} \otimes B \reduce \mathbf{0} \\
+  & \vdash K \otimes \mathbf{0} \reduce \mathbf{0} \\
   & \vdash (S.K) \otimes B \reduce S.(K \otimes B) \\
   & \vdash K \otimes (S.B) \reduce S.(K \otimes B) \\
   & \vdash (K_1 + K_2) \otimes B \reduce K_1 \otimes B + K_2 \otimes B \\
   & \vdash K \otimes (B_1 + B_2) \reduce K \otimes B_1 + K \otimes B_2
 \end{align*}
 
-
-\subsubsection*{\textsf{OPT-ADJ}}
-\begin{align*}
-  & \vdash \textbf{0}_\mathcal{O}^\dagger \reduce \textbf{0}_\mathcal{O} \\
-  & \vdash \textbf{1}_\mathcal{O}^\dagger \reduce \textbf{1}_\mathcal{O} \\
-  & \vdash (K \otimes B)^\dagger \reduce B^\dagger \otimes K^\dagger \\
-  & \vdash (O^\dagger)^\dagger \reduce O \\
-  & \vdash (S.O)^\dagger \reduce S^*.(O^\dagger) \\
-  & \vdash (O_1 + O_2)^\dagger \reduce O_1^\dagger + O_2^\dagger\\
-  & \vdash (O_1 \cdot O_2)^\dagger \reduce O_2^\dagger \cdot O_1^\dagger \\
-  & \vdash (O_1 \otimes O_2)^\dagger \reduce O_1^\dagger \otimes O_2^\dagger
-\end{align*}
-
-\subsubsection*{\textsf{OPT-SCR}}
-\begin{align*}
-  & \vdash C(0).O \reduce \mathbf{0}_\mathcal{O} \\
-  & \vdash C(1).O \reduce O \\
-  & \vdash S.\textbf{0}_\mathcal{O} \reduce \textbf{0}_\mathcal{O} \\
-  & \vdash S_1.(S_2.O) \reduce (S_1 \times S_2).O \\
-  & \vdash S.(O_1 + O_2) \reduce S.O_1 + S.O_2
-\end{align*}
-
-\subsubsection*{\textsf{OPT-ADD}}
-\begin{align*}
-  & \vdash O + \mathbf{0}_\mathcal{O} \reduce O \\
-  & \vdash O + O \reduce C(1 + 1).O \\
-  & \vdash S.O + O \reduce (S + C(1)).O \\
-  & \vdash S_1.O + S_2.O \reduce (S_1 + S_2).O
-\end{align*}
-
 \subsubsection*{\textsf{OPT-MLT}}
 \begin{align*}
-  & \vdash \mathbf{0}_\mathcal{O} \cdot O \reduce \mathbf{0}_\mathcal{O} \\
-  & \vdash O \cdot \mathbf{0}_\mathcal{O} \reduce \mathbf{0}_\mathcal{O} \\
+  & \vdash \mathbf{0} \cdot O \reduce \mathbf{0} \\
+  & \vdash O \cdot \mathbf{0} \reduce \mathbf{0} \\
   & \vdash \mathbf{1}_\mathcal{O} \cdot O \reduce O \\
   & \vdash O \cdot \mathbf{1}_\mathcal{O} \reduce O \\
   & \vdash (K \otimes B) \cdot O \reduce K \otimes (B \cdot O)\\
@@ -321,8 +308,8 @@ We want to study the theory of Dirac notations modulo the scalars and classical 
 
 \subsubsection*{\textsf{OPT-TSR}}
 \begin{align*}
-  & \vdash \mathbf{0}_\mathcal{O} \otimes O \reduce \mathbf{0}_\mathcal{O} \\
-  & \vdash O \otimes \mathbf{0}_\mathcal{O} \reduce \mathbf{0}_\mathcal{O} \\
+  & \vdash \mathbf{0} \otimes O \reduce \mathbf{0} \\
+  & \vdash O \otimes \mathbf{0} \reduce \mathbf{0} \\
   & \vdash (K_1 \otimes B_1) \otimes (K_2 \otimes B_2) \reduce (K_1 \otimes K_2) \otimes (B_1 \otimes B_2) \\
   & \vdash (S.O_1) \otimes O_2 \reduce S.(O_1 \otimes O_2) \\
   & \vdash O_1 \otimes (S.O_2) \reduce S.(O_1 \otimes O_2) \\
