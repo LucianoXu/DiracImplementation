@@ -219,6 +219,7 @@ We want to study the theory of Dirac notations modulo the scalars and classical 
 \subsubsection*{\textsf{ADJ-OPT}}
 \begin{align*}
   & \vdash \mathbf{1}_\mathcal{O}^\dagger \reduce \mathbf{1}_\mathcal{O}\\
+  & \vdash (K \otimes B)^\dagger \reduce B^\dagger \otimes K^\dagger \\
   & \vdash (O_1 \cdot O_2)^\dagger \reduce O_1^\dagger \cdot O_2^\dagger \\
   & \vdash (O_1 \otimes O_2)^\dagger \reduce O_1^\dagger \otimes O_2^\dagger
 \end{align*}
@@ -411,17 +412,10 @@ And we can check the local confluence of locally AC reduction of $X_{ext}$ by ca
     & (C(a) \times C(b)) \times x \reduce C(a \times b) \times x \\
     & (S_1 \times (S_2 + S_3)) \times x \reduce ((S_1 \times S_2) + (S_1 \times S_3)) \times x \\
     \\
-    & (K + \mathbf{0}_\mathcal{K}) + x \reduce K + x \\
-    & (K + K) + x \reduce C(1 + 1).K + x \\
-    & (S.K + K) + x \reduce (S + 1).K + x \\
-    & (S_1.K + S_2.K) + x \reduce (S_1 + S_2).K + x \\
-    \\
-    & \textrm{(same for bra)}\\
-    \\
-    & (O + \mathbf{0}_\mathcal{O}) + x \reduce O + x \\
-    & (O + O) + x \reduce C(1 + 1).O + x \\
-    & (S.O + O) + x \reduce (S + 1).O + x \\
-    & (S_1.O + S_2.O) + x \reduce (S_1 + S_2).O + x
+    & (X + \mathbf{0}_\mathcal{K}) + x \reduce X + x \\
+    & (X + X) + x \reduce C(1 + 1).X + x \\
+    & (S.X + X) + x \reduce (S + 1).X + x \\
+    & (S_1.X + S_2.X) + x \reduce (S_1 + S_2).X + x
   \end{align*}
 \end{proposition}
 
@@ -525,10 +519,7 @@ We can use a SMT solver to check the conditions for the equality \textbf{DeltaEQ
 \begin{definition}[DNE]
     The \textbf{language of Dirac Notation Extended}, denoted as $\mathfrak{DNE}(\Sigma_\mathcal{B}, \Sigma_\mathcal{S})$, consists of the same sorts as $\mathfrak{DN}(\Sigma_\mathcal{B}, \Sigma_\mathcal{S})$ with the following new symbols:
     \begin{align*}
-        & S ::= \sum_i S \\
-        & K ::= B^\top\ |\ \sum_i K \\
-        & B ::= K^\top\ |\ \sum_i B \\
-        & O ::= O^\top\ |\ \sum_i O
+        & D ::= D^\top\ |\ \sum_i D
     \end{align*}
     The index $i$ for summation is a bind variable. The common considerations for bind variables are applied here: $\alpha$-conversion and substitutions.
 \end{definition}
@@ -540,41 +531,33 @@ We can use a SMT solver to check the conditions for the equality \textbf{DeltaEQ
     The AC-rewrite system $\mathfrak{DNE}$ consists of all the rules in $\mathfrak{DN}$ as well as the rules in this section.
 \end{definition}
 
-\subsubsection*{\textsf{KET-TRANS}}
+\subsubsection*{\textsf{TRANS-UNI}}
 \begin{align*}
-  & \mathbf{0}_\mathcal{B}^\top \reduce \mathbf{0}_\mathcal{K} \\
+  & \mathbf{0}^\top \reduce \mathbf{0} \\
+  & (X^\dagger)^\top \reduce (X^\top)^\dagger \\
+  & (X^\top)^\top \reduce X \\
+  & (S . X)^\top \reduce S . X^\top \\
+  & (X_1 + X_2)^\top \reduce X_1^\top + X_2^\top \\
+\end{align*}
+
+\subsubsection*{\textsf{TRANS-KET}}
+\begin{align*}
   & \bra{s}^\top \reduce \ket{s} \\
-  & (K^\dagger)^\top \reduce (K^\top)^\dagger \\
-  & (K^\top)^\top \reduce K \\
-  & (S . B)^\top \reduce S . B^\top \\
-  & (B_1 + B_2)^\top \reduce B_1^\top + B_2^\top \\
   & (B \cdot O)^\top \reduce O^\top \cdot B^\top \\
   & (B_1 \otimes B_2)^\top \reduce B_1^\top \otimes B_2^\top
 \end{align*}
 
-
-\subsubsection*{\textsf{BRA-TRANS}}
+\subsubsection*{\textsf{TRANS-BRA}}
 \begin{align*}
-  & \mathbf{0}_\mathcal{K}^\top \reduce \mathbf{0}_\mathcal{B} \\
   & \ket{s}^\top \reduce \bra{s} \\
-  & (B^\dagger)^\top \reduce (B^\top)^\dagger \\
-  & (B^\top)^\top \reduce B \\
-  & (S . K)^\top \reduce S . K^\top \\
-  & (K_1 + K_2)^\top \reduce K_1^\top + K_2^\top \\
   & (O \cdot K)^\top \reduce K^\top \cdot O^\top \\
   & (K_1 \otimes K_2)^\top \reduce K_1^\top \otimes K_2^\top
 \end{align*}
 
-
-\subsubsection*{\textsf{OPT-TRANS}}
+\subsubsection*{\textsf{TRANS-OPT}}
 \begin{align*}
-  & \mathbf{0}_\mathcal{O}^\top \reduce \mathbf{0}_\mathcal{O} \\
   & \mathbf{1}_\mathcal{O}^\top \reduce \mathbf{1}_\mathcal{O} \\
   & (K \otimes B)^\top \reduce B^\top \otimes K^\top \\
-  & (O^\dagger)^\top \reduce (O^\top)^\dagger \\
-  & (O^\top)^\top \reduce O \\
-  & (S . O)^\top \reduce S . O^\top \\
-  & (O_1 + O_2)^\top \reduce O_1^\top + O_2^\top \\
   & (O_1 \cdot O_2)^\top \reduce O_2^\top \cdot O_1^\top \\
   & (O_1 \otimes O_2)^\top \reduce O_1^\top \otimes O_2^\top
 \end{align*}
@@ -642,9 +625,11 @@ Here $A \cdot B$ is interpreted as four cases: $B \cdot K$, $O \cdot K$, $B \cdo
   & A \otimes (\sum_i B) \reduce \sum_i (A \otimes B)
 \end{align*}
 
-\yx{problem: when pushing inside, the information of bind variable independence is lost. So we should do in the opposite way.}
 
-\yx{Maybe we want to do in the opposite way: pull everything out as much as possible. But those rules involve checking whether the subterm to be pulled out is dependent on the bind variable. But this strategy makes matching elimination rule simpler.}
+\subsubsection*{About \textsf{SUM-DIST}: push in or pull out?}
+We can flip the direction of the rules in \textsf{SUM-DIST} to pull elements out of the summation. I believe the difference lies in the \textbf{information of bind variable dependencices}.
+
+When pushing inside, the information of bind variable independence is lost. This makes elimination rule less complete. Maybe we want to do in the opposite way: pull everything out as much as possible. Those rules involve checking whether the subterm to be pulled out is independent on the bind variable. But this strategy makes matching elimination rule simpler.
 
 \subsubsection*{\textsf{SUM-ADD}}
 Here the addition $A + B$ is interpreted in four sorts: scalar, ket, bra and operator.
@@ -664,7 +649,7 @@ $ e^{i(a+b)} $ and $ e^{ia + ib} $ are equivalent in maths but they have differe
 
 \subsubsection*{Solution}
 
-We adopt a unique table for Wolfram expressions and search in the table whenever we create a new one. This ensures that semantically equivalent terms only have once instance in the system. While this implementation is inefficient during rewriting, we only transform the normal forms using unique scalar tables when comparing equivalence.
+We adopt a unique table for Wolfram expressions and search in the table whenever we create a new Wolfram expression. This ensures that semantically equivalent terms only have one instance in the system. While this implementation is inefficient during rewriting, we only transform the normal forms using unique scalar tables when comparing equivalence.
 
 \subsection{\textsf{DOT-DUAL} equational theory}
 
