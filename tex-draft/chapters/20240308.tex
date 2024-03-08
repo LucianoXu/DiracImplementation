@@ -419,6 +419,8 @@ And we can check the local confluence of locally AC reduction of $X_{ext}$ by ca
   \end{align*}
 \end{proposition}
 
+\yx{These part is not encoded in CiME2 code because the tool is already AC-extended.}
+
 \begin{proposition}
   The system $\mathfrak{S}_{0ext} \cup \mathfrak{DN}_{ext}$ is locally confluent.
 \end{proposition}
@@ -497,7 +499,7 @@ This equality holds, but it is hard to detect merely by the syntax. In general, 
 \yx{We need to prove that the backbone system together with these rules are confluent.}
 
 \subsection{Extension for Delta Operator (simple version)}
-It's impractical to fully deicide the three conditions, espacially when the atomic basis $\mathfrak{B}$ is complicated. Therefore we present here a simpler extension to rewrite these Delta operators in common cases.
+It's impractical to fully decide the three conditions, espacially when the atomic basis $\mathfrak{B}$ is complicated. Therefore we present here a simpler extension to rewrite these Delta operators in common cases.
 
 \subsubsection*{\textsf{DELTA*}}
 \begin{align*}
@@ -519,7 +521,8 @@ We can use a SMT solver to check the conditions for the equality \textbf{DeltaEQ
 \begin{definition}[DNE]
     The \textbf{language of Dirac Notation Extended}, denoted as $\mathfrak{DNE}(\Sigma_\mathcal{B}, \Sigma_\mathcal{S})$, consists of the same sorts as $\mathfrak{DN}(\Sigma_\mathcal{B}, \Sigma_\mathcal{S})$ with the following new symbols:
     \begin{align*}
-        & D ::= D^\top\ |\ \sum_i D
+        & M ::= \emptyset\ |\ x\ |\ \{| e |\}\ |\ M \cup M \\
+        & D ::= D^\top\ |\ \sum^{(S)}_{i \in M} D\ |\ \sum_{i \in M} D\ |\ \lambda x.D\ |\ D\ D
     \end{align*}
     The index $i$ for summation is a bind variable. The common considerations for bind variables are applied here: $\alpha$-conversion and substitutions.
 \end{definition}
@@ -604,7 +607,7 @@ The following rules are for ket, bra and operators respectively.
 $$
 \sum_i \sum_j (\bra{i} A \ket{j} . \ket{j}\bra{i} \cdot B) \reduce A \cdot B,
 $$
-but this is not hold in general: $B$ can be dependent on $i$.
+So we have to pull $B$ out.
 }
 
 \subsubsection*{\textsf{SUM-DIST}}
@@ -613,23 +616,46 @@ Here the zero operator $\mathbf{0}$ is interpreted in three sorts: ket, bra and 
 Here $A \cdot B$ is interpreted as four cases: $B \cdot K$, $O \cdot K$, $B \cdot O$ and $O_1 \cdot O_2$. $A \otimes B$ is interpreted as four cases: $K_1 \otimes K_2$, $B_1 \otimes B_2$, $K \otimes B$ and $O_1 \otimes O_2$.
 
 \begin{align*}
-  & (\sum_i S_1) \times S_2 \reduce \sum_i (S_1 \times S_2) \\
+  & \sum_i (S_1 \times X) \reduce (\sum_i S_1) \times X \\
   & (\sum_i S)^* \reduce \sum_i S^* \\
   & (\sum_i A)^\dagger \reduce \sum_i A^\dagger \\
   & (\sum_i A)^\top \reduce \sum_i A^\top \\
-  & S.(\sum_i A) \reduce \sum_i (S.A) \\
-  & (\sum_i S). A \reduce \sum_i (S.A) \\
-  & (\sum_i A) \cdot B \reduce \sum_i (A \cdot B) \\
-  & A \cdot (\sum_i B) \reduce \sum_i (A \cdot B) \\
-  & (\sum_i A) \otimes B \reduce \sum_i (A \otimes B) \\
-  & A \otimes (\sum_i B) \reduce \sum_i (A \otimes B)
+  & \sum_i (X.A) \reduce X.(\sum_i A) \\
+  & \sum_i (S.X) \reduce (\sum_i S). X \\
+  & \textcolor{blue}{\sum_i (A \cdot X) \reduce (\sum_i A) \cdot X} \\
+  & \textcolor{blue}{\sum_i (X \cdot B) \reduce X \cdot (\sum_i B)} \\
+  & \sum_i (A \otimes X) \reduce (\sum_i A) \otimes X \\
+  & \sum_i (X \otimes B) \reduce X \otimes (\sum_i B)
 \end{align*}
+
+\textbf{Remark:} In the end we choose to pull everything out. The considerations behinds are:
+\begin{itemize}
+  \item make \textsf{SUM-ELIM-7} to \textsf{SUM-ELIM-10} more complete.
+\end{itemize}
 
 
 \subsubsection*{About \textsf{SUM-DIST}: push in or pull out?}
 We can flip the direction of the rules in \textsf{SUM-DIST} to pull elements out of the summation. I believe the difference lies in the \textbf{information of bind variable dependencices}.
 
 When pushing inside, the information of bind variable independence is lost. This makes elimination rule less complete. Maybe we want to do in the opposite way: pull everything out as much as possible. Those rules involve checking whether the subterm to be pulled out is independent on the bind variable. But this strategy makes matching elimination rule simpler.
+
+
+\subsubsection*{\textsf{SUM-COMP}}
+These rules are for completion.
+
+\begin{align*}
+  & \frac{A \cdot B \reduce C \qquad \text{(bind variable renamed)}}{A \cdot (\sum_i B) \reduce \sum_i C} \\
+  \\
+  & \frac{A \cdot B \reduce C \qquad \text{(bind variable renamed)}}{(\sum_i A) \cdot B \reduce \sum_i C} \\
+  \\
+  & \frac{A \otimes B \reduce C \qquad \text{(bind variable renamed)}}{A \otimes (\sum_i B) \reduce \sum_i C} \\
+  \\
+  & \frac{A \otimes B \reduce C \qquad \text{(bind variable renamed)}}{(\sum_i A) \otimes B \reduce \sum_i C} \\
+  \\
+  & \frac{S \neq C(1)}{\sum_i^{(S)} S \reduce (\sum^{(S)}_i C(1)) \times S} \\
+  \\
+  & \sum_i A \reduce (\sum^{(S)}_i C(1)).A
+\end{align*}
 
 \subsubsection*{\textsf{SUM-ADD}}
 Here the addition $A + B$ is interpreted in four sorts: scalar, ket, bra and operator.
@@ -638,6 +664,24 @@ Here the addition $A + B$ is interpreted in four sorts: scalar, ket, bra and ope
 \end{align*}
 
 \section{Problems \& Techniques for $\mathfrak{DNE}$}
+
+\subsection{Big-op: merge or expand?}
+
+\subsubsection*{Problem}
+We have the equational theory:
+$$
+\sum_{i\in{s_0, s_1, ..., s_n}} A = A[i:=s_0] + A[i:=s_1] + \cdots + A[i:=s_n]
+$$
+But which side should be the canonical form?
+
+The conservative choice is the right hand side, and the problem is it can be quite inefficient. The problem with left hand side is that sometimes it will lead to unjoinable normal terms. For examle:
+
+$$
+\sum_{i \in 2} \ket{0}\bra{i} + \ket{1}\bra{0} \reducefrom \ket{0}\bra{0} + \ket{0}\bra{1} + \ket{1}\bra{0} \reduce \sum_{i \in 2} \ket{i}\bra{0} + \ket{0}\bra{1}
+$$
+
+\subsubsection*{Solution}
+I think the proper solution is to leave the choice to the user. We can use LHS by default and implement a transformation to expand the summation.
 
 \subsection{Equivalence checking in Wolfram Engine}
 
@@ -692,6 +736,25 @@ $$
 \textrm{(SUM-SWAP-JUX)} \qquad \sum_i \sum_j A \reduce (\sum_i \sum_j A)\ \textrm{SUMEQ}\ (\sum_j \sum_i A)
 $$
 Then we introduce another rewriting section, which first apply the rule SUM-SWAP-JUX once, and then rewrite again using $\mathfrak{DNE}$. The syntactic equivalence after this transformation should be equivalent to the equivalence of $\mathfrak{DNE}$ normal terms with \textsf{SUM-SWAP} equational theory.
+
+\subsection{\textsf{SUM-ENTRY-EQ} equational theory}
+
+\subsubsection*{Problem}
+Consider the equational theory:
+\begin{align*}
+  & \sum_i (\bra{i} \cdot K).\ket{i} = K \\
+  & \sum_i (B \cdot \ket{i}).\bra{i} = B \\
+  & \sum_i \sum_j (\bra{i} A \ket{j}).\ket{i}\bra{j} = A
+\end{align*}
+
+We can rewrite towards the right, but in some scenarios we want to explicitly expand the ket/bra/operators in calculation.
+
+\subsubsection*{Solution}
+We can let the user to manually control whether they want to rewrite towards the left or the right hand side.
+
+\begin{conjecture}
+  Iteratively doing the expansion once is enough for proving the equivalence.
+\end{conjecture}
 
 
 \subsection{Unjoinable Critical Pair}
