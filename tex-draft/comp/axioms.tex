@@ -1,0 +1,139 @@
+
+\subsubsection*{\textsf{BASIS}}
+\begin{align*}
+    \fst\ (s, t) & = s \\
+    \snd\ (s, t)& = t \\
+    (\fst\ s, \snd\ s) & = s
+\end{align*}
+
+\subsubsection*{\textsf{DOT-DUAL}}
+\begin{align*}
+    B \cdot K = K^\top \cdot B^\top
+\end{align*}
+
+\subsubsection*{\textsf{DELTA}}
+\begin{align*}
+    & \textsc{(DeltaC)} && \delta_{s, t} = \delta_{t, s} \\
+    \\
+    & \textsc{(DeltaEQ)} && \frac{(\bigwedge_i s_i =_\textsf{BASIS} t_i) \leftrightarrow (\bigwedge_i s_i' =_\textsf{BASIS} t_i') \textrm{ is valid}}{\prod_i \delta_{s_i, t_i} = \prod_i \delta_{s_i', t_i'}} \\
+    \\
+    & \textsc{(Delta1)} && 
+    \frac{\bigwedge_i s_i =_\textsf{BASIS} t_i \textrm{ is valid}}{ \prod_i \delta_{s_i, t_i} = 1}
+    \\
+    \\
+    & \textsc{(Delta0)} && 
+    \frac{\bigwedge_i s_i =_\textsf{BASIS} t_i \textrm{ is not satisfiable}}{ \prod_i \delta_{s_i, t_i} = 0}
+\end{align*}
+  
+\subsubsection*{\textsf{SCR-COMPLEX}}
+
+\begin{align*}
+    a + b & = b + a \\
+    (a + b) + c & = a + (b + c) \\
+    a \times b & = b \times a \\
+    (a \times b) \times c & = a \times (b \times c) \\
+    C(\alpha) + C(\beta) & = C(\alpha + \beta) \\
+    C(\alpha) \times C(\beta) & = C(\alpha \times \beta) \\
+    C(\alpha)^* & = C(\alpha^*) \\
+    C(0) + a & = a \\
+    C(0) \times a & = C(0) \\
+    C(1) \times a & = a \\
+    a \times (b + c) & = a \times b + a \times c \\
+    \delta_{s, t}^* & = \delta_{s, t} \\
+    (a + b)^* & = a^* + b^* \\
+    (a \times b)^* & = a^* \times b^* \\
+    (a^*)^* & = a \\
+    (B \cdot K)^* & = K^\dagger \cdot B^\dagger \\
+  \end{align*}
+
+\subsubsection*{\textsf{SCR-DOT}}
+$A \cdot B$ is interpreted as inner product.
+\begin{align*}
+    \mathbf{0} \cdot K & = C(0) \\
+    B \cdot (S.K) & = S \times (B \cdot K) \\
+    \bra{s} \cdot \ket{t} & = \delta_{s, t} \\
+    (B_1 \otimes B_2) \cdot (K_1 \otimes K_2) & = (B_1 \cdot K_1) \times (B_2 \cdot K_2) \\
+\end{align*}
+
+\subsubsection*{\textsf{UNI-DOT}}
+\begin{align*}
+    \textbf{0} \cdot D & = \textbf{0} \\
+    \textbf{1}_\mathcal{O} \cdot D & = D \\
+    D_1 \cdot (S.D_2) & = S.(D_1 \cdot D_2) \\
+    D_0 \cdot (D_1 + D_2) & = D_0 \cdot D_1 + D_0 \cdot D_2 \\
+    D_0 \cdot (D_1 \cdot D_2) & = (D_0 \cdot D_1) \cdot D_2 \\
+    (D_1 \otimes D_2) \cdot (D_1' \otimes D_2') & = (D_1 \cdot D_1') \otimes (D_2 \cdot D_2')
+\end{align*}
+
+For example one interpretation for the last axiom is: 
+$$
+(O_1 \otimes_O O_2) \cdot_K (K_1 \otimes_K K_2) = (O_1 \cdot_K K_1) \otimes_K (O_2 \cdot_K K_2).
+$$
+
+\subsubsection*{\textsf{UNI-TSR}}
+\begin{align*}
+    \mathbf{0} \otimes D & = \mathbf{0} \\
+    D \otimes \mathbf{0} & = \mathbf{0} \\
+    \mathbf{1}_\mathcal{O} \otimes \mathbf{1}_\mathcal{O} & = \mathbf{1}_\mathcal{O} \\
+    \ket{s} \otimes \ket{t}& =\ket{(s, t)} \\
+    D_1 \otimes (S.D_2) & = S.(D_1 \otimes D_2) \\
+    D_0 \otimes (D_1 + D_2) & = D_0 \otimes D_1 + D_0 \otimes D_2
+\end{align*}
+
+  
+\subsubsection*{\textsf{ADJ}}
+\begin{align*}
+    \textbf{0}^\dagger & = \textbf{0} \\
+    \mathbf{1}_\mathcal{O}^\dagger & = \mathbf{1}_\mathcal{O}\\
+    \ket{t}^\dagger & = \bra{t}\\
+    (D^\dagger)^\dagger & = D \\
+    (S.D)^\dagger & = S^*.(D^\dagger) \\
+    (D_1 + D_2)^\dagger & = D_1^\dagger + D_2^\dagger\\
+    (D_1 \cdot D_2)^\dagger & = D_2^\dagger \cdot D_1^\dagger \\
+    (D_1 \otimes D_2)^\dagger & = D_1^\dagger \otimes D_2^\dagger \\
+    (K \otimes B)^\dagger & = B^\dagger \otimes K^\dagger
+\end{align*}
+
+\subsubsection*{\textsf{LINEAR}}
+\begin{align*}
+    D_1 + D_2 & = D_2 + D_1 \\
+    (D_1 + D_2) + D_3 & = D_1 + (D_2 + D_3) \\
+    C(0).D & = \mathbf{0} \\
+    C(1).D & = D \\
+    D + \mathbf{0} & = D \\
+    S.\mathbf{0} & = \mathbf{0} \\
+    S_1.(S_2.D) & = (S_1 \times S_2).D \\
+    S.(D_1 + D_2) & = S.D_1 + S.D_2 \\
+\end{align*}
+
+
+\subsubsection*{\textsf{OUTER}}
+\begin{align*}
+    (K_1 \otimes B) \cdot K_2 & = (B \cdot K_2).K_1 \\
+    B_1 \cdot (K \otimes B_2) & = (B_1 \cdot K).B_2 \\
+    (K \otimes B) \cdot O & = K \otimes (B \cdot O)\\
+    O \cdot (K \otimes B) & = (O \cdot K) \otimes B\\
+    (K_1 \otimes B_1) \otimes (K_2 \otimes B_2) & = (K_1 \otimes K_2) \otimes (B_1 \otimes B_2) \\
+\end{align*}
+
+\subsubsection*{\textsf{TRANS-UNI}}
+\begin{align*}
+  \mathbf{0}^\top & = \mathbf{0} \\
+  \mathbf{1}_\mathcal{O}^\top & = \mathbf{1}_\mathcal{O} \\
+  \ket{s}^\top & = \bra{s} \\
+  (D^\dagger)^\top & = (D^\top)^\dagger \\
+  (D^\top)^\top & = D \\
+  (S . D)^\top & = S . D^\top \\
+  (D_1 + D_2)^\top & = D_1^\top + D_2^\top \\
+  (D_1 \cdot D_2)^\top & = D_2^\top \cdot D_1^\top \\
+  (D_1 \otimes D_2)^\top & = D_1^\top \otimes D_2^\top \\
+  (K \otimes B)^\top & = B^\top \otimes K^\top \\
+\end{align*}
+
+\subsubsection*{\textsf{SUM}}
+(only part of the equations)
+\begin{align*}
+    \sum_i \sum_j A & = \sum_j \sum_i A \\
+    \sum_i \sum_j (\bra{i} A \ket{j}).\ket{i}\bra{j}  & = A \\
+    \vdots
+\end{align*}

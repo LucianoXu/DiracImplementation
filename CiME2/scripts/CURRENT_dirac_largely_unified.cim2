@@ -218,6 +218,7 @@ let R = TRS F X "
   (* >>>> Tensor Product <<<< *)
   0X TSRO O0 -> 0X ;
   O0 TSRO 0X -> 0X ;
+  1O TSRO 1O -> 1O ;
   (K1 OUTER B1) TSRO (K2 OUTER B2) -> (K1 TSRK K2) OUTER (B1 TSRB B2) ;
   (S0 SCR O1) TSRO O2 -> S0 SCR (O1 TSRO O2) ;
   O1 TSRO (S0 SCR O2) -> S0 SCR (O1 TSRO O2) ;
@@ -262,48 +263,11 @@ let R = TRS F X "
   (S1 SCR X0) ADD (S2 SCR X0) -> (S1 ADDS S2) SCR X0 ;
 
   
-  (* ################# extension rules for AC symbols ################## *)
-
-  (* To prove the confluence of a system with AC symbols, we need to check the critical pairs of an extended system. *)
-
-  (0 + a) + x -> a + x ;
-  (0 * a) * x -> 0 * x ;
-  (1 * a) * x -> a * x ;
-  (a * (b + c)) * x -> ((a * b) + (a * c)) * x ;
-
-  (C(0) ADDS a) ADDS x -> a ADDS x ;
-  (C(a) ADDS C(b)) ADDS x -> C(a + b) ADDS x ;
-  (S0 ADDS S0) ADDS x -> (C(1 + 1) MLTS S0) ADDS x ;
-  ((C(a) MLTS S0) ADDS S0) ADDS x -> (C(a + 1) MLTS S0) ADDS x ;
-  ((C(a) MLTS S0) ADDS (C(b) MLTS S0)) ADDS x -> (C(a + b) MLTS S0) ADDS x ;
-
-  (C(0) MLTS a) MLTS x -> C(0) MLTS x ;
-  (C(1) MLTS a) MLTS x -> a MLTS x ;
-  (C(a) MLTS C(b)) MLTS x -> C(a * b) MLTS x ;
-  (S1 MLTS (S2 ADDS S3)) MLTS x -> ((S1 MLTS S2) ADDS (S1 MLTS S3)) MLTS x ;
-
-  (X0 ADD 0X) ADD x -> X0 ADD x ;
-  (X0 ADD X0) ADD x -> (C(1 + 1) SCR X0) ADD x ;
-  ((S0 SCR X0) ADD X0) ADD x -> ((S0 ADDS C(1)) SCR X0) ADD x ;
-  ((S1 SCR X0) ADD (S2 SCR X0)) ADD x -> ((S1 ADDS S2) SCR X0) ADD x ;
-  
 ";
 
 (* optional : 
 
   DELTA(s, s) -> C(1) ;
 
-
-print_all_cps R;
-
-
-let u = term F X "((x0 SCR x1) ADD (x0 SCR x2)) DOT x3" ;
-let v = term F X "((x1 ADD x2) DOT x3) MLTS x0" ;
-
-normalize R u;
-normalize R v;
 *)
 
-confluence R;
-
-#quit;
