@@ -28,11 +28,11 @@ The core language DN consists of limited symbols for Dirac notation, and its ter
   The \textbf{language of Dirac Notation}, denoted as $\mathfrak{DN}(\Sigma_\mathcal{B}, \Sigma_\mathcal{S})$, has five sorts defined as follows:
   \begin{align*}
     & \mathcal{A} \textrm{(base)} && t ::= && x\ |\ b\ |\ (t, t)\ |\ \fst\ t\ |\ \snd\ t \\
-    & \mathcal{S} \textrm{(scalar)} && S ::= && x\ |\ C(\alpha)\ |\ \delta_{t, t}\ |\ S + S\ |\ S \times S\ |\ S^*\ |\ B \cdot_I K \\
-    & \mathcal{D} \textrm{(Dirac notation)} && D ::= && x\ |\ \mathbf{0}\ |\ D^\dagger\ |\ S.D\ |\ D + D\ |\ D \otimes D\ |\ K\ |\ B\ |\ O \\
-    & \mathcal{K} \textrm{(ket)} && K ::= && \ket{s}\ |\ D \cdot_{K} D \\
-    & \mathcal{B} \textrm{(bra)} && B ::= && \bra{s}\ |\ D \cdot_{B} D \\
-    & \mathcal{O} \textrm{(operator)} && O ::= && \mathbf{1}_\mathcal{O}\ |\ D \otimes_P D\ |\ D \cdot_{O} D
+    & \mathcal{S} \textrm{(scalar)} && S ::= && x\ |\ C(\alpha)\ |\ \delta_{t, t}\\
+    & \mathcal{D} \textrm{(Dirac notation)} && D ::= && x\ |\ \mathbf{0}\ |\ \mathbf{1}\ |\ D^\dagger\ |\ D \times D\ |\ D.D\ |\ D + D\ |\ D \cdot D\ |\ D \otimes D\ |\ K\ |\ B\ |\ O \\
+    & \mathcal{K} \textrm{(ket)} && K ::= && \ket{s} \\
+    & \mathcal{B} \textrm{(bra)} && B ::= && \bra{s} \\
+    & \mathcal{O} \textrm{(operator)} && O ::= && \\
   \end{align*}
   Here $x$ is a variable, $b$ is a term of $\Sigma_\mathcal{B}$ and $\alpha$ is a term of $\Sigma_\mathcal{S}$.
 
@@ -83,6 +83,8 @@ We want to study the theory of Dirac notations modulo the scalars and classical 
   An \textbf{atomic basis rewrite system} $\mathfrak{B}$ is a terminating and ground confluent rewrite system for $\Sigma_\mathcal{B}$.
 \end{definition}
 
+\subsection{Super Merging}
+\input{comp/dirac_trs.tex}
 
 \subsection{TRS for DN}
 \label{sec: typed_dirac_rules}

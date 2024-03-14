@@ -1,0 +1,102 @@
+\yx{Consider everything as linear operators.}
+
+
+\subsubsection*{\textsf{BASIS}}
+\begin{align*}
+    \vdash \fst\ (e_1, e_2) \reduce e_1
+    \qquad
+    \vdash \snd\ (e_1, e_2) \reduce e_2
+    \qquad
+    \vdash (\fst\ e, \snd\ e)\reduce e
+\end{align*}
+
+\subsubsection*{\textsf{DELTA}}
+\begin{align*}
+  & \vdash \delta_{u, (s, t)} \reduce \delta_{\fst\ u, s} \times \delta_{\snd\ u, t} \\
+  & \vdash \delta_{\fst\ u, \fst\ v}\times\delta_{\snd\ u, \snd\ v} \reduce \delta_{u, v}
+\end{align*}
+
+
+\subsubsection*{\textsf{SCR-COP}}
+\begin{align*}
+  & \vdash C(0) \reduce \mathbf{0} \\
+\end{align*}
+
+
+\subsubsection*{\textsf{ADJ}}
+\begin{align*}
+  & \vdash C(\alpha)^\dagger \reduce C(\alpha^*) \\
+  & \vdash \delta_{s, t}^\dagger \reduce \delta_{s, t} \\
+  & \vdash \textbf{0}^\dagger \reduce \textbf{0} \\
+  & \vdash \mathbf{1}^\dagger \reduce \mathbf{1} \\
+  & \vdash \bra{t}^\dagger \reduce \ket{t}\\
+  & \vdash \ket{t}^\dagger \reduce \bra{t}\\
+  & \vdash (A^\dagger)^\dagger \reduce A \\
+  & \vdash (A \times B)^\dagger \reduce A^\dagger \times B^\dagger \\
+  & \vdash (S.A)^\dagger \reduce S^\dagger . A^\dagger \\
+  & \vdash (A + B)^\dagger \reduce A^\dagger + B^\dagger\\
+  & \vdash (A \cdot B)^\dagger \reduce B^\dagger \cdot A^\dagger \\
+  & \vdash (A \otimes B)^\dagger \reduce A^\dagger \otimes B^\dagger
+\end{align*}
+
+
+\subsubsection*{\textsf{MLT}}
+\begin{align*}
+  & \vdash \mathbf{0} \times A \reduce \mathbf{0} \\
+  & \vdash C(1) \times A \reduce A \\
+  & \vdash C(\alpha) \times C(\beta) \reduce C(\alpha \times \beta) \\
+  & \vdash A \times (B + C) \reduce A \times B + A \times C
+\end{align*}
+
+\subsubsection*{\textsf{SCR}}
+\begin{align*}
+    & \vdash \mathbf{0} . A \reduce \mathbf{0} \\
+    & \vdash A.\mathbf{0} \reduce \mathbf{0} \\
+    & \vdash C(1).X \reduce X \\
+    & \vdash A.(B.X) \reduce (A \times B).X \\
+    & \vdash S.(A + B) \reduce S.A + S.B
+\end{align*}
+
+\subsubsection*{\textsf{ADD}}
+\begin{align*}
+    & \vdash C(\alpha) + C(\beta) \reduce C(\alpha + \beta) \\
+    & \vdash \mathbf{0} + A \reduce A \\
+    & \vdash D + D \reduce C(1 + 1).D \\
+    & \vdash A \times D + D \reduce (A + C(1)).D \\
+    & \vdash A \times D + B \times D \reduce (A + B).D \\
+\end{align*}
+
+\subsubsection*{\textsf{DOT}}
+\begin{align*}
+  & \vdash \mathbf{0} \cdot A \reduce \mathbf{0} \\
+  & \vdash A \cdot \mathbf{0} \reduce \mathbf{0} \\
+  & \vdash \textbf{1} \cdot A \reduce A \\
+  & \vdash A \cdot \textbf{1} \reduce A \\
+  & \vdash \bra{s} \cdot \ket{t} \reduce \delta_{s, t} \\
+  & \vdash (S.A) \cdot B \reduce S.(A \cdot B) \\
+  & \vdash A \cdot (S.B) \reduce S.(A \cdot B) \\
+  & \vdash (A + B) \cdot C \reduce A \cdot C + B \cdot C \\
+  & \vdash A \cdot (B + C) \reduce A \cdot B + A \cdot C \\
+  & \vdash (A \otimes B) \cdot \ket{t} \reduce (A \cdot \ket{\fst\ t}) \otimes (B \cdot \ket{\snd\ t}) \\
+  & \vdash \bra{t} \cdot (A \otimes B) \reduce (\bra{\fst\ t} \cdot A) \otimes (\bra{\snd\ t} \cdot B) \\
+  & \vdash (A \otimes B) \cdot (C \otimes D) \reduce (A \cdot C) \otimes (B \cdot D)
+\end{align*}
+
+
+\subsubsection*{\textsf{TSR}}
+\begin{align*}
+%   & \vdash C(\alpha) \otimes C(\beta) \reduce C(\alpha) \times C(\beta) \\
+%   & \vdash C(\alpha) \otimes \delta_{s, t} \reduce C(\alpha) \times \delta_{s, t} \\ 
+%   & \vdash \delta_{s, t} \otimes C(\alpha) \reduce C(\alpha) \times \delta_{s, t} \\ 
+%   & \vdash \delta_{s, t} \otimes \delta_{p, q} \reduce \delta_{s, t} \times \delta_{p, q} \\ 
+%   \\
+  & \vdash \mathbf{0} \otimes X \reduce \mathbf{0} \\
+  & \vdash X \otimes \mathbf{0} \reduce \mathbf{0} \\
+  & \vdash \ket{s} \otimes \ket{t}\reduce \ket{(s, t)} \\
+  & \vdash \bra{s} \otimes \bra{t}\reduce \bra{(s, t)} \\
+  & \vdash \mathbf{1} \otimes \mathbf{1} \reduce \mathbf{1} \\
+  & \vdash (S.A) \otimes B \reduce S.(A \otimes B) \\
+  & \vdash A \otimes (S.B) \reduce S.(A \otimes B) \\
+  & \vdash (A + B) \otimes C \reduce A \otimes C + B \otimes C \\
+  & \vdash A \otimes (B + C) \reduce A \otimes B + A \otimes C
+\end{align*}
