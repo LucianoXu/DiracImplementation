@@ -28,15 +28,16 @@ The core language DN consists of limited symbols for Dirac notation, and its ter
   The \textbf{language of Dirac Notation}, denoted as $\mathfrak{DN}(\Sigma_\mathcal{B}, \Sigma_\mathcal{S})$, has five sorts defined as follows:
   \begin{align*}
     & \mathcal{A} \textrm{(base)} && t ::= && x\ |\ b\ |\ (t, t)\ |\ \fst\ t\ |\ \snd\ t \\
-    & \mathcal{S} \textrm{(scalar)} && S ::= && x\ |\ C(\alpha)\ |\ \delta_{t, t}\ |\ S + S\ |\ S \times S\ |\ S^*\ |\ B \cdot K \\
-    & \mathcal{D} \textrm{(Dirac notation)} && D ::= && x\ |\ \mathbf{0}\ |\ D^\dagger\ |\ S.D\ |\ D + D\ |\ K\ |\ B\ |\ O \\
-    & \mathcal{K} \textrm{(ket)} && K ::= && \ket{s}\ |\ D \cdot_{K} D\ |\ D \otimes_{K} D \\
-    & \mathcal{B} \textrm{(bra)} && B ::= && \bra{s}\ |\ D \cdot_{B} D\ |\ D \otimes_{B} D \\
-    & \mathcal{O} \textrm{(operator)} && O ::= && \mathbf{1}_\mathcal{O}\ |\ D \otimes_P D\ |\ D \cdot_{O} D\ |\ D \otimes_{O} D
+    & \mathcal{S} \textrm{(scalar)} && S ::= && x\ |\ C(\alpha)\ |\ \delta_{t, t}\ |\ S + S\ |\ S \times S\ |\ S^*\ |\ B \cdot_I K \\
+    & \mathcal{D} \textrm{(Dirac notation)} && D ::= && x\ |\ \mathbf{0}\ |\ D^\dagger\ |\ S.D\ |\ D + D\ |\ D \otimes D\ |\ K\ |\ B\ |\ O \\
+    & \mathcal{K} \textrm{(ket)} && K ::= && \ket{s}\ |\ D \cdot_{K} D \\
+    & \mathcal{B} \textrm{(bra)} && B ::= && \bra{s}\ |\ D \cdot_{B} D \\
+    & \mathcal{O} \textrm{(operator)} && O ::= && \mathbf{1}_\mathcal{O}\ |\ D \otimes_P D\ |\ D \cdot_{O} D
   \end{align*}
   Here $x$ is a variable, $b$ is a term of $\Sigma_\mathcal{B}$ and $\alpha$ is a term of $\Sigma_\mathcal{S}$.
 
 \end{definition}
+\yx{Here the ordered sorts are only for the purpose of expressing the theory. In \texttt{CiME2} and the implementation, there is only one universal sort.}
 
 \textbf{Remark: } Although we use the same symbol in different sorts ($B \cdot K$ and $O \cdot K$, for example), they are actually different funtions and can be easily distinguished by the context. This is also reflected in the \texttt{CiME} script.
 
@@ -211,6 +212,20 @@ We want to study the theory of Dirac notations modulo the scalars and classical 
   & \vdash S_1.X + S_2.X \reduce (S_1 + S_2).X
 \end{align*}
 
+\subsubsection*{\textsf{TSR}}
+\begin{align*}
+  & \vdash \mathbf{0} \otimes X \reduce \mathbf{0} \\
+  & \vdash X \otimes \mathbf{0} \reduce \mathbf{0} \\
+  & \vdash \ket{s} \otimes \ket{t}\reduce \ket{(s, t)} \\
+  & \vdash \bra{s} \otimes \bra{t}\reduce \bra{(s, t)} \\
+  & \vdash \mathbf{1}_\mathcal{O} \otimes \mathbf{1}_\mathcal{O} \reduce \mathbf{1}_\mathcal{O} \\
+  & \vdash (K_1 \otimes B_1) \otimes (K_2 \otimes B_2) \reduce (K_1 \otimes K_2) \otimes (B_1 \otimes B_2) \\
+  & \vdash (S.X_1) \otimes X_2 \reduce S.(X_1 \otimes X_2) \\
+  & \vdash X_1 \otimes (S.X_2) \reduce S.(X_1 \otimes X_2) \\
+  & \vdash (X_1 + X_2) \otimes X_3 \reduce X_1 \otimes X_3 + X_2 \otimes X_3 \\
+  & \vdash X_1 \otimes (X_2 + X_3) \reduce X_1 \otimes X_2 + X_1 \otimes X_3
+\end{align*}
+
 \subsubsection*{\textsf{KET-MLT}}
 \begin{align*}
   & \vdash \textbf{0} \cdot K \reduce \textbf{0} \\
@@ -229,17 +244,6 @@ We want to study the theory of Dirac notations modulo the scalars and classical 
 
 \textbf{Remark: } Again, the difficulty comes from space structure. The intuition for reductions is also the same: decompose the multiplication when at least one side is explicitly in tensor product form.
 
-
-\subsubsection*{\textsf{KET-TSR}}
-\begin{align*}
-  & \vdash \mathbf{0} \otimes K \reduce \mathbf{0} \\
-  & \vdash K \otimes \mathbf{0} \reduce \mathbf{0} \\
-  & \vdash \ket{s} \otimes \ket{t}\reduce\ket{(s, t)} \\
-  & \vdash (S.K_1) \otimes K_2 \reduce S.(K_1 \otimes K_2) \\
-  & \vdash K_1 \otimes (S.K_2) \reduce S.(K_1 \otimes K_2) \\
-  & \vdash (K_1 + K_2) \otimes K_3 \reduce K_1 \otimes K_3 + K_2 \otimes K_3 \\
-  & \vdash K_1 \otimes (K_2 + K_3) \reduce K_1 \otimes K_2 + K_1 \otimes K_3
-\end{align*}
 
 \textbf{Remark: } The rules for bra are symmetric to the rules for ket. Only the correspondence of rules in red are different:
 
@@ -276,18 +280,6 @@ We want to study the theory of Dirac notations modulo the scalars and classical 
   & \vdash (O_1 \otimes O_2) \cdot ((O_1' \otimes O_2') \cdot O_3) \reduce ((O_1 \cdot O_1') \otimes (O_2 \cdot O_2')) \cdot O_3
 \end{align*}
 
-
-\subsubsection*{\textsf{OPT-TSR}}
-\begin{align*}
-  & \vdash \mathbf{0} \otimes O \reduce \mathbf{0} \\
-  & \vdash O \otimes \mathbf{0} \reduce \mathbf{0} \\
-  & \vdash \mathbf{1}_\mathcal{O} \otimes \mathbf{1}_\mathcal{O} \reduce \mathbf{1}_\mathcal{O} \\
-  & \vdash (K_1 \otimes B_1) \otimes (K_2 \otimes B_2) \reduce (K_1 \otimes K_2) \otimes (B_1 \otimes B_2) \\
-  & \vdash (S.O_1) \otimes O_2 \reduce S.(O_1 \otimes O_2) \\
-  & \vdash O_1 \otimes (S.O_2) \reduce S.(O_1 \otimes O_2) \\
-  & \vdash (O_1 + O_2) \otimes O_3 \reduce O_1 \otimes O_3 + O_2 \otimes O_3 \\
-  & \vdash O_1 \otimes (O_2 + O_3) \reduce O_1 \otimes O_2 + O_1 \otimes O_3
-\end{align*}
 
 
 \section{Confluence of DN}
@@ -972,12 +964,7 @@ Similar to the universal application symbol $\circ$, we also use $A \otimes B$ a
 
 \begin{definition}[labelled core language]
   \begin{align*}
-    \tilde{D} ::=\ & D_{R}\ |\ D_{R; R}\\
-    & |\ \tilde{D}^\dagger\ |\ S.\tilde{D}\ |\ \tilde{D} + \tilde{D} \\
-    & |\ \tilde{D} \cdot_K \tilde{D}\ |\ \tilde{D} \otimes_K \tilde{D}\\
-    & |\ \tilde{D} \cdot_B \tilde{D}\ |\ \tilde{D} \otimes_B \tilde{D}\\
-    & |\ \tilde{D} \otimes_P \tilde{D}\ |\ \tilde{D} \cdot_O \tilde{D}\ |\ \tilde{D} \otimes_O \tilde{D} \\
-    S ::=\ & \tilde{D} \cdot \tilde{D}
+    D ::=\ & D_{R}\ |\ D_{R; R}\ |\ D \tilde{\otimes} D
   \end{align*}
   In other words, we don't allow variables for labelled core language.
   Here, $\otimes_K$, $\otimes_B$ and $\otimes_P$ are AC symbols.
@@ -990,8 +977,15 @@ Similar to the universal application symbol $\circ$, we also use $A \otimes B$ a
 \begin{align*}
   & \ket{(s, t)}_{(Q, R)} \reduce \ket{s}_{Q} \otimes \ket{t}_{R} \\
   & \bra{(s, t)}_{(Q, R)} \reduce \bra{s}_{Q} \otimes \bra{s}_{R} \\
+  & \mathbf{0}_{(Q, R)} \reduce \mathbf{0}_{Q} \otimes \mathbf{0}_{R} \\
+  & \mathbf{0}_{(Q_1, Q_2); R} \reduce \mathbf{0}_{Q_1; \fst\ R} \otimes \mathbf{0}_{Q_2; \fst\ R} \\
+  & \mathbf{0}_{Q; (R_1, R_2)} \reduce \mathbf{0}_{\fst\ Q; R_1} \otimes \mathbf{0}_{\snd\ Q; R_2} \\
+  & \mathbf{1}_{(Q, R)} \reduce \mathbf{1}_{Q} \otimes \mathbf{1}_{R} \\
+  & \mathbf{1}_{(Q_1, Q_2); R} \reduce \mathbf{1}_{Q_1; \fst\ R} \otimes \mathbf{1}_{Q_2; \fst\ R} \\
+  & \mathbf{1}_{Q; (R_1, R_2)} \reduce \mathbf{1}_{\fst\ Q; R_1} \otimes \mathbf{1}_{\snd\ Q; R_2} \\
+  & (A \otimes B)_{(Q, R)} \reduce A_{Q} \otimes B_{R} \\
   & (A \otimes_O B)_{(Q_1, Q_2); R} \reduce A_{Q_1; \fst\ R} \otimes_O B_{Q_2; \snd\ R} \\
-  & (A \otimes_O B)_{Q; (R_1, R_2)} \reduce A_{\fst\ Q; R_1} \otimes_O B_{\snd\ Q; R_2} \\
+  & (A \otimes_O B)_{Q; (R_1, R_2)} \reduce A_{\fst\ Q; R_1} \otimes_O B_{\snd\ Q; R_2}
 \end{align*}
 
 
@@ -1010,24 +1004,24 @@ Similar to the universal application symbol $\circ$, we also use $A \otimes B$ a
 \begin{align*}
   & (A_{R})^\dagger \reduce (A^\dagger)_{R} \\
   & (A_{Q; R})^\dagger \reduce (A^\dagger)_{Q; R} \\
+  & (A_{R})^\top \reduce (A^\top)_{R} \\
+  & (A_{Q; R})^\top \reduce (A^\top)_{Q; R} \\
   & (S.A)_{R} \reduce S.(A_{R}) \\
   & (S.A)_{Q; R} \reduce S.(A_{Q; R})\\
-  & \textcolor{blue}{A_{R} + B_{R} \reduce (A + B)_{R}} \\
-  & \textcolor{blue}{A_{Q; R} + B_{Q; R} \reduce (A + B)_{Q; R}} \\
-  \\
-  & A + A \reduce C(1 + 1).A \\
-  & A + S.A \reduce (S + C(1)).A \\
-  & S_1.A + S_2.A \reduce (S_1 + S_2).A \\
+  & \textcolor{blue}{(A + B)_{R} \reduce A_{R} + B_{R}} \\
+  & \textcolor{blue}{(A + B)_{Q; R} \reduce A_{Q; R} + B_{Q; R}} \\
   \\
   & A_{Q; R} \cdot_O B_{R; S} \reduce (A \cdot_O B)_{Q; S} \\
   & A_{Q; R} \cdot_O B_{R} \reduce (A \cdot_O B)_{Q; R} \\
   & A_{Q} \cdot_O B_{Q; R} \reduce (A \cdot_O B)_{Q; R} \\
   & A_{Q; R} \cdot_K B_{R} \reduce (A \cdot_K B)_{Q} \\
   & A_{Q} \cdot_B B_{Q; R} \reduce (A \cdot_B B)_{R} \\
-  & A_{R} \cdot_O B_{R} \reduce (A \cdot B)_{R} \\
+  & A_{R} \cdot_O B_{R} \reduce (A \cdot_O B)_{R} \\
   & A_{R} \cdot_I B_{R} \reduce (A \cdot_I B) \\
+  \\
+  & (K \otimes_P B)_{R} \reduce K_{R} \otimes_P B_{R} \\
+  & (K \otimes_P B)_{Q; R} \reduce K_{Q} \otimes_P B_{R}
 \end{align*}
-
 
 \subsubsection*{\textsf{OPT-EXT}}
 I think the concept ``cylinder extension'' is only limited to endomorphisms. Besides, one quantum register should a sub-register of the other one, which is defined as follows:
@@ -1064,4 +1058,16 @@ I think the concept ``cylinder extension'' is only limited to endomorphisms. Bes
   & \frac{Q \textrm{ is a subterm of } R \textrm{ at } p}{A_{Q} \cdot B_{R} \reduce (\textrm{ext}(A, p) \cdot B)_{R}} \\
   \\
   & \frac{R \textrm{ is a subterm of } Q \textrm{ at } p}{A_{Q} \cdot B_{R} \reduce (A \cdot \textrm{ext}(B, p))_{Q}} \\
+\end{align*}
+
+\begin{align*}
+  & \frac{Q \textrm{ is in } R}{A_{Q} \cdot (B_{R} \otimes X) \reduce (A_{Q} \cdot B_{R}) \otimes X} \\
+  \\
+  & \frac{R \textrm{ is in } Q}{(A_{Q} \otimes X) \cdot B_{R} \reduce X \otimes (A_{Q} \cdot B_{R})} \\
+\end{align*}
+
+\subsubsection*{\textsf{LABEL-SUM}}
+\begin{align*}
+  & (\sum_{i \in S} A)_{R} \reduce \sum_{i \in S} (A_{R}) \\
+  & (\sum_{i \in S} A)_{Q; R} \reduce \sum_{i \in S} (A_{Q: R}) \\
 \end{align*}
