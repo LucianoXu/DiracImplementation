@@ -16,33 +16,41 @@
   & \vdash \delta_{\fst\ u, \fst\ v}\times\delta_{\snd\ u, \snd\ v} \reduce \delta_{u, v}
 \end{align*}
 
-
-\subsubsection*{\textsf{SCR-COP}}
+\subsubsection*{\textsf{CONJ}}
 \begin{align*}
-  & \vdash C(0) \reduce \mathbf{0} \\
+  & \vdash C(\alpha)^* \reduce C(\alpha^*) \\
+  & \vdash \delta_{s, t}^* \reduce \delta_{s, t} \\
+  & \vdash (A + B)^* \reduce A^* + B^* \\
+  & \vdash (A \times B)^* \reduce A^* \times B^* \\
+  & \vdash (A^*)^* \reduce A
 \end{align*}
-
 
 \subsubsection*{\textsf{ADJ}}
 \begin{align*}
-  & \vdash C(\alpha)^\dagger \reduce C(\alpha^*) \\
-  & \vdash \delta_{s, t}^\dagger \reduce \delta_{s, t} \\
   & \vdash \textbf{0}^\dagger \reduce \textbf{0} \\
   & \vdash \mathbf{1}^\dagger \reduce \mathbf{1} \\
   & \vdash \bra{t}^\dagger \reduce \ket{t}\\
   & \vdash \ket{t}^\dagger \reduce \bra{t}\\
   & \vdash (A^\dagger)^\dagger \reduce A \\
-  & \vdash (A \times B)^\dagger \reduce A^\dagger \times B^\dagger \\
-  & \vdash (S.A)^\dagger \reduce S^\dagger . A^\dagger \\
+  & \vdash (S.A)^\dagger \reduce S^* . A^\dagger \\
   & \vdash (A + B)^\dagger \reduce A^\dagger + B^\dagger\\
   & \vdash (A \cdot B)^\dagger \reduce B^\dagger \cdot A^\dagger \\
   & \vdash (A \otimes B)^\dagger \reduce A^\dagger \otimes B^\dagger
 \end{align*}
 
 
+\subsubsection*{\textsf{ADDS}}
+\begin{align*}
+    & \vdash C(0) + S \reduce S \\
+    & \vdash C(\alpha) + C(\beta) \reduce C(\alpha + \beta) \\
+    & \vdash D + D \reduce C(1 + 1) \times D \\
+    & \vdash C(a) \times A + A \reduce C(a + 1) \times A \\
+    & \vdash C(a) \times A + C(b) \times A \reduce C(a + b) \times D \\
+\end{align*}
+
 \subsubsection*{\textsf{MLT}}
 \begin{align*}
-  & \vdash \mathbf{0} \times A \reduce \mathbf{0} \\
+  & \vdash C(0) \times A \reduce C(0) \\
   & \vdash C(1) \times A \reduce A \\
   & \vdash C(\alpha) \times C(\beta) \reduce C(\alpha \times \beta) \\
   & \vdash A \times (B + C) \reduce A \times B + A \times C
@@ -50,7 +58,7 @@
 
 \subsubsection*{\textsf{SCR}}
 \begin{align*}
-    & \vdash \mathbf{0} . A \reduce \mathbf{0} \\
+    & \vdash C(0) . A \reduce \mathbf{0} \\
     & \vdash A.\mathbf{0} \reduce \mathbf{0} \\
     & \vdash C(1).X \reduce X \\
     & \vdash A.(B.X) \reduce (A \times B).X \\
@@ -59,11 +67,10 @@
 
 \subsubsection*{\textsf{ADD}}
 \begin{align*}
-    & \vdash C(\alpha) + C(\beta) \reduce C(\alpha + \beta) \\
     & \vdash \mathbf{0} + A \reduce A \\
     & \vdash D + D \reduce C(1 + 1).D \\
-    & \vdash A \times D + D \reduce (A + C(1)).D \\
-    & \vdash A \times D + B \times D \reduce (A + B).D \\
+    & \vdash A.D + D \reduce (A + C(1)).D \\
+    & \vdash A.D + B.D \reduce (A + B).D \\
 \end{align*}
 
 \subsubsection*{\textsf{DOT}}

@@ -1,8 +1,55 @@
-\documentclass{book}
-\usepackage[utf8]{inputenc}
-\usepackage[margin=0.8in]{geometry}
-%\usepackage{natbib}
-%\usepackage{graphicx}
+%%
+%% This is file `sample-acmlarge.tex',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% samples.dtx  (with options: `all,journal,bibtex,acmlarge')
+%% 
+%% IMPORTANT NOTICE:
+%% 
+%% For the copyright see the source file.
+%% 
+%% Any modified versions of this file must be renamed
+%% with new filenames distinct from sample-acmlarge.tex.
+%% 
+%% For distribution of the original source see the terms
+%% for copying and modification in the file samples.dtx.
+%% 
+%% This generated file may be distributed as long as the
+%% original source files, as listed above, are part of the
+%% same distribution. (The sources need not necessarily be
+%% in the same archive or directory.)
+%%
+%%
+%% Commands for TeXCount
+%TC:macro \cite [option:text,text]
+%TC:macro \citep [option:text,text]
+%TC:macro \citet [option:text,text]
+%TC:envir table 0 1
+%TC:envir table* 0 1
+%TC:envir tabular [ignore] word
+%TC:envir displaymath 0 word
+%TC:envir math 0 word
+%TC:envir comment 0 0
+%%
+%%
+%% The first command in your LaTeX source must be the \documentclass
+%% command.
+%%
+%% For submission and review of your manuscript please change the
+%% command to \documentclass[manuscript, screen, review]{acmart}.
+%%
+%% When submitting camera ready or to TAPS, please change the command
+%% to \documentclass[sigconf]{acmart} or whichever template is required
+%% for your publication.
+%%
+%%
+\documentclass[manuscript, review, timestamp]{acmart}
+
+
+
+
 \usepackage{color}
 \usepackage{amsmath}
 %\usepackage{amssymb}
@@ -14,14 +61,7 @@
 \usepackage{paralist}
 \usepackage{hhline}
 \usepackage{bm}
-\usepackage{listings,lstcoq}
-\definecolor{ltblue}{rgb}{0,0.4,0.4}
-\definecolor{dkblue}{rgb}{0,0.1,0.6}
-\definecolor{dkgreen}{rgb}{0,0.35,0}
-\definecolor{dkviolet}{rgb}{0.3,0,0.5}
-\definecolor{dkred}{rgb}{0.5,0,0}
-\lstset{language=Coq}
-\usepackage{pmboxdraw}
+\usepackage{braket}
 \usepackage{pifont}% http://ctan.org/pkg/pifont
 \newcommand{\cmark}{\CIRCLE}%
 \newcommand{\xmark}{\Circle}%
@@ -34,59 +74,1260 @@
 \usepackage{wrapfig}
 \usepackage{dsfont}
 
-\input{notations}
 
-\newcommand{\gb}[1]{\textit{\color{green}[GB] : #1}}
-\newcommand{\py}[1]{\textit{\color{red}[PY] : #1}}
-\newcommand{\lz}[1]{\textit{\color{blue}[LZ] : #1}}
-\newcommand{\jl}[1]{\textit{\color{blue}[JL] : #1}}
+
+
+%%
+%% \BibTeX command to typeset BibTeX logo in the docs
+\AtBeginDocument{%
+  \providecommand\BibTeX{{%
+    Bib\TeX}}}
+
+%% Rights management information.  This information is sent to you
+%% when you complete the rights form.  These commands have SAMPLE
+%% values in them; it is your responsibility as an author to replace
+%% the commands and values with those provided to you when you
+%% complete the rights form.
+
+%%
+%% Submission ID.
+%% Use this when submitting an article to a sponsored event. You'll
+%% receive a unique submission ID from the organizers
+%% of the event, and this ID should be used as the parameter to this command.
+%%\acmSubmissionID{123-A56-BU3}
+
+%%
+%% For managing citations, it is recommended to use bibliography
+%% files in BibTeX format.
+%%
+%% You can then either use BibTeX with the ACM-Reference-Format style,
+%% or BibLaTeX with the acmnumeric or acmauthoryear sytles, that include
+%% support for advanced citation of software artefact from the
+%% biblatex-software package, also separately available on CTAN.
+%%
+%% Look at the sample-*-biblatex.tex files for templates showcasing
+%% the biblatex styles.
+%%
+
+%%
+%% The majority of ACM publications use numbered citations and
+%% references.  The command \citestyle{authoryear} switches to the
+%% "author year" style.
+%%
+%% If you are preparing content for an event
+%% sponsored by ACM SIGGRAPH, you must use the "author year" style of
+%% citations and references.
+%% Uncommenting
+%% the next command will enable that style.
+%%\citestyle{acmauthoryear}
+
 \newcommand{\yx}[1]{\textit{\color{blue}[YX] : #1}}
 
-\newcommand{\modify}[1]{{\color{red}#1}}
-
-\usepackage{amssymb}
-\usepackage{amsmath}
-\usepackage{stmaryrd}
-\usepackage{hyperref}
-
-\usepackage{braket}
-
-
-\title{\textbf{Dirac Notation Theories}\\ 
-\Large{Infrastructure for Quantum Formal Systems}}
-\author{}
-
+%%
+%% end of the preamble, start of the body of the document source.
 \begin{document}
 
-% \maketitle
+%%
+%% The "title" command has an optional parameter,
+%% allowing the author to define a "short title" to be used in page headers.
+\title{Decision Procedure for Dirac Notations}
 
-% \tableofcontents
+%%
+%% The "author" command and its associated commands are used to define
+%% the authors and their affiliations.
+%% Of note is the shared affiliation of the first two authors, and the
+%% "authornote" and "authornotemark" commands
+%% used to denote shared contribution to the research.
 
-% \clearpage
+%%
+%% By default, the full list of authors will be used in the page
+%% headers. Often, this list is too long, and will overlap
+%% other information printed in the page headers. This command allows
+%% the author to define a more concise list
+%% of authors' names for this purpose.
+
+%%
+%% The abstract is a short summary of the work to be presented in the
+%% article.
+\begin{abstract}
+\end{abstract}
+
+%%
+%% The code below is generated by the tool at http://dl.acm.org/ccs.cfm.
+%% Please copy and paste the code instead of the example below.
+%%
+
+%%
+%% Keywords. The author(s) should pick words that accurately describe
+%% the work being presented. Separate the keywords with commas.
+
+%%
+%% This command processes the author and affiliation and title
+%% information and builds the first part of the formatted document.
+\maketitle
+
+\section{The Core Language: Untyped Dirac Notation}
+One difficulty of formalizing Dirac notations and designing the rewriting rules is the overloading of operators. This feature makes Dirac notations flexible and easy to use, but also introduced ambiguity into the syntax. In the core langauge, we want to prove some desired properties of the term rewriting system, such as congruence and soundness, and we have to rely on existing theories and tools. Therefore we choose the untyped universal algebra with AC symbols.
 
 
-\input{chapters/20240315.tex}
+\newcommand*{\unit}{\texttt{unit}}
+\newcommand*{\utt}{\texttt{tt}}
+\newcommand*{\fst}{\texttt{fst}}
+\newcommand*{\snd}{\texttt{snd}}
+\newcommand*{\reduce}{\ \triangleright\ }
+\newcommand*{\reducefrom}{\ \triangleleft\ }
+
+\newcommand*{\zeroK}[1]{\mathbf{0}_{\mathcal{K}(#1)}}
+\newcommand*{\zeroB}[1]{\mathbf{0}_{\mathcal{B}(#1)}}
+\newcommand*{\zeroO}[1]{\mathbf{0}_{\mathcal{O}(#1)}}
 
 
-% first version involving implementation, transpose and big-op
-% \input{chapters/20240308.tex}
-% \input{chapters/20240301.tex}
+\section{Core Language: DN}
 
-% \input{chapters/20240126.tex}
+The core language DN consists of limited symbols for Dirac notation, and its term rewriting system is expressed in standard AC-rewriting.
 
-% inappropriate but innovative ideas of AC tensor/multiplication. Can be used as a reference for lablled Dirac notations.
-\input{chapters/20240112.tex}
+% \begin{definition} [atomic basis signature]
+%   The \textbf{atomic basis signature} $\Sigma_\mathcal{B}$ is an arbitrary signature.
+% \end{definition}
 
-% \input{chapters/20240105.tex}
+% \begin{definition} [complex scalar signature]
+%   The \textbf{complex scalar signature} $\Sigma_\mathcal{S}$ contains constant symbols $0, 1$, a unary symbol $*$ and binary symbols $+, \times$.
+% \end{definition}
 
-% good discussion on big operators, Dirac lambda calculus, labelled Dirac notation
-% \input{chapters/20231215.tex}
+\begin{definition}[language of Dirac Notation]
+  The \textbf{language of Dirac Notation}, denoted as $\mathfrak{DN}(\Sigma_\mathcal{B}, \Sigma_\mathcal{S})$, has five sorts defined as follows:
+  \begin{align*}
+    & \mathcal{C} \textrm{(complex)} && \alpha ::= x\ |\ 0\ |\ 1\ |\ \alpha + \alpha\ |\ \alpha \times \alpha\ |\ \alpha^* \\
+    & \mathcal{A} \textrm{(base)} && t ::= x\ |\ (t, t)\ |\ \fst\ t\ |\ \snd\ t \\
+    & \mathcal{S} \textrm{(scalar)} && S ::= x\ |\ C(\alpha)\ |\ \delta_{t, t}\ |\ S + S\ |\ S \times S\ |\ S^*\ |\ B \cdot K \\
+    & \mathcal{K} \textrm{(ket)} && K ::= x\ |\ \mathbf{0}_\mathcal{K}\ |\ \ket{t}\ |\ B^\dagger\ |\ S.K\ |\ K + K\ |\ O \cdot K\ |\ K \otimes K \\
+    & \mathcal{B} \textrm{(bra)} && B ::= x\ |\ \mathbf{0}_\mathcal{B}\ |\ \bra{t}\ |\ K^\dagger\ |\ S.B\ |\ B + B\ |\ B \cdot O\ |\ B \otimes B \\
+    & \mathcal{O} \textrm{(operator)} && O ::= x\ |\ \mathbf{0}_\mathcal{O}\ |\ \mathbf{1}_\mathcal{O}\ |\ K \otimes B\ |\ O^\dagger\ |\ S.O\ |\ O + O\ |\ O \cdot O\ |\ O \otimes O
+  \end{align*}
+  Here $x$ represents variables.
+  % $b$ is a term of $\Sigma_\mathcal{B}$ and $\alpha$ is a term of $\Sigma_\mathcal{S}$.
 
-% \input{chapters/20231208.tex}
+\end{definition}
 
-% \input{chapters/20231117.tex}
+\textbf{Remark: } Although we use the same characters in different sorts ($B \cdot K$ and $O \cdot K$, for example), they are actually different symbols and can be easily distinguished by the context. This is also reflected in the \texttt{CiME2} script. The language is intended to be used in the multi-sorted manner, but in the proof of confluence property, we check the unsorted version. The unsorted version simply removes all sort constraints, and its confluence is equivalent to that of the multi-sorted version, which is the persistancy proved in \cite{Aoto1997}.
+
+
+Transpose is also an important operation pervasively used in quantum information. The core language here does not incoporate this symbol due to some confluence problems.
+
+
+\subsection{Semantics}
+(Constructed in CoqQ.)
+
+\subsection{TRS for DN}
+\label{sec: typed_dirac_rules}
+
+\begin{definition} [TRS $\mathfrak{DN}$]
+  The AC-rewrite system $\mathfrak{DN}$ conssits of all the rules in Sec.\ref{sec: typed_dirac_rules}.
+  The AC-symbols are $+$ (for all sorts) and $\times$. The commutative symbol is $\delta_{s, t}$.
+\end{definition}
+
+\subsubsection*{\textsf{COMPLEX}}
+\begin{gather*}
+  0 + \alpha \reduce \alpha
+  \qquad
+  0 \times \alpha \reduce 0
+  \qquad
+  1 \times \alpha \reduce \alpha\\
+  \alpha \times (\beta + \gamma) \reduce \alpha \times \beta + \alpha \times \gamma\\
+  0^* \reduce 0
+  \qquad
+  1^* \reduce 1 \\
+  (\alpha + \beta)^* \reduce \alpha^* + \beta^*
+  \qquad
+  (\alpha \times \beta)^* \reduce \alpha^* \times \beta^*
+  \qquad
+  (\alpha^*)^* \reduce \alpha
+\end{gather*}
+
+
+\subsubsection*{\textsf{BASIS}}
+\begin{align*}
+    \fst\ (e_1, e_2) \reduce e_1
+    \qquad
+    \snd\ (e_1, e_2) \reduce e_2
+    \qquad
+    (\fst\ e, \snd\ e)\reduce e
+\end{align*}
+
+\subsubsection*{\textsf{DELTA}}
+\begin{align*}
+  & \delta_{u, (s, t)} \reduce \delta_{\fst\ u, s} \times \delta_{\snd\ u, t} 
+  \qquad
+  \delta_{\fst\ u, \fst\ v}\times\delta_{\snd\ u, \snd\ v} \reduce \delta_{u, v}
+\end{align*}
+
+\textbf{Remark: } These rules are for completion.
+
+
+\subsubsection*{\textsf{SCR-COP}}
+\begin{gather*}
+   C(0) + S \reduce S
+  \qquad
+   C(\alpha) + C(\beta) \reduce C(\alpha + \beta)
+  \qquad
+   S + S \reduce C(1 + 1) \times S \\
+   C(\alpha) \times S + S \reduce C(\alpha + 1) \times S
+  \qquad
+   C(\alpha) \times S + C(\beta) \times S \reduce C(\alpha + \beta) \times S
+  \\
+  \\
+   C(0) \times S \reduce C(0)
+  \qquad
+   C(1) \times S \reduce S
+  \qquad
+   C(\alpha) \times C(\beta) \reduce C(\alpha \times \beta)
+  \qquad
+   S_1 \times (S_2 + S_3) \reduce S_1 \times S_2 + S_1 \times S_3
+  \\
+  \\
+   C(\alpha)^* \reduce C(\alpha^*)
+  \qquad
+   \delta_{s, t}^* \reduce \delta_{s, t} \\
+   (S_1 + S_2)^* \reduce S_1^* + S_2^*
+  \qquad
+   (S_1 \times S_2)^* \reduce S_1^* \times S_2^*
+  \qquad
+   (S^*)^* \reduce S
+  \qquad
+   (B \cdot K)^* \reduce K^\dagger \cdot B^\dagger
+\end{gather*}
+
+
+
+\subsubsection*{\textsf{SCR-DOT}}
+\begin{gather*}
+  \mathbf{0}_\mathcal{B} \cdot K \reduce C(0)
+  \qquad
+  B \cdot \mathbf{0}_\mathcal{K} \reduce C(0)
+  \qquad
+  (S.B) \cdot K \reduce S \times (B \cdot K)
+  \qquad
+  B \cdot (S.K) \reduce S \times (B \cdot K) \\
+  (B_1 + B_2) \cdot K \reduce B_1 \cdot K + B_2 \cdot K
+  \qquad
+  B \cdot (K_1 + K_2) \reduce B \cdot K_1 + B \cdot K_2
+  \qquad
+  \bra{s} \cdot \ket{t} \reduce \delta_{s, t} \\
+\end{gather*}
+
+\begin{gather*}
+  (B_1 \otimes B_2) \cdot \ket{t} \reduce (B_1 \cdot \ket{\fst\ t}) \times (B_2 \cdot \ket{\snd\ t}) \\
+  \bra{t} \cdot (K_1 \otimes K_2) \reduce (\bra{\fst\ t} \cdot K_1) \times (\bra{\snd\ t} \cdot K_2) \\
+  (B_1 \otimes B_2) \cdot (K_1 \otimes K_2) \reduce (B_1 \cdot K_1) \times (B_2 \cdot K_2)
+\end{gather*}
+
+\textbf{Remark: } The difficulty here comes from Hilbert space structure. The intuition is that, we decompose the multiplication (inner product) when at least one side is explicitly in tensor product form.
+
+\textbf{Remark:} Notice that we don't consider $ (S.B) \cdot K \reduce (S^*).(B \cdot K)$. Inner product is linear (not conjugate linear) on $B$, because $B$ is already in the dual space.
+
+\subsubsection*{\textsf{SCR-SORT}}
+\begin{gather*}
+  (B \cdot O) \cdot K \reduce B \cdot (O \cdot K) \\
+  \bra{s} \cdot ((O_1 \otimes O_2) \cdot K) \reduce ((\bra{\fst\ s} \cdot O_1) \otimes (\bra{\snd\ t} \cdot O_2)) \cdot K \\
+  (B_1 \otimes B_2) \cdot ((O_1 \otimes O_2) \cdot K) \reduce ((B_1 \cdot O_1) \otimes (B_2 \cdot O_2)) \cdot K \\
+\end{gather*}
+
+
+\textbf{Remark: } The first rule sorts the multiplication to the right, which breaks the symmetry of ket and bra. The remaining two rules are for completion.
+
+\subsubsection*{\textsf{KET-ADJ}}
+\begin{gather*}
+  \textbf{0}_\mathcal{B}^\dagger \reduce \textbf{0}_\mathcal{K}
+  \qquad
+  \bra{t}^\dagger \reduce \ket{t}
+  \qquad
+  (K^\dagger)^\dagger \reduce K
+  \qquad
+  (S.B)^\dagger \reduce S^*.(B^\dagger) \\
+  (B_1 + B_2)^\dagger \reduce B_1^\dagger + B_2^\dagger
+  \qquad
+  (B \cdot O)^\dagger \reduce O^\dagger \cdot B^\dagger
+  \qquad
+  (B_1 \otimes B_2)^\dagger \reduce B_1^\dagger \otimes B_2^\dagger
+\end{gather*}
+
+\subsubsection*{\textsf{KET-SCR}}
+\begin{gather*}
+  C(0).K \reduce \textbf{0}_{\mathcal{K}}
+  \qquad
+  C(1).K \reduce K
+  \qquad
+  S.\textbf{0}_\mathcal{K} \reduce \textbf{0}_\mathcal{K}
+  \qquad
+  S_1.(S_2.K) \reduce (S_1 \times S_2).K
+  \qquad
+  S.(K_1 + K_2) \reduce S.K_1 + S.K_2
+\end{gather*}
+
+\subsubsection*{\textsf{KET-ADD}}
+\begin{gather*}
+  K + \textbf{0}_\mathcal{K} \reduce K
+  \qquad
+  K + K \reduce C(1 + 1).K
+  \qquad
+  S.K + K \reduce (S + C(1)).K
+  \qquad
+  S_1.K + S_2.K \reduce (S_1 + S_2).K
+\end{gather*}
+
+\subsubsection*{\textsf{KET-MLT}}
+\begin{gather*}
+  \textbf{0}_\mathcal{O} \cdot K \reduce \textbf{0}_\mathcal{K}
+  \qquad
+  O \cdot \mathbf{0}_{\mathcal{K}} \reduce \mathbf{0}_{\mathcal{K}}
+  \qquad
+  \textbf{1}_\mathcal{O} \cdot K \reduce K \\
+  (S.O) \cdot K \reduce S.(O \cdot K)
+  \qquad
+  O \cdot (S.K) \reduce S.(O \cdot K) \\
+  (O_1 + O_2) \cdot K \reduce O_1 \cdot K + O_2 \cdot K
+  \qquad
+  O \cdot (K_1 + K_2) \reduce O \cdot K_1 + O \cdot K_2 \\
+  \textcolor{red}{ (K_1 \otimes B) \cdot K_2 \reduce (B \cdot K_2).K_1}
+  \qquad
+  \textcolor{red}{ (O_1 \cdot O_2) \cdot K \reduce O_1 \cdot (O_2 \cdot K)} \\
+  \textcolor{red}{ (O_1 \otimes O_2) \cdot ((O_1' \otimes O_2') \cdot K) \reduce ((O_1 \cdot O_1') \otimes (O_2 \cdot O_2')) \cdot K} \\
+  (O_1 \otimes O_2) \cdot \ket{t} \reduce (O_1 \cdot \ket{\fst\ t}) \otimes (O_2 \cdot \ket{\snd\ t}) \\
+  (O_1 \otimes O_2) \cdot (K_1 \otimes K_2) \reduce (O_1 \cdot K_1) \otimes (O_2 \cdot K_2)
+\end{gather*}
+
+\textbf{Remark: } Again, the difficulty comes from space structure. The intuition for reductions is also the same: decompose the multiplication when at least one side is explicitly in tensor product form.
+
+
+\subsubsection*{\textsf{KET-TSR}}
+\begin{gather*}
+  \mathbf{0}_\mathcal{K} \otimes K \reduce \mathbf{0}_\mathcal{K}
+  \qquad
+  K \otimes \mathbf{0}_\mathcal{K} \reduce \mathbf{0}_\mathcal{K}
+  \qquad
+  \ket{s} \otimes \ket{t}\reduce\ket{(s, t)} \\
+  (S.K_1) \otimes K_2 \reduce S.(K_1 \otimes K_2)
+  \qquad
+  K_1 \otimes (S.K_2) \reduce S.(K_1 \otimes K_2) \\
+  (K_1 + K_2) \otimes K_3 \reduce K_1 \otimes K_3 + K_2 \otimes K_3
+  \qquad
+  K_1 \otimes (K_2 + K_3) \reduce K_1 \otimes K_2 + K_1 \otimes K_3
+\end{gather*}
+
+\textbf{Remark: } The rules for bra are symmetric to the rules for ket. Only the correspondence of rules in red are different:
+
+\begin{gather*}
+  B_1 \cdot (K \otimes B_2) \reduce (B_1 \cdot K).B_2 \\
+  B \cdot (O_1 \cdot O_2) \reduce (B \cdot O_1) \cdot O_2 \\
+  (B \cdot (O_1 \otimes O_2)) \cdot (O_1' \otimes O_2') \reduce B \cdot ((O_1 \cdot O_1') \otimes (O_2 \cdot O_2'))
+\end{gather*}
+
+\subsubsection*{\textsf{OPT-OUTER}}
+\begin{gather*}
+  \mathbf{0}_\mathcal{K} \otimes B \reduce \mathbf{0}_\mathcal{O}
+  \qquad
+  K \otimes \mathbf{0}_\mathcal{B} \reduce \mathbf{0}_\mathcal{O} \\
+  (S.K) \otimes B \reduce S.(K \otimes B)
+  \qquad
+  K \otimes (S.B) \reduce S.(K \otimes B) \\
+  (K_1 + K_2) \otimes B \reduce K_1 \otimes B + K_2 \otimes B
+  \qquad
+  K \otimes (B_1 + B_2) \reduce K \otimes B_1 + K \otimes B_2
+\end{gather*}
+
+
+\subsubsection*{\textsf{OPT-ADJ}}
+\begin{gather*}
+  \textbf{0}_\mathcal{O}^\dagger \reduce \textbf{0}_\mathcal{O}
+  \qquad
+  \textbf{1}_\mathcal{O}^\dagger \reduce \textbf{1}_\mathcal{O}
+  \qquad
+  (K \otimes B)^\dagger \reduce B^\dagger \otimes K^\dagger
+  \qquad
+  (O^\dagger)^\dagger \reduce O \\
+  (S.O)^\dagger \reduce S^*.(O^\dagger)
+  \qquad
+  (O_1 + O_2)^\dagger \reduce O_1^\dagger + O_2^\dagger
+  \qquad
+  (O_1 \cdot O_2)^\dagger \reduce O_2^\dagger \cdot O_1^\dagger
+  \qquad
+  (O_1 \otimes O_2)^\dagger \reduce O_1^\dagger \otimes O_2^\dagger
+\end{gather*}
+
+\subsubsection*{\textsf{OPT-SCR}}
+\begin{gather*}
+  C(0).O \reduce \mathbf{0}_\mathcal{O}
+  \qquad
+  C(1).O \reduce O
+  \qquad
+  S.\textbf{0}_\mathcal{O} \reduce \textbf{0}_\mathcal{O} \\
+  S_1.(S_2.O) \reduce (S_1 \times S_2).O
+  \qquad
+  S.(O_1 + O_2) \reduce S.O_1 + S.O_2
+\end{gather*}
+
+\subsubsection*{\textsf{OPT-ADD}}
+\begin{gather*}
+  O + \mathbf{0}_\mathcal{O} \reduce O
+  \qquad
+  O + O \reduce C(1 + 1).O
+  \quad
+  S.O + O \reduce (S + C(1)).O
+  \quad
+  S_1.O + S_2.O \reduce (S_1 + S_2).O
+\end{gather*}
+
+\subsubsection*{\textsf{OPT-MLT}}
+\begin{gather*}
+  \mathbf{0}_\mathcal{O} \cdot O \reduce \mathbf{0}_\mathcal{O}
+  \qquad
+  O \cdot \mathbf{0}_\mathcal{O} \reduce \mathbf{0}_\mathcal{O}
+  \qquad
+  \mathbf{1}_\mathcal{O} \cdot O \reduce O
+  \qquad
+  O \cdot \mathbf{1}_\mathcal{O} \reduce O \\
+  (K \otimes B) \cdot O \reduce K \otimes (B \cdot O)
+  \qquad
+  O \cdot (K \otimes B) \reduce (O \cdot K) \otimes B\\
+  (S.O_1) \cdot O_2 \reduce S.(O_1 \cdot O_2)
+  \qquad
+  O_1 \cdot (S.O_2) \reduce S.(O_1 \cdot O_2) \\
+  (O_1 + O_2) \cdot O_3 \reduce O_1 \cdot O_3 + O_2 \cdot O_3
+  \qquad
+  O_1 \cdot (O_2 + O_3) \reduce O_1 \cdot O_2 + O_1 \cdot O_3 \\
+  (O_1 \cdot O_2) \cdot O_3 \reduce O_1 \cdot (O_2 \cdot O_3) \\
+  (O_1 \otimes O_2) \cdot (O_1' \otimes O_2') \reduce (O_1 \cdot O_1') \otimes (O_2 \cdot O_2') \\
+  (O_1 \otimes O_2) \cdot ((O_1' \otimes O_2') \cdot O_3) \reduce ((O_1 \cdot O_1') \otimes (O_2 \cdot O_2')) \cdot O_3
+\end{gather*}
+
+
+\subsubsection*{\textsf{OPT-TSR}}
+\begin{gather*}
+  \mathbf{0}_\mathcal{O} \otimes O \reduce \mathbf{0}_\mathcal{O}
+  \qquad
+  O \otimes \mathbf{0}_\mathcal{O} \reduce \mathbf{0}_\mathcal{O} \\
+  (K_1 \otimes B_1) \otimes (K_2 \otimes B_2) \reduce (K_1 \otimes K_2) \otimes (B_1 \otimes B_2) \\
+  (S.O_1) \otimes O_2 \reduce S.(O_1 \otimes O_2)
+  \qquad
+  O_1 \otimes (S.O_2) \reduce S.(O_1 \otimes O_2) \\
+  (O_1 + O_2) \otimes O_3 \reduce O_1 \otimes O_3 + O_2 \otimes O_3
+  \qquad
+  O_1 \otimes (O_2 + O_3) \reduce O_1 \otimes O_2 + O_1 \otimes O_3
+\end{gather*}
+
+
+% \section{Confluence of DN}
+
+% We use \texttt{CiME2} to check the local confluence of the TRS of typed Dirac notation automatically. Because our TRS contains modulo theories and AC-symbols, we need to apply some the techniques:
+
+% \begin{itemize}
+%   \item consider a smallest instance of the complex scalar rewrite system and utilize the avatar lemma, and
+%   \item consider an extended system due to the AC-symbols.
+% \end{itemize}
+
+% The whole procedure is very similar to that of Lineal.
+
+% \subsection{Confluence modulo Theory and the Avatar Lemma}
+
+% First we introduce some concepts about modularity and the avatar lemma.
+
+% \begin{definition}[Subsumption]
+%   A terminating and confluent relation $S$ subsumes a relation $S_0$ if whenever $t \to_{S_0} u$, $t$ and $u$ have the same $S$-normal form.
+% \end{definition}
+
+% \begin{definition}[Commuting relations]
+%   Two relations $X$ and $Y$ are said to be commuting if whenever $t \to_X u$ and $t \to_Y v$, there exists a term $w$ such that $u \to_Y w$ and $v \to_X w$.
+% \end{definition}
+
+% \begin{proposition}[The avatar lemma] \cite{Arrighi2005} Let $X$, $S$ and $S_0$ be three relations defined on a set such that:
+%   \begin{itemize}
+%     \item $S$ is terminating and confluent;
+%     \item $S$ subsumes $S_0$;
+%     \item $S_0 \cup X$ is locally confluent;
+%     \item $X$ commutes with $S^*$.
+%   \end{itemize}
+%   Then, the relation $S \cup X$ is locally confluent.
+% \end{proposition}
+
+% We now present a smallest instantiation $\mathfrak{S}_0$ of a complext scalar rewrite system. 
+
+% \begin{definition}[The rewrite system $\mathfrak{S}_0$]
+%   The system $\mathfrak{S}_0$ is defined by the following rules:
+%   \begin{gather*}
+%     0 + \alpha \reduce \alpha\\
+%     0 \times \alpha \reduce 0\\
+%     1 \times \alpha \reduce \alpha\\
+%     \alpha \times (\beta + \gamma) \reduce \alpha \times \beta + \alpha \times \gamma\\
+%     0^* \reduce 0 \\
+%     1^* \reduce 1 \\
+%     (\alpha + \beta)^* \reduce \alpha^* + \beta^*\\
+%     (\alpha \times \beta)^* \reduce \alpha^* \times \beta^*\\
+%     (\alpha^*)^* \reduce \alpha
+%   \end{gather*}
+%   where $+$ and $\times$ are AC-symbols.
+% \end{definition}
+
+
+% \subsection{AC-rewriting and Extension Rules}
+% If a TRS $R$ contains AC-symbols, checking the critical pairs of $R$ is not enough to ensure the local confluence of $R$. This is because the LHS of rules can match the term unlocally. For example:
+% $$
+% (K_0 + K_1) + K_0 \reduce C(1 + 1).K_0 + K_1
+% $$
+% by the rule $ K + K \reduce C(1 + 1).K$. We need to consider an extended system, as indicated by the following definition.
+
+% \begin{definition}[The extension rules]
+%   Let $X$ be a AC-rewrite system with AC symbols $f_1, \cdots, f_n$. We define the AC-rewrite system $X_{ext}$ as containing the same AC symbols as $X$, the same rules as $X$, plus the rule $f_i(t, x) \to f_i(u, x)$ for each rule $t \to u$ of $X$ where the head symbol of $t$ is $f_i$.
+% \end{definition}
+
+% This extension is automatically completed for all rules encoded in \texttt{CiME2}.
+
+% \begin{proposition}
+%   The system $\mathfrak{S}_{0ext} \cup \mathfrak{DN}_{ext}$ is locally confluent.
+% \end{proposition}
+% \begin{proof}
+%   Checked by \texttt{CiME2}.
+% \end{proof}
+
+% \subsection{Checking by \texttt{CiME}}
+
+% We encoded the typed Dirac notation in a simple TRS and checked the confluence of the whole system. Here is a summary of the rules.
+
+
+% \begin{center}
+%   \begin{tabular}{c|c}
+%   \hline
+%   Type & Rule Number \\
+%   \hline
+%   type checking & 27 \\
+%   overloading polymorphic symbols & 22 \\
+%   complex scalar avatar & 9 \\
+%   Dirac notation & 141 \\
+%   AC-symbol extension rules & 25 \\
+%   \hline
+%   Total & 224 \\
+%   \hline
+%   \end{tabular}
+% \end{center}
+
+% And all the 3133 critical pairs are joinable.
+
+% \subsubsection*{About Reduandancy}
+% I also checked through a \texttt{Python} script that removing any of the reduction rule will lead to non-confluence or change of the equational theory. For example, I found that removing 
+% $$
+%  (\fst\ e, \snd\ e)\reduce e
+% $$
+% or
+% $$
+%  (K_1 \otimes B_1) \otimes (K_2 \otimes B_2) \reduce (K_1 \otimes K_2) \otimes (B_1 \otimes B_2)
+% $$
+% respectively will still lead to a confluence TRS, but the equivalence induced by the TRS will be be changed.
+
+
+% \section{Termination of DN}
+
+% (to be proved.)
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \section{Module Theories}
+
+% We want to study the theory of Dirac notations modulo the scalars and classical basis. This idea is inspired by the Lineal paper \cite{Arrighi2017}.
+
+% \begin{definition}[complex scalar rewrite system]
+%   A \textbf{complex scalar rewrite system} is a rewrite system $\mathfrak{S}$ for $\Sigma_\mathcal{S}$ such that:
+%   \begin{itemize}
+%     \item $\mathfrak{S}$ is terminating and ground confluent,
+%     \item $+$ and $\times$ are AC-symbols,
+%     \item for all closed terms $\alpha$, $\beta$ and $\gamma$, the pair of terms
+%       \begin{itemize}
+%         \item $0 + \alpha$ and $\alpha$
+%         \item $0 \times \alpha$ and $0$,
+%         \item $1 \times \alpha$ and $\alpha$,
+%         \item $\alpha \times (\beta + \gamma)$ and $\alpha \times \beta + \alpha \times \gamma$,
+%         \item $(\alpha + \beta)^*$ and $\alpha^* + \beta^*$,
+%         \item $(\alpha \times \beta)^*$ and $\alpha^* \times \beta^*$,
+%         \item $(\alpha^*)^*$ and $\alpha$,
+%       \end{itemize}
+%       have the same normal forms,
+%     \item $0$ and $1$ are normal terms.
+%   \end{itemize}
+% \end{definition}
+
+
+% \begin{definition}[atomic basis rewrite system]
+%   An \textbf{atomic basis rewrite system} $\mathfrak{B}$ is a terminating and confluent rewrite system for $\Sigma_\mathcal{B}$.
+% \end{definition}
+
+
+
+\section{Extension: Delta*}
+
+In the backbone rewriting system DN, we don't attempt to reduce Delta operators $\delta_{s, t}$ to constants $0$ or $1$. This is because the complete reduction needs some semantic analysis, and the practical solutions make use of some heuristics, which are described here.
+
+
+As a demonstration of the difficulty, we first consider the following example:
+$$
+\delta_{i, j} \times \delta_{i, k} = \delta_{i, j} \times \delta_{j, k}.
+$$
+This equality holds, but it is hard to detect merely by the syntax. In general, The equality and reduction of Delta operators need the semantic analysis, which is presented below.
+
+
+\subsubsection*{\textsf{DELTA-COMPLETE}}
+
+\begin{align*}
+  & \textsc{(DeltaEQ)} && \frac{(\bigwedge_i s_i =_\textsf{BASIS} t_i) \leftrightarrow (\bigwedge_i s_i' =_\textsf{BASIS} t_i') \textrm{ is valid}}{\prod_i \delta_{s_i, t_i} = \prod_i \delta_{s_i', t_i'}} \\
+  \\
+  & \textsc{(Delta1)} && 
+  \frac{\bigwedge_i s_i =_\textsf{BASIS} t_i \textrm{ is valid}}{ \prod_i \delta_{s_i, t_i} \reduce 1}
+  \\
+  \\
+  & \textsc{(Delta0)} && 
+  \frac{\bigwedge_i s_i =_\textsf{BASIS} t_i \textrm{ is not satisfiable}}{ \prod_i \delta_{s_i, t_i} \reduce 0}
+\end{align*}
+
+
+\subsection{Extension for Delta Operator (simple version)}
+It's impractical to fully deicide the three conditions, espacially when the atomic basis $\mathfrak{B}$ is complicated. Therefore we present here a simpler extension to rewrite these Delta operators in common cases.
+
+\subsubsection*{\textsf{DELTA*}}
+\begin{align*}
+  & \textsc{(Delta1)} && 
+   \delta_{s, s} \reduce 1
+  \\
+  \\
+  & \textsc{(Delta0)} &&
+  \frac{s = t \text{ not satisfiable}}{ \delta_{s, t} \reduce 0}
+\end{align*}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Extension: Sum and Transpose}
+
+\begin{definition}[Multi-set]
+  \begin{align*}
+    M ::= \emptyset\ |\ \mathbf{U}\ |\ M \cup M
+  \end{align*}
+\end{definition}
+
+\subsubsection*{\textsf{SET-SIMP}}
+\begin{gather*}
+  \emptyset \cup M \reduce M
+  \qquad
+  \mathbf{U} \cup M \reduce \mathbf{U}
+\end{gather*}
+
+\begin{definition}[DNE]
+    The \textbf{language of Dirac Notation Extended}, denoted as $\mathfrak{DNE}(\Sigma_\mathcal{B}, \Sigma_\mathcal{S})$, consists of the same sorts as the core language and the following new symbols:
+    \begin{align*}
+        & S ::= \sum_{i \in M} S\ |\ \lambda x.S\ |\ S\ t && K ::= B^\top\ |\ \sum_{i \in M} K\ |\ \lambda x.K\ |\ K\ t \\
+        & B ::= K^\top\ |\ \sum_{i \in M} B\ |\ \lambda x.B\ |\ B\ t && O ::= O^\top\ |\ \sum_{i \in M} O\ |\ \lambda x.O\ |\ O\ t
+    \end{align*}
+    The index $i$ for summation is a bind variable, and $M$ is the variable for the multiset of summation. The common equivalence involving bind variables are adopted here: $\alpha$-conversion and substitutions.
+\end{definition}
+
+\section{TRS for DNE}
+
+\subsubsection*{\textsf{BETA-REDUCTION}}
+\begin{gather*}
+  (\lambda x.A)\ t \reduce A[x:=t]
+\end{gather*}
+\textbf{Reamrk:} We need abstraction and application to represent Dirac notations dependent on some variable. For example, $\sum_{i \in M} v_i$.
+
+\subsubsection*{\textsf{TRANS-KET}}
+\begin{gather*}
+  \mathbf{0}_\mathcal{B}^\top \reduce \mathbf{0}_\mathcal{K}
+  \qquad
+  \bra{s}^\top \reduce \ket{s}
+  \qquad
+  (K^\dagger)^\top \reduce (K^\top)^\dagger
+  \qquad
+  (K^\top)^\top \reduce K \\
+  (S . B)^\top \reduce S . B^\top
+  \qquad
+  (B_1 + B_2)^\top \reduce B_1^\top + B_2^\top
+  \qquad
+  (B \cdot O)^\top \reduce O^\top \cdot B^\top
+  \qquad
+  (B_1 \otimes B_2)^\top \reduce B_1^\top \otimes B_2^\top
+\end{gather*}
+
+\subsubsection*{\textsf{TRANS-BRA}}
+\begin{gather*}
+  \mathbf{0}_\mathcal{K}^\top \reduce \mathbf{0}_\mathcal{B}
+  \qquad
+  \ket{s}^\top \reduce \bra{s}
+  \qquad
+  (B^\dagger)^\top \reduce (B^\top)^\dagger
+  \qquad
+  (B^\top)^\top \reduce B \\
+  (S . K)^\top \reduce S . K^\top
+  \qquad
+  (K_1 + K_2)^\top \reduce K_1^\top + K_2^\top
+  \qquad
+  (O \cdot K)^\top \reduce K^\top \cdot O^\top
+  \qquad
+  (K_1 \otimes K_2)^\top \reduce K_1^\top \otimes K_2^\top
+\end{gather*}
+
+
+
+\subsubsection*{\textsf{TRANS-OPT}}
+\begin{gather*}
+  \mathbf{0}_\mathcal{O}^\top \reduce \mathbf{0}_\mathcal{O}
+  \qquad
+  \mathbf{1}_\mathcal{O}^\top \reduce \mathbf{1}_\mathcal{O}
+  \qquad
+  (K \otimes B)^\top \reduce B^\top \otimes K^\top
+  \qquad
+  (O^\dagger)^\top \reduce (O^\top)^\dagger
+  \qquad
+  (O^\top)^\top \reduce O \\
+  (S . O)^\top \reduce S . O^\top
+  \qquad
+  (O_1 + O_2)^\top \reduce O_1^\top + O_2^\top
+  \qquad
+  (O_1 \cdot O_2)^\top \reduce O_2^\top \cdot O_1^\top
+  \qquad
+  (O_1 \otimes O_2)^\top \reduce O_1^\top \otimes O_2^\top
+\end{gather*}
+
+\textbf{Remark:} It has been checked by CiME2 that for the TRS $\mathfrak{DN}$ extended with transpose rules, the only unjoinable critical pairs are joinable with the equational theory $B\cdot K = K^\top \cdot B^\top$.
+
+
+\subsubsection*{\textsf{SUM-ELIM}}
+
+\begin{gather*}
+  \sum_{i \in M} C(0) \reduce C(0)
+  \qquad
+  \sum_{i \in M} \mathbf{0}_\mathcal{K} \reduce \mathbf{0}_\mathcal{K}
+  \qquad
+  \sum_{i \in M} \mathbf{0}_\mathcal{B} \reduce \mathbf{0}_\mathcal{B}
+  \qquad
+  \sum_{i \in M} \mathbf{0}_\mathcal{O} \reduce \mathbf{0}_\mathcal{O}
+\end{gather*}
+
+One common condition is attached to all the following rules: variable $i$ does not have free appearance in term $s$
+
+Here $S.A$ is interpreted as three cases: $S.K$, $S.B$ and $S.O$.
+\begin{gather*}
+  \sum_{i \in \mathbf{U}} \delta_{i, s} \reduce C(1)
+  \qquad
+  \sum_{i \in \mathbf{U}} (\delta_{i, s} \times S) \reduce S[i:=s] \\
+  \sum_{i \in \mathbf{U}} (\delta_{i, s}.A) \reduce A[i:=s]
+  \qquad
+  \sum_{i \in \mathbf{U}} ((\delta_{i, s} \times S).A) \reduce S[i:=s].A[i:=s]
+\end{gather*}
+
+\textbf{Remark:} To avoid problems, we assume that bind variables cannot be substituted into sum expressions. For example:
+$$
+\sum_{i \in M} \delta_{i, s}[s:=i^2] \equiv \sum_{j \in M} \delta_{j, i^2}.
+$$
+In other words, the variables will never implicitly depend on bind variables.
+
+\subsubsection*{\textsf{SUM-DIST}}
+
+Here the $A^\dagger$, $A^\top$, $S.A$ and addition are interpreted in three sorts: ket, bra and operator.
+The bind variable $i$ does not appear in $X$.
+Here $A \cdot B$ is interpreted as four cases: $B \cdot K$, $O \cdot K$, $B \cdot O$ and $O_1 \cdot O_2$. $A \otimes B$ is interpreted as four cases: $K_1 \otimes K_2$, $B_1 \otimes B_2$, $K \otimes B$ and $O_1 \otimes O_2$.
+
+\begin{gather*}
+  \sum_{i \in M} (S_1 \times X) \reduce (\sum_{i \in M} S_1) \times X
+  \qquad
+  (\sum_{i \in M} S)^* \reduce \sum_{i \in M} S^* \\
+  (\sum_{i \in M} A)^\dagger \reduce \sum_{i \in M} A^\dagger
+  \qquad
+  (\sum_{i \in M} A)^\top \reduce \sum_{i \in M} A^\top \\
+  \sum_{i \in M} (X.A) \reduce X.(\sum_{i \in M} A)
+  \qquad
+  \sum_{i \in M} (S.X) \reduce (\sum_{i \in M} S). X \\
+  \sum_{i \in M} (A \cdot X) \reduce (\sum_{i \in M} A) \cdot X
+  \qquad
+  \sum_{i \in M} (X \cdot B) \reduce X \cdot (\sum_{i \in M} B) \\
+  \sum_{i \in M} (A \otimes X) \reduce (\sum_{i \in M} A) \otimes X
+  \qquad
+  \sum_{i \in M} (X \otimes B) \reduce X \otimes (\sum_{i \in M} B)
+\end{gather*}
+
+\subsubsection*{About \textsf{SUM-DIST}: push in or pull out?}
+We can flip the direction of the rules in \textsf{SUM-DIST} to pull elements out of the summation. I believe the difference lies in the \textbf{information of bind variable dependencices}.
+
+When pushing inside, the information of bind variable independence is lost. This makes elimination rule less complete. Maybe we want to do in the opposite way: pull everything out as much as possible. Those rules involve checking whether the subterm to be pulled out is independent on the bind variable. But this strategy makes matching elimination rule simpler.
+
+
+\subsubsection*{\textsf{SUM-COMP}}
+These rules are for completion.
+
+\begin{gather*}
+  \frac{A \cdot B \reduce C \qquad \text{(bind variable renamed)}}{A \cdot (\sum_{i \in M} B) \reduce \sum_{i \in M} C}
+  \qquad
+  \frac{A \cdot B \reduce C \qquad \text{(bind variable renamed)}}{(\sum_{i \in M} A) \cdot B \reduce \sum_{i \in M} C} \\
+  \\
+  \frac{A \otimes B \reduce C \qquad \text{(bind variable renamed)}}{A \otimes (\sum_{i \in M} B) \reduce \sum_{i \in M} C}
+  \qquad
+  \frac{A \otimes B \reduce C \qquad \text{(bind variable renamed)}}{(\sum_{i \in M} A) \otimes B \reduce \sum_{i \in M} C} \\
+  \\
+  \frac{S \neq C(1), i \text{ is free in } S}{\sum_{i \in M} S \reduce (\sum_{i \in M} C(1)) \times S}
+  \qquad
+  \frac{i \text{ is free in } A}{\sum_{i \in M} A \reduce (\sum_{i \in M} C(1)).A}
+\end{gather*}
+
+\subsubsection*{\textsf{SUM-ADD}}
+Here the addition $A + B$ is interpreted in four sorts: scalar, ket, bra and operator.
+\begin{align*}
+  & (\sum_{i \in M} A) + (\sum_{j \in N} B) \reduce \sum_{k \in M \cup N} (A[i:=k] + B[j:=k])
+\end{align*}
+
+\subsection{Controlled Rewriting}
+
+The following equalities hold for ket, bra and operators respectively, but there are no appropriate normal forms. 
+\begin{gather*}
+  \sum_i (\bra{i} \cdot K).\ket{i} = K
+  \qquad
+  \sum_i (B \cdot \ket{i}).\bra{i} = B \\
+  \sum_i \sum_j (\bra{i} A \ket{j}).\ket{i}\bra{j} = A
+  \qquad
+  \sum_i \sum_j (\bra{i} A \ket{j}).\ket{j}\bra{i} = A^\top
+\end{gather*}
+
+We leave the control to the user by two functions: \textbf{EntryReduce} rewrite from left to right, and \textbf{EntryExpand} rewrite from right to left.
+
+\subsection{Equivalence Checking}
+
+Our goal is to design the algorithm that checks whether two terms are equivalent. Ideally this can be achieved by rewriting to normal forms, but for complicated scenarios, the normal form may not exist. This is the case with transpose and big operator. We have these axioms: 
+\begin{align*}
+& \text{(DOT-DUAL)} && B \cdot K = K^\top \cdot B^\top \\
+& \text{(SUM-SWAP)} && \sum_{i \in M} \sum_{j \in N} A = \sum_{j \in N} \sum_{i \in M} A 
+\end{align*}
+
+Our algorithm for deciding equivalence takes these equations into consideration.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Labelled Dirac Notation}
+
+\begin{definition}[quantum registers]
+  \begin{align*}
+    R ::= x\ |\ (R, R)\ |\ \fst\ R\ |\ \snd\ R
+  \end{align*}
+  We define the following relations for quantum registers:
+  \begin{itemize}
+    \item $R$ \textbf{belongs to} $Q$, written as $R\ \text{in}\ Q$,
+    \item $R$ \textbf{is disjoint with} $Q$, written as $R \| Q$.
+  \end{itemize}
+\end{definition}
+
+\textbf{Remark:} We still have a speical algorithm deciding the relations.
+
+\begin{definition}[register set]
+  \begin{align*}
+    S ::= \emptyset\ |\ \{ R \} \ |\ S \cup S\ |\ S \setminus S
+  \end{align*}
+\end{definition}
+
+\textbf{Remark: } $ S_1 \cap S_2 \equiv S_1 \cup S_2 \setminus (S_1 \setminus S_2) \setminus (S_2 \setminus S_1) $
+
+\subsubsection*{\textsf{REG}}
+\begin{gather*}
+  \fst\ (R_1, R_2) \reduce R_1 \qquad 
+  \snd\ (R_1, R_2) \reduce R_2 \qquad
+  (\fst\ R, \snd\ R) \reduce R
+\end{gather*}
+
+
+\subsubsection*{\textsf{RSET}}
+\begin{gather*}
+  S \cup \emptyset \reduce S
+  \qquad
+  S \cup S \reduce S
+  \qquad
+  \{ \fst\ R \} \cup \{ \snd\ R \} \reduce R \\
+  S \setminus \emptyset \reduce S
+  \qquad
+  \emptyset \setminus S \reduce \emptyset
+  \qquad
+  S \setminus S \reduce \emptyset \\
+  (S_1 \cup S_2) \setminus X \reduce (S_1 \setminus X) \cup (S_2 \setminus X)
+  \qquad
+  S_1 \setminus (S_2 \cup S_3) \reduce (S_1 \setminus S_2) \setminus S_3 \\
+  \\
+  \frac{ R_1 \textrm{ in } R_2 }{ \{ R_1 \} \cup \{ R_2 \} \reduce \{ R_2 \} }
+  \qquad
+  \frac{ R_1 \textrm{ in } R_2 }{ \{ R_1 \} \setminus \{ R_2 \} \reduce \emptyset } \\
+  \\
+  \frac{ R_1 \textrm{ in } R_2 }{ \{R_2\} \setminus \{R_1\} \reduce (\{\fst\ R_2\} \setminus \{R_1\}) \cup (\{\snd\ R_2\} \setminus \{R_1\})}
+  \qquad
+  \frac{R_1 \| R_2}{ \{ R_1 \} \setminus \{ R_2 \} \reduce \{ R_1 \}} 
+\end{gather*}
+
+\begin{definition}[labelled core language]
+  The \textbf{labelled core langauge} includes all symbols in the core language of Dirac notation, as well as symbols for the three new sorts.
+  \begin{align*}
+    & && S ::=\ \tilde{B} \cdot \tilde{K} \\
+    & \tilde{\mathcal{K}}\text{(labelled ket)}&& \tilde{K} ::=\ K_{R}\ |\ \tilde{B}^\dagger\ |\ S.\tilde{K}\ |\ \tilde{K} + \tilde{K}\ |\ \tilde{O} \cdot \tilde{K}\ |\ \tilde{K} \otimes \tilde{K} \\
+    & \tilde{\mathcal{B}}\text{(labelled bra)} && \tilde{B} ::=\ B_{R}\ |\ \tilde{K}^\dagger\ |\ S.\tilde{B}\ |\ \tilde{B} + \tilde{B}\ |\ \tilde{B} \cdot \tilde{O}\ |\ \tilde{B} \otimes \tilde{B} \\
+    & \tilde{\mathcal{O}}\text{(labelled operator)} &&\tilde{O} ::=\ O_{R; R}\ |\ \tilde{K}\otimes\tilde{B}\ |\ \tilde{O}^\dagger\ |\ S.\tilde{O}\ |\ \tilde{O} + \tilde{O}\ |\ \tilde{O} \cdot \tilde{O}\ |\ \tilde{O} \otimes \tilde{O}
+  \end{align*}
+  In other words, we don't allow variables for labelled core language for now.
+\end{definition}
+
+\subsubsection*{\textsf{LABEL-CORE}}
+We generally copied the symbols ($\dagger, S.\tilde{X}, +, \cdot, \otimes$) from the core language. Therefore we also need a copy of the corresponding rewriting rules.
+
+\subsubsection*{\textsf{TSR-DECOMP}}
+
+\begin{gather*}
+  \ket{(s, t)}_{(Q, R)} \reduce \ket{s}_{Q} \otimes \ket{t}_{R}
+  \qquad
+  \bra{(s, t)}_{(Q, R)} \reduce \bra{s}_{Q} \otimes \bra{s}_{R} \\
+  {\mathbf{0}_\mathcal{K}}_{(Q, R)} \reduce {\mathbf{0}_\mathcal{K}}_{Q} \otimes {\mathbf{0}_\mathcal{K}}_{R}
+  \qquad
+  {\mathbf{0}_\mathcal{B}}_{(Q, R)} \reduce {\mathbf{0}_\mathcal{B}}_{Q} \otimes {\mathbf{0}_\mathcal{B}}_{R} \\
+  {\mathbf{0}_\mathcal{O}}_{(Q, R); (S, T)} \reduce {\mathbf{0}_\mathcal{O}}_{(Q, S)} \otimes {\mathbf{0}_\mathcal{O}}_{(R, T)} \\
+  {\mathbf{0}_\mathcal{O}}_{(Q_1, Q_2); R} \reduce {\mathbf{0}_\mathcal{O}}_{Q_1; \fst\ R} \otimes {\mathbf{0}_\mathcal{O}}_{Q_2; \fst\ R}
+  \qquad
+  {\mathbf{0}_\mathcal{O}}_{Q; (R_1, R_2)} \reduce {\mathbf{0}_\mathcal{O}}_{\fst\ Q; R_1} \otimes {\mathbf{0}_\mathcal{O}}_{\snd\ Q; R_2} \\
+  {\mathbf{1}_\mathcal{O}}_{(Q, R); (Q, R)} \reduce {\mathbf{1}_\mathcal{O}}_{Q; Q} \otimes {\mathbf{1}_\mathcal{O}}_{R; R} \\
+  {\mathbf{1}_\mathcal{O}}_{(Q_1, Q_2); R} \reduce {\mathbf{1}_\mathcal{O}}_{Q_1; \fst\ R} \otimes {\mathbf{1}_\mathcal{O}}_{Q_2; \fst\ R}
+  \qquad
+  {\mathbf{1}_\mathcal{O}}_{Q; (R_1, R_2)} \reduce {\mathbf{1}_\mathcal{O}}_{\fst\ Q; R_1} \otimes {\mathbf{1}_\mathcal{O}}_{\snd\ Q; R_2}
+\end{gather*}
+\begin{gather*}
+  (K_1 \otimes K_2)_{(Q, R)} \reduce {K_1}_{Q} \otimes {K_2}_{R}
+  \qquad
+  (B_1 \otimes B_2)_{(Q, R)} \reduce {B_1}_{Q} \otimes {B_2}_{R} \\
+  (O_1 \otimes O_2)_{(Q, R); (S, T)} \reduce {O_1}_{Q; S} \otimes {O_2}_{R; T} \\
+  (O_1 \otimes O_2)_{(Q_1, Q_2); R} \reduce {O_1}_{Q_1; \fst\ R} \otimes {O_2}_{Q_2; \snd\ R}
+  \qquad
+  (O_1 \otimes O_2)_{Q; (R_1, R_2)} \reduce {O_1}_{\fst\ Q; R_1} \otimes {O_2}_{\snd\ Q; R_2}
+\end{gather*}
+
+
+\subsubsection*{\textsf{TSR-COMP}}
+\begin{gather*}
+  {K_1}_{\fst\ R} \otimes {K_1}_{\snd\ R} \reduce (K_1 \otimes K_2)_{R}
+  \qquad
+  {B_1}_{\fst\ R} \otimes {B_2}_{\snd\ R} \reduce (B_1 \otimes B_2)_{R} \\
+  {O_1}_{\fst\ Q; \fst\ R} \otimes {O_2}_{\snd\ Q; \snd\ R} \reduce (O_1 \otimes O_2)_{Q; R}
+\end{gather*}
+
+\subsubsection*{\textsf{DOT-TSR}}
+\begin{align*}
+  \frac{R \| S}{{O_1}_{Q; R} \cdot {O_2}_{S; T} \reduce {O_1}_{Q; R} \otimes {O_2}_{S; T}}
+\end{align*}
+
+\subsubsection*{\textsf{LABEL-LIFT}}
+\begin{gather*}
+  (K_{R})^\dagger \reduce (K^\dagger)_{R}
+  \qquad
+  (B_{R})^\dagger \reduce (B^\dagger)_{R}
+  \qquad
+  (O_{Q; R})^\dagger \reduce (O^\dagger)_{Q; R} \\
+  (K_{R})^\top \reduce (K^\top)_{R}
+  \qquad
+  (B_{R})^\top \reduce (B^\top)_{R}
+  \qquad
+  (O_{Q; R})^\top \reduce (O^\top)_{Q; R} \\
+  (S.K)_{R} \reduce S.(K_{R})
+  \qquad
+  (S.B)_{R} \reduce S.(B_{R})
+  \qquad
+  (S.O)_{Q; R} \reduce S.(O_{Q; R}) \\
+  (K_1 + K_2)_{R} \reduce {K_1}_{R} + {K_2}_{R}
+  \qquad
+  (B_1 + B_2)_{R} \reduce {B_1}_{R} + {B_2}_{R}
+  \qquad
+  (O_1 + O_2)_{Q; R} \reduce {O_1}_{Q; R} + {O_2}_{Q; R}
+\end{gather*}
+\begin{gather*}
+  {O_1}_{Q; R} \cdot {O_2}_{R; S} \reduce (O_1 \cdot O_2)_{Q; S}
+  \qquad
+  O_{Q; R} \cdot K_{R} \reduce (O \cdot K)_{Q}
+  \qquad
+  B_{Q} \cdot O_{Q; R} \reduce (B \cdot O)_{R} \\
+  B_{R} \cdot K_{R} \reduce B \cdot K \\
+  (K \otimes B)_{Q; R} \reduce K_{Q} \otimes B_{R}
+\end{gather*}
+
+\subsubsection*{\textsf{OPT-EXT}}
+I think the concept ``cylinder extension'' is only limited to endomorphisms. Besides, one quantum register should a sub-register of the other one, which is defined as follows:
+
+\begin{definition}[sub-register]
+  \begin{gather*}
+    \fst\ R \preceq R \qquad \snd\ R \preceq R \qquad Q \preceq (Q, R) \qquad R \preceq (Q, R)
+    \qquad 
+    \frac{Q \preceq R \qquad R \preceq S}{Q \preceq S}
+  \end{gather*}
+
+  And we can further calculate the ``position'' of sub-register, which will be utilized during cylinder extension: assume $Q$ is a sub-register of $R$, then the position of $Q$ in $R$ is a string defined as follows:
+  \begin{align*}
+    & \textrm{pos}(\fst\ R, R) = 0 \\
+    & \textrm{pos}(\snd\ R, R) = 1 \\
+    & \textrm{pos}(Q, (Q, R)) = 0 \\
+    & \textrm{pos}(R, (Q, R)) = 1 \\
+    & \textrm{pos}(Q, S) = \textrm{pos}(R, S)\ \textrm{pos}(Q, R)
+  \end{align*}
+\end{definition}
+
+\textbf{Remark:} For a well-formed quantum register, the sub-register position is well-defined.
+
+\begin{definition}[cylinder extension]
+  \begin{align*}
+    \textrm{ext}(O, \epsilon) \equiv O
+    && \textrm{ext}(O, p::0) \equiv O \otimes \mathbf{1}_\mathcal{O}
+    && \textrm{ext}(O, p::1) \equiv \mathbf{1}_\mathcal{O} \otimes O
+  \end{align*}
+\end{definition}
+
+\subsubsection*{\textsf{CYLINDER-EXT}}
+\begin{gather*}
+  \frac{Q \textrm{ is a subterm of } R \textrm{ at } p}{O_{Q; Q} \cdot K_{R} \reduce (\textrm{ext}(O, p) \cdot K)_{R}}
+  \qquad
+  \frac{Q \textrm{ is a subterm of } R \textrm{ at } p}{{O_1}_{Q; Q} \cdot {O_2}_{R; T} \reduce (\textrm{ext}(O_1, p) \cdot O_2)_{R; T}} \\
+  \\
+  \frac{R \textrm{ is a subterm of } Q \textrm{ at } p}{B_{Q} \cdot O_{R; R} \reduce (B \cdot \textrm{ext}(O, p))_{Q}}
+  \qquad
+  \frac{R \textrm{ is a subterm of } Q \textrm{ at } p}{{O_1}_{T; Q} \cdot {O_2}_{R; T} \reduce (O_1 \cdot \textrm{ext}(O_2, p))_{T; Q}} \\
+\end{gather*}
+
+
+\subsection{Labelled Extended Language}
+\begin{definition}[labelled extended language]
+  The \textbf{labelled extended language} consists of the symbols in labelled core langauge and unlabelled extended language, and add the new symbols of transpose and big-op for labelled bra, ket and operators, which is described in the following.
+  \begin{align*}
+    \tilde{K} ::= \tilde{B}^\top\ |\ \sum_{i \in M} \tilde{K}
+    && \tilde{B} ::= \tilde{K}^\top\ |\ \sum_{i \in M} \tilde{B}
+    && \tilde{O} ::= \tilde{O}^\top\ |\ \sum_{i \in M} \tilde{O}
+  \end{align*}
+  
+\end{definition}
+
+
+\subsubsection*{\textsf{LABEL-SUM}}
+\begin{gather*}
+  (\sum_{i \in M} K)_{R} \reduce \sum_{i \in M} (K_{R})
+  \qquad
+  (\sum_{i \in M} B)_{R} \reduce \sum_{i \in M} (B_{R})
+  \qquad
+  (\sum_{i \in M} O)_{Q; R} \reduce \sum_{i \in M} (O_{Q; R})
+\end{gather*}
+
+\subsubsection*{\textsf{LABEL-TEMP}}
+\yx{These are ad-hoc rules for the examples for now. They are still not organized and require further investigations.}
+\begin{gather*}
+  \frac{R \textsf{ in } Q}{O_{P; R} \cdot (K_{Q} \otimes \tilde{K'}) \reduce (O_{P; R} \cdot K_{Q}) \otimes \tilde{K'}} 
+  \qquad
+  \frac{R \textsf{ in } Q}{O_{P; R} \cdot (K_{Q} \otimes \tilde{B}) \reduce (O_{P; R} \cdot K_{Q}) \otimes \tilde{B}} \\
+  \\
+  \frac{R \textsf{ in } Q}{{O_1}_{P; R} \cdot ({O_2}_{Q; T} \otimes \tilde{O_3}) \reduce ({O_1}_{P; R} \cdot {O_2}_{Q; T}) \otimes \tilde{O_3}} \\
+  \\
+  \frac{Q \textsf{ in } R}{(B_{R} \otimes \tilde{B'}) \cdot O_{Q;P} \reduce (B_{R} \cdot O_{Q;P}) \otimes \tilde{B'}} 
+  \qquad
+  \frac{Q \textsf{ in } R}{({O_1}_{T;R} \otimes \tilde{O'}) \cdot {O_2}_{Q;P} \reduce ({O_1}_{T;R} \cdot {O_2}_{Q;P}) \otimes \tilde{O'}} \\
+  \\
+  B_{R} \cdot (K_{R} \otimes \tilde{B'}) \reduce (B_{R} \cdot K_{R}) . \tilde{B'} 
+  \qquad
+  (\tilde{K'} \otimes B_{R}) \cdot K_{R} \reduce (B_{R} \cdot K_{R}) . \tilde{K'}
+\end{gather*}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Examples}
+
+These are the verified examples in the \texttt{Python} implementation.
+
+\subsection{Operation on maximally entangled state}
+\begin{example}
+  Assume $S$ and $T$ are subsystems on Hilbert space $\mathcal{H}_T$ and $\ket{\Phi}_{S,T} = \sum_i \ket{i}\ket{i}$ is a maximally entangled state. Then for all operators $A\in\mathcal{L}(\mathcal{H}_T, \mathcal{H}_T)$, we have 
+  $$
+  A_S\ket{\Phi}_{S, T} = A_T^\top\ket{\Phi}_{S, T}.
+  $$
+\end{example}
+\textbf{Remark:} The normal forms are 
+$$
+\left ( \sum_{i \in  \mathbf{U}, j \in  \mathbf{U}} ( \langle  i | \cdot   A  | j \rangle)   \left ( | i \rangle _{  S } \otimes  | j \rangle _{  T } \right ) \right )
+$$
+and
+$$
+\left ( \sum_{i \in  \mathbf{U}, j \in  \mathbf{U}}   ( \langle  i | \cdot    A^\top  | j \rangle)  \left (  | i \rangle _{  T } \otimes  | j \rangle _{  S } \right ) \right )
+.
+$$
+The equivalence checking algorithm applies (DOT-DUAL) and (SUM-SWAP) on the terms and accepts.
+
+
+\subsection{Some Steps in Verifying HHL}
+
+
+
+\subsection{Semnatics Calculation of a Simple qWhile Program}
+We formalized the small-step operational semantics of quantum while programs as a term rewriting system.
+\begin{definition}[TRS for qWhile]
+  \begin{align*}
+    \langle \textbf{abort}, \rho \rangle &\longrightarrow \langle \textbf{Halt}, \textbf{0}_\mathcal{O} \rangle \\
+    \langle \textbf{skip}, \rho \rangle &\longrightarrow \langle \textbf{Halt}, \rho \rangle \\
+    \langle q :=0, \rho \rangle &\longrightarrow \langle \textbf{Halt}, \sum_{i \in \textbf{U}} (\ket{0}\otimes\bra{1})_{q;q} \cdot \rho \cdot (\ket{1}\otimes\bra{0})_{q;q} \rangle \\
+    \langle U, \rho \rangle & \longrightarrow \langle \textbf{Halt}, U \cdot \rho \cdot U^\dagger \rangle \\
+    \langle \textbf{if } P \textbf{ then } S_1 \textbf{ else } S_2 \textbf{ end}, \rho \rangle &\longrightarrow \{| \langle S_1, P \cdot \rho \cdot P \rangle, \langle S_2, (\mathbf{1}_\mathcal{O} + (-1).P) \cdot \rho \cdot (\mathbf{1}_\mathcal{O} + (-1).P)\rangle |\} \\
+     & \vdots
+  \end{align*}
+  Note that the calculations of quantum states are represented by the syntax of Dirac notations defined above.
+\end{definition}
+
+\begin{example}
+  $\langle \textbf{ while}^2\ (\ket{0}\otimes\bra{0})_q \textbf{ do } X_q\ \textbf{end}, (\ket{0}\otimes\bra{0})_q \rangle \longrightarrow \langle \textbf{ Halt}, (\ket{1}\otimes\bra{1})_q \rangle$
+\end{example}
+
+\textbf{Remark:} It should take 140 steps to complete the calculation!
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Typed Dirac Notation}
+The untyped Dirac notation is hard to use because we explicitly need different symbols to distinguish between the ambiguous semantics of the same syntax. We will use a typed version as the front-end language for the user, which is introduced below.
+
+
+
+\subsection{Syntax and Typing}
+
+
+\begin{definition}[types of Dirac notation core language]
+  The \textbf{type of core language} is defined by
+  \begin{align*}
+    \tau ::= x\ |\ T\ |\ (\tau * \tau)\ |\ S\ |\ B(\tau)\ |\ K(\tau)\ |\ O(\tau, \tau)
+  \end{align*}
+
+  Here $x$ is a variable and $T$ is a constant of type. The $T$ and $(\tau * \tau)$ rules generate \textbf{types of spaces}. And the following rules generate \textbf{types of Dirac notations}.
+\end{definition}
+We use the set of orthonormal basis to represent the type of a Hilbert space. For example, the constant of the type for qubit Hilbert spaces is $\{0, 1\}$.
+
+\begin{definition}[terms of Dirac notation core language]
+  The \textbf{term of Dirac notations} $\mathfrak{DN}(\Sigma_\mathcal{B})$ is defined by
+  \begin{align*}
+    t ::= \ & x\ |\ b\ |\ (t, t)\ |\ \fst\ t\ |\ \snd\ t  && \text{(basis)} \\
+    e ::= \ 
+      &    x                          \\
+      & |\ C(\alpha)                     && \text{(complex scalar)}   \\
+      & |\ \delta_{t, t}              && \text{(Delta expression)} \\
+      & |\ e + e                      && \text{(addition)} \\
+      & |\ e \times e                 && \text{(multiplication)} \\
+      & |\ \mathbf{0}_{\mathcal{K}(\tau)}\ |\ \mathbf{0}_{\mathcal{B}(\tau)}\ |\ \mathbf{0}_{\mathcal{O}(\tau, \tau)}    && \text{(zero operator)}\\
+      & |\ \mathbf{1}_{\mathcal{O}(\tau)} && \text{(identity operator)}\\
+      & |\ \ket{t}                    && \text{(ket)} \\
+      & |\ \bra{t}                    && \text{(bra)} \\
+      & |\ e^\dagger                        && \text{(adjoint or conjugate)} \\
+      & |\ e \cdot e                  && \text{(multiplication)} \\
+      & |\ e \otimes e                && \text{(tensor product)}
+  \end{align*}
+  Here $x$ is a variable, $b$ is a constant base, and $\alpha$ is a term in the underlining complex scalar language $\Sigma_\mathcal{B}$.
+\end{definition}
+
+\begin{definition}[typing rules]
+  A typing assumption has the form $x : \tau$, meaning variable $x$ has the type $\tau$. A typing context $\Gamma$ consists of typing assumptions and each variable appears only once.
+
+  A typing judgement $\Gamma \vdash e : \sigma$ indicates that $e$ is a term of type $\sigma$ in context $\Gamma$. The well-typed terms are defined by the following rules:
+  \begin{gather*}
+    \frac{x : \sigma \in \Gamma}{\Gamma \vdash x : \sigma}
+  \end{gather*}
+  Basis:
+  \begin{gather*}
+    \frac{b\ \textrm{is an atomic base of}\ T}{\Gamma \vdash b : T}\\
+    \\
+    \frac{\Gamma \vdash e_1 : \tau \qquad \Gamma \vdash e_2 : \sigma}{\Gamma \vdash (e_1, e_2) : ( \tau * \sigma )}
+    \qquad
+    \frac{\Gamma \vdash e : ( \tau * \sigma ) }{\Gamma \vdash \fst\ e : \tau}
+    \qquad
+    \frac{\Gamma \vdash e : ( \tau * \sigma ) }{\Gamma \vdash \snd\ e : \sigma} \\
+  \end{gather*}
+  Complex Scalar:
+  \begin{gather*}
+    \frac{}{\Gamma \vdash C(\alpha) : S}
+    \qquad
+    \frac{\Gamma \vdash s : \rho \qquad \Gamma \vdash t : \rho}{\Gamma \vdash \delta_{s, t} : S}
+  \end{gather*}
+  Ket and Bra:
+  \begin{gather*}
+    \\
+    \frac{\Gamma \vdash t : \tau}{\Gamma \vdash \ket{t} : K(\tau)}
+    \qquad 
+    \frac{\Gamma \vdash t : \tau}{\Gamma \vdash \bra{t} : B(\tau)}
+  \end{gather*}
+  Adjoint and Conjugate:
+  \begin{gather*}
+    \frac{\Gamma \vdash e : S}{\Gamma \vdash e^\dagger : S}
+    \qquad
+    \frac{\Gamma \vdash e : K(\tau)}{\Gamma \vdash e^\dagger : B(\tau)}
+    \qquad
+    \frac{\Gamma \vdash e : B(\tau)}{\Gamma \vdash e^\dagger : K(\tau)}
+    \qquad
+    \frac{\Gamma \vdash e : O(\tau, \rho)}{\Gamma \vdash e^\dagger : O(\rho, \tau)} 
+  \end{gather*}
+  Multiplication:
+  \begin{gather*}
+    \frac{\Gamma \vdash a : S \qquad \Gamma \vdash b : S}{\Gamma \vdash a \times b : S}
+    \qquad
+    \frac{\Gamma \vdash s : S \qquad \Gamma \vdash e : K(\tau)}{\Gamma \vdash s \times e : K(\tau)} 
+    \qquad
+    \frac{\Gamma \vdash s : S \qquad \Gamma \vdash e : B(\tau)}{\Gamma \vdash s \times e : B(\tau)} 
+    \qquad
+    \frac{\Gamma \vdash s : S \qquad \Gamma \vdash e : O(\tau, \rho)}{\Gamma \vdash s \times e : O(\tau, \rho)}
+  \end{gather*}
+  Zero:
+  \begin{gather*}
+    \frac{}{\Gamma \vdash \mathbf{0}_{\mathcal{K}(\tau)} : K(\tau)}
+    \qquad
+    \frac{}{\Gamma \vdash \mathbf{0}_{\mathcal{B}(\tau)} : B(\tau)}
+    \qquad
+    \frac{}{\Gamma \vdash \mathbf{0}_{\mathcal{O}(\tau, \rho)} : K(\tau, \rho)}
+  \end{gather*}
+  One:
+  \begin{gather*}
+    \frac{}{\Gamma \vdash \mathbf{1}_{\mathcal{O}(\tau)} : O(\tau, \tau)}
+  \end{gather*}
+  Add:
+  \begin{gather*}
+    \frac{\Gamma \vdash e_1 : S \qquad \Gamma \vdash e_2 : S }{\Gamma \vdash e_1 + e_2 : S }
+    \qquad
+    \frac{\Gamma \vdash e_1 : K(\tau) \qquad \Gamma \vdash e_2 : K(\tau) }{\Gamma \vdash e_1 + e_2 : K(\tau) } \\
+    \\
+    \frac{\Gamma \vdash e_1 : B(\tau) \qquad \Gamma \vdash e_2 : B(\tau) }{\Gamma \vdash e_1 + e_2 : B(\tau) }
+    \qquad
+    \frac{\Gamma \vdash e_1 : O(\tau, \rho) \qquad \Gamma \vdash e_2 : O(\tau, \rho) }{\Gamma \vdash e_1 + e_2 : O(\tau, \rho) }
+  \end{gather*}
+  Dot:
+  \begin{gather*}
+    \frac{\Gamma \vdash e_1 : B(\tau) \qquad \Gamma \vdash e_2 : K(\tau) }{\Gamma \vdash e_2 \cdot e_1 : S } 
+    \qquad 
+    \frac{\Gamma \vdash e_1 : B(\tau) \qquad \Gamma \vdash e_2 : O(\tau, \rho) }{\Gamma \vdash e_2 \cdot e_1 : B(\rho) } \\
+    \\
+    \frac{\Gamma \vdash e_1 : O(\tau, \rho) \qquad \Gamma \vdash e_2 : K(\rho) }{\Gamma \vdash e_2 \cdot e_1 : K(\tau) }
+    \qquad
+    \frac{\Gamma \vdash e_1 : O(\tau, \rho) \qquad \Gamma \vdash e_2 : O(\rho, \sigma) }{\Gamma \vdash e_2 \cdot e_1 : O(\tau, \sigma) }
+  \end{gather*}
+  Tensor:
+  \begin{gather*}
+    \frac{\Gamma \vdash e_1 : K(\tau) \qquad \Gamma \vdash e_2 : B(\rho) }{\Gamma \vdash e_1 \otimes e_2 : O(\tau, \rho)}
+    \qquad
+    \frac{\Gamma \vdash e_1 : K(\tau) \qquad \Gamma \vdash e_2 : K(\rho) }{\Gamma \vdash e_1 \otimes e_2 : K(\tau * \rho)} \\
+    \\
+    \frac{\Gamma \vdash e_1 : B(\tau) \qquad \Gamma \vdash e_2 : B(\rho) }{\Gamma \vdash e_1 \otimes e_2 : B(\tau * \rho)}
+    \qquad
+    \frac{\Gamma \vdash e_1 : O(\tau_1, \rho_1) \qquad \Gamma \vdash e_2 : O(\tau_2, \rho_2) }{\Gamma \vdash e_1 \otimes e_2 : O(\tau_1 * \tau_2, \rho_1 * \rho_2)}\\
+    \\
+    \frac{\Gamma \vdash e_1 : O(\tau, \rho) \qquad \Gamma \vdash e_2 : K(\sigma) }{\Gamma \vdash e_1 \otimes e_2 : O(\tau * \sigma, \rho)} 
+    \qquad
+    \frac{\Gamma \vdash e_1 : K(\sigma) \qquad \Gamma \vdash e_2 : B(\tau, \rho) }{\Gamma \vdash e_1 \otimes e_2 : O(\sigma * \tau, \rho)} \\
+    \\
+    \frac{\Gamma \vdash e_1 : O(\tau, \rho) \qquad \Gamma \vdash B : B(\sigma) }{\Gamma \vdash e_1 \otimes e_2 : O(\tau, \rho * \sigma)}
+    \qquad
+    \frac{\Gamma \vdash e_1 : B(\sigma) \qquad \Gamma \vdash B : O(\tau, \rho) }{\Gamma \vdash e_1 \otimes e_2 : O(\tau, \sigma * \rho)}
+  \end{gather*}
+\end{definition}
+
+
 
 \bibliographystyle{plain}
 \bibliography{ref}
 
 \end{document}
+\endinput

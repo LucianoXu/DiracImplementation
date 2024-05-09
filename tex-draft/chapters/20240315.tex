@@ -1,16 +1,8 @@
 \chapter{20240315}
 
-\newcommand*{\unit}{\texttt{unit}}
-\newcommand*{\utt}{\texttt{tt}}
-\newcommand*{\fst}{\texttt{fst}}
-\newcommand*{\snd}{\texttt{snd}}
-\newcommand*{\reduce}{\ \triangleright\ }
-\newcommand*{\reducefrom}{\ \triangleleft\ }
 
-\newcommand*{\zeroK}[1]{\mathbf{0}_{\mathcal{K}(#1)}}
-\newcommand*{\zeroB}[1]{\mathbf{0}_{\mathcal{B}(#1)}}
-\newcommand*{\zeroO}[1]{\mathbf{0}_{\mathcal{O}(#1)}}
-
+\section{Motivation}
+\yx{One important idea: mentioning that registers are just like variables in classical programming language.}
 
 \section{Core Language: DN}
 
@@ -1018,7 +1010,7 @@ Similar to the universal application symbol $\circ$, we also use $A \otimes B$ a
   & A_{Q} \cdot_O B_{Q; R} \reduce (A \cdot_O B)_{Q; R} \\
   & A_{Q; R} \cdot_K B_{R} \reduce (A \cdot_K B)_{Q} \\
   & A_{Q} \cdot_B B_{Q; R} \reduce (A \cdot_B B)_{R} \\
-  & A_{R} \cdot_O B_{R} \reduce (A \cdot_O B)_{R} \\
+  & A_{R} \cdot B_{R} \reduce (A \cdot B)_{R} \\
   & A_{R} \cdot_I B_{R} \reduce (A \cdot_I B) \\
   \\
   & (K \otimes_P B)_{R} \reduce K_{R} \otimes_P B_{R} \\
@@ -1062,14 +1054,27 @@ I think the concept ``cylinder extension'' is only limited to endomorphisms. Bes
   & \frac{R \textrm{ is a subterm of } Q \textrm{ at } p}{A_{Q} \cdot B_{R} \reduce (A \cdot \textrm{ext}(B, p))_{Q}} \\
 \end{align*}
 
-\begin{align*}
-  & \frac{Q \textrm{ is in } R}{A_{Q} \cdot (B_{R} \otimes X) \reduce (A_{Q} \cdot B_{R}) \otimes X} \\
-  \\
-  & \frac{R \textrm{ is in } Q}{(A_{Q} \otimes X) \cdot B_{R} \reduce X \otimes (A_{Q} \cdot B_{R})} \\
-\end{align*}
-
 \subsubsection*{\textsf{LABEL-SUM}}
 \begin{align*}
   & (\sum_{i \in S} A)_{R} \reduce \sum_{i \in S} (A_{R}) \\
   & (\sum_{i \in S} A)_{Q; R} \reduce \sum_{i \in S} (A_{Q: R}) \\
+\end{align*}
+
+\subsubsection*{\textsf{LABEL-TEMP}}
+\begin{align*}
+  & \frac{R \textsf{ is in } Q}{A_{R} \cdot (B_{Q} \otimes X) \reduce (A_{R} \cdot B_{Q}) \otimes X} \\
+  \\
+  & \frac{Q \textsf{ is in } R}{(A_{R} \otimes X) \cdot B_{Q} \reduce (A_{R} \cdot B_{Q}) \otimes X} \\
+  \\
+  & A_{R} \cdot_I (B_{R} \otimes X) \reduce (A_{R} \cdot_I B_{R}) . X \\
+  & (A_{R} \otimes X) \cdot_I B_{R} \reduce (A_{R} \cdot_I B_{Q}) . X \\
+  & (A \cdot B) \cdot C \reduce A \cdot (B \cdot C) \\
+  & (A + B) \cdot C \reduce (A \cdot C) + (B \cdot C) \\
+  & C \cdot (A + B) \reduce (C \cdot A) + (C \cdot B) \\
+  & \mathbf{1}_\mathcal{O} \cdot A \reduce A \\
+  & A \cdot \mathbf{1}_\mathcal{O} \reduce A \\
+  \\
+  & \frac{R \textsf{ is in } S}{A_{Q; R} \cdot (B_{S; T} \otimes X) \reduce (A_{Q; R} \cdot B_{S; T}) \otimes X} \\
+  \\
+  & \frac{S \textsf{ is in } R}{(A_{Q; R} \otimes X) \cdot B_{S; T} \reduce (A_{Q; R} \cdot B_{S; T}) \otimes X} \\
 \end{align*}

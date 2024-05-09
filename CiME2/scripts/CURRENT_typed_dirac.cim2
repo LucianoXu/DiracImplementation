@@ -422,42 +422,7 @@ let R = TRS F X "
   (O1 ADDO O2) TSRO O0 -> (O1 TSRO O0) ADDO (O2 TSRO O0) ;
   O0 TSRO (O1 ADDO O2) -> (O0 TSRO O1) ADDO (O0 TSRO O2) ;
 
-  
-  (* ################# extension rules for AC symbols ################## *)
 
-  (* To prove the confluence of a system with AC symbols, we need to check the critical pairs of an extended system. *)
-
-  (0 + a) + x -> a + x ;
-  (0 * a) * x -> 0 * x ;
-  (1 * a) * x -> a * x ;
-  (a * (b + c)) * x -> ((a * b) + (a * c)) * x ;
-
-  (C(0) ADDS a) ADDS x -> a ADDS x ;
-  (C(a) ADDS C(b)) ADDS x -> C(a + b) ADDS x ;
-  (S0 ADDS S0) ADDS x -> (C(1 + 1) MLTS S0) ADDS x ;
-  ((C(a) MLTS S0) ADDS S0) ADDS x -> (C(a + 1) MLTS S0) ADDS x ;
-  ((C(a) MLTS S0) ADDS (C(b) MLTS S0)) ADDS x -> (C(a + b) MLTS S0) ADDS x ;
-
-  (C(0) MLTS a) MLTS x -> C(0) MLTS x ;
-  (C(1) MLTS a) MLTS x -> a MLTS x ;
-  (C(a) MLTS C(b)) MLTS x -> C(a * b) MLTS x ;
-  (S1 MLTS (S2 ADDS S3)) MLTS x -> ((S1 MLTS S2) ADDS (S1 MLTS S3)) MLTS x ;
-
-  (K0 ADDK 0K) ADDK x -> K0 ADDK x ;
-  (K0 ADDK K0) ADDK x -> (C(1 + 1) SCRK K0) ADDK x ;
-  ((S0 SCRK K0) ADDK K0) ADDK x -> ((S0 ADDS C(1)) SCRK K0) ADDK x ;
-  ((S1 SCRK K0) ADDK (S2 SCRK K0)) ADDK x -> ((S1 ADDS S2) SCRK K0) ADDK x ;
-
-  (B0 ADDB 0B) ADDB x -> B0 ADDB x ;
-  (B0 ADDB B0) ADDB x -> (C(1 + 1) SCRB B0) ADDB x ;
-  ((S0 SCRB B0) ADDB B0) ADDB x -> ((S0 ADDS C(1)) SCRB B0) ADDB x ;
-  ((S1 SCRB B0) ADDB (S2 SCRB B0)) ADDB x -> ((S1 ADDS S2) SCRB B0) ADDB x ;
-
-  (O0 ADDO 0O) ADDO x -> O0 ADDO x ;
-  (O0 ADDO O0) ADDO x -> (C(1 + 1) SCRO O0) ADDO x ;
-  ((S0 SCRO O0) ADDO O0) ADDO x -> ((S0 ADDS C(1)) SCRO O0) ADDO x ;
-  ((S1 SCRO O0) ADDO (S2 SCRO O0)) ADDO x -> ((S1 ADDS S2) SCRO O0) ADDO x ;
-  
 ";
 
 (* optional : 
