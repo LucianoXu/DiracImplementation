@@ -47,11 +47,6 @@
 %%
 \documentclass[manuscript, review, timestamp]{acmart}
 
-
-%%%% for Chinese formating
-\usepackage{xeCJK}
-
-% \setCJKmainfont{}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -213,10 +208,6 @@ Our contribution:
 
 \subsection{Confluence modulo Theory and the Avatar Lemma}
 
-% 数学的语言和证明使用从底到上的方法构建，我们的狄拉克符号证明也是一样。它可以明显地被分成不同部分，包含各自的语言和计算方法。类似复数，向量空间基矢的部分相对独立完整，我们可以把它称为不同的理论模块。而例如狄拉克符号的理论基于这两者之上，可以看成是模块函数。后续的理论发展又可以基于这一整个结果，例如我们的扩展狄拉克语言，添加了 big operator sum 以及量子寄存器索引。
-% 这些部分都相对独立完整，我们可以把它称为不同的模块。
-% 过往我们经常把整个形式系统作为一个整体来研究。这样做简单直接，不需要考虑各部分之间如何结合，但是以灵活性作为代价。以狄拉克符号为例，当我们扩展复数的语言，或者设计更完备的重写系统，严格来说整个形式系统的性质需要重新考虑。为了使得理论结果能够更加一般，我们可以探索一种模块化的叙述、证明方法。对于重写系统而言，我们可以利用Avatar Lemma\cite{Arrighi2005}\cite{Arrighi2017}，下面是它的介绍。
-
 Our theories on Dirac notations can be divided into different parts, each containing its own language and computational methods. For example, the parts concerning complex numbers and basis vectors of vector spaces are relatively independent and complete; while the language and algorithm of Dirac notations are based on these components. Subsequent theoretical developments can build on this entire result, such as our extended Dirac language which incorporates a big operator sum and indices for quantum registers.
 
 These components are relatively independent and complete, allowing us to refer to them as different modules. Traditionally, the entire formal system has been studied as a whole. This approach is straightforward and direct, avoiding the need to consider how the parts interact, but at the expense of flexibility. Taking Dirac notation as an example, when we expand the language of complex numbers or design a more comprehensive rewriting system, the properties of the entire formal system need to be reconsidered. To make theoretical results more general, we can explore a modular narrative and proof methodology. For rewriting systems, we can utilize the Avatar Lemma \cite{Arrighi2005}\cite{Arrighi2017}, which is introduced below.
@@ -245,10 +236,6 @@ These components are relatively independent and complete, allowing us to refer t
 The smaller relation $S_0$ here is called the avatar, since it captures the critical part of the larger relation $S$ that will appear in the rest part $X$. The avatar lemma formalizes our intuition about the modularity of confluence: if we start with the locally confluent system $S_0 \cup X$ and extend the system from $S_0$ to $S$, which will not interfere with the other part $X$ and is still confluent, then the whole system $S\cup X$ will remain locally confluent. In our development of Dirac notations, we will use such avatars to represent the weakest requirement on complex numbers and basis.
 
 
-% 我们可以从程序和证明的同构性的角度加以解释：。。。。定理证明器的发展也蕴含了这一概念。以Coq为例：证明中的S0是模块的接口，相当于Coq中的Module Type。S是对S0的一种实现，相当于Coq中的Module。S Subsume S0 相当于模块S具有类型S0。而从子模块构建的函数 S |-> S U X 相当于Coq中的Functor。
-
-
-
 \section{The Core Language}
 
 One difficulty of formalizing Dirac notations and designing the rewriting rules is the overloading of operators. This feature makes Dirac notations flexible and easy to use, but also introduced ambiguity into the syntax. In the core langauge, we want to prove some desired properties of the term rewriting system, such as congruence and soundness, and we have to rely on existing theories and tools. Therefore we choose the untyped universal algebra with AC symbols.
@@ -260,6 +247,7 @@ One difficulty of formalizing Dirac notations and designing the rewriting rules 
   The \textbf{atomic basis signature} $\Sigma_\mathcal{A}$ is any finite language.
 \end{definition}
 
+Because we consider the tensor product structure, larger Hilbert spaces can be composed by the atomic ones, like the qubit Hilbert space. The atomic basis here characterize the basis of the atomic Hilbert spaces.
 We limit the basis signature to finite languages to avoid problems of infinite dimensions.
 
 \begin{definition} [complex number signature]
