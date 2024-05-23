@@ -230,7 +230,8 @@ let R = TRS F X "
   (********************************************)
 
   (* ============== Delta Operator ================ *)
-
+  
+  DELTA(s, s) -> C(1) ;
   DELTA(s, PAIR(t1, t2)) -> DELTA(FST(s), t1) MLTS DELTA(SND(s), t2) ;
   DELTA(FST(s), FST(t)) MLTS DELTA(SND(s), SND(t)) -> DELTA(s, t) ;
 

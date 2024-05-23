@@ -1,0 +1,161 @@
+a%:M = \sum_i a |i><i|
+1%:M \1 idfun
+krausso f x = \sum_i ((f i \o x) \o (f i)^A)
+(formso f) x = f \o x \o f^A
+*t tensor
+^*t  ^A dagger
+^*m ^C conjugate
+^T transpose
+
+<p|A|i><j|q> = d_jq <p|A|i>
+<p|(|i><j|A)|q> = d_ip <j|A|q>
+< i | M^* | j > = < i | M | j > ^*
+<i|M^\dagger|j> = <j|M|i>^*
+(a *: A + B)^*t = a^* *: A^*t + B^*t
+(A + B)^*t = A^*t + B^*t
+(c *: A)^*t = c^* *: A^*t
+(c *: A + B)^*t = c^* *: A^*t + B^*t
+(A *m B)^*t = B^*t *m A^*t
+(M^*t)^*t = M
+(a%:M)^*t = a^*%:M
+(1%:M)^*t = 1%:M
+|i><j|^*m = |i><j|
+|i><j|^*t = |j><i|
+M^T = M^*m^*t
+M^T = M^*t^*m
+M^*m = M^*t^T
+
+\tr M^*t = (\tr M)^*
+\tr M^*m = (\tr M)^*
+(<i|M)^*t = M^*t|i>
+(M|i>)^*t = <i|M^*t
+<u| (\sum_i Mi |i><i|) |u> = \sum_i Mi * <u|i><i|u>
+<i|(A *m B^*t)|j> = <i|A (<j|B)^*t
+A *m B = \sum_i (A|i>)(<i|B)
+<i|(\sum_i Di|i><i| *m A) = Di <i|A
+\tr A = \sum_i<i|A|i>
+\Tr (f \o g) = \Tr (g \o f)
+\Tr (c *: f + g) = c * \Tr f + \Tr g
+\Tr f^A = (\Tr f)^*
+\Tr f^T = (\Tr f)
+\Tr f^C = (\Tr f)^*
+\Tr [> u; v <] = [< v; u >]
+\sum_i |i><i| = \1
+|i><j| |k><l| = d_jk |i><l|
+|i><j| |j><k| = |i><k|
+  \Tr (f |i><j|) = <j|(f|i>)
+  f = \sum_j\sum_i <i|(f|j>) |i><j|
+  ##### f = \sum_i <i.1|(f|i.2>) |i.1><i.2|
+v = \sum_i (<i|v>) |i>
+(g|u>)<v| = g(|u><v|)
+  |u>(g|v>)^A = (|u><v|)g^A
+ g = \sum_i (g|i>)<i|
+(f :o g) u = f (g u)
+\sum_i\sum_j Fi Gj u Gj^A Fi^A = \sum_i Fi (\sum_j Gj u Gj^A) Fi^A
+f :o (g :o h) = (f :o g) :o h
+\sum_i Fi (\sum_j\sum_k Gj Hk u Hk^A Gj^A) Fi^A = \sum_i\sum_j Fi Gj (\sum_k Hk u Hk^A) Gj^A Fi^A
+f :o (a *: u + v) = a *: (f :o u) + (f :o v)
+(f1 + f2) :o g = (f1 :o g) + (f2 :o g)
+f :o (g1 + g2) = (f :o g1) + (f :o g2)
+ (- f) :o g = - (f :o g)
+f :o (- g) = - (f :o g)
+(k *: f) :o g = k *: (f :o g)
+f :o (k *: g) = k *: (f :o g)
+(k *: f1 + f2) :o g = k *: (f1 :o g) + (f2 :o g)
+ f :o (k *: g1 + g2) = k *: (f :o g1) + (f :o g2)
+A :o B :o C :o D = A :o (B :o C) :o D
+
+  \sum_i \sum_j br i j \o ((f i \o (a *: x + y)) \o (f i)^A) \o (br i j)^A =
+  \sum_i a *: \sum_j br i j \o ((f i \o x) \o (f i)^A) \o (br i j)^A + 
+  \sum_i \sum_j br i j \o ((f i \o y) \o (f i)^A) \o (br i j)^A
+
+###########\sum_i ((f i \o \sum_i0 ((g i0 \o x) \o (g i0)^A)) \o (f i)^A) =
+\sum_i (((f i.1 \o g i.2) \o x) \o (f i.1 \o g i.2)^A)
+
+c *: (\sum_i ((f i \o x) \o (f i)^A)) =
+\sum_i ((sqrtC c *: f i \o x) \o (sqrtC c *: f i)^A)
+(M *t N)^*t = M^*t *t N^*t
+\tr (M *t N) = \tr M * \tr N
+
+mxswap (mxswap x) = x
+mxswap (a *: x + y) = a *: mxswap x + mxswap y
+mxswap (A *t B) = B *t A
+\tr (mxswap A) = \tr A
+mxswap A *m mxswap B = mxswap (A *m B)
+(mxswap A)^T = mxswap (A ^T)
+(mxswap A)^*t = mxswap (A ^*t)
+
+ptrace2 A = ptrace1 (mxswap A)
+ptrace1 A = ptrace2 (mxswap A)
+ptrace2 (c *: A + B) = c *: ptrace2 A + ptrace2 B
+
+\tr A = \tr (ptrace2 A)
+\tr A = \tr (ptrace1 A)
+ptrace1 (A *m (1%:M *t B)) = ptrace1 A *m B
+(1%:M) *t (1%:M) = 1%:M
+
+<i|(A *m B)|j> = \sum_i1\sum_i2 <i|A|(i1,i2)><(i1,i2)|B|j>
+<(k,p)|((|i><j| *t \1) *m A)|q> = d_ik * <(j,p)|A|q>
+<p|(A *m (|i><j| *t \1))|(k,q)> = d_jk * <(p|A|(i,q)>
+diag_mx (A *t B) = diag_mx A *t diag_mx B
+
+E : {E_k}
+so2choi E = \sum_i\sum_j |i><j| *t (\sum_k E_k |i><j| E_k^*t)
+
+ptrace1 (so2choi E *m (x^T *t 1%:M)) = \sum_k E_k x E_k^A. 
+so2choi (a *: x + y) = a *: so2choi x + so2choi y
+
+\tr (so2choi E *m ( x^T *t y)) = \Tr (E x \o y)
+ptrace2 (A *m (B *t 1%:M)) = ptrace2 A *m B
+
+======================================================
+sum_ij |i><j| *t (E |i><j|) = M
+sum_ij |i><j| *t (sum_k E_k |i><j| E_k^* ) = sum_k l_k |v_k><v_k|
+sum_k (sum_ij |i><j| *t E_k|i><j|E_k^* )
+sum_i |i>*t E_k|i> = sqrt(l_k) v_k
+E_k = \sum_i sqrt(l_k)<i|v_k><i|
+
+ptrace2 M = sum_tk l_k <t|v_k><v_k|t>
+=sum_tkij l_k |i><i|<t|v_k><v_k|t>|j><j|
+=sum_ijk |i><j| sum_t <t| <i|v_k><v_k|j> |t>
+E_k^* E_k = sum_ij l_k |j><v_k|j> <i|v_k><i|
+= sum_k sum_ij l_k |i><j| <v_k|i><j|v_k>
+
+<vj||vi>
+<vi|vj>
+
+E_k E_k^* = sum_ij l_k <i|v_k><i| |j><v_k|j>
+=sum_i l_k <i|v_k><v_k|i>
+
+E |i><j| = <i| M |j>
+|i> = delta i 0
+<i| = delta 0 i
+x = sum_ij <i|x|j>|i><j|
+
+(E x)
+= (E sum_ij <i|x|j>|i><j| )
+= sum_ij <i|x|j> E |i><j|
+= sum_ij <i|x|j> <i|M|j>
+
+sum_ij |i><j| *t (sum_k f k o |i><j| o (f k)^A))
+sum_k (|i> *t (f k o |i>)
+========================================================
+
+\Tr (E x \o A) = \Tr (x \o (E^*o A))
+\Tr (A \o E x) = \Tr ((E^*o A) \o x)
+
+ \sum_i |v><i|x|i><v| = \tr x * |v><v|
+ \sum_i |i><v|x|v><i| = <v|x|v> *: \1
+
+dualso (E :o F) = dualso F :o dualso E
+
+\sum_i (elemso f i) = krausso f
+ifso f br x = \sum_i ((br i :o elemso f i) x)
+ifso f br = \sum_i (br i :o elemso f i)
+dualso (ifso f br) = \sum_i dualso (br i :o (elemso f i))
+
+dualqm   f O := \sum_i ((f i)^A \o (O i) \o (f i))
+dualqm f O = \sum_i ((elemso f i)^*o (O i))
+\sum_i \Tr ((elemso f i) x \o O i) = \Tr (x \o dualqm f O)
+\sum_i \Tr (O i \o (elemso f i) x) = \Tr (dualqm f O \o x)
+

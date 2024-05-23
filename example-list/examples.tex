@@ -74,7 +74,9 @@
 \usepackage{wrapfig}
 \usepackage{dsfont}
 
-
+\newcommand{\tr}{\mathrm{tr}}
+\newcommand{\pass}{\textcolor{blue}{\textbf{ [PASS] }}}
+\newcommand{\fail}{\textcolor{red}{\textbf{ [FAIL] }}}
 
 
 %%
@@ -168,16 +170,23 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Preliminary Example}
+\begin{example}
+  \pass Let $\ket{\Phi} = \sum_{i \in \mathbf{U}}\ket{i, i}$ to be the maximally entangled state on Hilbert space $\mathcal{H}\times\mathcal{H}$. Then for all operators $M_1, M_2 \in \mathrm{Hom}(\mathcal{H}, \mathcal{H})$,
+  $$
+  \bra{\Phi} (I \otimes M_1) (M_2 \otimes I) \ket{\Phi} = \tr(M_1^\top M_2).
+  $$
+\end{example}
 
 \section{Textbook Examples}
 
-\begin{example}[QCQI (2.10)]
+\begin{example}[QCQI (2.10)] \pass
   $$
   A\left( \sum_i a_i \ket{v_i} \right) = \sum_i a_i A(\ket{v_i}).
   $$
 \end{example}
 
-\begin{example}[QCQI (2.13)]
+\begin{example}[QCQI (2.13)] \pass
   $$
   \left( \ket{v}, \sum_i \lambda_i \ket{w_i} \right) = \sum_i \lambda_i (\ket{v}, \ket{w_i}).
   $$
@@ -186,27 +195,27 @@
   $$
 \end{example}
 
-\begin{example}[QCQI Exercise 2.6]
+\begin{example}[QCQI Exercise 2.6] \pass
   $$
   \left( \sum_i \lambda_i \ket{w_i}, \ket{v} \right) = \sum_i \lambda_i^* (\ket{w_i}, \ket{v}).
   $$
 \end{example}
 
-\begin{example}[QCQI (2.18)]
+\begin{example}[QCQI (2.18)] \pass
   For orthonormal basis $\ket{i}$,
   $$
   \left( \sum_i v_i \ket{i}, \sum_j w_j \ket{j} \right) = \sum_{ij}v_i^*w_j \delta_{ij} = \sum_i v_i^* w_i.
   $$
 \end{example}
 
-\begin{example}[QCQI (2.21)]
+\begin{example}[QCQI (2.21)] \pass
   $$
   \left( \sum_i \ket{i}\bra{i} \right) \ket{v} = \sum_i \ket{i} \braket{i|v}.
   $$
   Notice the slippery informal expression here. $\ket{v}$ should actually be $v$.
 \end{example}
 
-\begin{example}[QCQI (2.22)]
+\begin{example}[QCQI (2.22)] \pass
   $$
   \sum_i\ket{i}\bra{i} = I.
   $$
@@ -214,65 +223,171 @@
 \end{example}
 
 
-\begin{example}[QCQI (2.24-2.25)]
+\begin{example}[QCQI (2.24-2.25)] \pass
   $$
-  \sum_{ij} \ket{w_j}\bra{i_j}A\ket{v_i}\bra{v_i} = \sum_{ij}\bra{w_j}A\ket{v_i}\ket{w_j}\bra{v_i}.
+  \sum_{ij} \ket{w_j}\bra{w_j}A\ket{v_i}\bra{v_i} = \sum_{ij}\bra{w_j}A\ket{v_i}\ket{w_j}\bra{v_i}.
   $$
 \end{example}
 
-\begin{example}[QCQI (2.26)]
+\begin{example}[QCQI (2.26)] \pass
   $$
   \braket{v|v}\braket{w|w} = \sum_i\braket{v|i}\braket{i|v}\braket{w|w}.
   $$
 \end{example}
+\textbf{Remark:} need to detect $\sum_{i\in\mathbf{U}}\ket{i}\bra{i} \to \mathbf{1}_\mathcal{O}$.
 
-\begin{example}[QCQI Exercise 2.14]
+\begin{example}[QCQI Exercise 2.14] \pass
   $$
   \left( \sum_i a_i A_i \right)^\dagger = \sum_i a_i^* A_i^\dagger.
   $$
 \end{example}
 
-\begin{example}[QCQI Exercise 2.16]
+\begin{example}[QCQI Exercise 2.16] \pass
   Show that any projector $P\equiv \sum_{i=1}^k \ket{i}\bra{i}$ satisfies the equation $P^2=P$.
 \end{example}
 
-\begin{example}[QCQI (2.46)]
+\begin{example}[QCQI (2.46)] \pass
   $$
     (A \otimes B)\left(\sum_i a_i \ket{v_i}\otimes\ket{w_i}\right) \equiv \sum_i a_i A \ket{v_i} \otimes B\ket{w_i}.
   $$
 \end{example}
 
-\begin{example}[QCQI (2.49)]
+\begin{example}[QCQI (2.49)] \pass
   $$
     \left(\sum_i a_i \ket{v_i}\otimes\ket{w_i}, \sum_j b_j \ket{v'_j}\otimes \ket{w'_j}\right) \equiv \sum_{ij}a_i^*b_j\braket{v_i|v'_j}\braket{w_i|w'_j}.
   $$
 \end{example}
 
-\begin{example}[QCQI (2.61)]
+\begin{example}[QCQI (2.61)] \pass
   $$
     \sum_i\bra{i}A\ket{\psi}\braket{\psi|i} = \bra{\psi}A\ket{\psi}.
   $$
 \end{example}
 
-\begin{example}[QCQI Exercise 2.43]
-  Show that for $j,k = 1,2,3$,
+% \begin{example}[QCQI Exercise 2.43] \fail
+%   Show that for $j,k = 1,2,3$,
+%   $$
+%     \sigma_j\sigma_k = \delta_{jk}I + i\sum_{l=1}^3\epsilon_{jkl}\sigma_l.
+%   $$
+%   This can be checked with the help of Mathematica.
+% \end{example}
+
+\begin{example}[QCQI (2.128)] \pass
   $$
-    \sigma_j\sigma_k = \delta_{jk}I + i\sum_{l=1}^3\epsilon_{jkl}\sigma_l.
+    \sum_{m',m''}\bra{\psi}M_m^\dagger\bra{m'}(I\otimes\ket{m}\bra{m})M_{m''}\ket{\psi}\ket{m''} = \bra{\psi}M_m^\dagger M_m\ket{\psi}.
   $$
-  This can be checked with the help of Mathematica.
 \end{example}
 
-\begin{example}[QCQI (2.128)]
-  $$
-    \sum_{m',m''}\bra{\psi}M_m^\dagger\bra{m'}(I_Q\otimes\ket{m}\bra{m})M_{m''}\ket{\psi}\ket{m''} = \bra{\psi}M_m^\dagger M_m\ket{\psi}.
-  $$
-\end{example}
-
-\begin{example}[QCQI Theorem 4.1]
+\begin{example}[QCQI Theorem 4.1] \pass
   Suppose $U$ is a unitary operation on a single qubit. Then there exist real numbers $\alpha, \beta, \gamma$ and $\delta$ such that $$
-  U = e^{i\alpha}R_z(\beta)R_y(\gamma)R_z(\delta).
+  U = \left[
+  \begin{array}{cc}
+  e^{i(\alpha - \beta/2 - \delta/2)} \cos \frac{\gamma}{2} & -e^{i(\alpha - \beta/2 + \delta/2)} \sin \frac{\gamma}{2} \\
+  e^{i(\alpha + \beta/2 - \delta/2)} \sin \frac{\gamma}{2} & e^{i(\alpha + \beta/2 + \delta/2)} \cos \frac{\gamma}{2}
+  \end{array}
+  \right]
+  = e^{i\alpha}R_z(\beta)R_y(\gamma)R_z(\delta),
+  $$
+  where
+\[
+  R_x(\theta) \equiv
+  \begin{bmatrix}
+  \cos \frac{\theta}{2} & -i \sin \frac{\theta}{2} \\
+  -i \sin \frac{\theta}{2} & \cos \frac{\theta}{2}
+  \end{bmatrix}
+  \qquad
+  R_y(\theta) \equiv
+  \begin{bmatrix}
+  \cos \frac{\theta}{2} & -\sin \frac{\theta}{2} \\
+  \sin \frac{\theta}{2} & \cos \frac{\theta}{2}
+  \end{bmatrix}
+  \qquad
+  R_z(\theta) \equiv
+  \begin{bmatrix}
+  e^{-i \theta / 2} & 0 \\
+  0 & e^{i \theta / 2}
+  \end{bmatrix}
+  \]
+  are the rotation gates.
+\end{example}
+
+
+\section{Operation on maximally entangled state}
+\begin{example} \pass
+  Assume $S$ and $T$ are subsystems on Hilbert space $\mathcal{H}_T$ and $\ket{\Phi}_{S,T} = \sum_i \ket{i}\ket{i}$ is a maximally entangled state. Then for all operators $A\in\mathcal{L}(\mathcal{H}_T, \mathcal{H}_T)$, we have 
+  $$
+  A_S\ket{\Phi}_{S, T} = A_T^\top\ket{\Phi}_{S, T}.
   $$
 \end{example}
+
+
+\section{CoqQ Examples}
+\begin{enumerate}
+  \item \pass $\bra{p}A\ket{i}\braket{j|q} = \delta_{j,q}\bra{p}A\ket{i}$
+  \item \pass $\bra{p}(\ket{i}\bra{j}A)\ket{q} = \delta_{i, p}\bra{j}A\ket{q}$
+  \item \pass $\bra{i}M^*\ket{j} = \bra{i}M\ket{j}^*$
+  \item \pass $\bra{i}M^\dagger\ket{j} = \bra{j}M\ket{i}^*$
+  \item \pass $(a A + B)^* = a^* A^* + B^*$
+  \item \pass $(A+B)^\dagger = A^\dagger + B^\dagger$
+  \item \pass $(c A)^\dagger = c^* A^\dagger$
+  \item \pass $(c A + B)^\dagger = c^* A^\dagger + B^\dagger$
+  \item \pass $(A \cdot B)^\dagger = B^\dagger \cdot A^\dagger$
+  \item \pass $(M^\dagger)^\dagger = M$
+  \item \pass $(aI)^\dagger = a^* I$
+  \item \pass $(1 I)^\dagger = I$
+  \item \pass $(\ket{i}\bra{j})^* = \ket{i}\bra{j}$
+  \item \pass $(\ket{i}\bra{j})^\dagger = \ket{j}\bra{i}$
+  \item \pass $M^\top = (M^*)^\dagger$
+  \item \pass $M^\top = (M^\dagger)^*$
+  \item \pass $M^* = (M^\dagger)^\top$
+  \item \pass $\tr(M^\dagger) = \tr(M)^*$
+  \item \pass $\tr(M^*) = \tr(M)^*$
+  \item \pass $(\bra{i}M)^\dagger = M^\dagger \ket{i}$
+  \item \pass $(M \ket{i})^\dagger = \bra{i} M^\dagger$
+  \item \pass $\bra{u} \left( \sum_{i} a_i \ket{i}\bra{i} \right) \ket{u} = \sum_i a_i \braket{u|i}\braket{i|u}$
+  \item \pass $\bra{i}(A\cdot B^\dagger)\ket{j} = \bra{i} A (\bra{j}B)^\dagger$
+  \item \pass $A \cdot B = \sum_i (A \ket{i})(\bra{i} B)$
+  \item \pass $\bra{i}(\sum_{i \in \mathbf{U}} d_i \ket{i}\bra{i} A) = d_i \bra{i} A$
+  \item \pass $\tr(A) = \sum_{i \in \mathbf{U}}\bra{i} A \ket{i}$
+  \item \pass $\tr(A B) = \tr(B A)$ (entry expansion is critical here)
+  \item \pass $\tr(c A + B) = c\ \tr(A) + \tr(B)$
+  \item \pass $\tr(A^\dagger) = \tr(A)^*$
+  \item \pass $\tr(A^\top) = \tr(A)$
+  \item \pass $\tr(A^*) = \tr(A)^*$
+  \item \pass $\tr(\ket{u}\bra{v}) = \braket{v|u}$
+  \item \pass $\tr(\ket{u}\bra{v}) = \braket{v|u}$ ($u$, $v$ are arbitrary vectors)
+  \item \pass $\sum_{i\in\mathbf{U}} \ket{i}\bra{i} = I$
+  \item \pass $\ket{i}\bra{j}\cdot\ket{k}\bra{l} = \delta_{j,k}\ket{i}\bra{l}$
+  \item \pass $\ket{i}\bra{j}\cdot\ket{j}\bra{k} = \ket{i}\bra{k}$
+  \item \pass $\tr(A \ket{i}\bra{j}) = \bra{j} (A \ket{i})$
+  \item \pass $A = \sum_{j\in\mathbf{U}}\sum_{i\in\mathbf{U}} \bra{i}(A\ket{j}) \ket{i}\bra{j}$
+  \item \pass $\ket{v} = \sum_{i\in\mathbf{U}}(\braket{i|v})\ket{i}$
+  \item \pass $(A\ket{u})\bra{v} = A(\ket{u}\bra{v})$
+  \item \pass $\ket{u}(A\ket{v})^\dagger = (\ket{u}\bra{v})A^\dagger$
+  \item \pass $\bra{b} = \sum_{i\in\mathbf{U}}(\braket{b|i}\bra{i})$
+  \item \pass $(A\cdot B)\ v = A (B\ v)$
+  \item \pass $\sum_{i}\sum_{j}F_i G_j A G_j^\dagger F_i^\dagger = \sum_i F_i (\sum_j G_j A G_j^\dagger) F_i^\dagger$
+  \item \pass $(A\cdot B)\cdot C = A \cdot (B \cdot C)$
+  \item \pass $\sum_i F_i \cdot (\sum_j \sum_k G_j \cdot H_k \cdot A \cdot H_k^\dagger \cdot G_j^\dagger) \cdot F_i^\dagger = \sum_i \sum_j F_i \cdot G_j \cdot (\sum_k H_k \cdot A \cdot H_k^\dagger) \cdot G_j^\dagger \cdot F_i^\dagger$
+  \item \pass $A\cdot(a B + C) = a (A\cdot B) + (A\cdot C)$
+  \item \pass $(A_1 + A_2)\cdot B = A_1 \cdot B + A_2 \cdot B$
+  \item \pass $A \cdot (B_1 + B_2) = A \cdot B_1 + A \cdot B_2$
+  \item \pass $(-A) \cdot B = - (A \cdot B)$
+  \item \pass $A \cdot (-B) = - (A \cdot B)$
+  \item \pass $(k A) \cdot B = k (A \cdot B)$
+  \item \pass $A \cdot (k B) = k (A \cdot B)$
+  \item \pass $(k A_1 + A_2) \cdot B = k (A_1 \cdot B) + A_2 \cdot B$
+  \item \pass $A \cdot (k B_1 + B_2) = k (A \cdot B_1) + A \cdot B_2$
+  \item \pass $A \cdot B \cdot C \cdot D = A \cdot (B \cdot C) \cdot D$
+  \item \pass $\sum_i \sum_j br_{i, j} \cdot ((f_i \cdot (a X + Y)) \cdot f_i^\dagger \cdot br_{i, j}^\dagger) = \sum_i a \sum_j br_{i, j} \cdot ((f_i \cdot X) \cdot f_i^\dagger) \cdot br_{i, j}^\dagger + \sum_i \sum_j br_{i, j} \cdot ((f_i \cdot Y) \cdot f_i^\dagger) \cdot br_{i, j}^\dagger$
+  \item \pass $c > 0 \to c \sum_i (f_i \cdot X \cdot f_i^\dagger) = \sum_i ((\sqrt{c} f_i \cdot X) \cdot (\sqrt{c} f_i^\dagger))$
+  \item \pass $(M \otimes N)^\dagger = M^\dagger \otimes N^\dagger$
+  \item \fail $\tr (M \otimes N) = \tr(M) \tr(N)$
+  \item \fail $SWAP(SWAP(A))=A$
+\end{enumerate}
+
+\clearpage
+\appendix 
 
 \section{PQC/Quantum Black Box Equivalence Checking}
 \begin{figure*}[h]
@@ -282,25 +397,6 @@
 \begin{figure*}[h]
   \includegraphics*[width=\textwidth]{QCQI.Fig4.8.png}
 \end{figure*}
-
-
-\section{Operation on maximally entangled state}
-\begin{example}
-  Assume $S$ and $T$ are subsystems on Hilbert space $\mathcal{H}_T$ and $\ket{\Phi}_{S,T} = \sum_i \ket{i}\ket{i}$ is a maximally entangled state. Then for all operators $A\in\mathcal{L}(\mathcal{H}_T, \mathcal{H}_T)$, we have 
-  $$
-  A_S\ket{\Phi}_{S, T} = A_T^\top\ket{\Phi}_{S, T}.
-  $$
-\end{example}
-\textbf{Remark:} The normal forms are 
-$$
-\left ( \sum_{i \in  \mathbf{U}, j \in  \mathbf{U}} ( \langle  i | \cdot   A  | j \rangle)   \left ( | i \rangle _{  S } \otimes  | j \rangle _{  T } \right ) \right )
-$$
-and
-$$
-\left ( \sum_{i \in  \mathbf{U}, j \in  \mathbf{U}}   ( \langle  i | \cdot    A^\top  | j \rangle)  \left (  | i \rangle _{  T } \otimes  | j \rangle _{  S } \right ) \right )
-.
-$$
-The equivalence checking algorithm applies (DOT-DUAL) and (SUM-SWAP) on the terms and accepts.
 
 
 
@@ -324,7 +420,6 @@ We formalized the small-step operational semantics of quantum while programs as 
 \end{example}
 
 \textbf{Remark:} It should take 140 steps to complete the calculation!
-
 
 
 \bibliographystyle{plain}

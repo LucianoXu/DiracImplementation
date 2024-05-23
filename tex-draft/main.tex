@@ -289,7 +289,7 @@ Transpose is also an important operation pervasively used in quantum information
 
 \subsection{Denotational Semantics}
 
-Denotational semantics explain the formal languageas a process of calculation. For language $L$, it first specifies its domain $\mathcal{D}_L$. For syntax $S$ of $L$, the semantics $\sem{S} \in \mathcal{D}_L$, and the semantics of different symbols are defined by the rules as mathematical functions. For the modules, the domain for $\Sigma_\mathcal{C}$ is simply the complex field $\mathbb{C}$, and the domain for $\Sigma_\mathcal{A}$ is some finite set $A$. In the following, we give the denotational semantics of core language $\mathfrak{DN}(\Sigma_\mathcal{A}, \Sigma_\mathcal{C})$. 
+Denotational semantics explain the formal language as a process of calculation. For language $L$, it first specifies its domain $\mathcal{D}_L$. For syntax $S$ of $L$, the semantics $\sem{S} \in \mathcal{D}_L$, and the semantics of different symbols are defined by the rules as mathematical functions. For the modules, the domain for $\Sigma_\mathcal{C}$ is simply the complex field $\mathbb{C}$, and the domain for $\Sigma_\mathcal{A}$ is some finite set $A$. In the following, we give the denotational semantics of core language $\mathfrak{DN}(\Sigma_\mathcal{A}, \Sigma_\mathcal{C})$. 
 
 \begin{definition}[denotational semantics of basis]
   For atomic basis $\Sigma_\mathcal{A}$ with domain $A$, the domain of basis $\mathcal{E}$ is the binary tree algebra over $A$, which is defined as 
@@ -322,7 +322,7 @@ Denotational semantics explain the formal languageas a process of calculation. F
 \yx{We set $\fst\ a = a$ to avoid malformed terms.}
 
 
-The semantics for Dirac notations are based on linear algebra, but some explanation on typing is necessary here. In mathematics we commonly distinguish linear spaces with different sizes, which corresponds to a more meticulous type system with basis set information. But our internal language only use sorts to represent vectors or operators, but the space itself is untyped. It is equivalent to say that we consider only one universal linear space. On the one hand, it can be understood as the direct sum of all different, typed linear spaces. On the other hand, it is the linear space with basis set $\mathcal{D}_\mathcal{E}$. From the isomorphism $\mathcal{H}_{A\cup B} \cong \mathcal{H}_A \oplus \mathcal{H}_B$, $\mathcal{H}_{A \times B} \cong \mathcal{H}_A \otimes \mathcal{H}_B$, we have
+The semantics for Dirac notations are based on linear algebra, but some explanation on typing is necessary here. In mathematics we commonly distinguish linear spaces with different sizes, which corresponds to a more meticulous type system with basis set information. But our internal language only use sorts to represent vectors or operators, and the space itself is untyped. It is equivalent to say that we consider only one universal linear space. On the one hand, it can be understood as the direct sum of all different, typed linear spaces. On the other hand, it is the linear space with basis set $\mathcal{D}_\mathcal{E}$. From the isomorphism $\mathcal{H}_{A\cup B} \cong \mathcal{H}_A \oplus \mathcal{H}_B$, $\mathcal{H}_{A \times B} \cong \mathcal{H}_A \otimes \mathcal{H}_B$, we have
 $$
 \mathcal{H}_{\mathcal{D}_\mathcal{E}} = \mathcal{H}_{\mu X.(A\cup (X \times X))} \cong \mu V. \mathcal{H}_A \oplus (V \otimes V).
 $$
@@ -621,7 +621,7 @@ It is reasonable to assume that we have the rewriting term system to decide the 
 \begin{definition}[TRS $R_{\Sigma_\mathcal{C}}$]
   For the complex number language $\Sigma_\mathcal{C}$, the TRS $R_{\Sigma_\mathcal{C}}$ is an TRS such that:
   \begin{itemize}
-    \item $S$ is terminating and ground confluent,
+    \item $R_{\Sigma_\mathcal{C}}$ is terminating and ground confluent,
     \item for all closed terms $\alpha$, $\beta$ and $\gamma$, the pair of terms
     \begin{itemize}
         \item $0 + \alpha$ and $\alpha$,
@@ -1058,9 +1058,9 @@ Then We consider completeness. The two deduction rules (*) and (**) in \ref{def:
 
 The above results generally means that the TRS $R_\mathfrak{DN}$ is sound for the denotational semantics, and is not weaker than the axiomatic semantics. Combining these two, we can easily prove the consistency of the two sematnics as a byproduct.
 
-\begin{lemma}[consistency of denotational and axiomatic semantics]
+\begin{corollary}[consistency of denotational and axiomatic semantics]
   The axiomatic semantics is consistent with the denotational one. In other words, for all $X, Y \in \mathfrak{DN}(\Sigma_\mathcal{A}, \Sigma_\mathcal{C})$, if $AX \vdash X = Y$, then $\sem{X} = \sem{Y}$.
-\end{lemma}
+\end{corollary}
 \begin{proof}
   By induction on the proof by $AX$. The cases of axioms in $AX$ are proved by the relative completeness and soundness of $R_\mathfrak{DN}$. The deduction rules (*) and (**) in \ref{def: SCR-DELTA} can be checked by hand.
   \yx{A small problem here. Difference in s, t symbols does not imply that their semantical explanations are different. I should modify the premises of (*) and (**).}
@@ -1073,7 +1073,7 @@ The above results generally means that the TRS $R_\mathfrak{DN}$ is sound for th
 
 \yx{introduce a language of sets here}
 
-\begin{definition}[Multi-set]
+\begin{definition}[set]
   \begin{align*}
     M ::= \emptyset\ |\ \mathbf{U}\ |\ M \cup M
   \end{align*}
@@ -1173,7 +1173,8 @@ The above results generally means that the TRS $R_\mathfrak{DN}$ is sound for th
   \qquad
   \sum_{i \in M} \mathbf{0}_\mathcal{B} \reduce \mathbf{0}_\mathcal{B}
   \qquad
-  \sum_{i \in M} \mathbf{0}_\mathcal{O} \reduce \mathbf{0}_\mathcal{O}
+  \sum_{i \in M} \mathbf{0}_\mathcal{O} \reduce \mathbf{0}_\mathcal{O}\\
+  \sum_{i \in \mathbf{U}} \ket{i}\otimes\bra{i} \reduce \mathbf{1}_\mathcal{O}
 \end{gather*}
 
 One common condition is attached to all the following rules: variable $i$ does not have free appearance in term $s$
@@ -1187,7 +1188,14 @@ Here $S.A$ is interpreted as three cases: $S.K$, $S.B$ and $S.O$.
   \qquad
   \sum_{i \in \mathbf{U}} ((\delta_{i, s} \times S).A) \reduce S[i:=s].A[i:=s]
 \end{gather*}
-
+\begin{gather*}
+  \sum_{i \in M} \sum_{j \in M} \delta_{i, j} \reduce \sum_{j \in M} C(1)
+  \qquad
+  \sum_{i \in M} \sum_{j \in M} (\delta_{i, j} \times S) \reduce \sum_{j \in M} S[i:=j] \\
+  \sum_{i \in M} \sum_{j \in M} (\delta_{i, j}.A) \reduce \sum_{j \in M} A[i:=j]
+  \qquad
+  \sum_{i \in M} \sum_{j \in M} ((\delta_{i, j} \times S).A) \reduce \sum_{j \in M} S[i:=j].A[i:=j]
+\end{gather*}
 \textbf{Remark:} To avoid problems, we assume that bind variables cannot be substituted into sum expressions. For example:
 $$
 \sum_{i \in M} \delta_{i, s}[s:=i^2] \equiv \sum_{j \in M} \delta_{j, i^2}.
@@ -1201,21 +1209,21 @@ The bind variable $i$ does not appear in $X$.
 Here $A \cdot B$ is interpreted as four cases: $B \cdot K$, $O \cdot K$, $B \cdot O$ and $O_1 \cdot O_2$. $A \otimes B$ is interpreted as four cases: $K_1 \otimes K_2$, $B_1 \otimes B_2$, $K \otimes B$ and $O_1 \otimes O_2$.
 
 \begin{gather*}
-  \sum_{i \in M} (S_1 \times X) \reduce (\sum_{i \in M} S_1) \times X
+  (\sum_{i \in M} S) \times X \reduce \sum_{i \in M} (S \times X)
   \qquad
   (\sum_{i \in M} S)^* \reduce \sum_{i \in M} S^* \\
   (\sum_{i \in M} A)^\dagger \reduce \sum_{i \in M} A^\dagger
   \qquad
   (\sum_{i \in M} A)^\top \reduce \sum_{i \in M} A^\top \\
-  \sum_{i \in M} (X.A) \reduce X.(\sum_{i \in M} A)
+  X.(\sum_{i \in M} A) \reduce \sum_{i \in M} (X.A)
   \qquad
-  \sum_{i \in M} (S.X) \reduce (\sum_{i \in M} S). X \\
-  \sum_{i \in M} (A \cdot X) \reduce (\sum_{i \in M} A) \cdot X
+  (\sum_{i \in M} S). X \reduce \sum_{i \in M} (S.X) \\
+  (\sum_{i \in M} A) \cdot X \reduce \sum_{i \in M} (A \cdot X) 
   \qquad
-  \sum_{i \in M} (X \cdot B) \reduce X \cdot (\sum_{i \in M} B) \\
-  \sum_{i \in M} (A \otimes X) \reduce (\sum_{i \in M} A) \otimes X
+  X \cdot (\sum_{i \in M} B) \reduce \sum_{i \in M} (X \cdot B) \\
+  (\sum_{i \in M} A) \otimes X \reduce \sum_{i \in M} (A \otimes X) 
   \qquad
-  \sum_{i \in M} (X \otimes B) \reduce X \otimes (\sum_{i \in M} B)
+  X \otimes (\sum_{i \in M} B) \reduce \sum_{i \in M} (X \otimes B)
 \end{gather*}
 
 \subsubsection*{About \textsf{SUM-DIST}: push in or pull out?}
@@ -1223,29 +1231,13 @@ We can flip the direction of the rules in \textsf{SUM-DIST} to pull elements out
 
 When pushing inside, the information of bind variable independence is lost. This makes elimination rule less complete. Maybe we want to do in the opposite way: pull everything out as much as possible. Those rules involve checking whether the subterm to be pulled out is independent on the bind variable. But this strategy makes matching elimination rule simpler.
 
+\yx{The question to pull out or push in ...}
 
-\subsubsection*{\textsf{SUM-COMP}}
-These rules are for completion.
-
-\begin{gather*}
-  \frac{A \cdot B \reduce C \qquad \text{(bind variable renamed)}}{A \cdot (\sum_{i \in M} B) \reduce \sum_{i \in M} C}
-  \qquad
-  \frac{A \cdot B \reduce C \qquad \text{(bind variable renamed)}}{(\sum_{i \in M} A) \cdot B \reduce \sum_{i \in M} C} \\
-  \\
-  \frac{A \otimes B \reduce C \qquad \text{(bind variable renamed)}}{A \otimes (\sum_{i \in M} B) \reduce \sum_{i \in M} C}
-  \qquad
-  \frac{A \otimes B \reduce C \qquad \text{(bind variable renamed)}}{(\sum_{i \in M} A) \otimes B \reduce \sum_{i \in M} C} \\
-  \\
-  \frac{S \neq C(1), i \text{ is free in } S}{\sum_{i \in M} S \reduce (\sum_{i \in M} C(1)) \times S}
-  \qquad
-  \frac{i \text{ is free in } A}{\sum_{i \in M} A \reduce (\sum_{i \in M} C(1)).A}
-\end{gather*}
-
-\subsubsection*{\textsf{SUM-ADD}}
-Here the addition $A + B$ is interpreted in four sorts: scalar, ket, bra and operator.
-\begin{align*}
-  & (\sum_{i \in M} A) + (\sum_{j \in N} B) \reduce \sum_{k \in M \cup N} (A[i:=k] + B[j:=k])
-\end{align*}
+% \subsubsection*{\textsf{SUM-ADD}}
+% Here the addition $A + B$ is interpreted in four sorts: scalar, ket, bra and operator.
+% \begin{align*}
+%   & (\sum_{i \in M} A) + (\sum_{j \in N} B) \reduce \sum_{k \in M \cup N} (A[i:=k] + B[j:=k])
+% \end{align*}
 
 \subsection{Controlled Rewriting}
 
