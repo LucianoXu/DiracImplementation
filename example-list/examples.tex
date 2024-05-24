@@ -75,6 +75,8 @@
 \usepackage{dsfont}
 
 \newcommand{\tr}{\mathrm{tr}}
+\newcommand{\fst}{\textrm{fst }}
+\newcommand{\snd}{\textrm{snd }}
 \newcommand{\pass}{\textcolor{blue}{\textbf{ [PASS] }}}
 \newcommand{\fail}{\textcolor{red}{\textbf{ [FAIL] }}}
 
@@ -322,6 +324,17 @@
 
 
 \section{CoqQ Examples}
+\begin{definition}
+  Some high-level operators are encoded as follows.  
+  \begin{gather*}
+    \tr(A) \equiv \sum_{i\in\mathbf{U}} \bra{i} A \ket{i} \\
+    SWAP(A) \equiv \sum_{i\in\mathbf{U}}\sum_{j\in\mathbf{U}}\sum_{k\in\mathbf{U}}\sum_{l\in\mathbf{U}} \bra{i, j} A \ket{k, l} \ket{j, i}\bra{l, k} \\
+    \tr_1(A) \equiv \sum_{i\in\mathbf{U}}\sum_{j\in\mathbf{U}} (\sum_{k\in\mathbf{U}} \bra{k, i} A \ket{k, j}) \ket{i}\bra{j} \\
+    \tr_2(A) \equiv \sum_{i\in\mathbf{U}}\sum_{j\in\mathbf{U}} (\sum_{k\in\mathbf{U}} \bra{i, k} A \ket{j, k}) \ket{i}\bra{j} \\
+    so2choi(E) = \sum_{i\in\mathbf{U}}\sum_{j\in\mathbf{U}} \ket{i}\bra{j} \otimes (\sum_{k\in\mathbf{U}} E_k \ket{i}\bra{j} E_k^\dagger)
+  \end{gather*}
+\end{definition}
+
 \begin{enumerate}
   \item \pass $\bra{p}A\ket{i}\braket{j|q} = \delta_{j,q}\bra{p}A\ket{i}$
   \item \pass $\bra{p}(\ket{i}\bra{j}A)\ket{q} = \delta_{i, p}\bra{j}A\ket{q}$
@@ -382,8 +395,29 @@
   \item \pass $\sum_i \sum_j br_{i, j} \cdot ((f_i \cdot (a X + Y)) \cdot f_i^\dagger \cdot br_{i, j}^\dagger) = \sum_i a \sum_j br_{i, j} \cdot ((f_i \cdot X) \cdot f_i^\dagger) \cdot br_{i, j}^\dagger + \sum_i \sum_j br_{i, j} \cdot ((f_i \cdot Y) \cdot f_i^\dagger) \cdot br_{i, j}^\dagger$
   \item \pass $c > 0 \to c \sum_i (f_i \cdot X \cdot f_i^\dagger) = \sum_i ((\sqrt{c} f_i \cdot X) \cdot (\sqrt{c} f_i^\dagger))$
   \item \pass $(M \otimes N)^\dagger = M^\dagger \otimes N^\dagger$
-  \item \fail $\tr (M \otimes N) = \tr(M) \tr(N)$
-  \item \fail $SWAP(SWAP(A))=A$
+  \item \pass $\tr (M \otimes N) = \tr(M) \tr(N)$ (Index split is required)
+  \item \pass $SWAP(SWAP(A))=A$
+  \item \pass $A = \sum_{i \in \mathbf{U}} \bra{\fst i} A \ket{\snd i} \ket{\fst i} \bra{\snd i}$
+  \item \pass $\sum_{i\in T} f_i \cdot (\sum_{j \in R} g_j \cdot X \cdot g_j^\dagger) \cdot f_i^\dagger = \sum_{i \in T\times R} f_{\fst k} \cdot g_{\snd k} \cdot X \cdot f_{\fst k}^\dagger \cdot g_{\snd k}^\dagger$
+  \item \pass $SWAP(a X + Y) = a SWAP(X) + SWAP(Y)$
+  \item \pass $SWAP(A\otimes B) = B \otimes A$
+  \item \pass $\tr(SWAP(A)) = \tr(A)$
+  \item \pass $SWAP(A \cdot B) = SWAP(A) \cdot SWAP(B)$
+  \item \pass $SWAP(A)^\top = SWAP(A^\top)$
+  \item \pass $SWAP(A)^\dagger = SWAP(A^\dagger)$
+  \item \pass $\tr_2(A) = \tr_1(SWAP(A))$
+  \item \pass $\tr_1(A) = \tr_2(SWAP(A))$
+  \item \pass $\tr_2(c A + B) = c \tr_2(A) + \tr_2(B)$
+  \item \pass $\tr(A) = \tr(\tr_2(A))$
+  \item \pass $\tr(A) = \tr(\tr_1(A))$
+  \item \pass $\tr_1 (A \cdot (I \otimes B)) = \tr_1 (A) \cdot B$
+  \item \pass $I \otimes I = I$
+  \item \pass $\bra{i} A \cdot B \ket{j} = \sum_{a\in\mathbf{U}} \sum_{b\in\mathbf{U}} \bra{i}A\ket{a,b}\bra{a,b}B\ket{j}$
+  \item \pass $\bra{k,p} ((\ket{i}\bra{j} \otimes I) \cdot A) \ket{q} = \delta_{i, k} \bra{j, p} A \ket{q}$
+  \item \pass $\bra{p} (A \cdot (\ket{i}\bra{j} \otimes I)) \ket{k, q} = \delta_{j, k} \bra{p} A \ket{i, q}$
+  \item \fail $\tr_1(so2choi(E \cdot (X^\top \otimes I))) = \sum_{k\in\mathbf{U}} E_k X E_k^\dagger$ (the formalization of $E_i$ is problematic)
+  \item \fail $so2choi(a X + Y) =a\ so2choi(X) + so2choi(Y)$
+  \item \pass $\tr_2(A \cdot (B \otimes I)) = \tr_2(A) \cdot B$
 \end{enumerate}
 
 \clearpage

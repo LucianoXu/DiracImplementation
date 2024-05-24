@@ -1075,7 +1075,7 @@ The above results generally means that the TRS $R_\mathfrak{DN}$ is sound for th
 
 \begin{definition}[set]
   \begin{align*}
-    M ::= \emptyset\ |\ \mathbf{U}\ |\ M \cup M
+    M ::= \emptyset\ |\ \mathbf{U}\ |\ M \cup M\ |\ M \times M
   \end{align*}
 \end{definition}
 
@@ -1084,6 +1084,10 @@ The above results generally means that the TRS $R_\mathfrak{DN}$ is sound for th
   \emptyset \cup M \reduce M
   \qquad
   \mathbf{U} \cup M \reduce \mathbf{U}
+  \qquad
+  \emptyset \times M \reduce \emptyset
+  \qquad
+  \mathbf{U} \times \mathbf{U} \reduce \mathbf{U}
 \end{gather*}
 
 \begin{definition}[DNE]
@@ -1163,7 +1167,10 @@ The above results generally means that the TRS $R_\mathfrak{DN}$ is sound for th
 
 \textbf{Remark:} It has been checked by CiME2 that for the TRS $\mathfrak{DN}$ extended with transpose rules, the only unjoinable critical pairs are joinable with the equational theory $B\cdot K = K^\top \cdot B^\top$.
 
+\subsection{Juxtaposition of $B\cdot K$}
 
+
+\subsection{Sum Rewriting Rules}
 \subsubsection*{\textsf{SUM-ELIM}}
 
 \begin{gather*}
@@ -1174,7 +1181,7 @@ The above results generally means that the TRS $R_\mathfrak{DN}$ is sound for th
   \sum_{i \in M} \mathbf{0}_\mathcal{B} \reduce \mathbf{0}_\mathcal{B}
   \qquad
   \sum_{i \in M} \mathbf{0}_\mathcal{O} \reduce \mathbf{0}_\mathcal{O}\\
-  \sum_{i \in \mathbf{U}} \ket{i}\otimes\bra{i} \reduce \mathbf{1}_\mathcal{O}
+  \mathbf{1}_\mathcal{O} \reduce \sum_{i \in \mathbf{U}} \ket{i}\otimes\bra{i}
 \end{gather*}
 
 One common condition is attached to all the following rules: variable $i$ does not have free appearance in term $s$
@@ -1202,7 +1209,7 @@ $$
 $$
 In other words, the variables will never implicitly depend on bind variables.
 
-\subsubsection*{\textsf{SUM-DIST}}
+\subsubsection*{\textsf{SUM-PUSH}}
 
 Here the $A^\dagger$, $A^\top$, $S.A$ and addition are interpreted in three sorts: ket, bra and operator.
 The bind variable $i$ does not appear in $X$.
@@ -1231,29 +1238,47 @@ We can flip the direction of the rules in \textsf{SUM-DIST} to pull elements out
 
 When pushing inside, the information of bind variable independence is lost. This makes elimination rule less complete. Maybe we want to do in the opposite way: pull everything out as much as possible. Those rules involve checking whether the subterm to be pulled out is independent on the bind variable. But this strategy makes matching elimination rule simpler.
 
-\yx{The question to pull out or push in ...}
+\yx{Discuss: to pull out or push in ...}
 
 % \subsubsection*{\textsf{SUM-ADD}}
 % Here the addition $A + B$ is interpreted in four sorts: scalar, ket, bra and operator.
 % \begin{align*}
 %   & (\sum_{i \in M} A) + (\sum_{j \in N} B) \reduce \sum_{k \in M \cup N} (A[i:=k] + B[j:=k])
 % \end{align*}
+\subsubsection*{SUM-ADD}
+\begin{gather*}
+  (\sum_{i \in M} X) + (\sum_{j \in M} Y) = \sum_{k \in M} (X[i:=k] + Y[j:=k])
+\end{gather*}
 
-\subsection{Controlled Rewriting}
+\subsubsection*{SUM-INDEX}
+\begin{gather*}
+  \frac{\fst\ i \text{ not free in } A \vee \snd\ i \text{ not free in } A}{\sum_{i\in\mathbf{U}}A \reduce \sum_{j\in\mathbf{U}}\sum_{k\in\mathbf{U}}A[\fst\ i:=j, \snd\ i:=k, i:=(j,k)]}
+  \\
+  \\
+  \frac{\fst\ i \text{ not free in } A \vee \snd\ i \text{ not free in } A}{\sum_{i\in M_1 \times M_2}A \reduce \sum_{j\in M_1}\sum_{k\in M_2}A[\fst\ i:=j, \snd\ i:=k, i:=(j,k)]}
+  \\
+  \\
+  \frac{(j, k) \text{ not free in } A \wedge i, j \text{ appear in } A \text{ only as } (i, j)}{\sum_{j\in M_1}\sum_{k\in M_2}A \reduce \sum_{i\in M_1\times M_2}A[(j,k):=i]}
+\end{gather*}
 
-The following equalities hold for ket, bra and operators respectively, but there are no appropriate normal forms. 
+\subsection{Entry Expansion}
+
+The following equalities hold for ket, bra and operators respectively. 
 \begin{gather*}
   \sum_i (\bra{i} \cdot K).\ket{i} = K
   \qquad
-  \sum_i (B \cdot \ket{i}).\bra{i} = B \\
-  \sum_i \sum_j (\bra{i} A \ket{j}).\ket{i}\bra{j} = A
+  \sum_i (B \cdot \ket{i}).\bra{i} = B
   \qquad
-  \sum_i \sum_j (\bra{i} A \ket{j}).\ket{j}\bra{i} = A^\top
+  \sum_i \sum_j (\bra{i} A \ket{j}).\ket{i}\bra{j} = A
 \end{gather*}
 
-We leave the control to the user by two functions: \textbf{EntryReduce} rewrite from left to right, and \textbf{EntryExpand} rewrite from right to left.
+During the equivalence checking, the algorithm will expand the atomic variables of ket, bra and operator.
 
-\subsection{Equivalence Checking}
+\subsection{Entry Reduction}
+
+After the entry expansion, the algorithm will apply the rewriting rules again, and then try to match the left hand side of the three equations above, and rewrite to the reduced right hand side.
+
+\section{Equivalence Checking}
 
 Our goal is to design the algorithm that checks whether two terms are equivalent. Ideally this can be achieved by rewriting to normal forms, but for complicated scenarios, the normal form may not exist. This is the case with transpose and big operator. We have these axioms: 
 \begin{align*}
@@ -1261,7 +1286,7 @@ Our goal is to design the algorithm that checks whether two terms are equivalent
 & \text{(SUM-SWAP)} && \sum_{i \in M} \sum_{j \in N} A = \sum_{j \in N} \sum_{i \in M} A 
 \end{align*}
 
-Our algorithm for deciding equivalence takes these equations into consideration.
+Our algorithm for deciding equivalence takes these equations into consideration....
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

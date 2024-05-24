@@ -78,70 +78,40 @@ c *: (\sum_i ((f i \o x) \o (f i)^A)) =
 \tr (M *t N) = \tr M * \tr N
 
 mxswap (mxswap x) = x
+f = \sum_i <i.1|(f|i.2>) |i.1><i.2|
+\sum_i  ((f  i\o\sum_i0  ((g  i0\o  x)\o  (g  i0)^A))\o  (f  i)^A) =\sum_i (((f i.1 \o g i.2) \o x) \o (f i.1 \o g i.2)^A)
 mxswap (a *: x + y) = a *: mxswap x + mxswap y
 mxswap (A *t B) = B *t A
 \tr (mxswap A) = \tr A
 mxswap A *m mxswap B = mxswap (A *m B)
 (mxswap A)^T = mxswap (A ^T)
 (mxswap A)^*t = mxswap (A ^*t)
-
 ptrace2 A = ptrace1 (mxswap A)
 ptrace1 A = ptrace2 (mxswap A)
 ptrace2 (c *: A + B) = c *: ptrace2 A + ptrace2 B
-
 \tr A = \tr (ptrace2 A)
 \tr A = \tr (ptrace1 A)
 ptrace1 (A *m (1%:M *t B)) = ptrace1 A *m B
 (1%:M) *t (1%:M) = 1%:M
-
 <i|(A *m B)|j> = \sum_i1\sum_i2 <i|A|(i1,i2)><(i1,i2)|B|j>
 <(k,p)|((|i><j| *t \1) *m A)|q> = d_ik * <(j,p)|A|q>
+
 <p|(A *m (|i><j| *t \1))|(k,q)> = d_jk * <(p|A|(i,q)>
-diag_mx (A *t B) = diag_mx A *t diag_mx B
 
 E : {E_k}
 so2choi E = \sum_i\sum_j |i><j| *t (\sum_k E_k |i><j| E_k^*t)
 
 ptrace1 (so2choi E *m (x^T *t 1%:M)) = \sum_k E_k x E_k^A. 
+
 so2choi (a *: x + y) = a *: so2choi x + so2choi y
 
-\tr (so2choi E *m ( x^T *t y)) = \Tr (E x \o y)
+
 ptrace2 (A *m (B *t 1%:M)) = ptrace2 A *m B
 
-======================================================
-sum_ij |i><j| *t (E |i><j|) = M
-sum_ij |i><j| *t (sum_k E_k |i><j| E_k^* ) = sum_k l_k |v_k><v_k|
-sum_k (sum_ij |i><j| *t E_k|i><j|E_k^* )
-sum_i |i>*t E_k|i> = sqrt(l_k) v_k
-E_k = \sum_i sqrt(l_k)<i|v_k><i|
+|
+|------------> \Tr (E x \o A) = \Tr (x \o (E^*o A))
+|
 
-ptrace2 M = sum_tk l_k <t|v_k><v_k|t>
-=sum_tkij l_k |i><i|<t|v_k><v_k|t>|j><j|
-=sum_ijk |i><j| sum_t <t| <i|v_k><v_k|j> |t>
-E_k^* E_k = sum_ij l_k |j><v_k|j> <i|v_k><i|
-= sum_k sum_ij l_k |i><j| <v_k|i><j|v_k>
-
-<vj||vi>
-<vi|vj>
-
-E_k E_k^* = sum_ij l_k <i|v_k><i| |j><v_k|j>
-=sum_i l_k <i|v_k><v_k|i>
-
-E |i><j| = <i| M |j>
-|i> = delta i 0
-<i| = delta 0 i
-x = sum_ij <i|x|j>|i><j|
-
-(E x)
-= (E sum_ij <i|x|j>|i><j| )
-= sum_ij <i|x|j> E |i><j|
-= sum_ij <i|x|j> <i|M|j>
-
-sum_ij |i><j| *t (sum_k f k o |i><j| o (f k)^A))
-sum_k (|i> *t (f k o |i>)
-========================================================
-
-\Tr (E x \o A) = \Tr (x \o (E^*o A))
 \Tr (A \o E x) = \Tr ((E^*o A) \o x)
 
  \sum_i |v><i|x|i><v| = \tr x * |v><v|
