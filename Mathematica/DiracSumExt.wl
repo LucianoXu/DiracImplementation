@@ -5,7 +5,7 @@
 
 
 AppendTo[$Path, NotebookDirectory[]];
-BeginPackage["DiracSumExt`", {"DiracCore`", "DiracTpExt`"}];
+BeginPackage["DiracSumExt`", {"Unification`", "DiracCore`", "DiracTpExt`"}];
 
 
 ESET;
@@ -89,14 +89,7 @@ UniqueRenaming[IDX[indices___]]:=#->Unique[]&/@(First/@{indices});
 (* get the list of all bind variables *)
 BindVars[term_]:=Cases[term,IDX[bindvs___]->bindvs,{0,Infinity}]//Union//Map[First];
 
-AlphaNormQ[term_]:=With[{bindvs=BindVars[term]}, bindvs===Table[Symbol["idx"<>ToString[i]], {i, Length[bindvs]}]];
-
-(* the internal symbol for consider alpha-equivalence with multi-index sum *)
-SUMSWAP;
-
 NewBindVars[bindvs_]:=Table[Symbol["idx"<>ToString[i]], {i, Length[bindvs]}];
-
-AlphaNormRenaming[term_]:=With[{bindvs=BindVars[term]},Thread[bindvs->NewBindVars[bindvs]]];
 
 
 (* ::Section:: *)
@@ -105,7 +98,6 @@ AlphaNormRenaming[term_]:=With[{bindvs=BindVars[term]},Thread[bindvs->NewBindVar
 
 SetAttributes[UNION, {Orderless, Flat, OneIdentity}];
 SetAttributes[IDX, {Orderless}];
-SetAttributes[SUMSWAP, {Orderless}];
 
 
 (* ::Section:: *)
@@ -113,7 +105,7 @@ SetAttributes[SUMSWAP, {Orderless}];
 
 
 (*RenameSum[sum:(SUMS|SUMK|SUMB|SUMO)[i_, _, _]]:=sum/.{i:>Unique[]};*)
-CompleteBasis[]:=With[{nv=Unique[]}, SUMO[nv,USET,KET[nv]~OUTER~BRA[nv]]];
+CompleteBasis[]:=With[{nv=Unique[]}, SUMO[nv, USET, KET[nv]~OUTER~BRA[nv]]];
 
 
 (* ::Section:: *)
@@ -406,16 +398,6 @@ AppendTo[DNSumExtRules, RuleSumAdd4];
 
 
 (* ::Subsubsection:: *)
-(*Alpha conversion*)
-
-
-(* The condition is to avoid early hulting due to effortless alpha normalization *)
-SumAlphaNorm[term_]:=term/.{
-	s:((SUMS|SUMK|SUMB|SUMO)[___]):>With[{bindvs=BindVars[s]}, SUMSWAP@@(s/.#&/@Thread/@Thread[Table[bindvs,Length[bindvs]!]->Permutations[NewBindVars[bindvs]]])]
-	};
-
-
-(* ::Subsubsection:: *)
 (*EntryExpand*)
 
 
@@ -426,9 +408,9 @@ EntryExpandS[S1_ ~MLTS~ S2_]:=EntryExpandS[S1] ~MLTS~ EntryExpandS[S2];
 EntryExpandS[CONJS[S_]]:=CONJS[EntryExpandS[S]];
 EntryExpandS[B_ ~DOT~ K_]:=EntryExpandB[B] ~DOT~ EntryExpandK[K];
 EntryExpandS[SUMS[idx_, S_]]:=SUMS[idx, EntryExpandS[S]];
+EntryExpandS[S_]:=S;
 
 EntryExpandK[K:ZEROK|KET[_]]:=K;
-EntryExpandK[K_?AtomQ]:=With[{nv=Unique[]}, SUMK[nv, USET, (BRA[nv]~DOT~K)~SCRK~KET[nv]]];
 EntryExpandK[ADJK[B_]]:=ADJK[EntryExpandB[B]];
 EntryExpandK[S_ ~SCRK~ K_]:=EntryExpandS[S] ~SCRK~ EntryExpandK[K];
 EntryExpandK[K1_ ~ADDK~ K2_]:=EntryExpandK[K1] ~ADDK~ EntryExpandK[K2];
@@ -436,9 +418,9 @@ EntryExpandK[O0_ ~MLTK~ K_]:=EntryExpandO[O0] ~MLTK~ EntryExpandK[K];
 EntryExpandK[K1_ ~TSRK~ K2_]:=EntryExpandK[K1] ~TSRK~ EntryExpandK[K2];
 EntryExpandK[TPK[B_]]:=TPK[EntryExpandB[B]];
 EntryExpandK[SUMK[idx_, K_]]:=SUMK[idx, EntryExpandK[K]];
+EntryExpandK[K_]:=With[{nv=Unique[]}, SUMK[nv, USET, (BRA[nv]~DOT~K)~SCRK~KET[nv]]];
 
 EntryExpandB[B:ZEROB|BRA[_]]:=B;
-EntryExpandB[B_?AtomQ]:=With[{nv=Unique[]}, SUMB[nv, USET, (B~DOT~KET[nv])~SCRB~BRA[nv]]];
 EntryExpandB[ADJB[K_]]:=ADJB[EntryExpandK[K]];
 EntryExpandB[S_ ~SCRB~ B_]:=EntryExpandS[S] ~SCRB~ EntryExpandB[B];
 EntryExpandB[B1_ ~ADDB~ B2_]:=EntryExpandB[B1] ~ADDB~ EntryExpandB[B2];
@@ -446,9 +428,9 @@ EntryExpandB[B_ ~MLTB~ O0_]:=EntryExpandB[B] ~MLTB~ EntryExpandO[O0];
 EntryExpandB[B1_ ~TSRB~ B2_]:=EntryExpandB[B1] ~TSRB~ EntryExpandB[B2];
 EntryExpandB[TPB[K_]]:=TPB[EntryExpandK[K]];
 EntryExpandB[SUMB[idx_, B_]]:=SUMB[idx, EntryExpandB[B]];
+EntryExpandB[B_]:=With[{nv=Unique[]}, SUMB[nv, USET, (B~DOT~KET[nv])~SCRB~BRA[nv]]];
 
 EntryExpandO[O0:ZEROO|ONEO]:=O0;
-EntryExpandO[O0_?AtomQ]:=With[{i=Unique[], j=Unique[]}, SUMO[IDX[{i, USET}, {j, USET}], (BRA[i]~DOT~(O0~MLTK~KET[j]))~SCRO~(KET[i]~OUTER~BRA[j])]];
 EntryExpandO[K_ ~OUTER~ B_]:=EntryExpandK[K] ~OUTER~ EntryExpandB[B];
 EntryExpandO[ADJO[O0_]]:=ADJO[EntryExpandO[O0]];
 EntryExpandO[S_ ~SCRO~ O0_]:=EntryExpandS[S] ~SCRO~ EntryExpandO[O0];
@@ -457,6 +439,7 @@ EntryExpandO[O1_ ~TSRO~ O2_]:=EntryExpandO[O1] ~TSRO~ EntryExpandO[O2];
 EntryExpandO[O1_ ~MLTO~ O2_]:=EntryExpandO[O1] ~MLTO~ EntryExpandO[O2];
 EntryExpandO[TPO[O_]]:=TPO[EntryExpandO[O]];
 EntryExpandO[SUMO[idx_, O_]]:=SUMO[idx, EntryExpandO[O]];
+EntryExpandO[O0_]:=With[{i=Unique[], j=Unique[]}, SUMO[IDX[{i, USET}, {j, USET}], (BRA[i]~DOT~(O0~MLTK~KET[j]))~SCRO~(KET[i]~OUTER~BRA[j])]];
 
 (* Unify the interface. *)
 DNEntryExpand[S1_ ~ADDS~ S2_]:=EntryExpandS[S1] ~ADDS~ EntryExpandS[S2];
@@ -532,6 +515,26 @@ RuleIndexSplit3 = (sum:SUMS|SUMK|SUMB|SUMO)[IDX[{i_, M1_}, {j_, M2_}, indices___
 	] :> 
 	With[{nv=Unique[]}, sum[IDX[{nv, M1 ~PROD~ M2}, indices], body//.(PAIR[i,j]->nv)]];
 AppendTo[DNSumExtRules, RuleIndexSplit3];
+
+
+(* ::Subsection:: *)
+(*Unification Preprocessing*)
+
+
+(* ::Text:: *)
+(*alpha-conversion is dealt in this unification.*)
+
+
+UnifyPreproc[s1:(sop:SUMS|SUMK|SUMB|SUMO)[idx1_, body1_], s2:(sop:SUMS|SUMK|SUMB|SUMO)[idx2_, body2_]] := 
+	Module[
+		{
+			bindvs1=BindVars[s1], 
+			bindvs2=BindVars[s2],
+			newbdvs1, newbdvs2
+		}, 
+		newbdvs1=Table[Unique[], Length[bindvs1]]; newbdvs2=Table[Unique[], Length[bindvs2]];
+		{body1/.Thread[bindvs1 -> newbdvs1], body2/.Thread[bindvs2 -> newbdvs2], Join[newbdvs1, newbdvs2]}
+	];
 
 
 End[];

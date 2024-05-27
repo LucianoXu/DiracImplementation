@@ -331,7 +331,10 @@
     SWAP(A) \equiv \sum_{i\in\mathbf{U}}\sum_{j\in\mathbf{U}}\sum_{k\in\mathbf{U}}\sum_{l\in\mathbf{U}} \bra{i, j} A \ket{k, l} \ket{j, i}\bra{l, k} \\
     \tr_1(A) \equiv \sum_{i\in\mathbf{U}}\sum_{j\in\mathbf{U}} (\sum_{k\in\mathbf{U}} \bra{k, i} A \ket{k, j}) \ket{i}\bra{j} \\
     \tr_2(A) \equiv \sum_{i\in\mathbf{U}}\sum_{j\in\mathbf{U}} (\sum_{k\in\mathbf{U}} \bra{i, k} A \ket{j, k}) \ket{i}\bra{j} \\
-    so2choi(E) = \sum_{i\in\mathbf{U}}\sum_{j\in\mathbf{U}} \ket{i}\bra{j} \otimes (\sum_{k\in\mathbf{U}} E_k \ket{i}\bra{j} E_k^\dagger)
+    so2choi(E) \equiv \sum_{i\in\mathbf{U}}\sum_{j\in\mathbf{U}} \ket{i}\bra{j} \otimes (\sum_{k\in\mathbf{U}} E_k \ket{i}\bra{j} E_k^\dagger) \\
+    krausso(M, f)(X) \equiv \sum_{i \in M} f_i \cdot X \cdot f_i^\dagger \\
+    elemso(f, k)(X) \equiv f_k \cdot X \cdot f_k^\dagger \\
+    dualqm(M, f)(O) \equiv \sum_{i\in M} f_i^\dagger \cdot O_i \cdot f_i
   \end{gather*}
 \end{definition}
 
@@ -415,9 +418,17 @@
   \item \pass $\bra{i} A \cdot B \ket{j} = \sum_{a\in\mathbf{U}} \sum_{b\in\mathbf{U}} \bra{i}A\ket{a,b}\bra{a,b}B\ket{j}$
   \item \pass $\bra{k,p} ((\ket{i}\bra{j} \otimes I) \cdot A) \ket{q} = \delta_{i, k} \bra{j, p} A \ket{q}$
   \item \pass $\bra{p} (A \cdot (\ket{i}\bra{j} \otimes I)) \ket{k, q} = \delta_{j, k} \bra{p} A \ket{i, q}$
-  \item \fail $\tr_1(so2choi(E \cdot (X^\top \otimes I))) = \sum_{k\in\mathbf{U}} E_k X E_k^\dagger$ (the formalization of $E_i$ is problematic)
-  \item \fail $so2choi(a X + Y) =a\ so2choi(X) + so2choi(Y)$
+  \item \pass $\tr_1(so2choi(E) \cdot (X^\top \otimes I)) = \sum_{k\in\mathbf{U}} E_k X E_k^\dagger$
+  \item \fail $so2choi(a X + Y) =a\ so2choi(X) + so2choi(Y)$ ($aX + Y$ is not well formalized)
   \item \pass $\tr_2(A \cdot (B \otimes I)) = \tr_2(A) \cdot B$
+  \item \pass $\tr (so2choi(E)\cdot (X^\top \otimes Y)) = \tr(E(X) \cdot Y)$
+  \item \pass $\tr (E(X) \cdot A) = \tr (X \cdot E^*(A))$
+  \item \pass $\tr (A \cdot E(X)) = \tr (E^*(X) \cdot A)$
+  \item \pass $\sum_{i \in \mathbf{U}} \ket{v}\bra{i} X \ket{i}\bra{v} = \tr(X) * \ket{v}\bra{v}$
+  \item \pass $\sum_{i \in \mathbf{U}} \ket{i}\bra{v}X\ket{v}\bra{i} = \bra{v}X\ket{v} I$
+  \item \pass $\sum_{i \in M} elemso(f, i)(X) = krausso(M, f)(X)$
+  \item \pass $\sum_{i \in M} \tr(elemso(f,i)(X)\cdot O_i) = \tr (X \cdot dualqm(M, f)(O))$
+  \item \pass $\sum_{i \in M} \tr(O_i \cdot elemso(f,i)(X)) = \tr (dualqm(M,f)(O0)\cdot X)$
 \end{enumerate}
 
 \clearpage

@@ -137,6 +137,7 @@ AppendTo[DNTpExtRules, RuleTPO9];
 
 
 (* Juxtaposition *)
+
 Juxtapose[term_]:=term/.{B_~DOT~K_->JUX[B~DOT~K,TPB[K]~DOT~TPK[B]]};
 
 

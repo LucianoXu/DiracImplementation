@@ -2,6 +2,8 @@ a%:M = \sum_i a |i><i|
 1%:M \1 idfun
 krausso f x = \sum_i ((f i \o x) \o (f i)^A)
 (formso f) x = f \o x \o f^A
+dualqm   f O := \sum_i ((f i)^A \o (O i) \o (f i))
+
 *t tensor
 ^*t  ^A dagger
 ^*m ^C conjugate
@@ -69,7 +71,7 @@ A :o B :o C :o D = A :o (B :o C) :o D
   \sum_i a *: \sum_j br i j \o ((f i \o x) \o (f i)^A) \o (br i j)^A + 
   \sum_i \sum_j br i j \o ((f i \o y) \o (f i)^A) \o (br i j)^A
 
-###########\sum_i ((f i \o \sum_i0 ((g i0 \o x) \o (g i0)^A)) \o (f i)^A) =
+\sum_i ((f i \o \sum_i0 ((g i0 \o x) \o (g i0)^A)) \o (f i)^A) =
 \sum_i (((f i.1 \o g i.2) \o x) \o (f i.1 \o g i.2)^A)
 
 c *: (\sum_i ((f i \o x) \o (f i)^A)) =
@@ -107,25 +109,15 @@ so2choi (a *: x + y) = a *: so2choi x + so2choi y
 
 
 ptrace2 (A *m (B *t 1%:M)) = ptrace2 A *m B
-
-|
-|------------> \Tr (E x \o A) = \Tr (x \o (E^*o A))
-|
-
+\tr (so2choi E *m ( x^T *t y)) = \Tr (E x \o y)
+\Tr (E x \o A) = \Tr (x \o (E^*o A))
 \Tr (A \o E x) = \Tr ((E^*o A) \o x)
-
  \sum_i |v><i|x|i><v| = \tr x * |v><v|
  \sum_i |i><v|x|v><i| = <v|x|v> *: \1
 
-dualso (E :o F) = dualso F :o dualso E
-
 \sum_i (elemso f i) = krausso f
-ifso f br x = \sum_i ((br i :o elemso f i) x)
-ifso f br = \sum_i (br i :o elemso f i)
-dualso (ifso f br) = \sum_i dualso (br i :o (elemso f i))
 
-dualqm   f O := \sum_i ((f i)^A \o (O i) \o (f i))
-dualqm f O = \sum_i ((elemso f i)^*o (O i))
 \sum_i \Tr ((elemso f i) x \o O i) = \Tr (x \o dualqm f O)
+
 \sum_i \Tr (O i \o (elemso f i) x) = \Tr (dualqm f O \o x)
 

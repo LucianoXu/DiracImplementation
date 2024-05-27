@@ -1,1 +1,8 @@
-\tr (so2choi E *m ( x^T *t y)) = \Tr (E x \o y)
+dualso (E :o F) = dualso F :o dualso E
+
+ifso f br x = \sum_i ((br i :o elemso f i) x)
+ifso f br = \sum_i (br i :o elemso f i)
+dualso (ifso f br) = \sum_i dualso (br i :o (elemso f i))
+
+
+dualqm f O = \sum_i ((elemso f i)^*o (O i))
