@@ -24,7 +24,7 @@ DNNorm[term_]:=FullSimplify[Juxtapose[DNEntryExpand[term//.DNRules]//.DNRules//.
 
 
 DNEqQ[term1_,term2_]:=
-	Unify[DNNorm[term1], DNNorm[term2]] =!= False;
+	Unify[DNNorm[term1], DNNorm[term2], {}] =!= False;
 
 
 End[];

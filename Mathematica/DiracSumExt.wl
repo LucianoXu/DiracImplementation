@@ -150,8 +150,8 @@ AppendTo[DNSumExtRules, RuleSumElim3];
 RuleSumElim4 = SUMO[IDX[___], ZEROO] -> ZEROO;
 AppendTo[DNSumExtRules, RuleSumElim4];
 
-RuleSumElimOne = ONEO :> CompleteBasis[];
-AppendTo[DNSumExtRules, RuleSumElimOne];
+(*RuleSumElimOne = ONEO :> CompleteBasis[];
+AppendTo[DNSumExtRules, RuleSumElimOne];*)
 
 
 RuleSumElim5 = SUMS[IDX[{i_, USET}, indices___], DELTA[i_, s_]]/;FreeQ[s, i] -> SUMS[IDX[indices], CPX[1]];

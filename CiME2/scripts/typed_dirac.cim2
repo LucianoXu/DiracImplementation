@@ -23,6 +23,7 @@ let F = signature
   T : constant ;
   PROD : infix binary ;
 
+  Atom : binary ;
   Base : binary ;
   S : unary ;
   K : binary ;
@@ -40,9 +41,9 @@ let F = signature
 
   (* Scalar *)
   C_S : unary ;
-  DELTA_S : binary ;
-  ADDS_S : infix binary ;
-  MLTS_S : infix binary ;
+  DELTA_S : commutative ;
+  ADDS_S : AC ;
+  MLTS_S : AC ;
   CONJS_S : unary ;
   DOT_S : infix binary ;
 
@@ -51,7 +52,7 @@ let F = signature
   KET_S : unary ;
   ADJK_S : unary ;
   SCRK_S : infix binary ;
-  ADDK_S : infix binary ;
+  ADDK_S : AC ;
   MLTK_S : infix binary ;
   TSRK_S : infix binary ;
 
@@ -60,7 +61,7 @@ let F = signature
   BRA_S : unary ;
   ADJB_S : unary ;
   SCRB_S : infix binary ;
-  ADDB_S : infix binary ;
+  ADDB_S : AC ;
   MLTB_S : infix binary ;
   TSRB_S : infix binary ;
 
@@ -70,7 +71,7 @@ let F = signature
   OUTER_S : infix binary ;
   ADJO_S : unary ;
   SCRO_S : infix binary ;
-  ADDO_S : infix binary ;
+  ADDO_S : AC ;
   MLTO_S : infix binary ;
   TSRO_S : infix binary ;
 
@@ -132,6 +133,10 @@ let X = vars "a b c x S0 S1 S2 S3 s s1 s2 t t1 t2 B0 B1 B2 K0 K1 K2 O0 O1 O2 O1'
 let R = TRS F X "
 
   (* ######################## TYPE CHECKING ############################ *)
+  PAIR_S(Base(s, T1), Base(t, T2)) -> Base(PAIR(s, t), T1 PROD T2) ;
+  FST_S(Base(s, T1 PROD T2)) -> Base(FST(s), T1) ;
+  SND_S(Base(s, T1 PROD T2)) -> Base(SND(s), T2) ;
+
   C_S(a) -> S(C(a)) ;
   DELTA_S(Base(s, T1), Base(t, T1)) -> S(DELTA(s, t)) ;
   S(a) ADDS_S S(b) -> S(a ADDS b) ;
@@ -222,7 +227,7 @@ let R = TRS F X "
 
   FST(PAIR(s, t)) -> s ;
   SND(PAIR(s, t)) -> t ;
-  PAIR(FST(t), SND(t)) -> t ;
+  PAIR(FST(s), SND(s)) -> s ;
 
 
   (********************************************)

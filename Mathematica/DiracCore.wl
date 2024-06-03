@@ -522,7 +522,7 @@ AppendTo[DNCoreRules, RuleSCRK1];
 OrderCheck[P[CPX[0]~SCRK~K0], P[ZEROK], InCarrier[P[K0]]];
 
 
-RuleSCRK2 = CPX[1] ~SCRK~ K0_ -> ZEROK;
+RuleSCRK2 = CPX[1] ~SCRK~ K0_ -> K0;
 AppendTo[DNCoreRules, RuleSCRK2];
 OrderCheck[P[CPX[1]~SCRK~K0], P[K0], InCarrier[P[K0]]];
 
@@ -547,7 +547,7 @@ AppendTo[DNCoreRules, RuleSCRB1];
 RuleOrderCheckDerivative[P, RuleSCRB1, 2];
 
 
-RuleSCRB2 = CPX[1] ~SCRB~ B0_ -> ZEROB;
+RuleSCRB2 = CPX[1] ~SCRB~ B0_ -> B0;
 AppendTo[DNCoreRules, RuleSCRB2];
 RuleOrderCheckDerivative[P, RuleSCRB2, 2];
 

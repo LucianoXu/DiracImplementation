@@ -1,0 +1,504 @@
+(* 
+
+    Language and Term Rewriting System for "Typed Dirac Notation"
+
+    This language can be used in two levels: deal with the internal untyped language directly,
+    or use the typed syntax with type polymorphism.
+
+    Yingte Xu, 2024
+
+*)
+
+let F = signature
+"
+
+  (* -------- types -------- *)
+  T : binary ;
+
+  Base : unary ;
+  S : constant ;
+  K : unary ;
+  B : unary ;
+  O : binary ;
+
+  PROD : infix binary ;
+
+  TBra : unary ;
+  TKet : unary ;
+  
+  baseofK : unary ;
+  baseofB : unary ;
+
+  type : unary ;
+  typeC : unary ;
+  typeof : unary ;
+
+
+  (* Basis *)
+  PAIR_S : binary ;
+  FST_S : unary ;
+  SND_S : unary ;
+
+  (* Scalar *)
+  C_S : unary ;
+  DELTA_S : commutative ;
+  ADDS_S : AC ;
+  MLTS_S : AC ;
+  CONJS_S : unary ;
+  DOT_S : infix binary ;
+
+  (* Ket *)
+  0K_S : unary ;
+  KET_S : unary ;
+  ADJK_S : unary ;
+  SCRK_S : infix binary ;
+  ADDK_S : AC ;
+  MLTK_S : infix binary ;
+  TSRK_S : infix binary ;
+
+  (* Bra *)
+  0B_S : unary ;
+  BRA_S : unary ;
+  ADJB_S : unary ;
+  SCRB_S : infix binary ;
+  ADDB_S : AC ;
+  MLTB_S : infix binary ;
+  TSRB_S : infix binary ;
+
+  (* Operator *)
+  0O_S : binary ;
+  1O_S : unary ;
+  OUTER_S : infix binary ;
+  ADJO_S : unary ;
+  SCRO_S : infix binary ;
+  ADDO_S : AC ;
+  MLTO_S : infix binary ;
+  TSRO_S : infix binary ;
+
+
+
+  (* complex number *)
+  + : AC ;
+  * : AC ;
+  0 : constant ;
+  1 : constant ;
+  ^* : postfix unary ;
+
+  
+  (* universal application *)
+  @ : infix binary ;
+
+  (* otimes and cdot *)
+  OTIMES : infix binary ;
+  CDOT : infix binary ;
+
+
+  (* -------- internal langauge -------- *)
+
+  (* Basis *)
+  PAIR : binary ;
+  FST : unary ;
+  SND : unary ;
+
+  (* Scalar *)
+  C : unary ;
+  DELTA : commutative ;
+  ADDS : AC ;
+  MLTS : AC ;
+  CONJS : unary ;
+  DOT : infix binary ;
+
+  (* Ket *)
+  0K : unary ;
+  KET : unary ;
+  ADJK : unary ;
+  SCRK : infix binary ;
+  ADDK : AC ;
+  MLTK : infix binary ;
+  TSRK : infix binary ;
+
+  (* Bra *)
+  0B : unary ;
+  BRA : unary ;
+  ADJB : unary ;
+  SCRB : infix binary ;
+  ADDB : AC ;
+  MLTB : infix binary ;
+  TSRB : infix binary ;
+
+  (* Operator *)
+  0O : binary ;
+  1O : unary ;
+  OUTER : infix binary ;
+  ADJO : unary ;
+  SCRO : infix binary ;
+  ADDO : AC ;
+  MLTO : infix binary ;
+  TSRO : infix binary ;
+
+";
+
+let X = vars "a b c x S0 S1 S2 S3 s s1 s2 t t1 t2 X Y B0 B1 B2 K0 K1 K2 O0 O1 O2 O1' O2' T1 T2 T3 T4 x0 x1 x2 x3 x4";
+
+let R = TRS F X "
+
+  PAIR_S(T(s, Base(T1)), T(t, Base(T2))) -> T(PAIR(s, t), Base(T1 PROD T2)) ;
+  FST_S(T(s, Base(T1 PROD T2))) -> T(FST(s), Base(T1)) ;
+  SND_S(T(s, Base(T1 PROD T2))) -> T(SND(s), Base(T2)) ;
+
+    typeC(PAIR(s, t)) -> PAIR_S(typeC(s), typeC(t)) ;
+    typeC(FST(s)) -> FST_S(typeC(s)) ;
+    typeC(SND(s)) -> SND_S(typeC(s)) ;
+
+
+  C_S(a) -> T(C(a), S) ;
+  DELTA_S(T(s, Base(T1)), T(t, Base(T1))) -> T(DELTA(s, t), S) ;
+  T(a, S) ADDS_S T(b, S) -> T(a ADDS b, S) ;
+  T(a, S) MLTS_S T(b, S) -> T(a MLTS b, S) ;
+  CONJS_S(T(a, S)) -> T(CONJS(a), S) ;
+  T(B0, B(T1)) DOT_S T(K0, K(T1)) -> T(B0 DOT K0, S) ;
+
+    typeC(C(a)) -> C_S(a) ;
+    typeC(DELTA(s, t)) -> DELTA_S(typeC(s), typeC(t)) ;
+    typeC(S1 ADDS S2) -> typeC(S1) ADDS_S typeC(S2) ;
+    typeC(S1 MLTS S2) -> typeC(S1) MLTS_S typeC(S2) ;
+    typeC(CONJS(S0)) -> CONJS_S(typeC(S0)) ;
+    typeC(B0 DOT K0) -> typeC(B0) DOT_S typeC(K0) ;
+    
+
+  (* Ket *)
+  0K_S(T1) -> T(0K(T1), K(T1)) ;
+  KET_S(T(s, Base(T1))) -> T(KET(s), K(T1)) ;
+  ADJK_S(T(B0, B(T1))) -> T(ADJK(B0), K(T1)) ;
+  T(S0, S) SCRK_S T(K0, K(T1)) -> T(S0 SCRK K0, K(T1)) ;
+  T(K1, K(T1)) ADDK_S T(K2, K(T1)) -> T(K1 ADDK K2, K(T1)) ;
+  T(O0, O(T1, T2)) MLTK_S T(K0, K(T2)) -> T(O0 MLTK K0, K(T1)) ;
+  T(K1, K(T1)) TSRK_S T(K2, K(T2)) -> T(K1 TSRK K2, K(T1 PROD T2)) ;
+
+    typeC(KET(s)) -> KET_S(typeC(s)) ;
+    typeC(ADJK(B0)) -> ADJK_S(typeC(B0)) ;
+    typeC(S0 SCRK K0) -> typeC(S0) SCRK_S typeC(K0) ;
+    typeC(K1 ADDK K2) -> typeC(K1) ADDK_S typeC(K2) ;
+    typeC(O0 MLTK K0) -> typeC(O0) MLTK_S typeC(K0) ;
+    typeC(K1 TSRK K2) -> typeC(K1) TSRK_S typeC(K2) ;
+
+  (* Bra *)
+  0B_S(T1) -> T(0B(T1), B(T1)) ;
+  BRA_S(T(s, Base(T1))) -> T(BRA(s), B(T1)) ;
+  ADJB_S(T(K0, K(T1))) -> T(ADJB(K0), B(T1)) ;
+  T(S0, S) SCRB_S T(B0, B(T1)) -> T(S0 SCRB B0, B(T1)) ;
+  T(B1, B(T1)) ADDB_S T(B2, B(T1)) -> T(B1 ADDB B2, B(T1)) ;
+  T(B0, B(T1)) MLTB_S T(O0, O(T1, T2)) -> T(B0 MLTB O0, B(T2)) ;
+  T(B1, B(T1)) TSRB_S T(B2, B(T2)) -> T(B1 TSRB B2, B(T1 PROD T2)) ;
+
+    typeC(BRA(s)) -> BRA_S(typeC(s)) ;
+    typeC(ADJB(K0)) -> ADJB_S(typeC(K0)) ;
+    typeC(S0 SCRB B0) -> typeC(S0) SCRB_S typeC(B0) ;
+    typeC(B1 ADDB B2) -> typeC(B1) ADDB_S typeC(B2) ;
+    typeC(B0 MLTB O0) -> typeC(B0) MLTB_S typeC(O0) ;
+    typeC(B1 TSRB B2) -> typeC(B1) TSRB_S typeC(B2) ;
+
+
+  (* Operator *)
+  0O_S(T1, T2) -> T(0O(T1, T2), O(T1, T2)) ;
+  1O_S(T1) -> T(1O(T1), O(T1, T1)) ;
+  T(K0, K(T1)) OUTER_S T(B0, B(T2)) -> T(K0 OUTER B0, O(T1, T2)) ;
+  ADJO_S(T(O0, O(T1, T2))) -> T(ADJO(O0), O(T2, T1)) ;
+  T(S0, S) SCRO_S T(O0, O(T1, T2)) -> T(S0 SCRO O0, O(T1, T2)) ;
+  T(O1, O(T1, T2)) ADDO_S T(O2, O(T1, T2)) -> T(O1 ADDO O2, O(T1, T2)) ;
+  T(O1, O(T1, T2)) MLTO_S T(O2, O(T2, T3)) -> T(O1 MLTO O2, O(T1, T3)) ;
+  T(O1, O(T1, T2)) TSRO_S T(O2, O(T3, T4)) -> T(O1 TSRO O2, O(T1 PROD T3, T2 PROD T4)) ;
+
+    
+    typeC(K0 OUTER B0) -> typeC(K0) OUTER_S typeC(B0) ;
+    typeC(ADJO(O0)) -> ADJO_S(typeC(O0)) ;
+    typeC(S0 SCRO O0) -> typeC(S0) SCRO_S typeC(O0) ;
+    typeC(O1 ADDO O2) -> typeC(O1) ADDO_S typeC(O2) ;
+    typeC(O1 MLTO O2) -> typeC(O1) MLTO_S typeC(O2) ;
+    typeC(O1 TSRO O2) -> typeC(O1) TSRO_S typeC(O2) ;
+
+
+  (* ############# Well-typed assumptions ############## *)
+
+  (* ############# REDUCTION RULES FOR INTERNAL LANGUAGE ############### *)
+
+  K(baseofK(T1)) -> T1 ;
+  baseofK(K(T1)) -> T1 ;
+
+  B(baseofB(T1)) -> T1 ;
+  baseofB(B(T1)) -> T1 ;
+
+  O(TKet(T1), TBra(T1)) -> T1 ;
+  TKet(O(T1, T2)) -> T1 ;
+  TBra(O(T1, T2)) -> T2 ;
+
+  type(X) -> typeof(typeC(X)) ;
+  typeof(T(X, T1)) -> T1 ;
+
+
+  (********************************************)
+  (*           complex number (avatar)        *)
+  (********************************************)
+
+  0 + a -> a ;
+  0 * a -> 0 ;
+  1 * a -> a ;
+  a * (b + c) -> (a * b) + (a * c) ;
+  0 ^* -> 0 ;
+  1 ^* -> 1 ;
+  (a + b) ^* -> (a ^*) + (b ^*) ;
+  (a * b) ^* -> (a ^*) * (b ^*) ;
+  (a ^*) ^* -> a ;
+
+  (********************************************)
+  (*                 Basis                    *)
+  (********************************************)
+
+(*  FST(A(s)) -> A(s) ;
+  SND(A(s)) -> A(s) ;
+  *)
+
+  FST(PAIR(s, t)) -> s ;
+  SND(PAIR(s, t)) -> t ;
+  PAIR(FST(s), SND(s)) -> s ;
+
+
+  (********************************************)
+  (*                 Scalars                  *)
+  (********************************************)
+
+  (* ============== Delta Operator ================ *)
+  
+  DELTA(s, s) -> C(1) ;
+  DELTA(s, PAIR(t1, t2)) -> DELTA(FST(s), t1) MLTS DELTA(SND(s), t2) ;
+  DELTA(FST(s), FST(t)) MLTS DELTA(SND(s), SND(t)) -> DELTA(s, t) ;
+  
+  (*
+  DELTA(A(s), FST(t)) MLTS DELTA(A(s), SND(t)) -> DELTA(A(s), t) ;
+  DELTA(A(s), A(t)) MLTS DELTA(A(s), A(t)) -> DELTA(A(s), A(t)) ;
+  *)
+
+  (* ============================================== *)
+
+  C(0) ADDS a -> a ;
+  C(a) ADDS C(b) -> C(a + b) ;
+  S0 ADDS S0 -> C(1 + 1) MLTS S0 ;
+  (C(a) MLTS S0) ADDS S0 -> C(a + 1) MLTS S0 ;
+  (C(a) MLTS S0) ADDS (C(b) MLTS S0) -> C(a + b) MLTS S0 ;
+
+  C(0) MLTS a -> C(0) ;
+  C(1) MLTS a -> a ;
+  C(a) MLTS C(b) -> C(a * b) ;
+  S1 MLTS (S2 ADDS S3) -> (S1 MLTS S2) ADDS (S1 MLTS S3) ;
+
+
+  CONJS(C(a)) -> C(a ^*) ;
+  CONJS(DELTA(s, t)) -> DELTA(s, t) ;
+  CONJS(S1 ADDS S2) -> CONJS(S1) ADDS CONJS(S2) ;
+  CONJS(S1 MLTS S2) -> CONJS(S1) MLTS CONJS(S2) ;
+  CONJS(CONJS(S0)) -> S0 ;
+  CONJS(B0 DOT K0) -> ADJB(K0) DOT ADJK(B0) ;
+
+  0B(T1) DOT K0 -> C(0) ;
+  B0 DOT 0K(T1) -> C(0) ;
+  (S0 SCRB B0) DOT K0 -> S0 MLTS (B0 DOT K0) ;
+  B0 DOT (S0 SCRK K0) -> S0 MLTS (B0 DOT K0) ;
+  (B1 ADDB B2) DOT K0 -> (B1 DOT K0) ADDS (B2 DOT K0) ;
+  B0 DOT (K1 ADDK K2) -> (B0 DOT K1) ADDS (B0 DOT K2) ;
+  BRA(s) DOT KET(t) -> DELTA(s, t) ;
+  (B1 TSRB B2) DOT KET(t) -> (B1 DOT KET(FST(t))) MLTS (B2 DOT KET(SND(t))) ;
+  BRA(t) DOT (K1 TSRK K2) -> (BRA(FST(t)) DOT K1) MLTS (BRA(SND(t)) DOT K2) ;
+  (B1 TSRB B2) DOT (K1 TSRK K2) -> (B1 DOT K1) MLTS (B2 DOT K2) ;
+
+  (B0 MLTB O0) DOT K0 -> B0 DOT (O0 MLTK K0) ;
+  BRA(s) DOT ((O1 TSRO O2) MLTK K0) -> ((BRA(FST(s)) MLTB O1) TSRB (BRA(SND(s)) MLTB O2)) DOT K0 ;
+  (B1 TSRB B2) DOT ((O1 TSRO O2) MLTK K0) -> ((B1 MLTB O1) TSRB (B2 MLTB O2)) DOT K0 ;
+
+
+  (********************************************)
+  (*            Ket and Bra                   *)
+  (********************************************)
+
+
+  (* >>>> Conjugate Transpose <<<< *)
+  ADJK(0B(T1)) -> 0K(T1) ;
+  ADJK(BRA(t)) -> KET(t) ;
+  ADJK(ADJB(K0)) -> K0 ;
+  ADJK(S0 SCRB B0) -> CONJS(S0) SCRK ADJK(B0) ;
+  ADJK(B1 ADDB B2) -> ADJK(B1) ADDK ADJK(B2) ;
+  ADJK(B0 MLTB O0) -> ADJO(O0) MLTK ADJK(B0) ;
+  ADJK(B1 TSRB B2) -> ADJK(B1) TSRK ADJK(B2) ;
+
+  ADJB(0K(T1)) -> 0B(T1) ;
+  ADJB(KET(t)) -> BRA(t) ;
+  ADJB(ADJK(B0)) -> B0 ;
+  ADJB(S0 SCRK K0) -> CONJS(S0) SCRB ADJB(K0) ;
+  ADJB(K1 ADDK K2) -> ADJB(K1) ADDB ADJB(K2) ;
+  ADJB(O0 MLTK K0) -> ADJB(K0) MLTB ADJO(O0) ;
+  ADJB(K1 TSRK K2) -> ADJB(K1) TSRB ADJB(K2) ;
+
+  (* >>>> Scalar Multiplication <<<< *)
+  C(0) SCRK K0 -> 0K(baseofK(type(K0))) ;
+  C(1) SCRK K0 -> K0 ;
+  S0 SCRK 0K(T1) -> 0K(T1) ;
+  S1 SCRK (S2 SCRK K0) -> (S1 MLTS S2) SCRK K0 ;
+  S0 SCRK (K1 ADDK K2) -> (S0 SCRK K1) ADDK (S0 SCRK K2) ;
+
+  C(0) SCRB B0 -> 0B(baseofB(type(B0))) ;
+  C(1) SCRB B0 -> B0 ;
+  S0 SCRB 0B(T1) -> 0B(T1) ;
+  S1 SCRB (S2 SCRB B0) -> (S1 MLTS S2) SCRB B0 ;
+  S0 SCRB (B1 ADDB B2) -> (S0 SCRB B1) ADDB (S0 SCRB B2) ;
+
+  (* >>>> Addition <<<< *)
+  K0 ADDK 0K(T1) -> K0 ;
+  K0 ADDK K0 -> C(1 + 1) SCRK K0 ;
+  (S0 SCRK K0) ADDK K0 -> (S0 ADDS C(1)) SCRK K0 ;
+  (S1 SCRK K0) ADDK (S2 SCRK K0) -> (S1 ADDS S2) SCRK K0 ;
+
+  B0 ADDB 0B(T1) -> B0 ;
+  B0 ADDB B0 -> C(1 + 1) SCRB B0 ;
+  (S0 SCRB B0) ADDB B0 -> (S0 ADDS C(1)) SCRB B0 ;
+  (S1 SCRB B0) ADDB (S2 SCRB B0) -> (S1 ADDS S2) SCRB B0 ;
+
+
+  (* >>>> Multiplication <<<< *)
+  0O(T1, T2) MLTK K0 -> 0K(T1) ;
+  O0 MLTK 0K(T1) -> 0K(TKet(type(O0))) ;
+  1O(T1) MLTK K0 -> K0 ;
+  (S0 SCRO O0) MLTK K0 -> S0 SCRK (O0 MLTK K0) ;
+  O0 MLTK (S0 SCRK K0) -> S0 SCRK (O0 MLTK K0) ;
+  (O1 ADDO O2) MLTK K0 -> (O1 MLTK K0) ADDK (O2 MLTK K0) ;
+  O0 MLTK (K1 ADDK K2) -> (O0 MLTK K1) ADDK (O0 MLTK K2) ;
+  (K1 OUTER B0) MLTK K2 -> (B0 DOT K2) SCRK K1 ;
+  (O1 MLTO O2) MLTK K0 -> O1 MLTK (O2 MLTK K0) ;
+  (O1 TSRO O2) MLTK ((O1' TSRO O2') MLTK K0) -> ((O1 MLTO O1') TSRO (O2 MLTO O2')) MLTK K0 ;
+  (O1 TSRO O2) MLTK KET(t) -> (O1 MLTK KET(FST(t))) TSRK (O2 MLTK KET(SND(t))) ;
+  (O1 TSRO O2) MLTK (K1 TSRK K2) -> (O1 MLTK K1) TSRK (O2 MLTK K2) ;
+
+  B0 MLTB 0O(T1, T2) -> 0B(T2) ;
+  0B(T1) MLTB O0 -> 0B(TBra(type(O0))) ;
+  B0 MLTB 1O(T1) -> B0 ;
+  B0 MLTB (S0 SCRO O0) -> S0 SCRB (B0 MLTB O0) ;
+  (S0 SCRB B0) MLTB O0 -> S0 SCRB (B0 MLTB O0) ;
+  B0 MLTB (O1 ADDO O2) -> (B0 MLTB O1) ADDB (B0 MLTB O2) ;
+  (B1 ADDB B2) MLTB O0 -> (B1 MLTB O0) ADDB (B2 MLTB O0) ;
+  B1 MLTB (K0 OUTER B2) -> (B1 DOT K0) SCRB B2 ;
+  B0 MLTB (O1 MLTO O2) -> (B0 MLTB O1) MLTB O2 ;
+  (B0 MLTB (O1' TSRO O2')) MLTB (O1 TSRO O2) -> B0 MLTB ((O1' MLTO O1) TSRO (O2' MLTO O2)) ;
+  BRA(t) MLTB (O1 TSRO O2) -> (BRA(FST(t)) MLTB O1) TSRB (BRA(SND(t)) MLTB O2) ;
+  (B1 TSRB B2) MLTB (O1 TSRO O2) -> (B1 MLTB O1) TSRB (B2 MLTB O2) ;
+
+  (* >>>> Tensor Product <<<< *)
+  0K(T1) TSRK K0 -> 0K(T1 PROD baseofK(type(K0))) ;
+  K0 TSRK 0K(T1) -> 0K(baseofK(type(K0)) PROD T1) ;
+  KET(s) TSRK KET(t) -> KET(PAIR(s, t)) ;
+  (S0 SCRK K1) TSRK K2 -> S0 SCRK (K1 TSRK K2) ;
+  K1 TSRK (S0 SCRK K2) -> S0 SCRK (K1 TSRK K2) ;
+  (K1 ADDK K2) TSRK K0 -> (K1 TSRK K0) ADDK (K2 TSRK K0) ;
+  K0 TSRK (K1 ADDK K2) -> (K0 TSRK K1) ADDK (K0 TSRK K2) ;
+
+  0B(T1) TSRB B0 -> 0B(T1 PROD baseofB(type(B0))) ;
+  B0 TSRB 0B(T1) -> 0B(baseofB(type(B0)) PROD T1) ;
+  BRA(s) TSRB BRA(t) -> BRA(PAIR(s, t)) ;
+  (S0 SCRB B1) TSRB B2 -> S0 SCRB (B1 TSRB B2) ;
+  B1 TSRB (S0 SCRB B2) -> S0 SCRB (B1 TSRB B2) ;
+  (B1 ADDB B2) TSRB B0 -> (B1 TSRB B0) ADDB (B2 TSRB B0) ;
+  B0 TSRB (B1 ADDB B2) -> (B0 TSRB B1) ADDB (B0 TSRB B2) ;
+
+  (********************************************)
+  (*             Operators                    *)
+  (********************************************)
+
+  (* >>>> Outer Product <<<< *)
+  0K(T1) OUTER B0 -> 0O(T1, baseofB(type(B0))) ;
+  K0 OUTER 0B(T1) -> 0O(baseofK(type(K0)), T1) ;
+  (S0 SCRK K0) OUTER B0 -> S0 SCRO (K0 OUTER B0) ;
+  K0 OUTER (S0 SCRB B0) -> S0 SCRO (K0 OUTER B0) ;
+  (K1 ADDK K2) OUTER B0 -> (K1 OUTER B0) ADDO (K2 OUTER B0) ;
+  K0 OUTER (B1 ADDB B2) -> (K0 OUTER B1) ADDO (K0 OUTER B2) ;
+
+  (* >>>> Conjugate Transpose <<<< *)
+  ADJO(0O(T1, T2)) -> 0O(T2, T1) ;
+  ADJO(1O(T1)) -> 1O(T1) ;
+  ADJO(K0 OUTER B0) -> ADJK(B0) OUTER ADJB(K0) ;
+  ADJO(ADJO(O0)) -> O0 ;
+  ADJO(S0 SCRO O0) -> CONJS(S0) SCRO ADJO(O0) ;
+  ADJO(O1 ADDO O2) -> ADJO(O1) ADDO ADJO(O2) ;
+  ADJO(O1 MLTO O2) -> ADJO(O2) MLTO ADJO(O1) ;
+  ADJO(O1 TSRO O2) -> ADJO(O1) TSRO ADJO(O2) ;
+
+  (* >>>> Scalar Multiplication <<<< *)
+  C(0) SCRO O0 -> 0O(TKet(type(O0)), TBra(type(O0))) ;
+  C(1) SCRO O0 -> O0 ;
+  S0 SCRO 0O(T1, T2) -> 0O(T1, T2) ;
+  S1 SCRO (S2 SCRO O0) -> (S1 MLTS S2) SCRO O0 ;
+  S0 SCRO (O1 ADDO O2) -> (S0 SCRO O1) ADDO (S0 SCRO O2) ;
+
+  (* >>>> Addition <<<< *)
+  O0 ADDO 0O(T1, T2) -> O0 ;
+  O0 ADDO O0 -> C(1 + 1) SCRO O0 ;
+  (S0 SCRO O0) ADDO O0 -> (S0 ADDS C(1)) SCRO O0 ;
+  (S1 SCRO O0) ADDO (S2 SCRO O0) -> (S1 ADDS S2) SCRO O0 ;
+
+
+  (* >>>> Multiplication <<<< *)
+  0O(T1, T2) MLTO O0 -> 0O(T1, TBra(type(O0))) ;
+  O0 MLTO 0O(T1, T2) -> 0O(TKet(type(O0)), T2) ;
+  1O(T1) MLTO O0 -> O0 ;
+  O0 MLTO 1O(T1) -> O0 ;
+  (K0 OUTER B0) MLTO O0 -> K0 OUTER (B0 MLTB O0) ;
+  O0 MLTO (K0 OUTER B0) -> (O0 MLTK K0) OUTER B0 ;
+  (S0 SCRO O1) MLTO O2 -> S0 SCRO (O1 MLTO O2) ;
+  O1 MLTO (S0 SCRO O2) -> S0 SCRO (O1 MLTO O2) ;
+  (O1 ADDO O2) MLTO O0 -> (O1 MLTO O0) ADDO (O2 MLTO O0) ;
+  O0 MLTO (O1 ADDO O2) -> (O0 MLTO O1) ADDO (O0 MLTO O2) ;
+  (O1 MLTO O2) MLTO O0 -> O1 MLTO (O2 MLTO O0) ;
+  (O1 TSRO O2) MLTO (O1' TSRO O2') -> (O1 MLTO O1') TSRO (O2 MLTO O2') ;
+  (O1 TSRO O2) MLTO ((O1' TSRO O2') MLTO O0) -> ((O1 MLTO O1') TSRO (O2 MLTO O2')) MLTO O0 ;
+
+  (* >>>> Tensor Product <<<< *)
+  0O(T1, T2) TSRO O0 -> 0O(T1 PROD TKet(type(O0)), T2 PROD TBra(type(O0))) ;
+  O0 TSRO 0O(T1, T2) -> 0O(TKet(type(O0)) PROD T1, TBra(type(O0)) PROD T2) ;
+  1O(T1) TSRO 1O(T2) -> 1O(T1 PROD T2) ;
+  (K1 OUTER B1) TSRO (K2 OUTER B2) -> (K1 TSRK K2) OUTER (B1 TSRB B2) ;
+  (S0 SCRO O1) TSRO O2 -> S0 SCRO (O1 TSRO O2) ;
+  O1 TSRO (S0 SCRO O2) -> S0 SCRO (O1 TSRO O2) ;
+  (O1 ADDO O2) TSRO O0 -> (O1 TSRO O0) ADDO (O2 TSRO O0) ;
+  O0 TSRO (O1 ADDO O2) -> (O0 TSRO O1) ADDO (O0 TSRO O2) ;
+
+
+";
+
+(* optional : 
+
+  DELTA(s, s) -> C(1) ;
+
+*)
+
+(* confluence R; *)
+
+let u = term F X "
+
+FST_S(T(x0,Base(x1)))
+
+";
+
+let v = term F X "
+
+T(FST(x0),Base(PROJ1(x1)))
+
+";
+
+normalize R u;
+
+normalize R v;
+
+(*
+
+
+print_all_cps R;
+
+#quit;
+
+*)

@@ -10,9 +10,7 @@ BeginPackage["Unification`"];
 
 UnifyPreproc::usage = "The preprocessing function for unification of expressions. Should return: {newlhs, newrhs, newvars}.";
 
-Unify::usage = "Unify[term1_, term2_, vars_]
-Return: False if not unifiable, one substitution if unifiable.
-Supports Orderless unification (by branching and backtracking). ";
+Unify::usage = "Unify[term1_, term2_, vars_] Return: False if not unifiable, one substitution if unifiable. Supports Orderless unification (by branching and backtracking). ";
 
 
 Begin["Private`"];
@@ -26,7 +24,8 @@ PermutePairs[list1_, list2_] := With[
 	Transpose/@Table[{list1, permls}, {permls, perm2}]
 ];
 
-UnifyStep[substitutions_, equations_, vars_] := Module[
+(* eqtheory: a list of rewriting rules representing the avaiable equational theory to use *)
+UnifyStep[substitutions_, equations_, vars_, eqtheory_] := Module[
 		{
 			subst=substitutions,
 			eqs=equations,
@@ -38,8 +37,8 @@ UnifyStep[substitutions_, equations_, vars_] := Module[
 (*		Print["New Branch: ", substitutions, equations];
 		Print["Vars: ", vars];*)
 		While[Length[eqs]>0,
-			lhs=eqs[[1]][[1]];
-			rhs=eqs[[1]][[2]];
+			lhs=eqs[[1]][[1]]//.eqtheory;
+			rhs=eqs[[1]][[2]]//.eqtheory;
 			Which[
 				lhs===rhs,
 				eqs = Rest[eqs]; Continue[],
@@ -69,7 +68,12 @@ UnifyStep[substitutions_, equations_, vars_] := Module[
 						perm = PermutePairs[List@@(procEq[[1]]), List@@(procEq[[2]])];
 						For[i=1, i<=Length[perm], i++,
 							(* Use recursion to search in different branches *)
-							branchRes = UnifyStep[subst, Join[perm[[i]], Rest[eqs]], Join[vars, procEq[[3]]]];
+							branchRes = UnifyStep[
+								subst, 
+								Join[perm[[i]], Rest[eqs]], 
+								Join[vars, procEq[[3]]],
+								eqtheory
+							];
 							If[branchRes=!=False, Return[branchRes]];
 						];
 						Return[False],
@@ -79,7 +83,8 @@ UnifyStep[substitutions_, equations_, vars_] := Module[
 								UnifyStep[
 									subst, 
 									Join[Transpose[{List@@(procEq[[1]]), List@@(procEq[[2]])}], Rest[eqs]], 
-									Join[vars, procEq[[3]]]
+									Join[vars, procEq[[3]]],
+									eqtheory
 								]
 							],
 								
@@ -107,8 +112,11 @@ UnifyPreproc[term1_, term2_] := {term1, term2, {}};
 *)
 Unprotect[Unify];
 
-Unify[term1_, term2_, vars_]:=UnifyStep[{}, {{term1, term2}}, vars];
-Unify[term1_, term2_]:=UnifyStep[{}, {{term1, term2}}, {}];
+VarsOf[term1_, term2_]:=Union[Cases[term1,_Symbol,{0,Infinity}],Cases[term2,_Symbol,{0,Infinity}]];
+
+Unify[term1_, term2_, vars_, eqtheory_]:=UnifyStep[{}, {{term1, term2}}, vars, eqtheory];
+Unify[term1_, term2_, vars_]:=UnifyStep[{}, {{term1, term2}}, vars, {}];
+Unify[term1_, term2_]:=UnifyStep[{}, {{term1, term2}}, VarsOf[term1, term2], {}];
 Unify[___]:=Throw["Invalid Arguments for Unify."];
 
 SetAttributes[Unify, Protected];
