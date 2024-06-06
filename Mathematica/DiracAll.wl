@@ -5,7 +5,7 @@
 
 
 AppendTo[$Path, NotebookDirectory[]];
-BeginPackage["DiracAll`", {"Unification`", "DiracCore`", "DiracDeltaExt`", "DiracTpExt`", "DiracSumExt`"}];
+BeginPackage["DiracAll`", {"Unification`", "DiracCore`", "DiracDeltaExt`", "DiracSumExt`"}];
 
 
 DNRules;
@@ -17,10 +17,10 @@ Begin["Private`"];
 
 
 (* The order matters *)
-DNRules = Join[DNSetRules, DNCoreRules, DNDeltaExtRules, DNTpExtRules, DNSumPushRules, DNSumExtRules];
+DNRules = Join[DNSetRules, DNCoreRules, DNDeltaExtRules, DNSumPushRules, DNSumExtRules];
 
 
-DNNorm[term_]:=FullSimplify[Juxtapose[DNEntryExpand[term//.DNRules]//.DNRules//.DNEntryReduceRules//.DNRules]//.DNRules];
+DNNorm[term_]:=FullSimplify[DNEntryExpand[term//.DNRules]//.DNRules//.DNEntryReduceRules//.DNRules];
 
 
 DNEqQ[term1_,term2_]:=

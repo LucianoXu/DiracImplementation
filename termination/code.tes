@@ -1,6 +1,7 @@
 [a, b, c, x, S0, S1, S2, S3, s, s1, s2, t, t1, t2, B0, B1, B2, K0, K1, K2, O0, O1, O2, O1', O2', T1, T2, T3, T4]
 AC [+, *, MLTS, ADDS]
 C [DELTA]
+
 0 + a -> a
 0 * a -> 0
 1 * a -> a

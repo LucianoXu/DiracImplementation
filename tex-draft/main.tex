@@ -143,6 +143,10 @@
 
 \newcommand*{\sem}[1]{\llbracket #1 \rrbracket}
 
+\newcommand*{\done}{\textcolor{blue}{\textbf{ [DONE] }}}
+\newcommand*{\doing}{\textcolor{red}{\textbf{ [DOING] }}}
+\newcommand*{\pending}{\textcolor{gray}{\textbf{ [PENDING] }}}
+
 
 %%
 %% end of the preamble, start of the body of the document source.
@@ -190,31 +194,32 @@
 
 Technical TODO list :
 \begin{itemize}
-    \item Modify the internal untyped TRS and introduce type information. Try to encode type inferrence as rewriting rules.
+    \item \done Modify the internal untyped TRS and introduce type information. Try to encode type inferrence as rewriting rules.
         \begin{itemize}
             \item $0, 1$ symbol: type decoration
             \item variables: specified by a context, encoded as rewriting rules $\sigma(x) \reduce ...$
             \item composed terms: specified by typing rules, encoded by $TypeEval(...) \reduce ...$
         \end{itemize}
         This should also resolve the problem of specifiying the ``type'' for the universal set.
-
-        In CiME2: encode the typing system and prove confluence. 
+    \item \pending update the tool implementation
     %\item Consider the typed formal system for Dirac notation $\mathcal{E}_{T}$ and its conversion to the untyped internal language .
-    \item confluence (amend the original CiME2 code).
-    \item termination: the APRoVE tools failed to generate the proof automatically.
-    \item semantics (fixed), soundness (typing rule + rewriting rule)
-    \item completeness. 1. typed dirac (semantics equal); 2. axiom of typed dirac, i.e., equational axioms, prove the equational theory is relatively complete w.r.t. semantics equality??? ; 3. rewriting system is complete w.r.t. equational axioms (pointing out the importance and difficulty of TRS w.r.t. the equational theories)
-    \item Coq formalization of soundness (extended with big op) and completeness (core language)
-    \item explain the techniques applied in the implementation of extended langauge
+    \item \done confluence (amend the original CiME2 code).
+    \item \pending termination: the APRoVE tools failed to generate the proof automatically. Hard to find appropriate interpretation. 
+    \item \done fix the semantics
+    \item \done Check: can transpose be constructed? (ANS: yes, so we remove the syntax from the extended Dirac notation.)
+    \item \pending soundness (typing rule + rewriting rule)
+    \item \pending completeness. 1. typed dirac (semantics equal); 2. axiom of typed dirac, i.e., equational axioms, prove the equational theory is relatively complete w.r.t. semantics equality??? ; 3. rewriting system is complete w.r.t. equational axioms (pointing out the importance and difficulty of TRS w.r.t. the equational theories)
+    \item \pending Coq formalization of soundness (extended with big op) and completeness (core language)
+    \item \pending explain the techniques applied in the implementation of extended langauge
         \begin{itemize}
-            \item (DOT-DUAL) equation: using commutative internal symbol
             \item (SUM-SWAP) equation
             \item alpha-equivalence of sum index: using AC-unification
             \item entry-expansion techniques to improve automation
         \end{itemize}
-    \item a user language that will be compiled to the internal one (benefit: avoid different symbols for disambugating )
-    \item examples show the efficiency, add a long example
-    \item examples from other fields of quantum computing: circuit equivalence checking and program simulation
+    \item \pending a user language that will be compiled to the internal one (benefit: avoid different symbols for disambugating )
+    \item \pending add labelled Dirac notation
+    \item \pending examples show the efficiency, add a long example
+    \item \pending examples from other fields of quantum computing: circuit equivalence checking and program simulation
 \end{itemize}
 
 \clearpage
@@ -226,12 +231,11 @@ Technical TODO list :
 Storyline:
 \begin{enumerate}
     \item Formal method is an important topic in quantum computing with lots of applications.
-    \item Automation is an important topic in formal methods, because it reduces human efforts, enables reasoning in large scales, and relates to the performance of tools.
-    \item The current results in formalizing quantum computing are divided into two types: automated tools targeting at special cases (QBricks, QEC, EasyPQC), and expressive foundational formalizations (CoqQ).
-    \item The automation level is still low for general formalization.
+    \item Automation is a central topic in logic and formal methods. It reduces human efforts, enables reasoning in large scales, and is critical to the performance and usability of tools.
+    \item The current results in formalizing quantum computing are divided into two types: automated tools targeting at special cases (QBricks, QEC, EasyPQC), and expressive foundational formalizations (CoqQ). The automation level is still low for general formalization.
     \item Our work explores the general automation of quantum formal methods.
     \item Dirac notation is a good starting point for generality.
-    \item For automation, term rewriting system is a promising method.
+    \item For automation, term rewriting system is a promising method. It is explainable with theoretical guarantees.
 \end{enumerate}
 
 
@@ -245,57 +249,118 @@ Despite these developments, the level of automation in general formalizations re
 
 To achieve automation, we propose employing a term rewriting system, which shows promise in systematically handling complex transformations and ensuring correctness. Our work aims to develop a robust framework for the automated formalization of quantum computing, leveraging the strengths of Dirac notation and term rewriting systems to achieve higher levels of automation and efficiency in this critical field.
 
+
+Related works.
+
+Big Operator.\cite{Bertot2008}
+
+Lineal.\cite{Arrighi2017}
+
+CoqQ.\cite{Zhou2022}
+
+Decidability of Linear algebra.\cite{Solovay2012}
+
+CiME.\cite{Contejean2011}
+
+Term Rewriting. \cite{Baader1998}
+
+Termination techniques. \cite{Arts2000} \cite{Giesl2002} \cite{Giesl2006}
+
+Quantum. \cite{Nielsen2010}
+
+Wolfram. \cite{WolframLanguage}
+
+\vspace{2em}
+
 Our contribution:
 \begin{itemize}
-  \item A core language of Dirac notations. It is a sound abstract interpretation of the quantum states and operations. 
-  \item A term rewriting system on the core language with congruence proved.
-  \item An extension on the language and term rewriting system with more symbols. The TRS is not built with heuristics and not complete.
-  \item An implementation of the language and TRS, with many practical examples calculated.
+  \item \textbf{The first theory for the decision procedure of Dirac notations.} 
+  We rephrased the formal language of Dirac notation and developed its decision procedure. The language is separated into the core language of basic symbols and the extension with big operator sum. We proved the soundness and relative completeness (?) of the decision procedure, which is formally verified in \texttt{Coq}. Moreover, the core language is a pure term rewriting system with local confluence proved.
+  \item \textbf{An efficient and powerful tool implementation.}
+  We provide the implementation of the language and decision procedure in Mathematica. We encoded a broad scope of practical examples, and all the encoded problems can be automatically checked efficiently.
 \end{itemize}
 
 
 
-\section{Preliminaries}
+\section{Motivating Example}
 
-\subsection{Linear algebra with tensor product}
+When the state of a many-body quantum system cannot be represented by the direct product its component states, we say it is in an entangled state. Entangled quantum states are important resources for quantum computing and quantum information, as they demonstrate the nonlocal correlation among the subsystems. 
+Here is such a well-known property among others: for a maximally entangled two-body system $\ket{\Phi}$, if we apply operation $M$ on one subsystem, the result state is the same as applying $M^\top$ on the other entangled subsystem. 
+A subsequent corollary is, if we apply operations $M_1$ and $M_2$ respectively on two subsystems of a maximally entangled state, the overlap of the result state on the origin will be the same as the trace of operation $M_1^\top M_2$ on only one subsystem. In the following, we take the corollary as an example, rephrase it in the formal language called \textit{Dirac notation},
+% It serves as a good motivating example showing the key techniques and difficulties, and 
+and show how our theory and tool helps deciding the statement.
 
-\subsection{Quantum computing and Dirac notations}
+\begin{example}
+  Let $\ket{\Phi} = \sum_{i \in V}\ket{i, i}$ be the maximally entangled state on Hilbert space $\mathcal{H}_V\otimes\mathcal{H}_V$. Then for all operators $M_1, M_2 \in \mathrm{Hom}(\mathcal{H}_V, \mathcal{H}_V)$,
+  $$
+  \bra{\Phi} (I \otimes M_2) (M_1 \otimes I) \ket{\Phi} = \mathrm{tr}(M_2^\top M_1).
+  $$
+\end{example}
 
-\subsection{AC term rewriting}
+Dirac notation is widely used to describe quantum states and operations. It uses the braket notation to express linear algebra concisely, while the latter is the foundational language for quantum.
+In Dirac notation, (pure) states are denoted as \textit{kets}, representing vectors in the Hilbert spaces. The state $\ket{\Phi}$ is such an example. And because the entangled state consists of two subsystems $\mathcal{H}_V$, the overall state space is the tensor product $\mathcal{H}_V \otimes \mathcal{H}_V$ of subsystem spaces.
+Therefore, we have $\ket{\Psi} = \sum_{i\in V} \ket{i} \otimes \ket{i}$. Here $i$ is summed over all orthogonal basis in $V$, corresponding to the \textit{maximal} entanglement. Because of the natural isomorphism of tensor product spaces, the state $\ket{\Phi}$ can also be written as $\sum_{i \in V} \ket{i, i}$. 
+Further on, operations on states are linear operators in the corresponding spaces. Here $M_1 \otimes I$ means the operation $M_1$ is applied on the first subsystem, with an identical operation $I$ applied on the second one. The notation $I \otimes M_2$ is interpreted similarly. The successive multiplication $(I\otimes M_1)(M_2 \otimes I)\ket{\Phi}$ means the sequential application of two operations on the entangled state.
+Finally, we take the inner product of two states $\ket{u}$ and $\ket{v}$. To express the inner product operation in an associative way, the \textit{dual space} $\mathcal{H}_V^*$ is introduced, whose elements are linear functionals, denoted as \textit{bras} like $\bra{v}$. The left hand side of the equation computes the inner product of the post-operation state with the original maximally entangled one. The right hand side is the trace of associated operation $M_2^\top M_1$.
 
-\subsection{Confluence modulo Theory and the Avatar Lemma}
+Here is a step-wise proof of the equivalence by human.
+\begin{align}
+    & \ \bra{\Phi} (I \otimes M_2) (M_1 \otimes I) \ket{\Phi} \notag \\
+    \text{\{ expand $\ket{\Phi}$, absorbing identity operators \}} & = \left(\sum_{i\in V} \bra{i} \otimes \bra{i}\right) M_1 \otimes M_2 \left(\sum_{i \in V} \ket{i} \otimes \ket{i}\right) \\
+    \text{\{ push terms into the big operator \}} & = \sum_{i\in V} \sum_{j \in V} \left( \bra{i} \otimes \bra{i} \cdot  M_1 \otimes M_2 \cdot \ket{j} \otimes \ket{j} \right) \\
+    \text{\{ rearrange operations on two subsystems \}} & = \sum_{i\in V} \sum_{j \in V} \bra{i} M_1 \ket{j} \times \bra{i} M_2 \ket{j}
+\end{align}
 
-Our theories on Dirac notations can be divided into different parts, each containing its own language and computational methods. For example, the parts concerning complex numbers and basis vectors of vector spaces are relatively independent and complete; while the language and algorithm of Dirac notations are based on these components. Subsequent theoretical developments can build on this entire result, such as our extended Dirac language which incorporates a big operator sum and indices for quantum registers.
+\begin{align}
+  & \ \mathrm{tr}(M_2^\top M_1) \notag \\
+  \text{\{ expand trace definition \}} & = \sum_{k \in V} \bra{k} M_2^\top M_1 \ket{k} \\
+  \text{\{ insert the identity operator \}} & = \sum_{k \in V} \bra{k} M_2^\top (\sum_{l \in V} \ket{l}\bra{l}) M_1 \ket{k} \\
+  \text{\{ push terms into the big operator \}} & = \sum_{k \in V} \sum_{l \in V} \bra{k} M_2^\top \ket{l}\bra{l} M_1 \ket{k} \\
+  \text{\{ simplify the transpose operator \}} & = \sum_{k \in V} \sum_{l \in V} \bra{l} M_2 \ket{k} \times \bra{l} M_1 \ket{k}
+\end{align}
 
-These components are relatively independent and complete, allowing us to refer to them as different modules. Traditionally, the entire formal system has been studied as a whole. This approach is straightforward and direct, avoiding the need to consider how the parts interact, but at the expense of flexibility. Taking Dirac notation as an example, when we expand the language of complex numbers or design a more comprehensive rewriting system, the properties of the entire formal system need to be reconsidered. To make theoretical results more general, we can explore a modular narrative and proof methodology. For rewriting systems, we can utilize the Avatar Lemma \cite{Arrighi2005}\cite{Arrighi2017}, which is introduced below.
+The human proof proceeds by rewriting both sides of the equation according to the laws of linear algebra. 
+However, manual proofs take much human effort, and can be error-prone in large-scale examples. 
+Therefore, a natural goal is to design the formal verification, or even the decision procedure, based on Dirac notations.
 
-% First we introduce some concepts about modularity and the avatar lemma.
+The example illustrates the possibility and challenge for automated deduction of Dirac notations.
+On the one hand, some of the rewritings can be concluded as axioms, and the rewritings appear to be simplifying the terms. For example, $(I \otimes M_2)(M_1 \otimes I) = M_1 \otimes M_2$ in Eq.(1), and $\bra{k}M_2^\top\ket{l} = \bra{l}M_2\ket{k}$ in Eq.(7). On the other hand, some techniques require careful scheduling (e.g., rearranging $\bra{i}\otimes\bra{i}\cdot M_1 \otimes M_2 \cdot \ket{j} \otimes \ket{j}$ in Eq.(3)), and some seems to be heuristics (e.g., inserting the identity operator $\sum_{l \in V}\ket{l}\bra{l}$ in Eq.(5)).
+
+Our work resolves the decision problem of Dirac notations by designing a \textit{term rewriting system} (referred as TRS in the following). The general idea is to view Dirac notation as a universal algebra, summerize the equational axioms and specify the direction of rewriting. The proof by such a TRS can be explained and checked, and we can prove theoretical properties for the system, such as termination, confluence and even completeness.
+
+\subsection{Quantum, Linear Algebra and Dirac Notation in a Nutshell}
+\begin{itemize}
+  \item Axioms of Linear Algebra
+
+  \item Tensor Product Extension
+
+  \item Dirac Notation interpretation, ambiguity and associativity
+\end{itemize}
+
+\subsection{Term Rewriting}
+
+\begin{itemize}
+  \item Universal Algebra
+
+  \item TRS and equational theory
+  
+  \item Important properties: confluence and termination
+  
+  \item Variant: AC rewriting
+  
+  \item Modularity
+\end{itemize}
+
+When the whole formal system becomes large ane complicated, we can slice it into different layers. From such a point of view, different aspects of the system, i.e. language syntax, semantical interpretation, rewriting rules and proofs, are built in the bottom-up style. For example, in our work there will be two foundational systems for complex numbers and atomic basis, the core and extended Dirac notations are then constructed subsequently. Such a layered system provides flexibility and generality w.r.t. the basic modules. Also, properties can be developed by composing the corresponding proofs from the submodules. In our work, the local confluence of the core Dirac notation is proved by such modularity utilizing the avatar lemma, which is discussed in Sec.\ref{sec: conf-modular}.
 
 
-\begin{definition}[Subsumption]
-  A terminating and confluent relation $S$ subsumes a relation $S_0$ if whenever $t \to_{S_0} u$, $t$ and $u$ have the same $S$-normal form.
-\end{definition}
-
-\begin{definition}[Commuting relations]
-  Two relations $X$ and $Y$ are said to be commuting if whenever $t \to_X u$ and $t \to_Y v$, there exists a term $w$ such that $u \to_Y w$ and $v \to_X w$.
-\end{definition}
-
-\begin{lemma}[The avatar lemma] \cite{Arrighi2005} Let $X$, $S$ and $S_0$ be three relations defined on a set such that:
-  \begin{itemize}
-    \item $S$ is terminating and confluent;
-    \item $S$ subsumes $S_0$;
-    \item $S_0 \cup X$ is locally confluent;
-    \item $X$ commutes with $S^*$.
-  \end{itemize}
-  Then, the relation $S \cup X$ is locally confluent.
-\end{lemma}
-
-The smaller relation $S_0$ here is called the avatar, since it captures the critical part of the larger relation $S$ that will appear in the rest part $X$. The avatar lemma formalizes our intuition about the modularity of confluence: if we start with the locally confluent system $S_0 \cup X$ and extend the system from $S_0$ to $S$, which will not interfere with the other part $X$ and is still confluent, then the whole system $S\cup X$ will remain locally confluent. In our development of Dirac notations, we will use such avatars to represent the weakest requirement on complex numbers and basis.
-
-
-\section{The Core Language}
+\section{Dirac Notation Core Language}
 
 One difficulty of formalizing Dirac notations and designing the rewriting rules is the overloading of operators. This feature makes Dirac notations flexible and easy to use, but also introduced ambiguity into the syntax. In the core langauge, we want to prove some desired properties of the term rewriting system, such as congruence and soundness, and we have to rely on existing theories and tools. Therefore we choose the untyped universal algebra with AC symbols.
+
+
+
+
 
 
 \subsection{Language Syntax}
@@ -319,11 +384,8 @@ These symbols are only the least requirements as interfaces, and the real langua
 \begin{definition}[core language of Dirac Notation]
   The \textbf{core language of Dirac Notation}, denoted as $\mathfrak{DN}(\Sigma_\mathcal{A}, \Sigma_\mathcal{C})$, is a many-sorted language with dependent types, defined as follows.
   \begin{align*}
-    & \textbf{Kinds} && \textrm{(basis kind)} && P ::= \texttt{Atom}\ |\ P * P, \\
-    & && \textrm{(Dirac kind)} && D ::= \texttt{Scalar}\ |\ \texttt{Ket}\ |\ \texttt{Bra}\ |\ \texttt{Operator}, \\
-    \\
-    & \textbf{Types} && \textrm{(basis types)} && \sigma ::= x\ |\ A\ |\ \sigma \times \sigma\ |\ \pi_1(\sigma)\ |\ \pi_2(\sigma)\ |\ \pi_K(T)\ |\ \pi_B(T)\ |\ \type(t), \\
-    & && \textrm{(Dirac types)} && T ::= x\ |\ \Sc\ |\ \K(\sigma)\ |\ \B(\sigma)\ |\ \Op(\sigma, \sigma)\ |\ \type(S)\ |\ \type(K)\ |\ \type(B)\ |\ \type(O), \\
+    & \textbf{Types} && \textrm{(basis types)} && \sigma ::= A\ |\ \sigma \times \sigma, \\
+    & && \textrm{(Dirac types)} && T ::= \Sc\ |\ \K(\sigma)\ |\ \B(\sigma)\ |\ \Op(\sigma, \sigma), \\
     \\
     & \textbf{Terms} && \textrm{(complex number)} && \alpha \in \Sigma_\mathcal{C}, \\
     & && \textrm{(basis)} && t ::= x\ |\ a\ |\ (t, t)\ |\ \fst t\ |\ \snd t, \\
@@ -334,9 +396,6 @@ These symbols are only the least requirements as interfaces, and the real langua
   \end{align*}
   Here we use $x$ to represent variables, $a$ to represent atomic basis in $\Sigma_\mathcal{A}$, lower case letters like $s, t$ to represent basis from $\mathcal{E}$, and Greek letters like $\alpha$ to represent complex number terms from $\Sigma_\mathcal{C}$. We use letters $S$, $K$, $B$, $O$ and their variants to represent terms from the scalar, ket, bra and operator sorts repsectively.
 \end{definition}
-
-\yx{I think we should hide away the details of typing, and use Hilbert spaces/linear operators as the types for $\mathbf{0}_\mathcal{K}$ directly.}
-
 
 \subsection{Context and Typing}
 
@@ -350,73 +409,25 @@ We say the term $e$ is a \textbf{well-typed} term in context $\Gamma$ if $\Gamma
 
 Well-formed contexts can be constructed starting with an empty context, and continuously appending unique variables with proved typing judgements.
 
-\textsc{(Well-formed Context)}
-\begin{gather*}
-  \frac{}{\mathcal{WF}([])}
-  \qquad
-  \frac{\Gamma \vdash T : X \qquad x \notin \Gamma}{\mathcal{WF}(\Gamma :: (x : T))}
-\end{gather*}
-
-The typing judgements can be proved by the typing rules in the below.
-
 \textsc{(Context)}
 \begin{gather*}
-  \frac{\mathcal{WF}(\Gamma) \qquad x : \sigma \in \Gamma}{\Gamma \vdash x : \sigma}
-\end{gather*}
-
-\textsc{(Basis Type)}
-\begin{gather*}
-  \frac{\mathcal{WF}(\Gamma)}{\Gamma \vdash A : \texttt{Atom} }
-  \qquad
-  \frac{\Gamma \vdash \sigma_1 : P_1 \qquad \Gamma \vdash \sigma_2 : P_2}{\Gamma \vdash \sigma_1 \times \sigma_2 : P_1 * P_2}
-  \qquad
-  \frac{\Gamma \vdash \sigma : P_1 * P_2}{\Gamma \vdash \pi_1(\sigma) : P_1}
-  \qquad
-  \frac{\Gamma \vdash \sigma : P_1 * P_2}{\Gamma \vdash \pi_2(\sigma) : P_2} \\
-  \\
-  \frac{\Gamma \vdash T : \K(\sigma)}{\Gamma \vdash \pi_K(T) : P}
-  \qquad
-  \frac{\Gamma \vdash T : \B(\sigma)}{\Gamma \vdash \pi_B(T) : P} \qquad
-  \frac{\Gamma \vdash T : \Op(\sigma_1, \sigma_2)}{\Gamma \vdash \pi_K(T) : P_1}
-  \qquad
-  \frac{\Gamma \vdash T : \Op(\sigma_1, \sigma_2)}{\Gamma \vdash \pi_B(T) : P_2}
-  \qquad
-  \frac{\Gamma \vdash t : \sigma}{\Gamma \vdash \type(t) : P}
-\end{gather*}
-
-\textsc{(Dirac Type)}
-\begin{gather*}
-  \frac{\mathcal{WF}(\Gamma)}{\Gamma \vdash \Sc : \texttt{Scalar}}
-  \qquad
-  \frac{\Gamma \vdash \sigma : P}{\Gamma \vdash \K(\sigma) : \texttt{Ket}}
-  \qquad
-  \frac{\Gamma \vdash \sigma : P}{\Gamma \vdash \B(\sigma) : \texttt{Bra}}
-  \qquad
-  \frac{\Gamma \vdash \sigma_1 : P_1 \qquad \Gamma \vdash \sigma_2 : P_2}{\Gamma \vdash \Op(\sigma_1, \sigma_2) : \texttt{Operator}} \\
-  \\
-  \frac{\Gamma \vdash S : \Sc}{\Gamma \vdash \type(S) : \texttt{Scalar}}
-  \qquad
-  \frac{\Gamma \vdash K : \K(\sigma)}{\Gamma \vdash \type(K) : \texttt{Ket}}
-  \qquad
-  \frac{\Gamma \vdash B : \B(\sigma)}{\Gamma \vdash \type(B) : \texttt{Bra}}
-  \qquad
-  \frac{\Gamma \vdash O : \Op(\sigma_1, \sigma_2)}{\Gamma \vdash \type(O) : \texttt{Operator}}
+  \frac{x : \sigma \in \Gamma}{\Gamma \vdash x : \sigma}
 \end{gather*}
 
 \textsc{(Basis)}
 \begin{gather*}
-  \frac{\mathcal{WF}(\Gamma) \qquad a \text{ is an atomic basis of } A}{\Gamma \vdash a : A} \\
-  \\
+  \frac{a \text{ is an atomic basis of } A}{\Gamma \vdash a : A}
+  \qquad
   \frac{\Gamma \vdash s : \tau \qquad \Gamma \vdash t : \sigma}{\Gamma \vdash (s, t) :  \tau \times \sigma }
   \qquad
-  \frac{\Gamma \vdash \sigma : P_1 * P_2 \qquad \Gamma \vdash s : \sigma }{\Gamma \vdash \fst s : \pi_1(\sigma)}
+  \frac{\Gamma \vdash s : \sigma \times \tau }{\Gamma \vdash \fst s : \sigma}
   \qquad
-  \frac{\Gamma \vdash \sigma : P_1 * P_2 \qquad \Gamma \vdash s : \sigma }{\Gamma \vdash \snd s : \pi_2(\sigma)}
+  \frac{\Gamma \vdash s : \sigma \times \tau }{\Gamma \vdash \snd s : \tau}
 \end{gather*}
 
 \textsc{(Complex Scalar)}
 \begin{gather*}
-  \frac{\mathcal{WF}(\Gamma)}{\Gamma \vdash C(\alpha) : \Sc}
+  \frac{}{\Gamma \vdash C(\alpha) : \Sc}
   \qquad
   \frac{\Gamma \vdash s : \sigma \qquad \Gamma \vdash t : \sigma}{\Gamma \vdash \delta_{s, t} : \Sc} \\
   \\
@@ -431,7 +442,7 @@ The typing judgements can be proved by the typing rules in the below.
 
 \textsc{(Ket)}
 \begin{gather*}
-  \frac{\mathcal{WF}(\Gamma)}{\Gamma \vdash \mathbf{0}_{\mathcal{K}}(\tau) : \K(\tau)}
+  \frac{}{\Gamma \vdash \mathbf{0}_{\mathcal{K}}(\tau) : \K(\tau)}
   \qquad
   \frac{\Gamma \vdash t : \tau}{\Gamma \vdash \ket{t} : \K(\tau)}
   \qquad
@@ -448,7 +459,7 @@ The typing judgements can be proved by the typing rules in the below.
 
 \textsc{(Bra)}
 \begin{gather*}
-  \frac{\mathcal{WF}(\Gamma)}{\Gamma \vdash \mathbf{0}_{\mathcal{B}}(\tau) : \B(\tau)}
+  \frac{}{\Gamma \vdash \mathbf{0}_{\mathcal{B}}(\tau) : \B(\tau)}
   \qquad
   \frac{\Gamma \vdash t : \tau}{\Gamma \vdash \bra{t} : \B(\tau)}
   \qquad
@@ -465,9 +476,9 @@ The typing judgements can be proved by the typing rules in the below.
 
 \textsc{(Operator)}
 \begin{gather*}
-  \frac{\mathcal{WF}(\Gamma)}{\Gamma \vdash \mathbf{0}_{\mathcal{O}}(\tau, \rho) : \Op(\tau, \rho)}
+  \frac{}{\Gamma \vdash \mathbf{0}_{\mathcal{O}}(\tau, \rho) : \Op(\tau, \rho)}
   \qquad
-  \frac{\mathcal{WF}(\Gamma)}{\Gamma \vdash \mathbf{1}_{\mathcal{O}}(\tau) : \Op(\tau, \tau)}
+  \frac{}{\Gamma \vdash \mathbf{1}_{\mathcal{O}}(\tau) : \Op(\tau, \tau)}
   \qquad
   \frac{\Gamma \vdash K : \K(\tau) \qquad \Gamma \vdash B : \B(\rho) }{\Gamma \vdash K \otimes B : \Op(\tau, \rho)}
   \qquad
@@ -503,36 +514,12 @@ The language is intended to be used in the multi-sorted manner, but in the proof
 Denotational semantics explain the formal language as a process of calculation, where each expression $e$ is finally mapped to a mathematical object written as $\sem{e}$.
 Because our language have a hierechy of types, the denotational semantics should reflect the typing relation: types are interpreted as the domain sets, and the typing judgement should be interpreted as set-theoretical membership. This is the consistency requirement we will stick to in the below.
 
-\begin{definition}[typing consistency]
-  For any context $\Gamma$, expression $e$ and type $T$, if $\Gamma \vdash e : T$, then $\sem{e} \in \sem{T}$.
-\end{definition}
-
 A valuation is also necessary for specifying the interpretation. The valuation $v$ maps all variables $x$ to their interpretation $v(x)$. The semantics of $e$ under valuation $v$ is written as $\sem{e}^v$, and we omit $v$ when it is obvious or assumed.
-The valuations satisfying typing consistency are called \textbf{valid} valuations defined below.
-\begin{definition}[valid valuation]
-  A valuation $v$ is valid in well-formed context $\Gamma$ if for all $x : T \in \Gamma$, $v(x) \in \sem{T}^v$.
-\end{definition}
 
 In the following, we give the denotational semantics of core language $\mathfrak{DN}(\Sigma_\mathcal{A}, \Sigma_\mathcal{C})$. We assume a well-formed context $\Gamma$ and a valid valuation $v$, and only consider the well-typed expressions.
 
 \begin{definition}
   The set of all domains for the semantical interpretation of types in $\Sigma_{\mathcal{A}}$ is written as $\mathcal{A}$.
-\end{definition}
-
-\begin{definition}[semantics of kinds] The semantics of kinds are defined as sets of domains as follows:
-
-  \begin{align*}
-    & \sem{\texttt{Atom}} \equiv \mathcal{A},
-    \qquad
-    && \sem{P_1 * P_2} \equiv \{ S_1 \times S_2 : S_1 \in \sem{P_1}, S_2 \in \sem{P_2} \}, \\
-    \\
-    & \sem{\texttt{Scalar}} \equiv \{ \mathbb{C} \},
-    \qquad
-    && \sem{\texttt{Ket}} \equiv \{ \mathcal{H}_{\sem{P}} : P \text{ is a basis kind} \}, \\
-    & \sem{\texttt{Bra}} \equiv \{ \mathcal{H}^*_{\sem{P}} : P \text{ is a basis kind} \},
-    \qquad
-    && \sem{\texttt{Operator}} \equiv \{ \textsf{Hom}(S_1, S_2) : S_1, S_2 \in \sem{\texttt{Ket}} \}.
-  \end{align*}
 \end{definition}
 
 Basis types and Dirac types as terms have their types in kinds. The semantics of types are defined as domains, and should be contained in the semantics of kinds. Therefore, kinds are interpreted as sets of domains. \texttt{Atom} is interpreted as the set $\mathcal{A}$ of all different domains from the atomic basis language, and the kind $P_1 * P_2$ contains all different Cartesian products from $P_1$ and $P_2$. The semantics of \texttt{Ket}, \texttt{Bra} and \texttt{Operator} are defined as the set of all Hilbert spaces, Dual spaces and Homomorphisms, respectively.
@@ -541,44 +528,22 @@ Basis types and Dirac types as terms have their types in kinds. The semantics of
 \begin{definition}[semantics of types]
   The semantics of basis types are defined as domain sets as follows:
   \begin{align*}
-    & \begin{aligned}
+    & \text{(Basis Types)} && \begin{aligned}
       & \sem{A} \equiv \sem{A}_\mathcal{A},
       \qquad
-      && \sem{\sigma_1 \times \sigma_2} \equiv \sem{\sigma_1} \times \sem{\sigma_2}, \\
-      & \sem{\pi_1(\sigma)} \equiv S_1 \qquad \text{(where $\sem{\sigma} = S_1 \times S_2$)},
-      && \sem{\pi_2(\sigma)} \equiv S_2 \qquad \text{(where $\sem{\sigma} = S_1 \times S_2$)}, \\
-      & \sem{\pi_K(T)} \equiv \left\{
-        \begin{array}{ll}
-          S, & \text{ where } \sem{T} = \mathcal{H}_S, \\
-          S_1, & \text{ where } \sem{T} = \textsf{Hom}(S_1, S_2),
-        \end{array}
-      \right.
-      && \sem{\pi_B(T)} \equiv \left\{
-        \begin{array}{ll}
-          S, & \text{ where } \sem{T} = \mathcal{H}^*_S, \\
-          S_2, & \text{ where } \sem{T} = \textsf{Hom}(S_1, S_2),
-        \end{array}
-      \right.
+      && \sem{\sigma_1 \times \sigma_2} \equiv \sem{\sigma_1} \times \sem{\sigma_2},
     \end{aligned} \\
-    \\
-    & \begin{aligned}
+    & \text{(Dirac Types)} && \begin{aligned}
       \sem{\Sc} \equiv \mathbb{C},
       \qquad
       \sem{\K(\sigma)} \equiv \mathcal{H}_{\sem{\sigma}}, 
       \qquad 
       \sem{\B(\sigma)} \equiv \mathcal{H}^*_{\sem{\sigma}},
       \qquad
-      \sem{\Op(\sigma, \tau)} \equiv \textsf{Hom}(\sem{\sigma}, \sem{\tau}),
-    \end{aligned} \\
-    \\
-    & \begin{aligned}
-      \sem{\texttt{type}(t)} \equiv \sem{T} \qquad \text{(where $\Gamma \vdash t : T$)}
+      \sem{\Op(\sigma, \tau)} \equiv \textsf{Hom}(\sem{\sigma}, \sem{\tau}).
     \end{aligned}
   \end{align*}
 \end{definition}
-
-Because we only consider well-typed terms, the semantics are always well-defined.
-
 
 \begin{definition}[semantics of basis]
   For atomic basis $\Sigma_\mathcal{A}$ with domain $A$, the domain of basis $\mathcal{E}$ is the binary tree algebra over $A$, which is defined as 
@@ -596,7 +561,6 @@ Because we only consider well-typed terms, the semantics are always well-defined
     \sem{\fst t} \equiv x_1 \qquad (\text{where } \sem{t} = (x_1, x_2)), \\
     & \text{(Second Projection)} &&
     \sem{\snd t} \equiv x_2 \qquad (\text{where } \sem{t} = (x_1, x_2))
-    \\
   \end{align*}
 \end{definition}
 
@@ -681,216 +645,219 @@ One interesting decision is the explanation for Dirac notation inner product $B 
   \end{align*}
 \end{definition}
 
-
 \subsubsection*{Example}
 
 
-% \subsection{Axiomatic Semantics}
 
-% To further study the properties of this language, we try to axiomatize the equivalence in the denotational semantics as a proof system with equations, which results in the axiomatic semantics $AX$. The formal proof system should be sound in the sense that the axioms as equations hold in the denotational semantics. Meanwhile, the equivalence defined by axioms should be as comprehensive as possible compared to that in the denotational semantics, enabling it to cover most of the equivalence relations in which we are interested.
+\subsection{Axiomatic Semantics}
 
-% Although the formal system implies the equivalence of Dirac notations we desire, it does not point out how to correctly apply the axioms. Therefore, we still need to design an algorithm to decide the equivalence. A classical approach is to assign directions to the application of equations, resulting in the term rewriting system in the next section.
+To further study the properties of this language, we try to axiomatize the equivalence in the denotational semantics as a proof system with equations, which results in the axiomatic semantics $AX$. The formal proof system should be sound in the sense that the axioms as equations hold in the denotational semantics. Meanwhile, the equivalence defined by axioms should be as comprehensive as possible compared to that in the denotational semantics, enabling it to cover most of the equivalence relations in which we are interested.
 
-% The axiomatic semantics then serve as the criterion for the proof of soundness and completeness of the rewriting algorithm. But before that, let's fix the bridge first.
-% The symbol $\vdash_{AX}$ is omitted for the axioms.
+Although the formal system implies the equivalence of Dirac notations we desire, it does not point out how to correctly apply the axioms. Therefore, we still need to design an algorithm to decide the equivalence. A classical approach is to assign directions to the application of equations, resulting in the term rewriting system in the next section.
 
-% \begin{definition}[axiomatic semantics of complex numbers]
-%   \begin{gather*}
-%     0 + \alpha = \alpha
-%     \qquad
-%     \alpha + \beta = \beta + \alpha
-%     \qquad
-%     (\alpha + \beta) + \gamma = \alpha + (\beta + \gamma) \\
-%     0 \times \alpha = 0
-%     \qquad
-%     1 \times \alpha = \alpha
-%     \qquad
-%     \alpha \times \beta = \beta \times \alpha \\
-%     (\alpha \times \beta) \times \gamma = \alpha \times (\beta \times \gamma) \qquad
-%     \alpha \times (\beta + \gamma) = \alpha \times \beta + \alpha \times \gamma \\
-%     (\alpha + \beta)^* = \alpha^* + \beta^*
-%     \qquad
-%     (\alpha \times \beta)^* = \alpha^* \times \beta^*
-%     \qquad
-%     (\alpha^*)^* = \alpha
-%   \end{gather*}
-% \end{definition}
-% Compared to the ``scalar rewrite system'' in the Lineal paper\cite{Arrighi2017}, here we have three more axioms for the conjugate symbol.
+The axiomatic semantics then serve as the criterion for the proof of soundness and completeness of the rewriting algorithm. But before that, let's fix the bridge first.
+The symbol $\vdash_{AX}$ is omitted for the axioms.
 
-
-% \begin{definition}[BASIS]
-%   \begin{gather*}
-%       \fst (s, t) = s
-%       \qquad
-%       \snd (s, t) = t
-%   \end{gather*}
-% \end{definition}
-
-% Although in the denotational semantics we have to consider the case where projections are applied on atomic basis, we can omit the two rules 
-% $
-% \fst a = a,
-% \snd a = a
-% $
-% in the axiomatic semantics, as the extra definition in the denotational semantics are only necessary for technical reasons.
+\begin{definition}[axiomatic semantics of complex numbers]
+  \begin{gather*}
+    0 + \alpha = \alpha
+    \qquad
+    \alpha + \beta = \beta + \alpha
+    \qquad
+    (\alpha + \beta) + \gamma = \alpha + (\beta + \gamma) \\
+    0 \times \alpha = 0
+    \qquad
+    1 \times \alpha = \alpha
+    \qquad
+    \alpha \times \beta = \beta \times \alpha \\
+    (\alpha \times \beta) \times \gamma = \alpha \times (\beta \times \gamma) \qquad
+    \alpha \times (\beta + \gamma) = \alpha \times \beta + \alpha \times \gamma \\
+    (\alpha + \beta)^* = \alpha^* + \beta^*
+    \qquad
+    (\alpha \times \beta)^* = \alpha^* \times \beta^*
+    \qquad
+    (\alpha^*)^* = \alpha
+  \end{gather*}
+\end{definition}
+Compared to the ``scalar rewrite system'' in the Lineal paper\cite{Arrighi2017}, here we have three more axioms for the conjugate symbol.
 
 
+\begin{definition}[BASIS]
+  \begin{gather*}
+      \fst (s, t) = s
+      \qquad
+      \snd (s, t) = t
+  \end{gather*}
+\end{definition}
 
-% Many axioms have the similar form for scalars, bra, ket and operators. In the following we express them in a unified style and use the letter $D$ to represent some Dirac notation term of the appropriate sort.
-
-% \begin{definition}[UNI-LINEAR]
-%   \begin{gather*}
-%     D + \mathbf{0} = D
-%     \qquad
-%     D_1 + D_2 = D_2 + D_1
-%     \qquad
-%     (D_1 + D_2) + D_3 = D_1 + (D_2 + D_3) \\
-%     C(0).D = \mathbf{0}
-%     \qquad
-%     C(1).D = D
-%     \qquad
-%     S.\mathbf{0} = \mathbf{0} \\
-%     S_1.(S_2.D) = (S_1 \times S_2).D
-%     \qquad
-%     S.(D_1 + D_2) = S.D_1 + S.D_2
-%   \end{gather*}
-% \end{definition}
-
-% \begin{definition}[UNI-ADJOINT]
-%   \begin{gather*}
-%     \textbf{0}^\dagger = \textbf{0}
-%     \qquad
-%     \mathbf{1}_\mathcal{O}^\dagger = \mathbf{1}_\mathcal{O}
-%     \qquad
-%     \ket{t}^\dagger = \bra{t}
-%     \qquad
-%     (D^\dagger)^\dagger = D \\
-%     (S.D)^\dagger = S^*.(D^\dagger)
-%     \qquad
-%     (D_1 + D_2)^\dagger = D_1^\dagger + D_2^\dagger \\
-%     (D_1 \cdot D_2)^\dagger = D_2^\dagger \cdot D_1^\dagger \\
-%     (K_1 \otimes K_2)^\dagger = K_1^\dagger \otimes K_2^\dagger
-%     \qquad
-%     (B_1 \otimes B_2)^\dagger = B_1^\dagger \otimes B_2^\dagger
-%     \qquad
-%     (O_1 \otimes O_2)^\dagger = O_1^\dagger \otimes O_2^\dagger \\
-%     (K \otimes B)^\dagger = B^\dagger \otimes K^\dagger
-%   \end{gather*}
-% \end{definition}
+Although in the denotational semantics we have to consider the case where projections are applied on atomic basis, we can omit the two rules 
+$
+\fst a = a,
+\snd a = a
+$
+in the axiomatic semantics, as the extra definition in the denotational semantics are only necessary for technical reasons.
 
 
-% \begin{definition}[UNI-DOT]
-%   \begin{gather*}
-%       \textbf{0} \cdot D = \textbf{0}
-%       \qquad
-%       \textbf{1}_\mathcal{O} \cdot D = D \\
-%       D_1 \cdot (S.D_2) = S.(D_1 \cdot D_2)
-%       \qquad
-%       D_0 \cdot (D_1 + D_2) = D_0 \cdot D_1 + D_0 \cdot D_2 \\
-%       D_0 \cdot (D_1 \cdot D_2) = (D_0 \cdot D_1) \cdot D_2 \\
-%       (B_1 \otimes B_2) \cdot (K_1 \otimes K_2) = (B_1 \cdot K_1) \times (B_2 \cdot K_2) \\
-%       (O_1 \otimes O_2) \cdot (K_1 \otimes K_2) = (O_1 \cdot O_1) \times (B_2 \cdot K_2) \\
-%       (B_1 \otimes B_2) \cdot (O_1 \otimes O_2) = (B_1 \cdot K_1) \times (O_2 \cdot O_2) \\
-%       (O_1 \otimes O_2) \cdot (O_1' \otimes O_2') = (O_1 \cdot O_1') \times (O_2 \cdot O_2') \\
-%       (K_1 \otimes B_1) \cdot (K_2 \otimes B_2) = (B_1 \cdot K_2) . (K_1 \otimes B_2)
-%   \end{gather*}
-% \end{definition}
+
+Many axioms have the similar form for scalars, bra, ket and operators. In the following we express them in a unified style and use the letter $D$ to represent some Dirac notation term of the appropriate sort.
+
+\begin{definition}[UNI-LINEAR]
+  \begin{gather*}
+    D + \mathbf{0} = D
+    \qquad
+    D_1 + D_2 = D_2 + D_1
+    \qquad
+    (D_1 + D_2) + D_3 = D_1 + (D_2 + D_3) \\
+    C(0).D = \mathbf{0}
+    \qquad
+    C(1).D = D
+    \qquad
+    S.\mathbf{0} = \mathbf{0} \\
+    S_1.(S_2.D) = (S_1 \times S_2).D
+    \qquad
+    S.(D_1 + D_2) = S.D_1 + S.D_2
+  \end{gather*}
+\end{definition}
+
+\begin{definition}[UNI-ADJOINT]
+  \begin{gather*}
+    \textbf{0}^\dagger = \textbf{0}
+    \qquad
+    \mathbf{1}_\mathcal{O}^\dagger = \mathbf{1}_\mathcal{O}
+    \qquad
+    \ket{t}^\dagger = \bra{t}
+    \qquad
+    (D^\dagger)^\dagger = D \\
+    (S.D)^\dagger = S^*.(D^\dagger)
+    \qquad
+    (D_1 + D_2)^\dagger = D_1^\dagger + D_2^\dagger \\
+    (D_1 \cdot D_2)^\dagger = D_2^\dagger \cdot D_1^\dagger \\
+    (K_1 \otimes K_2)^\dagger = K_1^\dagger \otimes K_2^\dagger
+    \qquad
+    (B_1 \otimes B_2)^\dagger = B_1^\dagger \otimes B_2^\dagger
+    \qquad
+    (O_1 \otimes O_2)^\dagger = O_1^\dagger \otimes O_2^\dagger \\
+    (K \otimes B)^\dagger = B^\dagger \otimes K^\dagger
+  \end{gather*}
+\end{definition}
 
 
-% \begin{definition}[UNI-TENSOR]
-%   \begin{gather*}
-%       \mathbf{0} \otimes D = \mathbf{0}
-%       \qquad
-%       D \otimes \mathbf{0} = \mathbf{0}
-%       \qquad
-%       \mathbf{1}_\mathcal{O} \otimes \mathbf{1}_\mathcal{O} = \mathbf{1}_\mathcal{O} \\
-%       \ket{s} \otimes \ket{t} =\ket{(s, t)} \\
-%       D_1 \otimes (S.D_2) = S.(D_1 \otimes D_2)
-%       \qquad
-%       D_0 \otimes (D_1 + D_2) = D_0 \otimes D_1 + D_0 \otimes D_2 \\
-%       (K_1 \otimes B) \cdot K_2 = (B \cdot K_2).K_1
-%       \qquad
-%       B_1 \cdot (K \otimes B_2) = (B_1 \cdot K).B_2 \\
-%       (K \otimes B) \cdot O = K \otimes (B \cdot O)
-%       \qquad
-%       O \cdot (K \otimes B) = (O \cdot K) \otimes B \\
-%       (K_1 \otimes B_1) \otimes (K_2 \otimes B_2) = (K_1 \otimes K_2) \otimes (B_1 \otimes B_2) \\
-%   \end{gather*}
-% \end{definition}
-
-% Note the axiom $\ket{s} \otimes \ket{t} =\ket{(s, t)}$ here. The combination of two subsystems can either be expressed as tensor product in linear algebra (on the left), or by data structure of pairing (on the right). This points to the isomorphism $\mathcal{H}_{A \times B} \cong \mathcal{H}_A \otimes \mathcal{H}_B$.
-
-% Because the symbols and semantics of scalars are different, we list the axioms of scalars as follows.
-
-% \begin{definition}[SCR-BASIC]
-%   \begin{gather*}
-%     C(0) + S = S
-%     \qquad
-%     S_1 + S_2 = S_2 + S_1
-%     \qquad
-%     (S_1 + S_2) + S_3 = S_1 + (S_2 + S_3) \\
-%     C(0) \times S = C(0)
-%     \qquad
-%     C(1) \times S = S
-%     \qquad
-%     S_1 \times S_2 = S_2 \times S_1 \\
-%     (S_1 \times S_2) \times S_3 = S_1 \times (S_2 \times S_3)
-%     \qquad
-%     S_1 \times (S_2 + S_3) = S_1 \times S_2 + S_1 \times S_3 \\
-%     C(\alpha) + C(\beta) = C(\alpha + \beta)
-%     \qquad
-%     C(\alpha) \times C(\beta) = C(\alpha \times \beta)
-%     \qquad
-%     C(\alpha)^* = C(\alpha^*) \\
-%     \delta_{s, t}^* = \delta_{s, t}
-%     \qquad
-%     (S_1 + S_2)^* = S_1^* + S_2^*
-%     \qquad
-%     (S_1 \times S_2)^* = S_1^* \times S_2^*
-%     \qquad
-%     (S^*)^* = S
-%     \qquad
-%     (B \cdot K)^* = K^\dagger \cdot B^\dagger
-%   \end{gather*}  
-% \end{definition}
-
-% \begin{definition}[SCR-DELTA]
-%   \label{def: SCR-DELTA}
-%   \begin{gather*}
-%     \delta_{s, s} = C(1) \\
-%     s, t \text{ are different constants} \vdash_{AX} \delta_{s, t} = C(0)  \tag{*} \\
-%     (\bigwedge_i s_i = t_i) \leftrightarrow (\bigwedge_i s_i' = t_i') \vdash_{AX} \prod_i \delta_{s_i, t_i} = \prod_i \delta_{s_i', t_i'} \tag{**}
-%   \end{gather*}
-% \end{definition}
-
-% An example for the (**) axiom is $\delta_{i, j} \times \delta_{j, k} = \delta_{i, k} \times \delta_{j, k}$. This means the reasoning of Delta operators also involve some propositional logic.
-
-% \begin{definition}[SCR-DOT]
-%   \begin{gather*}
-%     \mathbf{0} \cdot K = C(0) \\
-%     B \cdot (S.K) = S \times (B \cdot K) \\
-%     B \cdot (K_1 + K_2) = B_0 \cdot K_1 + B_0 \cdot K_2 \\
-%     \bra{s} \cdot \ket{t} = \delta_{s, t} \\
-%     (B_1 \otimes B_2) \cdot (K_1 \otimes K_2) = (B_1 \cdot K_1) \times (B_2 \cdot K_2)
-%   \end{gather*}
-% \end{definition}
-
-% The symmetric rules can be deduced. For example,
-% \begin{align*}
-% (B_1 + B_2) \cdot K & = (((B_1 + B_2) \cdot K)^*)^* \\
-% & = (K^\dagger \cdot (B_1 + B_2)^\dagger)^* \\
-% & = (K^\dagger \cdot (B_1^\dagger + B_2^\dagger))^* \\
-% & = (K^\dagger \cdot B_1^\dagger + K^\dagger \cdot B_2^\dagger)^* \\
-% & = (K^\dagger \cdot B_1^\dagger)^* + (K^\dagger \cdot B_2^\dagger)^* \\
-% & = (B_1^\dagger)^\dagger \cdot (K^\dagger)^\dagger + (B_2^\dagger)^\dagger \cdot (K^\dagger)^\dagger \\
-% & = B_1 \cdot K + B_2 \cdot K.
-% \end{align*}
-
-% The axiomatic semantics are concluded above. To mitigate the formalization workload, its consistency compared to the denotational semantics is not directly proved here. Instead, we first prove the completeness of the term rewriting system w.r.t. the axioms, then prove the soundness of all the rewriting rules in \texttt{CoqQ} directly, which in the end implies that the axiomatic semantics is not stronger than the denotational one.
+\begin{definition}[UNI-DOT]
+  \begin{gather*}
+      \textbf{0} \cdot D = \textbf{0}
+      \qquad
+      \textbf{1}_\mathcal{O} \cdot D = D \\
+      D_1 \cdot (S.D_2) = S.(D_1 \cdot D_2)
+      \qquad
+      D_0 \cdot (D_1 + D_2) = D_0 \cdot D_1 + D_0 \cdot D_2 \\
+      D_0 \cdot (D_1 \cdot D_2) = (D_0 \cdot D_1) \cdot D_2 \\
+      (B_1 \otimes B_2) \cdot (K_1 \otimes K_2) = (B_1 \cdot K_1) \times (B_2 \cdot K_2) \\
+      (O_1 \otimes O_2) \cdot (K_1 \otimes K_2) = (O_1 \cdot O_1) \times (B_2 \cdot K_2) \\
+      (B_1 \otimes B_2) \cdot (O_1 \otimes O_2) = (B_1 \cdot K_1) \times (O_2 \cdot O_2) \\
+      (O_1 \otimes O_2) \cdot (O_1' \otimes O_2') = (O_1 \cdot O_1') \times (O_2 \cdot O_2') \\
+      (K_1 \otimes B_1) \cdot (K_2 \otimes B_2) = (B_1 \cdot K_2) . (K_1 \otimes B_2)
+  \end{gather*}
+\end{definition}
 
 
-\subsection{Decision algorithm: AC term rewriting}
+\begin{definition}[UNI-TENSOR]
+  \begin{gather*}
+      \mathbf{0} \otimes D = \mathbf{0}
+      \qquad
+      D \otimes \mathbf{0} = \mathbf{0}
+      \qquad
+      \mathbf{1}_\mathcal{O} \otimes \mathbf{1}_\mathcal{O} = \mathbf{1}_\mathcal{O} \\
+      \ket{s} \otimes \ket{t} =\ket{(s, t)} \\
+      D_1 \otimes (S.D_2) = S.(D_1 \otimes D_2)
+      \qquad
+      D_0 \otimes (D_1 + D_2) = D_0 \otimes D_1 + D_0 \otimes D_2 \\
+      (K_1 \otimes B) \cdot K_2 = (B \cdot K_2).K_1
+      \qquad
+      B_1 \cdot (K \otimes B_2) = (B_1 \cdot K).B_2 \\
+      (K \otimes B) \cdot O = K \otimes (B \cdot O)
+      \qquad
+      O \cdot (K \otimes B) = (O \cdot K) \otimes B \\
+      (K_1 \otimes B_1) \otimes (K_2 \otimes B_2) = (K_1 \otimes K_2) \otimes (B_1 \otimes B_2) \\
+  \end{gather*}
+\end{definition}
+
+Note the axiom $\ket{s} \otimes \ket{t} =\ket{(s, t)}$ here. The combination of two subsystems can either be expressed as tensor product in linear algebra (on the left), or by data structure of pairing (on the right). This points to the isomorphism $\mathcal{H}_{A \times B} \cong \mathcal{H}_A \otimes \mathcal{H}_B$.
+
+Because the symbols and semantics of scalars are different, we list the axioms of scalars as follows.
+
+\begin{definition}[SCR-BASIC]
+  \begin{gather*}
+    C(0) + S = S
+    \qquad
+    S_1 + S_2 = S_2 + S_1
+    \qquad
+    (S_1 + S_2) + S_3 = S_1 + (S_2 + S_3) \\
+    C(0) \times S = C(0)
+    \qquad
+    C(1) \times S = S
+    \qquad
+    S_1 \times S_2 = S_2 \times S_1 \\
+    (S_1 \times S_2) \times S_3 = S_1 \times (S_2 \times S_3)
+    \qquad
+    S_1 \times (S_2 + S_3) = S_1 \times S_2 + S_1 \times S_3 \\
+    C(\alpha) + C(\beta) = C(\alpha + \beta)
+    \qquad
+    C(\alpha) \times C(\beta) = C(\alpha \times \beta)
+    \qquad
+    C(\alpha)^* = C(\alpha^*) \\
+    \delta_{s, t}^* = \delta_{s, t}
+    \qquad
+    (S_1 + S_2)^* = S_1^* + S_2^*
+    \qquad
+    (S_1 \times S_2)^* = S_1^* \times S_2^*
+    \qquad
+    (S^*)^* = S
+    \qquad
+    (B \cdot K)^* = K^\dagger \cdot B^\dagger
+  \end{gather*}  
+\end{definition}
+
+\begin{definition}[SCR-DELTA]
+  \label{def: SCR-DELTA}
+  \begin{gather*}
+    \delta_{s, s} = C(1) \\
+    s, t \text{ are different constants} \vdash_{AX} \delta_{s, t} = C(0)  \tag{*} \\
+    (\bigwedge_i s_i = t_i) \leftrightarrow (\bigwedge_i s_i' = t_i') \vdash_{AX} \prod_i \delta_{s_i, t_i} = \prod_i \delta_{s_i', t_i'} \tag{**}
+  \end{gather*}
+\end{definition}
+
+An example for the (**) axiom is $\delta_{i, j} \times \delta_{j, k} = \delta_{i, k} \times \delta_{j, k}$. This means the reasoning of Delta operators also involve some propositional logic.
+
+\begin{definition}[SCR-DOT]
+  \begin{gather*}
+    \mathbf{0} \cdot K = C(0) \\
+    B \cdot (S.K) = S \times (B \cdot K) \\
+    B \cdot (K_1 + K_2) = B_0 \cdot K_1 + B_0 \cdot K_2 \\
+    \bra{s} \cdot \ket{t} = \delta_{s, t} \\
+    (B_1 \otimes B_2) \cdot (K_1 \otimes K_2) = (B_1 \cdot K_1) \times (B_2 \cdot K_2)
+  \end{gather*}
+\end{definition}
+
+The symmetric rules can be deduced. For example,
+\begin{align*}
+(B_1 + B_2) \cdot K & = (((B_1 + B_2) \cdot K)^*)^* \\
+& = (K^\dagger \cdot (B_1 + B_2)^\dagger)^* \\
+& = (K^\dagger \cdot (B_1^\dagger + B_2^\dagger))^* \\
+& = (K^\dagger \cdot B_1^\dagger + K^\dagger \cdot B_2^\dagger)^* \\
+& = (K^\dagger \cdot B_1^\dagger)^* + (K^\dagger \cdot B_2^\dagger)^* \\
+& = (B_1^\dagger)^\dagger \cdot (K^\dagger)^\dagger + (B_2^\dagger)^\dagger \cdot (K^\dagger)^\dagger \\
+& = B_1 \cdot K + B_2 \cdot K.
+\end{align*}
+
+The axiomatic semantics are concluded above. To mitigate the formalization workload, its consistency compared to the denotational semantics is not directly proved here. Instead, we first prove the completeness of the term rewriting system w.r.t. the axioms, then prove the soundness of all the rewriting rules in \texttt{CoqQ} directly, which in the end implies that the axiomatic semantics is not stronger than the denotational one.
+
+
+\section{Core Language Decision Procedure}
 \label{sec: typed_dirac_rules}
 
+The decision procedure of the core language is purely an AC term rewriting system.
+
+\subsection{AC Term Rewriting Algorithm}
 It is reasonable to assume that we have the rewriting term system to decide the complex number in $\Sigma_\mathcal{C}$ and atomic basis in $\Sigma_\mathcal{A}$, which are described in the following.
 
 \begin{definition}[TRS $R_{\Sigma_\mathcal{A}}$]
@@ -1298,7 +1265,7 @@ To decide the equivalence of two Dirac notation terms, we will use a variant of 
 \end{gather*}
 
 
-\section{Confluence of $R_\mathfrak{DN}$}
+\subsection{Confluence of $R_\mathfrak{DN}$}
 
 We use \texttt{CiME2} to check the local confluence of the TRS of Dirac notation automatically.
 
@@ -1349,15 +1316,21 @@ by the rule $ K + K \reduce C(1 + 1).K$. Therefore, to prove the confluence of a
 This extension rules are automatically added for all rules encoded in \texttt{CiME2}.
 
 \begin{proposition}
-  The system $R_\mathfrak{DN} \cup R_{\Sigma_\mathcal{C}0}$ is locally confluent.
+  The system $R_\mathfrak{DN} \cup R_{\Sigma_\mathcal{C}0}$ is locally confluent on well-typed terms.
 \end{proposition}
 \begin{proof}
-  Encoded and checked in \texttt{CiME2}.
+  We check that all the critical pairs are joinable. This is completed in two steps: firstly, encode the TRS within \texttt{CiME2} and find the unjoinable critical pairs. There are 55 typing related unjoinable critical pairs out of ~2000 critical pairs. Then we manually checked that with the well-typed constraint, the remaining 55 critical paris are also joinable. 
+  
+  As an example, there is an unjoinable critical pair
+  $$
+    \type(K_1) \reducefrom \type(K_1 + K_2) \reduce \type(K_2)
+  $$
+  from the rule $\type(K_1 + K_2) \reduce \type(K_1)$ on itself. But considering the well-typed constraint on $K_1 + K_2$, we should have $\type(K_1) = \type(K_2)$. Therefore the critical pair is actually joinable.
 \end{proof}
 
 
-\begin{lemma}[confluence of $R_\mathfrak{DN}$]
-  For any complex number rewrite system $R_{\Sigma_\mathcal{A}}$ and atomic basis rewrite system $R_{\Sigma_\mathcal{C}}$, the system $R_\mathfrak{DN} \cup R_{\Sigma_\mathcal{A}} \cup R_{\Sigma_\mathcal{C}}$ is confluent.
+\begin{lemma}[local confluence of $R_\mathfrak{DN}$]
+  For any complex number rewrite system $R_{\Sigma_\mathcal{A}}$ and atomic basis rewrite system $R_{\Sigma_\mathcal{C}}$, the system $R_\mathfrak{DN} \cup R_{\Sigma_\mathcal{A}} \cup R_{\Sigma_\mathcal{C}}$ is locally confluent.
 \end{lemma}
 \begin{proof}
   Both $R_{\Sigma_\mathcal{A}}$ and $R_{\Sigma_\mathcal{C}}$ are terminating and confluent by definition. 
@@ -1403,11 +1376,48 @@ This extension rules are automatically added for all rules encoded in \texttt{Ci
 % respectively will still lead to a confluence TRS, but the equivalence induced by the TRS will be be changed.
 
 
-\section{Termination of $R_\mathfrak{DN}$}
+\subsection{Termination of $R_\mathfrak{DN}$}
 
-TODO.
+Attempted to prove termination by modularity of simple terminating property. Not successful: cannot cut the whole system into several simply terminating one. Notice the rule $\delta_{s, (u, v)} \reduce \delta_{\fst s, u} \times \delta_{\snd s, v}$.
 
-\section{Soundness and Completeness of $R_\mathfrak{DN}$}
+Cannot find the interpretation to positive integers.
+
+
+
+\subsection{Confluence by Modularity}
+\label{sec: conf-modular}
+
+Our theories on Dirac notations can be divided into different parts, each containing its own language and computational methods. For example, the parts concerning complex numbers and basis vectors of vector spaces are relatively independent and complete; while the language and algorithm of Dirac notations are based on these components. Subsequent theoretical developments can build on this entire result, such as our extended Dirac language which incorporates a big operator sum and indices for quantum registers.
+
+These components are relatively independent and complete, allowing us to refer to them as different modules. Traditionally, the entire formal system has been studied as a whole. This approach is straightforward and direct, avoiding the need to consider how the parts interact, but at the expense of flexibility. Taking Dirac notation as an example, when we expand the language of complex numbers or design a more comprehensive rewriting system, the properties of the entire formal system need to be reconsidered. 
+To make theoretical results more general, we can explore a modular narrative and proof methodology. For rewriting systems, we can utilize the Avatar Lemma \cite{Arrighi2005}\cite{Arrighi2017}, which is introduced below.
+
+% First we introduce some concepts about modularity and the avatar lemma.
+
+
+\begin{definition}[Subsumption]
+  A terminating and confluent relation $S$ subsumes a relation $S_0$ if whenever $t \to_{S_0} u$, $t$ and $u$ have the same $S$-normal form.
+\end{definition}
+
+\begin{definition}[Commuting relations]
+  Two relations $X$ and $Y$ are said to be commuting if whenever $t \to_X u$ and $t \to_Y v$, there exists a term $w$ such that $u \to_Y w$ and $v \to_X w$.
+\end{definition}
+
+\begin{lemma}[The avatar lemma] \cite{Arrighi2005} Let $X$, $S$ and $S_0$ be three relations defined on a set such that:
+  \begin{itemize}
+    \item $S$ is terminating and confluent;
+    \item $S$ subsumes $S_0$;
+    \item $S_0 \cup X$ is locally confluent;
+    \item $X$ commutes with $S^*$.
+  \end{itemize}
+  Then, the relation $S \cup X$ is locally confluent.
+\end{lemma}
+
+The smaller relation $S_0$ here is called the avatar, since it captures the critical part of the larger relation $S$ that will appear in the rest part $X$. The avatar lemma formalizes our intuition about the modularity of confluence: if we start with the locally confluent system $S_0 \cup X$ and extend the system from $S_0$ to $S$, which will not interfere with the other part $X$ and is still confluent, then the whole system $S\cup X$ will remain locally confluent. In our development of Dirac notations, we will use such avatars to represent the weakest requirement on complex numbers and basis.
+
+
+
+\subsection{Soundness and Completeness of $R_\mathfrak{DN}$}
 
 To evaluate the reliability and capability of $R_\mathfrak{DN}$, we consider their soundness and correctness, which are defined and proved below.
 
@@ -1441,7 +1451,7 @@ The above results generally means that the TRS $R_\mathfrak{DN}$ is sound for th
   \yx{A small problem here. Difference in s, t symbols does not imply that their semantical explanations are different. I should modify the premises of (*) and (**).}
 \end{proof}
 
-\section{Completeness of $R_\mathfrak{DN}$ (New Proof)}
+\subsection{Completeness of $R_\mathfrak{DN}$ (New Proof)}
 
 \begin{definition}[completeness]
   We say the TRS $R$ of language $L$ is complete w.r.t. the semantics, if for all terms $e_1, e_2$ of $L$ and all variable valuations $\sigma$, $\sem{e_1}_\sigma = \sem{e_2}_\sigma$ implies $R \vdash e_1 \downarrow = e_2 \downarrow$.
@@ -1480,131 +1490,107 @@ The above results generally means that the TRS $R_\mathfrak{DN}$ is sound for th
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Extension: Sum and Transpose}
+\section{Extended Language: Big-op Sum}
 
-\yx{introduce a language of sets here}
-
-\begin{definition}[set]
-  \begin{align*}
-    M ::= \emptyset\ |\ \mathbf{U}\ |\ M \cup M\ |\ M \times M
-  \end{align*}
-\end{definition}
-
-\subsubsection*{\textsf{SET-SIMP}}
-\begin{gather*}
-  \emptyset \cup M \reduce M
-  \qquad
-  \mathbf{U} \cup M \reduce \mathbf{U}
-  \qquad
-  \emptyset \times M \reduce \emptyset
-  \qquad
-  \mathbf{U} \times \mathbf{U} \reduce \mathbf{U}
-\end{gather*}
-
+\subsection{Syntax, Typing and Semantics}
 \begin{definition}[DNE]
     The \textbf{language of Dirac Notation Extended}, denoted as $\mathfrak{DNE}(\Sigma_\mathcal{B}, \Sigma_\mathcal{S})$, consists of the same sorts as the core language and the following new symbols:
     \begin{align*}
-        & S ::= \sum_{i \in M} S\ |\ \lambda x.S\ |\ S\ t && K ::= B^\top\ |\ \sum_{i \in M} K\ |\ \lambda x.K\ |\ K\ t \\
-        & B ::= K^\top\ |\ \sum_{i \in M} B\ |\ \lambda x.B\ |\ B\ t && O ::= O^\top\ |\ \sum_{i \in M} O\ |\ \lambda x.O\ |\ O\ t
+        & \text{(set type)} && T ::= \texttt{Set}(\sigma) \\
+        & \text{(set)} && M ::= x\ |\ \mathbf{U}(\sigma)\ |\ M \times M \\
+        & \text{(extended Dirac notation)} && S ::= \sum_{i \in M} S
+        \qquad K ::= \sum_{i \in M} K
+        \qquad B ::= \sum_{i \in M} B
+        \qquad O ::= \sum_{i \in M} O
     \end{align*}
     The index $i$ for summation is a bind variable, and $M$ is the variable for the multiset of summation. The common equivalence involving bind variables are adopted here: $\alpha$-conversion and substitutions.
 \end{definition}
 
-\section{TRS for DNE}
+% typing
 
-\subsubsection*{\textsf{BETA-REDUCTION}}
-\begin{gather*}
-  (\lambda x.A)\ t \reduce A[x:=t]
-\end{gather*}
-\textbf{Reamrk:} We need abstraction and application to represent Dirac notations dependent on some variable. For example, $\sum_{i \in M} v_i$.
+The typing rules of DNE consist of those for DN and the following rules.
 
-\subsubsection*{\textsf{TRANS-KET}}
+\textsc{(Set)}
 \begin{gather*}
-  \mathbf{0}_\mathcal{B}^\top \reduce \mathbf{0}_\mathcal{K}
+  \frac{}{\Gamma \vdash \mathbf{U}(\sigma) : \texttt{Set}(\sigma)}
   \qquad
-  \bra{s}^\top \reduce \ket{s}
-  \qquad
-  (K^\dagger)^\top \reduce (K^\top)^\dagger
-  \qquad
-  (K^\top)^\top \reduce K \\
-  (S . B)^\top \reduce S . B^\top
-  \qquad
-  (B_1 + B_2)^\top \reduce B_1^\top + B_2^\top
-  \qquad
-  (B \cdot O)^\top \reduce O^\top \cdot B^\top
-  \qquad
-  (B_1 \otimes B_2)^\top \reduce B_1^\top \otimes B_2^\top
+  \frac{\Gamma \vdash M_1 : \texttt{Set}(\sigma) \qquad \Gamma \vdash M_2 : \texttt{Set}(\tau)}{\Gamma \vdash M_1 \times M_2 : \texttt{Set}(\sigma \times \tau)}
 \end{gather*}
 
-\subsubsection*{\textsf{TRANS-BRA}}
+\textsc{(Big-op)}
 \begin{gather*}
-  \mathbf{0}_\mathcal{K}^\top \reduce \mathbf{0}_\mathcal{B}
+  \frac{\Gamma \vdash M : \texttt{Set}(\sigma) \qquad \Gamma::(i : \sigma) \vdash S : \Sc}{\Gamma \vdash \sum_{i \in M} S : \Sc}
   \qquad
-  \ket{s}^\top \reduce \bra{s}
+  \frac{\Gamma \vdash M : \texttt{Set}(\sigma) \qquad \Gamma::(i : \sigma) \vdash K : \K(\tau)}{\Gamma \vdash \sum_{i \in M} K : \K(\tau)} \\
+  \\
+  \frac{\Gamma \vdash M : \texttt{Set}(\sigma) \qquad \Gamma::(i : \sigma) \vdash B : \B(\tau)}{\Gamma \vdash \sum_{i \in M} B : \B(\tau)}
   \qquad
-  (B^\dagger)^\top \reduce (B^\top)^\dagger
-  \qquad
-  (B^\top)^\top \reduce B \\
-  (S . K)^\top \reduce S . K^\top
-  \qquad
-  (K_1 + K_2)^\top \reduce K_1^\top + K_2^\top
-  \qquad
-  (O \cdot K)^\top \reduce K^\top \cdot O^\top
-  \qquad
-  (K_1 \otimes K_2)^\top \reduce K_1^\top \otimes K_2^\top
+  \frac{\Gamma \vdash M : \texttt{Set}(\sigma) \qquad \Gamma::(i : \sigma) \vdash O : \Op(\tau, \rho)}{\Gamma \vdash \sum_{i \in M} O : \Op(\tau, \rho)}
 \end{gather*}
 
+\begin{definition}[semantics of extended Dirac notation]
+  The semantics of the extended Dirac notations are defined as follows:
+  \begin{align*}
+    & \text{(Set Types)} && \begin{aligned}
+      \sem{\texttt{Set}(\sigma)} \equiv 2^{\sem{\sigma}},
+    \end{aligned} \\
+    & \text{(Set)} && \begin{aligned}
+      \sem{\mathbf{U}(\sigma)} \equiv \sem{\sigma},
+      \qquad
+      \sem{M_1 \times M_2} \equiv \sem{M_1} \times \sem{M_2},
+    \end{aligned} \\
+    \\
+    & \text{(Big-op)} && \begin{aligned}
+      & \sem{\sum_{i \in M} S}^v \equiv \sum_{m \in \sem{M}} \sem{S}^{v;\ i\mapsto m},
+      \qquad
+      \sem{\sum_{i \in M} K}^v \equiv \sum_{m \in \sem{M}} \sem{K}^{v;\ i\mapsto m},
+      \\
+      & \sem{\sum_{i \in M} B}^v \equiv \sum_{m \in \sem{M}} \sem{B}^{v;\ i\mapsto m},
+      \qquad
+      \sem{\sum_{i \in M} O}^v \equiv \sum_{m \in \sem{M}} \sem{O}^{v;\ i\mapsto m}.
+    \end{aligned}
+  \end{align*}
+\end{definition}
 
+Note that $v;\ i \mapsto m$ means the valuation that updates $v$ with variable $i$ mapping to $m$.
 
-\subsubsection*{\textsf{TRANS-OPT}}
+\section{Extended Language Decision Procedure}
+
+% \subsubsection*{\textsf{BETA-REDUCTION}}
+% \begin{gather*}
+%   (\lambda x.A)\ t \reduce A[x:=t]
+% \end{gather*}
+% \textbf{Reamrk:} We need abstraction and application to represent Dirac notations dependent on some variable. For example, $\sum_{i \in M} v_i$.
+
+\subsection{Rewriting Rules}
+
+\subsubsection*{\textsf{SET-SIMP}}
 \begin{gather*}
-  \mathbf{0}_\mathcal{O}^\top \reduce \mathbf{0}_\mathcal{O}
-  \qquad
-  \mathbf{1}_\mathcal{O}^\top \reduce \mathbf{1}_\mathcal{O}
-  \qquad
-  (K \otimes B)^\top \reduce B^\top \otimes K^\top
-  \qquad
-  (O^\dagger)^\top \reduce (O^\top)^\dagger
-  \qquad
-  (O^\top)^\top \reduce O \\
-  (S . O)^\top \reduce S . O^\top
-  \qquad
-  (O_1 + O_2)^\top \reduce O_1^\top + O_2^\top
-  \qquad
-  (O_1 \cdot O_2)^\top \reduce O_2^\top \cdot O_1^\top
-  \qquad
-  (O_1 \otimes O_2)^\top \reduce O_1^\top \otimes O_2^\top
+  \mathbf{U}(\sigma) \times \mathbf{U}(\tau) \reduce \mathbf{U}(\sigma \times \tau)
 \end{gather*}
 
-\textbf{Remark:} It has been checked by CiME2 that for the TRS $\mathfrak{DN}$ extended with transpose rules, the only unjoinable critical pairs are joinable with the equational theory $B\cdot K = K^\top \cdot B^\top$.
-
-\subsection{Juxtaposition of $B\cdot K$}
-
-
-\subsection{Sum Rewriting Rules}
 \subsubsection*{\textsf{SUM-ELIM}}
-
 \begin{gather*}
   \sum_{i \in M} C(0) \reduce C(0)
   \qquad
-  \sum_{i \in M} \mathbf{0}_\mathcal{K} \reduce \mathbf{0}_\mathcal{K}
+  \sum_{i \in M} \mathbf{0}_\mathcal{K}(\sigma) \reduce \mathbf{0}_\mathcal{K}(\sigma)
   \qquad
-  \sum_{i \in M} \mathbf{0}_\mathcal{B} \reduce \mathbf{0}_\mathcal{B}
+  \sum_{i \in M} \mathbf{0}_\mathcal{B}(\sigma) \reduce \mathbf{0}_\mathcal{B}(\sigma)
   \qquad
-  \sum_{i \in M} \mathbf{0}_\mathcal{O} \reduce \mathbf{0}_\mathcal{O}\\
-  \mathbf{1}_\mathcal{O} \reduce \sum_{i \in \mathbf{U}} \ket{i}\otimes\bra{i}
+  \sum_{i \in M} \mathbf{0}_\mathcal{O}(\sigma, \tau) \reduce \mathbf{0}_\mathcal{O}(\sigma, \tau)\\
+  \mathbf{1}_\mathcal{O}(\sigma) \reduce \sum_{i \in \mathbf{U}(\sigma)} \ket{i}\otimes\bra{i}
 \end{gather*}
 
 One common condition is attached to all the following rules: variable $i$ does not have free appearance in term $s$
 
 Here $S.A$ is interpreted as three cases: $S.K$, $S.B$ and $S.O$.
 \begin{gather*}
-  \sum_{i \in \mathbf{U}} \delta_{i, s} \reduce C(1)
+  \sum_{i \in \mathbf{U}(\sigma)} \delta_{i, s} \reduce C(1)
   \qquad
-  \sum_{i \in \mathbf{U}} (\delta_{i, s} \times S) \reduce S[i:=s] \\
-  \sum_{i \in \mathbf{U}} (\delta_{i, s}.A) \reduce A[i:=s]
+  \sum_{i \in \mathbf{U}(\sigma)} (\delta_{i, s} \times S) \reduce S[i:=s] \\
+  \sum_{i \in \mathbf{U}(\sigma)} (\delta_{i, s}.A) \reduce A[i:=s]
   \qquad
-  \sum_{i \in \mathbf{U}} ((\delta_{i, s} \times S).A) \reduce S[i:=s].A[i:=s]
+  \sum_{i \in \mathbf{U}(\sigma)} ((\delta_{i, s} \times S).A) \reduce S[i:=s].A[i:=s]
 \end{gather*}
 \begin{gather*}
   \sum_{i \in M} \sum_{j \in M} \delta_{i, j} \reduce \sum_{j \in M} C(1)
@@ -1662,8 +1648,9 @@ When pushing inside, the information of bind variable independence is lost. This
 \end{gather*}
 
 \subsubsection*{SUM-INDEX}
+\yx{Need to adjust the following rules according to typing information.}
 \begin{gather*}
-  \frac{\fst i \text{ not free in } A \vee \snd i \text{ not free in } A}{\sum_{i\in\mathbf{U}}A \reduce \sum_{j\in\mathbf{U}}\sum_{k\in\mathbf{U}}A[\fst i:=j, \snd i:=k, i:=(j,k)]}
+  \frac{\fst i \text{ not free in } A \vee \snd i \text{ not free in } A}{\sum_{i\in\mathbf{U}(\sigma \times \tau)}A \reduce \sum_{j\in\mathbf{U}(\sigma)}\sum_{k\in\mathbf{U}(\tau)}A[\fst i:=j, \snd i:=k, i:=(j,k)]}
   \\
   \\
   \frac{\fst i \text{ not free in } A \vee \snd i \text{ not free in } A}{\sum_{i\in M_1 \times M_2}A \reduce \sum_{j\in M_1}\sum_{k\in M_2}A[\fst i:=j, \snd i:=k, i:=(j,k)]}
@@ -1685,15 +1672,10 @@ The following equalities hold for ket, bra and operators respectively.
 
 During the equivalence checking, the algorithm will expand the atomic variables of ket, bra and operator.
 
-\subsection{Entry Reduction}
-
-After the entry expansion, the algorithm will apply the rewriting rules again, and then try to match the left hand side of the three equations above, and rewrite to the reduced right hand side.
-
-\section{Equivalence Checking}
+\subsection{Considering $\alpha$-conversion}
 
 Our goal is to design the algorithm that checks whether two terms are equivalent. Ideally this can be achieved by rewriting to normal forms, but for complicated scenarios, the normal form may not exist. This is the case with transpose and big operator. We have these axioms: 
 \begin{align*}
-& \text{(DOT-DUAL)} && B \cdot K = K^\top \cdot B^\top \\
 & \text{(SUM-SWAP)} && \sum_{i \in M} \sum_{j \in N} A = \sum_{j \in N} \sum_{i \in M} A 
 \end{align*}
 
@@ -1706,7 +1688,759 @@ Our algorithm for deciding equivalence takes these equations into consideration.
 Transpose is also an important operation pervasively used in quantum information, but the core language here does not incoporate this symbol due to some confluence problems. Since transpose is involutive (i.e., $(B^\top)^\top = B$), we cannot encode the axiom $ (B \cdot K)^\top = K^\top \cdot B^\top$ in the naive term rewriting system. We discovered that the difficulty raises with coexistence of adjoint and transpose. We can alternatively have the transpose symbol only, but not both. In light of this, transpose is moved to the extended language, where equivalence are decided with more powerful techniques like ordered rewriting.
 
 
-\section{Case Study}
+\section{Implementation and Case Study}
+
+In order to test the capability of our design, we implemented the language and algorithm in \textit{Mathematica}, and experimented with a broad range of examples from different fields and topics in quantum computing. The result suggests that our language is capable to express many important statements, and can correctly decide all encoded problems efficiently.
+
+\subsection{Mathematica Implementation}
+Our tool implementation is provided as a program package written in the \textit{Wolfram Language} (i.e., Mathematica). 
+% In general, the design of Mathematica can be considered as an extended version of \texttt{LISP}. 
+Mathematica is a flexible functional programming language and implementation, where programs and states are encoded akin to LISP expressions, and calculations are powered by pattern matching and rewriting. Besides, it is an outstanding computer algebra system that can automatically solve a large scope of mathematical problems.
+
+There are several reasons why we favor Mathematica over other languages like \texttt{Python} or \texttt{OCaml}.
+One reason is, that universal algebra fits well in the LISP style calculation, and rewritings can be implemented directly by the built-in matching and substitution.
+Another reason is the built-in algebra system for complex numbers. This relates to the decidability of reals: although we know that the real closed field is decidable, it does not include several symbols that often appear in quantum computing: $e^x$, $\mathrm{cos}(t)$, $\mathrm{sin}(t)$ and so on. The algebra system in Mathematica is a practical solution to it.
+Thirdly, the flexibility of Mathematica enables convenient interactive deductions. For example, we can introduce customized constructions, e.g. partial trace and swap, and extend the expressiveness of the language at the runtime. Such flexibility also allows us to control the rewriting process, assist in the deduction by manually making involved rewritings when necessary.
+
+We demonstrate the usage of our tool by the next example from \texttt{CoqQ}.
+
+\begin{example}
+  \label{ex: MMA}
+Check the equivalence
+  \[
+    \mathrm{tr}_1(so2choi(\mathcal{E}) \cdot (X^\top \otimes I)) = \mathcal{E}(X),
+  \]
+where $\mathcal{E}$ is a quantum channel, $\mathrm{tr}_1(A)$ is the partial trace over the first subsystem of $A$, and $so2choi$ transform the super operator to its Choi representation.
+\end{example}
+
+Quantum channels are completely positive super operators, and we can encode it in the Kraus operator sum representation, meaning that $\mathcal{E}(X) = \sum_{i \in \mathbf{U}} E_i X E_i^\dagger$. Then we construct the two ``high-level'' functions using big operators:
+
+  \begin{gather*}
+    \mathrm{tr}_1(A) \equiv \sum_{i\in\mathbf{U}}\sum_{j\in\mathbf{U}} (\sum_{k\in\mathbf{U}} \bra{k, i} A \ket{k, j}) \ket{i}\bra{j},
+    \qquad
+    so2choi(E) \equiv \sum_{i\in\mathbf{U}}\sum_{j\in\mathbf{U}} \ket{i}\bra{j} \otimes (\sum_{k\in\mathbf{U}} E_k \ket{i}\bra{j} E_k^\dagger).
+  \end{gather*}
+
+  Finally the equivalence is checked automatically by the tool. See Fig.\ref{fig: MMA ex} for the code implementation.
+
+\begin{figure*}
+  \includegraphics*[width=0.8\textwidth]{MMAexample.png}
+  \caption{The code encoding Example.\ref{ex: MMA} \yx{I can consider add pretty notation outputs to the code.}}
+  \label{fig: MMA ex}
+\end{figure*}
+
+Actually, the equality also holds if $\mathcal{E}$ is a general super operator. But this cannot be checked for the time being, since our language does not yet directly support super operators.
+
+\subsection{\texttt{CoqQ} Cases}
+
+All 90 examples verified in 10 seconds.
+
+\subsection{Circuit Cases}
+
+\subsection{Quantum Program Cases}
+
+\section{Conclusion and Future Work}
+
+In this paper, we have presented an approach to automating formal deductions in a more general setting using Dirac notations. Our methodology leverages term rewriting systems to provide a robust, explainable framework with theoretical guarantees, which is critical for the performance and usability of formal tools in quantum computing.
+
+We have demonstrated the implementation of our core language in Mathematica, verified various case studies, and shown the practical applicability of our approach. Our results affirm the soundness and completeness of the rewriting rules and their capability to handle complex calculations effectively.
+
+
+Future Work:
+\begin{itemize}
+  \item \textbf{Rewriting Rules Optimization:} 
+  Rearranging the rewriting rules in the core language to improve efficiency and scalability.
+  \item \textbf{Language Extension:} 
+  Incorporating more sorts (e.g., super operators), finer typing (e.g., unitary, Hermitian, positive operators), and more predicates (e.g., order judgement).
+  \item \textbf{AI Intergration:} As future extensions make the formal system more and more sophisticated, we should introduce artificial intelligence and machine learning techniques to facilitate automated deduction, aiming to overcome the limitation in generating capability of traditional term rewriting systems.
+\end{itemize}
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\bibliographystyle{plain}
+\bibliography{ref}
+
+\clearpage
+\appendix
+
+
+\section{Core Language Syntax, Typing and Semantics (Full Version)}
+
+\begin{definition} [atomic basis signature]
+  The \textbf{atomic basis signature} $\Sigma_\mathcal{A}$ is a  typed finite language.
+\end{definition}
+
+Because we consider the tensor product structure, larger Hilbert spaces can be composed by the atomic ones, like the qubit Hilbert space. The atomic basis here characterize the basis of the atomic Hilbert spaces.
+We limit the basis signature to finite languages to avoid problems of infinite dimensions.
+
+\begin{definition} [complex number signature]
+  The \textbf{complex number signature} $\Sigma_\mathcal{C}$ contains at least constant symbols $0, 1$, a unary symbol $*$ and binary symbols $+, \times$.
+\end{definition}
+
+Following the idea of the avatar lemma, the two signatures $\Sigma_\mathcal{A}$ and $\Sigma_\mathcal{C}$ characterize the language for atomic basis and complex numbers. 
+The symbols for complex numbers are zero, one, conjugate, addition and multiplication respectively. Compared the avatar language in the Lineal paper\cite{Arrighi2017}, it adds the conjugate symbol since we need to deal with conjugate and inner product.
+These symbols are only the least requirements as interfaces, and the real language to instantiate can contain more details. For example, the basis can contain symbols $0$ and $1$ for qubit spaces, and the complex numbers can still have exponential functions $e^x$ or square roots $\sqrt{x}$.
+
+
+\begin{definition}[core language of Dirac Notation]
+  The \textbf{core language of Dirac Notation}, denoted as $\mathfrak{DN}(\Sigma_\mathcal{A}, \Sigma_\mathcal{C})$, is a many-sorted language with dependent types, defined as follows.
+  \begin{align*}
+    & \textbf{Kinds} && \textrm{(basis kind)} && P ::= \texttt{Atom}\ |\ P * P, \\
+    & && \textrm{(Dirac kind)} && D ::= \texttt{Scalar}\ |\ \texttt{Ket}\ |\ \texttt{Bra}\ |\ \texttt{Operator}, \\
+    \\
+    & \textbf{Types} && \textrm{(basis types)} && \sigma ::= x\ |\ A\ |\ \sigma \times \sigma\ |\ \pi_1(\sigma)\ |\ \pi_2(\sigma)\ |\ \pi_K(T)\ |\ \pi_B(T)\ |\ \type(t), \\
+    & && \textrm{(Dirac types)} && T ::= x\ |\ \Sc\ |\ \K(\sigma)\ |\ \B(\sigma)\ |\ \Op(\sigma, \sigma)\ |\ \type(S)\ |\ \type(K)\ |\ \type(B)\ |\ \type(O), \\
+    \\
+    & \textbf{Terms} && \textrm{(complex number)} && \alpha \in \Sigma_\mathcal{C}, \\
+    & && \textrm{(basis)} && t ::= x\ |\ a\ |\ (t, t)\ |\ \fst t\ |\ \snd t, \\
+    & && \textrm{(scalar)} && S ::= x\ |\ C(\alpha)\ |\ \delta_{t, t}\ |\ S + S\ |\ S \times S\ |\ S^*\ |\ B \cdot K, \\
+    & && \textrm{(ket)} && K ::= x\ |\ \mathbf{0}_\mathcal{K}(\sigma)\ |\ \ket{t}\ |\ B^\dagger\ |\ S.K\ |\ K + K\ |\ O \cdot K\ |\ K \otimes K, \\
+    & && \textrm{(bra)} && B ::= x\ |\ \mathbf{0}_\mathcal{B}(\sigma)\ |\ \bra{t}\ |\ K^\dagger\ |\ S.B\ |\ B + B\ |\ B \cdot O\ |\ B \otimes B, \\
+    & && \textrm{(operator)} && O ::= x\ |\ \mathbf{0}_\mathcal{O}(\sigma, \sigma)\ |\ \mathbf{1}_\mathcal{O}(\sigma)\ |\ K \otimes B\ |\ O^\dagger\ |\ S.O\ |\ O + O\ |\ O \cdot O\ |\ O \otimes O.
+  \end{align*}
+  Here we use $x$ to represent variables, $a$ to represent atomic basis in $\Sigma_\mathcal{A}$, lower case letters like $s, t$ to represent basis from $\mathcal{E}$, and Greek letters like $\alpha$ to represent complex number terms from $\Sigma_\mathcal{C}$. We use letters $S$, $K$, $B$, $O$ and their variants to represent terms from the scalar, ket, bra and operator sorts repsectively.
+\end{definition}
+
+\subsection{Context and Typing}
+
+\begin{definition}[context]
+  A \textbf{typing assumption} is written as $x : X$, meaning that variable $x$ is of type $X$. A \textbf{context} $\Gamma$ is an ordered list of typing assumptions. We write $x : X \in \Gamma$ if the typing assumption is contained in context $\Gamma$, and $x \in \Gamma$ if there exists a typing assumption of $x$ contained in $\Gamma$.
+\end{definition}
+
+
+We define simultaneously two judgement. One is $\mathcal{WF}(\Gamma)$, meaning that a context is \textbf{well-formed}. And the second one is a \textbf{typing judgement} written as $\Gamma \vdash e : X$, indicating that $e$ is an expression of type $X$ in context $\Gamma$.
+We say the term $e$ is a \textbf{well-typed} term in context $\Gamma$ if $\Gamma \vdash e : X$ is a typing judgement for some $X$.
+
+Well-formed contexts can be constructed starting with an empty context, and continuously appending unique variables with proved typing judgements.
+
+\textsc{(Well-formed Context)}
+\begin{gather*}
+  \frac{}{\mathcal{WF}([])}
+  \qquad
+  \frac{\Gamma \vdash T : X \qquad x \notin \Gamma}{\mathcal{WF}(\Gamma :: (x : T))}
+\end{gather*}
+
+The typing judgements can be proved by the typing rules in the below.
+
+\textsc{(Context)}
+\begin{gather*}
+  \frac{\mathcal{WF}(\Gamma) \qquad x : \sigma \in \Gamma}{\Gamma \vdash x : \sigma}
+\end{gather*}
+
+\textsc{(Basis Type)}
+\begin{gather*}
+  \frac{\mathcal{WF}(\Gamma)}{\Gamma \vdash A : \texttt{Atom} }
+  \qquad
+  \frac{\Gamma \vdash \sigma_1 : P_1 \qquad \Gamma \vdash \sigma_2 : P_2}{\Gamma \vdash \sigma_1 \times \sigma_2 : P_1 * P_2}
+  \qquad
+  \frac{\Gamma \vdash \sigma : P_1 * P_2}{\Gamma \vdash \pi_1(\sigma) : P_1}
+  \qquad
+  \frac{\Gamma \vdash \sigma : P_1 * P_2}{\Gamma \vdash \pi_2(\sigma) : P_2} \\
+  \\
+  \frac{\Gamma \vdash T : \K(\sigma)}{\Gamma \vdash \pi_K(T) : P}
+  \qquad
+  \frac{\Gamma \vdash T : \B(\sigma)}{\Gamma \vdash \pi_B(T) : P} \qquad
+  \frac{\Gamma \vdash T : \Op(\sigma_1, \sigma_2)}{\Gamma \vdash \pi_K(T) : P_1}
+  \qquad
+  \frac{\Gamma \vdash T : \Op(\sigma_1, \sigma_2)}{\Gamma \vdash \pi_B(T) : P_2}
+  \qquad
+  \frac{\Gamma \vdash t : \sigma}{\Gamma \vdash \type(t) : P}
+\end{gather*}
+
+\textsc{(Dirac Type)}
+\begin{gather*}
+  \frac{\mathcal{WF}(\Gamma)}{\Gamma \vdash \Sc : \texttt{Scalar}}
+  \qquad
+  \frac{\Gamma \vdash \sigma : P}{\Gamma \vdash \K(\sigma) : \texttt{Ket}}
+  \qquad
+  \frac{\Gamma \vdash \sigma : P}{\Gamma \vdash \B(\sigma) : \texttt{Bra}}
+  \qquad
+  \frac{\Gamma \vdash \sigma_1 : P_1 \qquad \Gamma \vdash \sigma_2 : P_2}{\Gamma \vdash \Op(\sigma_1, \sigma_2) : \texttt{Operator}} \\
+  \\
+  \frac{\Gamma \vdash S : \Sc}{\Gamma \vdash \type(S) : \texttt{Scalar}}
+  \qquad
+  \frac{\Gamma \vdash K : \K(\sigma)}{\Gamma \vdash \type(K) : \texttt{Ket}}
+  \qquad
+  \frac{\Gamma \vdash B : \B(\sigma)}{\Gamma \vdash \type(B) : \texttt{Bra}}
+  \qquad
+  \frac{\Gamma \vdash O : \Op(\sigma_1, \sigma_2)}{\Gamma \vdash \type(O) : \texttt{Operator}}
+\end{gather*}
+
+\textsc{(Basis)}
+\begin{gather*}
+  \frac{\mathcal{WF}(\Gamma) \qquad a \text{ is an atomic basis of } A}{\Gamma \vdash a : A} \\
+  \\
+  \frac{\Gamma \vdash s : \tau \qquad \Gamma \vdash t : \sigma}{\Gamma \vdash (s, t) :  \tau \times \sigma }
+  \qquad
+  \frac{\Gamma \vdash \sigma : P_1 * P_2 \qquad \Gamma \vdash s : \sigma }{\Gamma \vdash \fst s : \pi_1(\sigma)}
+  \qquad
+  \frac{\Gamma \vdash \sigma : P_1 * P_2 \qquad \Gamma \vdash s : \sigma }{\Gamma \vdash \snd s : \pi_2(\sigma)}
+\end{gather*}
+
+\textsc{(Complex Scalar)}
+\begin{gather*}
+  \frac{\mathcal{WF}(\Gamma)}{\Gamma \vdash C(\alpha) : \Sc}
+  \qquad
+  \frac{\Gamma \vdash s : \sigma \qquad \Gamma \vdash t : \sigma}{\Gamma \vdash \delta_{s, t} : \Sc} \\
+  \\
+  \frac{\Gamma \vdash S_1 : \Sc \qquad \Gamma \vdash S_2 : \Sc }{\Gamma \vdash S_1 + S_2 : \Sc }
+  \qquad
+  \frac{\Gamma \vdash S_1 : \Sc \qquad \Gamma \vdash S_2 : \Sc}{\Gamma \vdash S_1 \times S_2 : \Sc}
+  \qquad
+  \frac{\Gamma \vdash S : \Sc}{\Gamma \vdash S^* : \Sc}
+  \qquad
+  \frac{\Gamma \vdash B: \B(\tau) \qquad \Gamma \vdash K : \K(\tau) }{\Gamma \vdash B \cdot K : \Sc }
+\end{gather*}
+
+\textsc{(Ket)}
+\begin{gather*}
+  \frac{\mathcal{WF}(\Gamma)}{\Gamma \vdash \mathbf{0}_{\mathcal{K}}(\tau) : \K(\tau)}
+  \qquad
+  \frac{\Gamma \vdash t : \tau}{\Gamma \vdash \ket{t} : \K(\tau)}
+  \qquad
+  \frac{\Gamma \vdash K : \K(\tau)}{\Gamma \vdash K^\dagger : \B(\tau)}
+  \qquad
+  \frac{\Gamma \vdash a : \Sc \qquad \Gamma \vdash K : \K(\tau)}{\Gamma \vdash a . K : \K(\tau)} \\
+  \\
+  \frac{\Gamma \vdash K_1 : \K(\tau) \qquad \Gamma \vdash K_2 : \K(\tau) }{\Gamma \vdash K_1 + K_2 : \K(\tau) }
+  \qquad
+  \frac{\Gamma \vdash O : \Op(\tau, \rho) \qquad \Gamma \vdash K : \K(\rho) }{\Gamma \vdash O \cdot K : \K(\tau) }
+  \qquad
+  \frac{\Gamma \vdash K_1 : \K(\tau) \qquad \Gamma \vdash K_2 : \K(\rho) }{\Gamma \vdash K_1 \otimes K_2 : \K(\tau \times \rho)}
+\end{gather*}
+
+\textsc{(Bra)}
+\begin{gather*}
+  \frac{\mathcal{WF}(\Gamma)}{\Gamma \vdash \mathbf{0}_{\mathcal{B}}(\tau) : \B(\tau)}
+  \qquad
+  \frac{\Gamma \vdash t : \tau}{\Gamma \vdash \bra{t} : \B(\tau)}
+  \qquad
+  \frac{\Gamma \vdash B : \B(\tau)}{\Gamma \vdash B^\dagger : \K(\tau)}
+  \qquad
+  \frac{\Gamma \vdash a : \Sc \qquad \Gamma \vdash B : \B(\tau)}{\Gamma \vdash a . B : \B(\tau)} \\
+  \\
+  \frac{\Gamma \vdash B_1 : \B(\tau) \qquad \Gamma \vdash B_2 : \B(\tau) }{\Gamma \vdash B_1 + B_2 : \B(\tau) }
+  \qquad
+  \frac{\Gamma \vdash B : \B(\tau) \qquad \Gamma \vdash O : \Op(\tau, \rho) }{\Gamma \vdash B \cdot O : \B(\rho) } 
+  \qquad
+  \frac{\Gamma \vdash B_1 : \B(\tau) \qquad \Gamma \vdash B_2 : \B(\rho) }{\Gamma \vdash B_1 \otimes B_2 : \B(\tau \times \rho)}
+\end{gather*}
+
+\textsc{(Operator)}
+\begin{gather*}
+  \frac{\mathcal{WF}(\Gamma)}{\Gamma \vdash \mathbf{0}_{\mathcal{O}}(\tau, \rho) : \Op(\tau, \rho)}
+  \qquad
+  \frac{\mathcal{WF}(\Gamma)}{\Gamma \vdash \mathbf{1}_{\mathcal{O}}(\tau) : \Op(\tau, \tau)}
+  \qquad
+  \frac{\Gamma \vdash K : \K(\tau) \qquad \Gamma \vdash B : \B(\rho) }{\Gamma \vdash K \otimes B : \Op(\tau, \rho)}
+  \qquad
+  \frac{\Gamma \vdash O : \Op(\tau, \rho)}{\Gamma \vdash O^\dagger : \Op(\rho, \tau)} \\
+  \\
+  \frac{\Gamma \vdash a : \Sc \qquad \Gamma \vdash O : \Op(\tau, \rho)}{\Gamma \vdash a . O : \Op(\tau, \rho)}
+  \qquad
+  \frac{\Gamma \vdash O_1 : \Op(\tau, \rho) \qquad \Gamma \vdash O_2 : \Op(\tau, \rho) }{\Gamma \vdash O_1 + O_2 : O(\tau, \rho) } \\
+  \\
+  \frac{\Gamma \vdash O_1 : \Op(\tau, \rho) \qquad \Gamma \vdash O_2 : \Op(\rho, \sigma) }{\Gamma \vdash O_1 \cdot O_2 : \Op(\tau, \sigma) }
+  \qquad
+  \frac{\Gamma \vdash O_1 : \Op(\tau_1, \rho_1) \qquad \Gamma \vdash O_2 : \Op(\tau_2, \rho_2) }{\Gamma \vdash O_1 \otimes O_2 : \Op(\tau_1 \times \tau_2, \rho_1 \times \rho_2)}
+\end{gather*}
+
+
+We make the modularity explicit by separating the complex number sort $\mathcal{C}$ from the scalar sort $\mathcal{S}$ in Dirac notations. It is necessary because the scalar language is defined by mutual induction with ket, bra and basis, which does not appear in standard language of complex. This also indicates the joint position in the term rewriting system: the rules for complex numbers can vary in different cases of $\sum_\mathcal{C}$, and our work on Dirac notations is to design the general rewriting rules involving inner products and Kronecker-Delta expressions. Separating the two languages allows us to apply the avatar lemma in theoretical analysis. From the implementation level, it means we can directly utilize different solvers that focus on complex numbers, and extend the language of complex numbers easily by modifying $\sum_\mathcal{C}$.
+
+The same discussion applies for the language of basis. The atomic basis describes every individual subsystem in the physical level. The pairing and projections are for basis in Hilbert space with tensor products, which lie in the logic level.
+
+We can consider possible candidates for instantiating $\Sigma_\mathcal{C}$, which touches the decidability problem of reals. Beyond the weakest one, the avatar $\{0, 1, *, +, \times\}$ itself \yx{any theorems on this one?}, we can also try to add symbols pervasively used in quantum, such as exponential functions, trigonometric functions and square/square root.
+
+The choice of the atomic basis language $\Sigma_\mathcal{A}$ has large freedom and can be suited to different scenarios. Besides introducing constant symbols (e.g., $0$ and $1$ basis), richer language with operations on basis terms are also possible. 
+
+
+Although we use the same characters in different sorts ($B \cdot K$ and $O \cdot K$, for example), they are actually different symbols and can be easily distinguished from the context. This is also reflected in the \texttt{CiME2} script. 
+
+The language is intended to be used in the multi-sorted manner, but in the proof of confluence property, we check the unsorted version. The unsorted version simply removes all sort constraints, and its confluence is equivalent to that of the multi-sorted version, which is the persistancy proved in \cite{Aoto1997}.
+
+
+
+\subsection{Denotational Semantics}
+
+Denotational semantics explain the formal language as a process of calculation, where each expression $e$ is finally mapped to a mathematical object written as $\sem{e}$.
+Because our language have a hierechy of types, the denotational semantics should reflect the typing relation: types are interpreted as the domain sets, and the typing judgement should be interpreted as set-theoretical membership. This is the consistency requirement we will stick to in the below.
+
+\begin{definition}[typing consistency]
+  For any context $\Gamma$, expression $e$ and type $T$, if $\Gamma \vdash e : T$, then $\sem{e} \in \sem{T}$.
+\end{definition}
+
+A valuation is also necessary for specifying the interpretation. The valuation $v$ maps all variables $x$ to their interpretation $v(x)$. The semantics of $e$ under valuation $v$ is written as $\sem{e}^v$, and we omit $v$ when it is obvious or assumed.
+The valuations satisfying typing consistency are called \textbf{valid} valuations defined below.
+\begin{definition}[valid valuation]
+  A valuation $v$ is valid in well-formed context $\Gamma$ if for all $x : T \in \Gamma$, $v(x) \in \sem{T}^v$.
+\end{definition}
+
+In the following, we give the denotational semantics of core language $\mathfrak{DN}(\Sigma_\mathcal{A}, \Sigma_\mathcal{C})$. We assume a well-formed context $\Gamma$ and a valid valuation $v$, and only consider the well-typed expressions.
+
+\begin{definition}
+  The set of all domains for the semantical interpretation of types in $\Sigma_{\mathcal{A}}$ is written as $\mathcal{A}$.
+\end{definition}
+
+\begin{definition}[semantics of kinds] The semantics of kinds are defined as sets of domains as follows:
+
+  \begin{align*}
+    & \sem{\texttt{Atom}} \equiv \mathcal{A},
+    \qquad
+    && \sem{P_1 * P_2} \equiv \{ S_1 \times S_2 : S_1 \in \sem{P_1}, S_2 \in \sem{P_2} \}, \\
+    \\
+    & \sem{\texttt{Scalar}} \equiv \{ \mathbb{C} \},
+    \qquad
+    && \sem{\texttt{Ket}} \equiv \{ \mathcal{H}_{\sem{P}} : P \text{ is a basis kind} \}, \\
+    & \sem{\texttt{Bra}} \equiv \{ \mathcal{H}^*_{\sem{P}} : P \text{ is a basis kind} \},
+    \qquad
+    && \sem{\texttt{Operator}} \equiv \{ \textsf{Hom}(S_1, S_2) : S_1, S_2 \in \sem{\texttt{Ket}} \}.
+  \end{align*}
+\end{definition}
+
+Basis types and Dirac types as terms have their types in kinds. The semantics of types are defined as domains, and should be contained in the semantics of kinds. Therefore, kinds are interpreted as sets of domains. \texttt{Atom} is interpreted as the set $\mathcal{A}$ of all different domains from the atomic basis language, and the kind $P_1 * P_2$ contains all different Cartesian products from $P_1$ and $P_2$. The semantics of \texttt{Ket}, \texttt{Bra} and \texttt{Operator} are defined as the set of all Hilbert spaces, Dual spaces and Homomorphisms, respectively.
+
+
+\begin{definition}[semantics of types]
+  The semantics of basis types are defined as domain sets as follows:
+  \begin{align*}
+    & \begin{aligned}
+      & \sem{A} \equiv \sem{A}_\mathcal{A},
+      \qquad
+      && \sem{\sigma_1 \times \sigma_2} \equiv \sem{\sigma_1} \times \sem{\sigma_2}, \\
+      & \sem{\pi_1(\sigma)} \equiv S_1 \qquad \text{(where $\sem{\sigma} = S_1 \times S_2$)},
+      && \sem{\pi_2(\sigma)} \equiv S_2 \qquad \text{(where $\sem{\sigma} = S_1 \times S_2$)}, \\
+      & \sem{\pi_K(T)} \equiv \left\{
+        \begin{array}{ll}
+          S, & \text{ where } \sem{T} = \mathcal{H}_S, \\
+          S_1, & \text{ where } \sem{T} = \textsf{Hom}(S_1, S_2),
+        \end{array}
+      \right.
+      && \sem{\pi_B(T)} \equiv \left\{
+        \begin{array}{ll}
+          S, & \text{ where } \sem{T} = \mathcal{H}^*_S, \\
+          S_2, & \text{ where } \sem{T} = \textsf{Hom}(S_1, S_2),
+        \end{array}
+      \right.
+    \end{aligned} \\
+    \\
+    & \begin{aligned}
+      \sem{\Sc} \equiv \mathbb{C},
+      \qquad
+      \sem{\K(\sigma)} \equiv \mathcal{H}_{\sem{\sigma}}, 
+      \qquad 
+      \sem{\B(\sigma)} \equiv \mathcal{H}^*_{\sem{\sigma}},
+      \qquad
+      \sem{\Op(\sigma, \tau)} \equiv \textsf{Hom}(\sem{\sigma}, \sem{\tau}),
+    \end{aligned} \\
+    \\
+    & \begin{aligned}
+      \sem{\texttt{type}(t)} \equiv \sem{T} \qquad \text{(where $\Gamma \vdash t : T$)}
+    \end{aligned}
+  \end{align*}
+\end{definition}
+
+Because we only consider well-typed terms, the semantics are always well-defined.
+
+
+\begin{definition}[semantics of basis]
+  For atomic basis $\Sigma_\mathcal{A}$ with domain $A$, the domain of basis $\mathcal{E}$ is the binary tree algebra over $A$, which is defined as 
+  $
+  \mathcal{D}_\mathcal{E} = \mu X.(A \cup (X \times X)),
+  $
+  the smallest set that contains $A$ and is closed under Cartesian product.
+
+  The semantics of symbols in $\mathcal{E}$ are defined as follows:
+  \begin{align*}
+    & \text{(Atomic Basis)} && \sem{a} \equiv \sem{a}_\mathcal{A}, \\
+    & \text{(Pairing)} &&
+    \sem{(t_1, t_2)} \equiv (\sem{t_1}, \sem{t_2}), \\
+    & \text{(First Projection)} &&
+    \sem{\fst t} \equiv x_1 \qquad (\text{where } \sem{t} = (x_1, x_2)), \\
+    & \text{(Second Projection)} &&
+    \sem{\snd t} \equiv x_2 \qquad (\text{where } \sem{t} = (x_1, x_2))
+  \end{align*}
+\end{definition}
+
+
+% The semantics for Dirac notations are based on linear algebra, but some explanation on typing is necessary here. In mathematics we commonly distinguish linear spaces with different sizes, which corresponds to a more meticulous type system with basis set information. But our internal language only use sorts to represent vectors or operators, and the space itself is untyped. It is equivalent to say that we consider only one universal linear space. On the one hand, it can be understood as the direct sum of all different, typed linear spaces. On the other hand, it is the linear space with basis set $\mathcal{D}_\mathcal{E}$. From the isomorphism $\mathcal{H}_{A\cup B} \cong \mathcal{H}_A \oplus \mathcal{H}_B$, $\mathcal{H}_{A \times B} \cong \mathcal{H}_A \otimes \mathcal{H}_B$, we have
+% $$
+% \mathcal{H}_{\mathcal{D}_\mathcal{E}} = \mathcal{H}_{\mu X.(A\cup (X \times X))} \cong \mu V. \mathcal{H}_A \oplus (V \otimes V).
+% $$
+
+
+\begin{definition}[semantics of scalar]
+  The domain of scalars $\mathcal{D}_\mathcal{S} = \mathbb{C}$ is the complex field.
+  The semantics of the symbols are defined as follows:
+  \begin{align*}
+    & \text{(Complex Number)} &&
+    \sem{C(\alpha)} \equiv \sem{\alpha}_\mathcal{C}, \\
+    & \text{(Kronecker Delta)} &&
+    \sem{\delta_{s, t}} \equiv \left\{
+      \begin{array}{ll}
+        1, & \text{where } \sem{s} = \sem{t}, \\
+        0, & \text{where } \sem{s} \neq \sem{t}, 
+      \end{array}
+    \right. \\
+    & \text{(Addition)} &&
+    \sem{S_1 + S_2} \equiv \sem{S_1} + \sem{S_2}, \\
+    & \text{(Multiplication)} &&
+    \sem{S_1 \times S_2} \equiv \sem{S_1} \times \sem{S_2}, \\
+    & \text{(Conjugate)} &&
+    \sem{S^*} \equiv \sem{S}^*, \\
+    & \text{(Inner Product)} &&
+    \sem{B \cdot K} \equiv \langle \sem{B}^*, \sem{K} \rangle.
+  \end{align*}
+\end{definition}
+
+Note that we use the symbol $C(\alpha)$ to introduce complex numbers as scalars.
+One interesting decision is the explanation for Dirac notation inner product $B \cdot K$. An other possibility is to let $\sem{B \cdot K} \equiv \langle \sem{B}, \sem{K} \rangle$, which may be closer to the inner product in linear algebra. The two explanations only differ in the convention sense. Our choice sets Dirac notation inner product linear on the bra $B$, which makes the rewriting rules of bra and ket more symmetric. Also, it enables easier equivalence checking for transpose in the extended language.
+
+
+\begin{definition}[semantics of ket/bra]
+  The domain for the semantics of ket and bra are $\mathcal{H}_{\mathcal{D}_\mathcal{E}}$ and $\mathcal{H}_{\mathcal{D}_\mathcal{E}}^*$ respectively.
+  The symbols are explained as follows:
+  \begin{align*}
+    & \text{(Zero Vector)} &&
+    \sem{\mathbf{0}_\mathcal{K}(\sigma)} \equiv \mathbf{0} && \sem{\mathbf{0}_\mathcal{B}(\sigma)} \equiv \mathbf{0}^*, \\
+    & \text{(Basis Vector)} &&
+    \sem{\ket{t}} \equiv \mathbf{e}_t && \sem{\bra{t}} \equiv \mathbf{e}^t, \\
+    & \text{(Adjoint)} &&
+    \sem{B^\dagger} \equiv \sem{B}^* && \sem{K^\dagger} \equiv \sem{K}^*, \\
+    & \text{(Scalar Multiplication)} &&
+    \sem{S.K} \equiv \sem{S} \sem{K} && \sem{S.B} \equiv \sem{S} \sem{B}, \\
+    & \text{(Addition)} &&
+    \sem{K_1 + K_2} \equiv \sem{K_1} + \sem{K_2} && \sem{B_1 + B_2} \equiv \sem{B_1} + \sem{B_2}, \\
+    & \text{(Linear Operator)} &&
+    \sem{O \cdot K} \equiv \sem{O} \cdot \sem{K} && \sem{B \cdot O} \equiv (\sem{O}^\dagger \cdot \sem{B}^*)^*, \\
+    & \text{(Tensor Product)} &&
+    \sem{K_1 \otimes K_2} \equiv \sem{K_1} \otimes \sem{K_2} && \sem{B_1 \otimes B_2} \equiv \sem{B_1} \otimes \sem{B_2}.
+  \end{align*}
+\end{definition}
+
+
+
+\begin{definition}[semantics of operator]
+  The domain for the semantics of operators is the homomorphism $\mathcal{D}_\mathcal{O} = \textrm{Hom}(\mathcal{H}_{\mathcal{D}_\mathcal{E}}, \mathcal{H}_{\mathcal{D}_\mathcal{E}})$.
+  The symbols are explained as follows:
+  \begin{align*}
+    & \text{(Zero Operator)} &&
+    \sem{\mathbf{0}_\mathcal{O}(\sigma, \tau)} \equiv \mathbf{0}_{\textrm{op}}, \\
+    & \text{(Identity Operator)} &&
+    \sem{\mathbf{1}_\mathcal{O}(\sigma)} \equiv \mathbf{I}, \\
+    & \text{(Outer Product)} &&
+    \sem{K \otimes B} \equiv \lambda \mathbf{v}. \langle \sem{B}^*, \mathbf{v}\rangle \sem{K}, \\
+    & \text{(Adjoint)} &&
+    \sem{O^\dagger} \equiv \sem{O}^\dagger, \\
+    & \text{(Scalar Operator)} &&
+    \sem{S.O} \equiv \sem{S} \sem{O}, \\
+    & \text{(Addition)} &&
+    \sem{O_1 + O_2} \equiv \sem{O_1}+\sem{O_2}, \\
+    & \text{(Operator Multiplication)} &&
+    \sem{O_1 \cdot O_2} \equiv \sem{O_1} \cdot \sem{O_2}, \\
+    & \text{(Tensor Product)} &&
+    \sem{O_1 \otimes O_2} \equiv \sem{O_1} \otimes \sem{O_2},
+  \end{align*}
+\end{definition}
+
+
+\subsubsection*{Example}
+
+
+\newcommand{\tr}{\mathrm{tr}}
+\newcommand{\pass}{\textcolor{blue}{\textbf{ [PASS] }}}
+\newcommand{\fail}{\textcolor{red}{\textbf{ [FAIL] }}}
+
+\section{Example List}
+
+\subsection{Textbook Examples}
+
+\begin{example}[QCQI (2.10)] \pass
+  $$
+  A\left( \sum_i a_i \ket{v_i} \right) = \sum_i a_i A(\ket{v_i}).
+  $$
+\end{example}
+
+\begin{example}[QCQI (2.13)] \pass
+  $$
+  \left( \ket{v}, \sum_i \lambda_i \ket{w_i} \right) = \sum_i \lambda_i (\ket{v}, \ket{w_i}).
+  $$
+  $$
+  (\ket{v}, \ket{w}) = (\ket{w}, \ket{v})^*.
+  $$
+\end{example}
+
+\begin{example}[QCQI Exercise 2.6] \pass
+  $$
+  \left( \sum_i \lambda_i \ket{w_i}, \ket{v} \right) = \sum_i \lambda_i^* (\ket{w_i}, \ket{v}).
+  $$
+\end{example}
+
+\begin{example}[QCQI (2.18)] \pass
+  For orthonormal basis $\ket{i}$,
+  $$
+  \left( \sum_i v_i \ket{i}, \sum_j w_j \ket{j} \right) = \sum_{ij}v_i^*w_j \delta_{ij} = \sum_i v_i^* w_i.
+  $$
+\end{example}
+
+\begin{example}[QCQI (2.21)] \pass
+  $$
+  \left( \sum_i \ket{i}\bra{i} \right) \ket{v} = \sum_i \ket{i} \braket{i|v}.
+  $$
+  Notice the slippery informal expression here. $\ket{v}$ should actually be $v$.
+\end{example}
+
+\begin{example}[QCQI (2.22)] \pass
+  $$
+  \sum_i\ket{i}\bra{i} = I.
+  $$
+  (In our language, identity operator $I$ will be a symbol.a)
+\end{example}
+
+
+\begin{example}[QCQI (2.24-2.25)] \pass
+  $$
+  \sum_{ij} \ket{w_j}\bra{w_j}A\ket{v_i}\bra{v_i} = \sum_{ij}\bra{w_j}A\ket{v_i}\ket{w_j}\bra{v_i}.
+  $$
+\end{example}
+
+\begin{example}[QCQI (2.26)] \pass
+  $$
+  \braket{v|v}\braket{w|w} = \sum_i\braket{v|i}\braket{i|v}\braket{w|w}.
+  $$
+\end{example}
+\textbf{Remark:} need to detect $\sum_{i\in\mathbf{U}}\ket{i}\bra{i} \to \mathbf{1}_\mathcal{O}$.
+
+\begin{example}[QCQI Exercise 2.14] \pass
+  $$
+  \left( \sum_i a_i A_i \right)^\dagger = \sum_i a_i^* A_i^\dagger.
+  $$
+\end{example}
+
+\begin{example}[QCQI Exercise 2.16] \pass
+  Show that any projector $P\equiv \sum_{i=1}^k \ket{i}\bra{i}$ satisfies the equation $P^2=P$.
+\end{example}
+
+\begin{example}[QCQI (2.46)] \pass
+  $$
+    (A \otimes B)\left(\sum_i a_i \ket{v_i}\otimes\ket{w_i}\right) \equiv \sum_i a_i A \ket{v_i} \otimes B\ket{w_i}.
+  $$
+\end{example}
+
+\begin{example}[QCQI (2.49)] \pass
+  $$
+    \left(\sum_i a_i \ket{v_i}\otimes\ket{w_i}, \sum_j b_j \ket{v'_j}\otimes \ket{w'_j}\right) \equiv \sum_{ij}a_i^*b_j\braket{v_i|v'_j}\braket{w_i|w'_j}.
+  $$
+\end{example}
+
+\begin{example}[QCQI (2.61)] \pass
+  $$
+    \sum_i\bra{i}A\ket{\psi}\braket{\psi|i} = \bra{\psi}A\ket{\psi}.
+  $$
+\end{example}
+
+% \begin{example}[QCQI Exercise 2.43] \fail
+%   Show that for $j,k = 1,2,3$,
+%   $$
+%     \sigma_j\sigma_k = \delta_{jk}I + i\sum_{l=1}^3\epsilon_{jkl}\sigma_l.
+%   $$
+%   This can be checked with the help of Mathematica.
+% \end{example}
+
+\begin{example}[QCQI (2.128)] \pass
+  $$
+    \sum_{m',m''}\bra{\psi}M_m^\dagger\bra{m'}(I\otimes\ket{m}\bra{m})M_{m''}\ket{\psi}\ket{m''} = \bra{\psi}M_m^\dagger M_m\ket{\psi}.
+  $$
+\end{example}
+
+\begin{example}[QCQI Theorem 4.1] \pass
+  Suppose $U$ is a unitary operation on a single qubit. Then there exist real numbers $\alpha, \beta, \gamma$ and $\delta$ such that $$
+  U = \left[
+  \begin{array}{cc}
+  e^{i(\alpha - \beta/2 - \delta/2)} \cos \frac{\gamma}{2} & -e^{i(\alpha - \beta/2 + \delta/2)} \sin \frac{\gamma}{2} \\
+  e^{i(\alpha + \beta/2 - \delta/2)} \sin \frac{\gamma}{2} & e^{i(\alpha + \beta/2 + \delta/2)} \cos \frac{\gamma}{2}
+  \end{array}
+  \right]
+  = e^{i\alpha}R_z(\beta)R_y(\gamma)R_z(\delta),
+  $$
+  where
+\[
+  R_x(\theta) \equiv
+  \begin{bmatrix}
+  \cos \frac{\theta}{2} & -i \sin \frac{\theta}{2} \\
+  -i \sin \frac{\theta}{2} & \cos \frac{\theta}{2}
+  \end{bmatrix}
+  \qquad
+  R_y(\theta) \equiv
+  \begin{bmatrix}
+  \cos \frac{\theta}{2} & -\sin \frac{\theta}{2} \\
+  \sin \frac{\theta}{2} & \cos \frac{\theta}{2}
+  \end{bmatrix}
+  \qquad
+  R_z(\theta) \equiv
+  \begin{bmatrix}
+  e^{-i \theta / 2} & 0 \\
+  0 & e^{i \theta / 2}
+  \end{bmatrix}
+  \]
+  are the rotation gates.
+\end{example}
+
+
+\subsection{Operation on maximally entangled state}
+\begin{example} \pass
+  Assume $S$ and $T$ are subsystems on Hilbert space $\mathcal{H}_T$ and $\ket{\Phi}_{S,T} = \sum_i \ket{i}\ket{i}$ is a maximally entangled state. Then for all operators $A\in\mathcal{L}(\mathcal{H}_T, \mathcal{H}_T)$, we have 
+  $$
+  A_S\ket{\Phi}_{S, T} = A_T^\top\ket{\Phi}_{S, T}.
+  $$
+\end{example}
+
+
+\subsection{CoqQ Examples}
+\begin{definition}
+  Some high-level operators are encoded as follows.  
+  \begin{gather*}
+    \tr(A) \equiv \sum_{i\in\mathbf{U}} \bra{i} A \ket{i} \\
+    SWAP(A) \equiv \sum_{i\in\mathbf{U}}\sum_{j\in\mathbf{U}}\sum_{k\in\mathbf{U}}\sum_{l\in\mathbf{U}} \bra{i, j} A \ket{k, l} \ket{j, i}\bra{l, k} \\
+    \tr_1(A) \equiv \sum_{i\in\mathbf{U}}\sum_{j\in\mathbf{U}} (\sum_{k\in\mathbf{U}} \bra{k, i} A \ket{k, j}) \ket{i}\bra{j} \\
+    \tr_2(A) \equiv \sum_{i\in\mathbf{U}}\sum_{j\in\mathbf{U}} (\sum_{k\in\mathbf{U}} \bra{i, k} A \ket{j, k}) \ket{i}\bra{j} \\
+    so2choi(E) \equiv \sum_{i\in\mathbf{U}}\sum_{j\in\mathbf{U}} \ket{i}\bra{j} \otimes (\sum_{k\in\mathbf{U}} E_k \ket{i}\bra{j} E_k^\dagger) \\
+    krausso(M, f)(X) \equiv \sum_{i \in M} f_i \cdot X \cdot f_i^\dagger \\
+    elemso(f, k)(X) \equiv f_k \cdot X \cdot f_k^\dagger \\
+    dualqm(M, f)(O) \equiv \sum_{i\in M} f_i^\dagger \cdot O_i \cdot f_i
+  \end{gather*}
+\end{definition}
+
+Note: the identity operator is encoded as $\sum_{i \in \mathbf{U}}\ket{i}\bra{i}$, not $\mathbf{1}_\mathcal{O}$. They are different.
+
+(In the order of their appearance in CoqQ.)
+\begin{enumerate}
+  \item \pass $\bra{p}A\ket{i}\braket{j|q} = \delta_{j,q}\bra{p}A\ket{i}$
+  \item \pass $\bra{p}(\ket{i}\bra{j}A)\ket{q} = \delta_{i, p}\bra{j}A\ket{q}$
+  \item \pass $\bra{i}M^*\ket{j} = \bra{i}M\ket{j}^*$
+  \item \pass $\bra{i}M^\dagger\ket{j} = \bra{j}M\ket{i}^*$
+  \item \pass $(a A + B)^* = a^* A^* + B^*$
+  \item \pass $(A+B)^\dagger = A^\dagger + B^\dagger$
+  \item \pass $(c A)^\dagger = c^* A^\dagger$
+  \item \pass $(c A + B)^\dagger = c^* A^\dagger + B^\dagger$
+  \item \pass $(A \cdot B)^\dagger = B^\dagger \cdot A^\dagger$
+  \item \pass $(M^\dagger)^\dagger = M$
+  \item \pass $(aI)^\dagger = a^* I$
+  \item \pass $(1 I)^\dagger = I$
+  \item \pass $(\ket{i}\bra{j})^* = \ket{i}\bra{j}$
+  \item \pass $(\ket{i}\bra{j})^\dagger = \ket{j}\bra{i}$
+  \item \pass $M^\top = (M^*)^\dagger$
+  \item \pass $M^\top = (M^\dagger)^*$
+  \item \pass $M^* = (M^\dagger)^\top$
+  \item \pass $\tr(M^\dagger) = \tr(M)^*$
+  \item \pass $\tr(M^*) = \tr(M)^*$
+  \item \pass $(\bra{i}M)^\dagger = M^\dagger \ket{i}$
+  \item \pass $(M \ket{i})^\dagger = \bra{i} M^\dagger$
+  \item \pass $\bra{u} \left( \sum_{i} a_i \ket{i}\bra{i} \right) \ket{u} = \sum_i a_i \braket{u|i}\braket{i|u}$
+  \item \pass $\bra{i}(A\cdot B^\dagger)\ket{j} = \bra{i} A (\bra{j}B)^\dagger$
+  \item \pass $A \cdot B = \sum_i (A \ket{i})(\bra{i} B)$
+  \item \pass $\bra{i}(\sum_{i \in \mathbf{U}} d_i \ket{i}\bra{i} A) = d_i \bra{i} A$
+  \item \pass $\tr(A) = \sum_{i \in \mathbf{U}}\bra{i} A \ket{i}$
+  \item \pass $\tr(A B) = \tr(B A)$ (entry expansion is critical here)
+  \item \pass $\tr(c A + B) = c\ \tr(A) + \tr(B)$
+  \item \pass $\tr(A^\dagger) = \tr(A)^*$
+  \item \pass $\tr(A^\top) = \tr(A)$
+  \item \pass $\tr(A^*) = \tr(A)^*$
+  \item \pass $\tr(\ket{u}\bra{v}) = \braket{v|u}$
+  \item \pass $\tr(\ket{u}\bra{v}) = \braket{v|u}$ ($u$, $v$ are arbitrary vectors)
+  \item \pass $\sum_{i\in\mathbf{U}} \ket{i}\bra{i} = I$
+  \item \pass $\ket{i}\bra{j}\cdot\ket{k}\bra{l} = \delta_{j,k}\ket{i}\bra{l}$
+  \item \pass $\ket{i}\bra{j}\cdot\ket{j}\bra{k} = \ket{i}\bra{k}$
+  \item \pass $\tr(A \ket{i}\bra{j}) = \bra{j} (A \ket{i})$
+  \item \pass $A = \sum_{j\in\mathbf{U}}\sum_{i\in\mathbf{U}} \bra{i}(A\ket{j}) \ket{i}\bra{j}$
+  \item \pass $\ket{v} = \sum_{i\in\mathbf{U}}(\braket{i|v})\ket{i}$
+  \item \pass $(A\ket{u})\bra{v} = A(\ket{u}\bra{v})$
+  \item \pass $\ket{u}(A\ket{v})^\dagger = (\ket{u}\bra{v})A^\dagger$
+  \item \pass $\bra{b} = \sum_{i\in\mathbf{U}}(\braket{b|i}\bra{i})$
+  \item \pass $(A\cdot B)\ v = A (B\ v)$
+  \item \pass $\sum_{i}\sum_{j}F_i G_j A G_j^\dagger F_i^\dagger = \sum_i F_i (\sum_j G_j A G_j^\dagger) F_i^\dagger$
+  \item \pass $(A\cdot B)\cdot C = A \cdot (B \cdot C)$
+  \item \pass $\sum_i F_i \cdot (\sum_j \sum_k G_j \cdot H_k \cdot A \cdot H_k^\dagger \cdot G_j^\dagger) \cdot F_i^\dagger = \sum_i \sum_j F_i \cdot G_j \cdot (\sum_k H_k \cdot A \cdot H_k^\dagger) \cdot G_j^\dagger \cdot F_i^\dagger$
+  \item \pass $A\cdot(a B + C) = a (A\cdot B) + (A\cdot C)$
+  \item \pass $(A_1 + A_2)\cdot B = A_1 \cdot B + A_2 \cdot B$
+  \item \pass $A \cdot (B_1 + B_2) = A \cdot B_1 + A \cdot B_2$
+  \item \pass $(-A) \cdot B = - (A \cdot B)$
+  \item \pass $A \cdot (-B) = - (A \cdot B)$
+  \item \pass $(k A) \cdot B = k (A \cdot B)$
+  \item \pass $A \cdot (k B) = k (A \cdot B)$
+  \item \pass $(k A_1 + A_2) \cdot B = k (A_1 \cdot B) + A_2 \cdot B$
+  \item \pass $A \cdot (k B_1 + B_2) = k (A \cdot B_1) + A \cdot B_2$
+  \item \pass $A \cdot B \cdot C \cdot D = A \cdot (B \cdot C) \cdot D$
+  \item \pass $\sum_i \sum_j br_{i, j} \cdot ((f_i \cdot (a X + Y)) \cdot f_i^\dagger \cdot br_{i, j}^\dagger) = \sum_i a \sum_j br_{i, j} \cdot ((f_i \cdot X) \cdot f_i^\dagger) \cdot br_{i, j}^\dagger + \sum_i \sum_j br_{i, j} \cdot ((f_i \cdot Y) \cdot f_i^\dagger) \cdot br_{i, j}^\dagger$
+  \item \pass $c > 0 \to c \sum_i (f_i \cdot X \cdot f_i^\dagger) = \sum_i ((\sqrt{c} f_i \cdot X) \cdot (\sqrt{c} f_i^\dagger))$
+  \item \pass $(M \otimes N)^\dagger = M^\dagger \otimes N^\dagger$
+  \item \pass $\tr (M \otimes N) = \tr(M) \tr(N)$ (Index split is required)
+  \item \pass $SWAP(SWAP(A))=A$
+  \item \pass $A = \sum_{i \in \mathbf{U}} \bra{\fst i} A \ket{\snd i} \ket{\fst i} \bra{\snd i}$
+  \item \pass $\sum_{i\in T} f_i \cdot (\sum_{j \in R} g_j \cdot X \cdot g_j^\dagger) \cdot f_i^\dagger = \sum_{i \in T\times R} f_{\fst k} \cdot g_{\snd k} \cdot X \cdot f_{\fst k}^\dagger \cdot g_{\snd k}^\dagger$
+  \item \pass $SWAP(a X + Y) = a SWAP(X) + SWAP(Y)$
+  \item \pass $SWAP(A\otimes B) = B \otimes A$
+  \item \pass $\tr(SWAP(A)) = \tr(A)$
+  \item \pass $SWAP(A \cdot B) = SWAP(A) \cdot SWAP(B)$
+  \item \pass $SWAP(A)^\top = SWAP(A^\top)$
+  \item \pass $SWAP(A)^\dagger = SWAP(A^\dagger)$
+  \item \pass $\tr_2(A) = \tr_1(SWAP(A))$
+  \item \pass $\tr_1(A) = \tr_2(SWAP(A))$
+  \item \pass $\tr_2(c A + B) = c \tr_2(A) + \tr_2(B)$
+  \item \pass $\tr(A) = \tr(\tr_2(A))$
+  \item \pass $\tr(A) = \tr(\tr_1(A))$
+  \item \pass $\tr_1 (A \cdot (I \otimes B)) = \tr_1 (A) \cdot B$
+  \item \pass $I \otimes I = I$
+  \item \pass $\bra{i} A \cdot B \ket{j} = \sum_{a\in\mathbf{U}} \sum_{b\in\mathbf{U}} \bra{i}A\ket{a,b}\bra{a,b}B\ket{j}$
+  \item \pass $\bra{k,p} ((\ket{i}\bra{j} \otimes I) \cdot A) \ket{q} = \delta_{i, k} \bra{j, p} A \ket{q}$
+  \item \pass $\bra{p} (A \cdot (\ket{i}\bra{j} \otimes I)) \ket{k, q} = \delta_{j, k} \bra{p} A \ket{i, q}$
+  \item \pass $\tr_1(so2choi(E) \cdot (X^\top \otimes I)) = \sum_{k\in\mathbf{U}} E_k X E_k^\dagger$
+  \item \fail $so2choi(a X + Y) =a\ so2choi(X) + so2choi(Y)$ ($aX + Y$ is not well formalized)
+  \item \pass $\tr_2(A \cdot (B \otimes I)) = \tr_2(A) \cdot B$
+  \item \pass $\tr (so2choi(E)\cdot (X^\top \otimes Y)) = \tr(E(X) \cdot Y)$
+  \item \pass $\tr (E(X) \cdot A) = \tr (X \cdot E^*(A))$
+  \item \pass $\tr (A \cdot E(X)) = \tr (E^*(X) \cdot A)$
+  \item \pass $\sum_{i \in \mathbf{U}} \ket{v}\bra{i} X \ket{i}\bra{v} = \tr(X) * \ket{v}\bra{v}$
+  \item \pass $\sum_{i \in \mathbf{U}} \ket{i}\bra{v}X\ket{v}\bra{i} = \bra{v}X\ket{v} I$
+  \item \pass $\sum_{i \in M} elemso(f, i)(X) = krausso(M, f)(X)$
+  \item \pass $\sum_{i \in M} \tr(elemso(f,i)(X)\cdot O_i) = \tr (X \cdot dualqm(M, f)(O))$
+  \item \pass $\sum_{i \in M} \tr(O_i \cdot elemso(f,i)(X)) = \tr (dualqm(M,f)(O)\cdot X)$
+\end{enumerate}
+
+\subsection{PQC/Quantum Black Box Equivalence Checking}
+\begin{figure*}[h]
+  \includegraphics*[width=\textwidth]{QCQI.Fig4.5.png}
+\end{figure*}
+
+\begin{figure*}[h]
+  \includegraphics*[width=\textwidth]{QCQI.Fig4.8.png}
+\end{figure*}
+
+
+\subsection{Semnatic Calculation of a Simple qWhile Program}
+We formalized the small-step operational semantics of quantum while programs as a term rewriting system.
+\begin{definition}[TRS for qWhile]
+  \begin{align*}
+    \langle \textbf{abort}, \rho \rangle &\longrightarrow \langle \textbf{Halt}, \textbf{0}_\mathcal{O} \rangle \\
+    \langle \textbf{skip}, \rho \rangle &\longrightarrow \langle \textbf{Halt}, \rho \rangle \\
+    \langle q :=0, \rho \rangle &\longrightarrow \langle \textbf{Halt}, \sum_{i \in \textbf{U}} (\ket{0}\otimes\bra{1})_{q;q} \cdot \rho \cdot (\ket{1}\otimes\bra{0})_{q;q} \rangle \\
+    \langle U, \rho \rangle & \longrightarrow \langle \textbf{Halt}, U \cdot \rho \cdot U^\dagger \rangle \\
+    \langle \textbf{if } P \textbf{ then } S_1 \textbf{ else } S_2 \textbf{ end}, \rho \rangle &\longrightarrow \{| \langle S_1, P \cdot \rho \cdot P \rangle, \langle S_2, (\mathbf{1}_\mathcal{O} + (-1).P) \cdot \rho \cdot (\mathbf{1}_\mathcal{O} + (-1).P)\rangle |\} \\
+     & \vdots
+  \end{align*}
+  Note that the calculations of quantum states are represented by the syntax of Dirac notations defined above.
+\end{definition}
+
+\begin{example}
+  $\langle \textbf{ while}^2\ (\ket{0}\otimes\bra{0})_q \textbf{ do } X_q\ \textbf{end}, (\ket{0}\otimes\bra{0})_q \rangle \longrightarrow \langle \textbf{ Halt}, (\ket{1}\otimes\bra{1})_q \rangle$
+\end{example}
+
+\textbf{Remark:} It should take 140 steps to complete the calculation!
 
 
 
@@ -1937,53 +2671,6 @@ I think the concept ``cylinder extension'' is only limited to endomorphisms. Bes
   (\tilde{K'} \otimes B_{R}) \cdot K_{R} \reduce (B_{R} \cdot K_{R}) . \tilde{K'}
 \end{gather*}
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\section{Typed Dirac Notation}
-The untyped Dirac notation is hard to use because we explicitly need different symbols to distinguish between the ambiguous semantics of the same syntax. We will use a typed version as the front-end language for the user, which is introduced below.
-
-
-
-\subsection{Syntax and Typing}
-
-
-\begin{definition}[types of Dirac notation core language]
-  The \textbf{type of core language} is defined by
-  \begin{align*}
-    \tau ::= x\ |\ T\ |\ (\tau * \tau)\ |\ S\ |\ B(\tau)\ |\ K(\tau)\ |\ O(\tau, \tau)
-  \end{align*}
-
-  Here $x$ is a variable and $T$ is a constant of type. The $T$ and $(\tau * \tau)$ rules generate \textbf{types of spaces}. And the following rules generate \textbf{types of Dirac notations}.
-\end{definition}
-We use the set of orthonormal basis to represent the type of a Hilbert space. For example, the constant of the type for qubit Hilbert spaces is $\{0, 1\}$.
-
-\begin{definition}[terms of Dirac notation core language]
-  The \textbf{term of Dirac notations} $\mathfrak{DN}(\Sigma_\mathcal{B})$ is defined by
-  \begin{align*}
-    t ::= \ & x\ |\ b\ |\ (t, t)\ |\ \fst t\ |\ \snd t  && \text{(basis)} \\
-    e ::= \ 
-      &    x                          \\
-      & |\ C(\alpha)                     && \text{(complex scalar)}   \\
-      & |\ \delta_{t, t}              && \text{(Delta expression)} \\
-      & |\ e + e                      && \text{(addition)} \\
-      & |\ e \times e                 && \text{(multiplication)} \\
-      & |\ \mathbf{0}_{\mathcal{K}(\tau)}\ |\ \mathbf{0}_{\mathcal{B}(\tau)}\ |\ \mathbf{0}_{\mathcal{O}(\tau, \tau)}    && \text{(zero operator)}\\
-      & |\ \mathbf{1}_{\mathcal{O}(\tau)} && \text{(identity operator)}\\
-      & |\ \ket{t}                    && \text{(ket)} \\
-      & |\ \bra{t}                    && \text{(bra)} \\
-      & |\ e^\dagger                        && \text{(adjoint or conjugate)} \\
-      & |\ e \cdot e                  && \text{(multiplication)} \\
-      & |\ e \otimes e                && \text{(tensor product)}
-  \end{align*}
-  Here $x$ is a variable, $b$ is a constant basis, and $\alpha$ is a term in the underlining complex scalar language $\Sigma_\mathcal{B}$.
-\end{definition}
-
-
-
-
-\bibliographystyle{plain}
-\bibliography{ref}
 
 \end{document}
 \endinput
