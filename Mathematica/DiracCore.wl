@@ -5,13 +5,42 @@
 
 
 AppendTo[$Path, NotebookDirectory[]];
-BeginPackage["DiracCore`"];
+BeginPackage["DiracCore`", {"Typing`"}];
 
 
 (* ::Section:: *)
 (*Public Interface*)
 
 
+DiracCtx::usage="Defin the rewriting rules to specify the context for DiracCtx";
+
+(* The kind symbols *)
+AtomKind;
+ProdKind;
+ScalarKind;
+KetKind;
+BraKind;
+OpKind;
+
+(* The type symbols *)
+ProdType;
+TypeProj1;
+TypeProj2;
+TypeProjK;
+TypeProjB;
+SType;
+KType;
+BType;
+OType;
+TypeCalc;
+
+InDiracCtxQ::usage = "Check whether the term is in the Dirac notation context.";
+TypeDeduce::usage = "Check the typing of the terms according to the DiracCtx.";
+TypeChecking;
+TypingRules;
+
+
+(* The term symbols *)
 PAIR;
 FST;
 SND;
@@ -99,6 +128,176 @@ Format[O1_ ~TSRO~ O2_]:=Row[{"(", O1, "\[CircleTimes]\!\(\*SubscriptBox[\(\\\ \)
 
 SetAttributes[DELTA, Orderless];
 SetAttributes[{ADDS, MLTS, ADDK, ADDB, ADDO}, {Orderless, Flat, OneIdentity}];
+
+
+(* ::Section:: *)
+(*Type Checking Rules*)
+
+
+DiracCtx = {};
+
+InDiracCtxQ[term_]:=MatchQ[term, Alternatives@@First/@DiracCtx];
+
+TypingRules = {};
+
+TypeDeduce[v_?InDiracCtxQ]:=v/.DiracCtx;
+TypeDeduce[e_]:=Throw[{"Type Checking Error: ", e}];
+TypeChecking[e_]:=Throw[{"Type Checking Error: ", e}];
+
+TypeDeduce[sigma1_ ~ProdType~ sigma2_] := TypeDeduce[sigma1] ~ProdKind~ TypeDeduce[sigma2];
+TypeDeduce[SType] := ScalarKind;
+TypeDeduce[KType[sigma_]] := KType[TypeDeduce[sigma]];
+TypeDeduce[BType[sigma_]] := BType[TypeDeduce[sigma]];
+TypeDeduce[OType[sigma_, tau_]] := OType[TypeDeduce[sigma], TypeDeduce[tau]];
+
+(* Basis *)
+TypeDeduce[PAIR[s_, t_]] := TypeDeduce[s] ~ProdType~ TypeDeduce[t];
+
+TypeDeduce[FST[s_]] := TypeChecking[FSTTyping[TypeDeduce[s]]];
+TypeChecking[FSTTyping[sigma1_ ~ProdType~ sigma2_]] := sigma1;
+
+TypeDeduce[SND[s_]] := TypeChecking[SNDTyping[TypeDeduce[s]]];
+TypeChecking[SNDTyping[sigma1_ ~ProdType~ sigma2_]] := sigma2;
+
+(* Scalar *)
+TypeDeduce[CPX[alpha_]] := SType;
+
+TypeDeduce[DELTA[s_, t_]] := TypeChecking[DELTATyping[TypeDeduce[s], TypeDeduce[t]]];
+TypeChecking[DELTATyping[T_, T_]] := SType;
+
+TypeDeduce[ADDS[args__]] := TypeChecking[ADDSTyping@@TypeDeduce/@{args}];
+TypeChecking[ADDSTyping[SType..]] := SType;
+
+TypeDeduce[MLTS[args__]] := TypeChecking[MLTSTyping@@TypeDeduce/@{args}];
+TypeChecking[MLTSTyping[SType..]] := SType;
+
+TypeDeduce[CONJS[S_]] := TypeChecking[CONJSTyping[TypeDeduce[S]]];
+TypeChecking[CONJSTyping[SType]] := SType;
+
+TypeDeduce[B_ ~DOT~ K_] := TypeChecking[TypeDeduce[B] ~DOTTyping~ TypeDeduce[K]];
+TypeChecking[BType[T_] ~DOTTyping~ KType[T_]] := SType;
+
+(* Ket *)
+TypeDeduce[ZEROK[sigma_]] := KType[sigma];
+
+TypeDeduce[KET[s_]] := KType[TypeDeduce[s]];
+
+TypeDeduce[ADJK[B_]] := TypeChecking[ADJKTyping[TypeDeduce[B]]];
+TypeChecking[ADJKTyping[BType[sigma_]]] := KType[sigma];
+
+TypeDeduce[S_ ~SCRK~ K_] := TypeChecking[TypeDeduce[S] ~SCRKTyping~ TypeDeduce[K]];
+TypeChecking[SType ~SCRKTyping~ KType[sigma_]] := KType[sigma];
+
+TypeDeduce[ADDK[args__]] := TypeChecking[ADDKTyping@@TypeDeduce/@{args}];
+TypeChecking[ADDKTyping[(KType[sigma_])..]] := KType[sigma];
+
+TypeDeduce[O0_ ~MLTK~ K_] := TypeChecking[TypeDeduce[O0] ~MLTKTyping~ TypeDeduce[K]];
+TypeChecking[OType[sigma_, tau_] ~MLTKTyping~ KType[tau_]] := KType[sigma];
+
+TypeDeduce[K1_ ~TSRK~ K2_] := TypeChecking[TypeDeduce[K1] ~TSRKTyping~ TypeDeduce[K2]];
+TypeChecking[KType[sigma_] ~TSRKTyping~ KType[tau_]] := KType[sigma ~ProdType~ tau];
+
+(* Bra *)
+TypeDeduce[ZEROB[sigma_]] := BType[sigma];
+
+TypeDeduce[BRA[s_]] := BType[TypeDeduce[s]];
+
+TypeDeduce[ADJB[K_]] := TypeChecking[ADJBTyping[TypeDeduce[K]]];
+TypeChecking[ADJBTyping[KType[sigma_]]] := BType[sigma];
+
+TypeDeduce[S_ ~SCRB~ B_] := TypeChecking[TypeDeduce[S] ~SCRBTyping~ TypeDeduce[B]];
+TypeChecking[SType ~SCRBTyping~ BType[sigma_]] := BType[sigma];
+
+TypeDeduce[ADDB[args__]] := TypeChecking[ADDBTyping@@TypeDeduce/@{args}];
+TypeChecking[ADDBTyping[(BType[sigma_])..]] := BType[sigma];
+
+TypeDeduce[B_ ~MLTB~ O0_] := TypeChecking[TypeDeduce[B] ~MLTBTyping~ TypeDeduce[O0]];
+TypeChecking[BType[sigma_] ~MLTBTyping~ OType[sigma_, tau_]] := BType[tau];
+
+TypeDeduce[B1_ ~TSRB~ B2_] := TypeChecking[TypeDeduce[B1] ~TSRBTyping~ TypeDeduce[B2]];
+TypeChecking[BType[sigma_] ~TSRBTyping~ BType[tau_]] := BType[sigma ~ProdType~ tau];
+
+(* Operator *)
+
+TypeDeduce[ZEROO[sigma_, tau_]] := OType[sigma, tau];
+
+TypeDeduce[ONEO[sigma_]] := OType[sigma, sigma];
+
+TypeDeduce[K_ ~OUTER~ B_] := TypeChecking[TypeDeduce[K] ~OUTERTyping~ TypeDeduce[B]];
+TypeChecking[KType[sigma_] ~OUTERTyping~ BType[tau_]] := OType[sigma, tau];
+
+TypeDeduce[ADJO[O0_]] := TypeChecking[ADJOTyping[TypeDeduce[O0]]];
+TypeChecking[ADJOTyping[OType[sigma_, tau_]]] := OType[tau, sigma];
+
+TypeDeduce[S_ ~SCRO~ O0_] := TypeChecking[TypeDeduce[S] ~SCROTyping~ TypeDeduce[O0]];
+TypeChecking[SType ~SCROTyping~ OType[sigma_, tau_]] := OType[sigma, tau];
+
+TypeDeduce[ADDO[args__]] := TypeChecking[ADDOTyping@@TypeDeduce/@{args}];
+TypeChecking[ADDOTyping[(OType[sigma_, tau_])..]] := OType[sigma, tau];
+
+TypeDeduce[O1_ ~MLTO~ O2_] := TypeChecking[TypeDeduce[O1] ~MLTOTyping~ TypeDeduce[O2]];
+TypeChecking[OType[sigma_, tau_] ~MLTOTyping~ OType[tau_, rho_]] := OType[sigma, rho];
+
+TypeDeduce[O1_ ~TSRO~ O2_] := TypeChecking[TypeDeduce[O1] ~TSROTyping~ TypeDeduce[O2]];
+TypeChecking[OType[sigma1_, tau1_] ~TSROTyping~ OType[sigma2_, tau2_]] := OType[sigma1 ~ProdType~ sigma2, tau1 ~ProdType~ tau2];
+
+
+(* ::Section:: *)
+(*Type Calculations*)
+
+
+TypeProj1[ProdType[T1_, T2_]]:=T1;
+TypeProj2[ProdType[T1_, T2_]]:=T2;
+KType[TypeProjK[T_]]:=T;
+TypeProjK[KType[T_]]:=T;
+BType[TypeProjB[T_]]:=T;
+TypeProjB[BType[T_]]:=T;
+OType[TypeProjK[T_],TypeProjB[T_]]:=T;
+TypeProjK[OType[T1_, T2_]]:=T1;
+TypeProjB[OType[T1_, T2_]]:=T2;
+
+TypeCalc[a_?InDiracCtxQ]:=a/.DiracCtx;
+(*TypeCalc[a_/;MatchQ[a, DefinedPatterns]]:=With[{},Print[a];Print[DiracCtx];a/.DiracCtx];*)
+TypeCalc[PAIR[s_, t_]]:=TypeCalc[s] ~ProdType~ TypeCalc[t];
+TypeCalc[FST[s_]]:=TypeProj1[TypeCalc[s]];
+TypeCalc[SND[s_]]:=TypeProj2[TypeCalc[s]];
+
+TypeCalc[CPX[_]]:=SType;
+TypeCalc[DELTA[_, _]]:=SType;
+TypeCalc[_ ~ADDS~ _]:=SType;
+TypeCalc[_ ~MLTS~ _]:=SType;
+TypeCalc[CONJS[_]]:=SType;
+TypeCalc[_ ~DOT~ _]:=SType;
+
+TypeCalc[ZEROK[sigma_]]:=KType[sigma];
+TypeCalc[KET[s_]]:=KType[TypeCalc[s]];
+TypeCalc[ADJK[B_]]:=KType[TypeProjB[TypeCalc[B]]];
+TypeCalc[_ ~SCRK~ K_]:=TypeCalc[K];
+TypeCalc[K_ ~ADDK~ _]:=TypeCalc[K];
+TypeCalc[O0_ ~MLTK~ _]:=KType[TypeProjK[TypeCalc[O0]]];
+TypeCalc[K1_ ~TSRK~ K2_]:=KType[TypeProjK[TypeCalc[K1]] ~ProdType~ TypeProjK[TypeCalc[K2]]];
+
+TypeCalc[ZEROB[sigma_]]:=BType[sigma];
+TypeCalc[BRA[s_]]:=BType[TypeCalc[s]];
+TypeCalc[ADJB[K_]]:=BType[TypeProjK[TypeCalc[K]]];
+TypeCalc[_ ~SCRB~ B_]:=TypeCalc[B];
+TypeCalc[B_ ~ADDB~ _]:=TypeCalc[B];
+TypeCalc[_ ~MLTB~ O0_]:=BType[TypeProjB[TypeCalc[O0]]];
+TypeCalc[B1_ ~TSRB~ B2_]:=BType[TypeProjB[TypeCalc[B1]] ~ProdType~ TypeProjB[TypeCalc[B2]]];
+
+TypeCalc[ZEROO[sigma_, tau_]]:=OType[sigma, tau];
+TypeCalc[ONEO[sigma_]]:=OType[sigma, sigma];
+TypeCalc[K_ ~OUTER~ B_]:=OType[TypeProjK[TypeCalc[K]], TypeProjB[TypeCalc[B]]];
+TypeCalc[ADJO[O0_]]:=OType[TypeProjB[TypeCalc[O0]], TypeProjK[TypeCalc[O0]]];
+TypeCalc[_ ~SCRO~ O0_]:=TypeCalc[O0];
+TypeCalc[O0_ ~ADDO~ _]:=TypeCalc[O0];
+TypeCalc[O1_ ~MLTO~ O2_]:=OType[TypeProjK[TypeCalc[O1]], TypeProjB[TypeCalc[O2]]];
+TypeCalc[O1_ ~TSRO~ O2_]:=OType[
+	TypeProjK[TypeCalc[O1]] ~ProdType~ TypeProjK[TypeCalc[O2]], 
+	TypeProjB[TypeCalc[O1]] ~ProdType~ TypeProjB[TypeCalc[O2]]
+];
+
+
 
 
 (* ::Section:: *)
@@ -196,11 +395,11 @@ RuleScalar15 = CONJS[B0_ ~DOT~ K0_] -> ADJB[K0] ~DOT~ ADJK[B0];
 AppendTo[DNCoreRules, RuleScalar15];
 
 
-RuleScalar16 = ZEROB ~DOT~ K0_ -> CPX[0];
+RuleScalar16 = ZEROB[_] ~DOT~ K0_ -> CPX[0];
 AppendTo[DNCoreRules, RuleScalar16];
 
 
-RuleScalar17 = B0_ ~DOT~ ZEROK -> CPX[0];
+RuleScalar17 = B0_ ~DOT~ ZEROK[_] -> CPX[0];
 AppendTo[DNCoreRules, RuleScalar17];
 
 
@@ -256,7 +455,7 @@ AppendTo[DNCoreRules, RuleScalar28];
 (*ADJK/ADJB*)
 
 
-RuleADJK1 = ADJK[ZEROB] -> ZEROK;
+RuleADJK1 = ADJK[ZEROB[sigma_]] -> ZEROK[sigma];
 AppendTo[DNCoreRules, RuleADJK1];
 
 
@@ -316,7 +515,7 @@ AppendTo[DNCoreRules, RuleADJB7];
 (*SCRK/SCRB*)
 
 
-RuleSCRK1 = CPX[0] ~SCRK~ K0_ -> ZEROK;
+RuleSCRK1 = CPX[0] ~SCRK~ K0_ :> ZEROK[TypeProjK[TypeCalc[K0]]];
 AppendTo[DNCoreRules, RuleSCRK1];
 
 
@@ -324,7 +523,7 @@ RuleSCRK2 = CPX[1] ~SCRK~ K0_ -> K0;
 AppendTo[DNCoreRules, RuleSCRK2];
 
 
-RuleSCRK3 = S0_ ~SCRK~ ZEROK -> ZEROK;
+RuleSCRK3 = S0_ ~SCRK~ ZEROK[sigma_] -> ZEROK[sigma];
 AppendTo[DNCoreRules, RuleSCRK3];
 
 
@@ -357,7 +556,7 @@ AppendTo[DNCoreRules, RuleSCRB5];
 (*ADDK/ADDB*)
 
 
-RuleADDK1 = K0_ ~ADDK~ ZEROK -> K0;
+RuleADDK1 = K0_ ~ADDK~ ZEROK[_] -> K0;
 AppendTo[DNCoreRules, RuleADDK1];
 
 
@@ -393,15 +592,15 @@ AppendTo[DNCoreRules, RuleADDB4];
 (*MLTK/MLTB*)
 
 
-RuleMLTK1 = ZEROO ~MLTK~ K0_ -> ZEROK;
+RuleMLTK1 = ZEROO[sigma_,_] ~MLTK~ K0_ -> ZEROK[sigma];
 AppendTo[DNCoreRules, RuleMLTK1];
 
 
-RuleMLTK2 = O0_ ~MLTK~ ZEROK -> ZEROK;
+RuleMLTK2 = O0_ ~MLTK~ ZEROK[_] :> ZEROK[TypeProjK[TypeCalc[O0]]];
 AppendTo[DNCoreRules, RuleMLTK2];
 
 
-RuleMLTK3 = ONEO ~MLTK~ K0_ -> K0;
+RuleMLTK3 = ONEO[_] ~MLTK~ K0_ -> K0;
 AppendTo[DNCoreRules, RuleMLTK3];
 
 
@@ -493,11 +692,11 @@ AppendTo[DNCoreRules, RuleMLTB12];
 (*TSRK/TSRB*)
 
 
-RuleTSRK1 = ZEROK ~TSRK~ K0_ -> ZEROK;
+RuleTSRK1 = ZEROK[sigma_] ~TSRK~ K0_ :> ZEROK[sigma ~ProdType~ TypeProjK[TypeCalc[K0]]];
 AppendTo[DNCoreRules, RuleTSRK1];
 
 
-RuleTSRK2 = K0_ ~TSRK~ ZEROK -> ZEROK;
+RuleTSRK2 = K0_ ~TSRK~ ZEROK[sigma_] -> ZEROK[TypeProjK[TypeCalc[K0]] ~ProdType~ sigma];
 AppendTo[DNCoreRules, RuleTSRK2];
 
 
@@ -557,11 +756,11 @@ AppendTo[DNCoreRules, RuleTSRB7];
 (*Outer*)
 
 
-RuleOUTER1 = ZEROK ~OUTER~ B0_ -> ZEROO;
+RuleOUTER1 = ZEROK[sigma_] ~OUTER~ B0_ :> ZEROO[sigma, TypeProjB[TypeCalc[B0]]];
 AppendTo[DNCoreRules, RuleOUTER1];
 
 
-RuleOUTER2 = K0_ ~OUTER~ ZEROB -> ZEROO;
+RuleOUTER2 = K0_ ~OUTER~ ZEROB[sigma_] -> ZEROO[TypeProjK[TypeCalc[K0]], sigma];
 AppendTo[DNCoreRules, RuleOUTER2];
 
 
@@ -621,7 +820,7 @@ AppendTo[DNCoreRules, RuleADJO8];
 (*SCRO*)
 
 
-RuleSCRO1 = CPX[0] ~SCRO~ O0_ -> ZEROO;
+RuleSCRO1 = CPX[0] ~SCRO~ O0_ :> ZEROO[TypeProjK[TypeCalc[O0]], TypeProjB[TypeCalc[O0]]];
 AppendTo[DNCoreRules, RuleSCRO1];
 
 
@@ -629,7 +828,7 @@ RuleSCRO2 = CPX[1] ~SCRO~ O0_ -> O0;
 AppendTo[DNCoreRules, RuleSCRO2];
 
 
-RuleSCRO3 = S0_ ~SCRO~ ZEROO -> ZEROO;
+RuleSCRO3 = S0_ ~SCRO~ ZEROO[sigma_, tau_] -> ZEROO[sigma, tau];
 AppendTo[DNCoreRules, RuleSCRO3];
 
 
@@ -645,7 +844,7 @@ AppendTo[DNCoreRules, RuleSCRO5];
 (*ADDO*)
 
 
-RuleADDO1 = O0_ ~ADDO~ ZEROO -> O0;
+RuleADDO1 = O0_ ~ADDO~ ZEROO[_, _] -> O0;
 AppendTo[DNCoreRules, RuleADDO1];
 
 
@@ -665,19 +864,19 @@ AppendTo[DNCoreRules, RuleADDO4];
 (*MLTO*)
 
 
-RuleMLTO1 = ZEROO ~MLTO~ O0_ -> ZEROO;
+RuleMLTO1 = ZEROO[sigma_, _] ~MLTO~ O0_ :> ZEROO[sigma, TypeProjB[TypeCalc[O0]]];
 AppendTo[DNCoreRules, RuleMLTO1];
 
 
-RuleMLTO2 = O0_ ~MLTO~ ZEROO -> ZEROO;
+RuleMLTO2 = O0_ ~MLTO~ ZEROO[_, tau_] :> ZEROO[TypeProjK[TypeCalc[O0]], tau];
 AppendTo[DNCoreRules, RuleMLTO2];
 
 
-RuleMLTO3 = ONEO ~MLTO~ O0_ -> O0;
+RuleMLTO3 = ONEO[_] ~MLTO~ O0_ -> O0;
 AppendTo[DNCoreRules, RuleMLTO3];
 
 
-RuleMLTO4 = O0_ ~MLTO~ ONEO -> O0;
+RuleMLTO4 = O0_ ~MLTO~ ONEO[_] -> O0;
 AppendTo[DNCoreRules, RuleMLTO4];
 
 
@@ -721,12 +920,18 @@ AppendTo[DNCoreRules, RuleMLTO13];
 (*TSRO*)
 
 
-RuleTSRO1 = ZEROO ~TSRO~ O0_ -> ZEROO;
+RuleTSRO1 = ZEROO[sigma_, tau_] ~TSRO~ O0_ :> 
+	ZEROO[sigma ~ProdType~ TypeProjK[TypeCalc[O0]], tau ~ProdType~ TypeProjB[TypeCalc[O0]]];
 AppendTo[DNCoreRules, RuleTSRO1];
 
 
-RuleTSRO2 = O0_ ~TSRO~ ZEROO -> ZEROO;
+RuleTSRO2 = O0_ ~TSRO~ ZEROO[sigma_, tau_] :>
+	ZEROO[TypeProjK[TypeCalc[O0]] ~ProdType~ sigma, TypeProjB[TypeCalc[O0]] ~ProdType~ tau];
 AppendTo[DNCoreRules, RuleTSRO2];
+
+
+RuleTSROONEO = ONEO[sigma_] ~TSRO~ ONEO[tau_] -> ONEO[sigma ~ProdType~ tau];
+AppendTo[DNCoreRules, RuleTSROONEO];
 
 
 RuleTSRO3 = (K1_ ~OUTER~ B1_) ~TSRO~ (K2_ ~OUTER~ B2_) -> (K1 ~TSRK~ K2) ~OUTER~ (B1 ~TSRB~ B2);

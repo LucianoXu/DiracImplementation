@@ -19,11 +19,6 @@ Begin["Private`"];
 (*Helper function to check if a variable occurs in a term*)
 OccursInQ[x_,expr_]:=MemberQ[Variables[expr],x];
 
-PermutePairs[list1_, list2_] := With[
-	{perm2 = Permutations[list2]},
-	Transpose/@Table[{list1, permls}, {permls, perm2}]
-];
-
 (* eqtheory: a list of rewriting rules representing the avaiable equational theory to use *)
 UnifyStep[substitutions_, equations_, vars_, eqtheory_] := Module[
 		{
@@ -65,13 +60,13 @@ UnifyStep[substitutions_, equations_, vars_, eqtheory_] := Module[
 					If[
 						MemberQ[Attributes[Evaluate[Head[procEq[[1]]]]], Orderless],
 						
-						perm = PermutePairs[List@@(procEq[[1]]), List@@(procEq[[2]])];
-						For[i=1, i<=Length[perm], i++,
+						(* Match ther first of procEq[[1]] with different elements in procEq[[2]] *)
+						For[i=1, i<=Length[procEq[[2]]], i++,
 							(* Use recursion to search in different branches *)
 							branchRes = UnifyStep[
 								subst, 
-								Join[perm[[i]], Rest[eqs]], 
-								Join[vars, procEq[[3]]],
+								Join[{{procEq[[1]][[1]], procEq[[2]][[i]]}, {Rest[procEq[[1]]], Drop[procEq[[2]],{i}]}}, Rest[eqs]], 
+								Union[vars, procEq[[3]]],
 								eqtheory
 							];
 							If[branchRes=!=False, Return[branchRes]];
@@ -83,7 +78,7 @@ UnifyStep[substitutions_, equations_, vars_, eqtheory_] := Module[
 								UnifyStep[
 									subst, 
 									Join[Transpose[{List@@(procEq[[1]]), List@@(procEq[[2]])}], Rest[eqs]], 
-									Join[vars, procEq[[3]]],
+									Union[vars, procEq[[3]]],
 									eqtheory
 								]
 							],

@@ -1,7 +1,7 @@
 (* ::Package:: *)
 
 (* ::Title:: *)
-(*Typing   Decoration*)
+(*Typing*)
 
 
 (* The infrastructure for typing. *)
