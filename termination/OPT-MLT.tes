@@ -1,0 +1,20 @@
+[a, b, c, x, y, S0, S1, S2, S3, s, s1, s2, t, t1, t2, B0, B1, B2, K0, K1, K2, O0, O1, O2, O1', O2', T1, T2, T3, T4]
+AC [+, *, MLTS, ADDS, ADDK, ADDB, ADDO]
+C [DELTA]
+
+PI(x, y) -> x
+PI(x, y) -> y
+
+MLTO(0O(T1, T2), O0) -> 0O(T1, PROJB(type(O0)))
+MLTO(O0, 0O(T1, T2)) -> 0O(PROJK(type(O0)), T2)
+MLTO(1O(T1), O0) -> O0
+MLTO(O0, 1O(T1)) -> O0
+MLTO(OUTER(K0, B0), O0) -> OUTER(K0, MLTB(B0, O0))
+MLTO(O0, OUTER(K0, B0)) -> OUTER(MLTK(O0, K0), B0)
+MLTO(SCRO(S0, O1), O2) -> SCRO(S0, MLTO(O1, O2))
+MLTO(O1, SCRO(S0, O2)) -> SCRO(S0, MLTO(O1, O2))
+MLTO(ADDO(O1, O2), O0) -> ADDO(MLTO(O1, O0), MLTO(O2, O0))
+MLTO(O0, ADDO(O1, O2)) -> ADDO(MLTO(O0, O1), MLTO(O0, O2))
+MLTO(MLTO(O1, O2), O0) -> MLTO(O1, MLTO(O2, O0))
+MLTO(TSRO(O1, O2), TSRO(O1', O2')) -> TSRO(MLTO(O1, O1'), MLTO(O2, O2'))
+MLTO(TSRO(O1, O2), MLTO(TSRO(O1', O2'), O0)) -> MLTO(TSRO(MLTO(O1, O1'), MLTO(O2, O2')), O0)

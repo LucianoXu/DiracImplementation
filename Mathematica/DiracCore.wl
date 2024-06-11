@@ -136,7 +136,7 @@ SetAttributes[{ADDS, MLTS, ADDK, ADDB, ADDO}, {Orderless, Flat, OneIdentity}];
 
 DiracCtx = {};
 
-InDiracCtxQ[term_]:=MatchQ[term, Alternatives@@First/@DiracCtx];
+InDiracCtxQ[term_] := MatchQ[term, Alternatives@@First/@DiracCtx];
 
 TypingRules = {};
 
@@ -483,7 +483,7 @@ RuleADJK7 = ADJK[B1_ ~TSRB~ B2_] -> ADJK[B1] ~TSRK~ ADJK[B2];
 AppendTo[DNCoreRules, RuleADJK7];
 
 
-RuleADJB1 = ADJB[ZEROK] -> ZEROB;
+RuleADJB1 = ADJB[ZEROK[sigma_]] -> ZEROB[sigma];
 AppendTo[DNCoreRules, RuleADJB1];
 
 
@@ -535,18 +535,21 @@ RuleSCRK5 = S0_ ~SCRK~ (K1_ ~ADDK~ K2_) -> (S0 ~SCRK~ K1) ~ADDK~ (S0 ~SCRK~ K2);
 AppendTo[DNCoreRules, RuleSCRK5];
 
 
-RuleSCRB1 = CPX[0] ~SCRB~ B0_ -> ZEROB;
+RuleSCRB1 = CPX[0] ~SCRB~ B0_ -> ZEROB[TypeProjB[TypeCalc[B0]]];
 AppendTo[DNCoreRules, RuleSCRB1];
 
 
 RuleSCRB2 = CPX[1] ~SCRB~ B0_ -> B0;
 AppendTo[DNCoreRules, RuleSCRB2];
 
-RuleSCRB3 = S0_ ~SCRB~ ZEROB -> ZEROB;
+
+RuleSCRB3 = S0_ ~SCRB~ ZEROB[sigma_] -> ZEROB[sigma];
 AppendTo[DNCoreRules, RuleSCRB3];
+
 
 RuleSCRB4 = S1_ ~SCRB~ (S2_ ~SCRB~ B0_) -> (S1 ~MLTS~ S2) ~SCRB~ B0;
 AppendTo[DNCoreRules, RuleSCRB4];
+
 
 RuleSCRB5 = S0_ ~SCRB~ (B1_ ~ADDB~ B2_) -> (S0 ~SCRB~ B1) ~ADDB~ (S0 ~SCRB~ B2);
 AppendTo[DNCoreRules, RuleSCRB5];
@@ -556,7 +559,7 @@ AppendTo[DNCoreRules, RuleSCRB5];
 (*ADDK/ADDB*)
 
 
-RuleADDK1 = K0_ ~ADDK~ ZEROK[_] -> K0;
+RuleADDK1 = K0_ ~ADDK~ ZEROK[sigma_] -> K0;
 AppendTo[DNCoreRules, RuleADDK1];
 
 
@@ -572,7 +575,7 @@ RuleADDK4 = (S1_ ~SCRK~ K0_) ~ADDK~ (S2_ ~SCRK~ K0_) -> (S1 ~ADDS~ S2) ~SCRK~ K0
 AppendTo[DNCoreRules, RuleADDK4];
 
 
-RuleADDB1 = B0_ ~ADDB~ ZEROB -> B0;
+RuleADDB1 = B0_ ~ADDB~ ZEROB[sigma_] -> B0;
 AppendTo[DNCoreRules, RuleADDB1];
 
 
@@ -592,15 +595,15 @@ AppendTo[DNCoreRules, RuleADDB4];
 (*MLTK/MLTB*)
 
 
-RuleMLTK1 = ZEROO[sigma_,_] ~MLTK~ K0_ -> ZEROK[sigma];
+RuleMLTK1 = ZEROO[sigma_,tau_] ~MLTK~ K0_ -> ZEROK[sigma];
 AppendTo[DNCoreRules, RuleMLTK1];
 
 
-RuleMLTK2 = O0_ ~MLTK~ ZEROK[_] :> ZEROK[TypeProjK[TypeCalc[O0]]];
+RuleMLTK2 = O0_ ~MLTK~ ZEROK[sigma_] :> ZEROK[TypeProjK[TypeCalc[O0]]];
 AppendTo[DNCoreRules, RuleMLTK2];
 
 
-RuleMLTK3 = ONEO[_] ~MLTK~ K0_ -> K0;
+RuleMLTK3 = ONEO[sigma_] ~MLTK~ K0_ -> K0;
 AppendTo[DNCoreRules, RuleMLTK3];
 
 
@@ -640,15 +643,15 @@ RuleMLTK12 = (O1_ ~TSRO~ O2_) ~MLTK~ (K1_ ~TSRK~ K2_) -> (O1 ~MLTK~ K1) ~TSRK~ (
 AppendTo[DNCoreRules, RuleMLTK12];
 
 
-RuleMLTB1 = B0_ ~MLTB~ ZEROO -> ZEROB;
+RuleMLTB1 = B0_ ~MLTB~ ZEROO[sigma_, tau_] -> ZEROB[tau];
 AppendTo[DNCoreRules, RuleMLTB1];
 
 
-RuleMLTB2 = ZEROB ~MLTB~ O0_ -> ZEROB;
+RuleMLTB2 = ZEROB[sigma_] ~MLTB~ O0_ -> ZEROB[TypeProjB[TypeCalc[O0]]];
 AppendTo[DNCoreRules, RuleMLTB2];
 
 
-RuleMLTB3 = B0_ ~MLTB~ ONEO -> B0;
+RuleMLTB3 = B0_ ~MLTB~ ONEO[sigma_] -> B0;
 AppendTo[DNCoreRules, RuleMLTB3];
 
 
@@ -720,11 +723,11 @@ RuleTSRK7 = K0_ ~TSRK~ (K1_ ~ADDK~ K2_) -> (K0 ~TSRK~ K1) ~ADDK~ (K0 ~TSRK~ K2);
 AppendTo[DNCoreRules, RuleTSRK7];
 
 
-RuleTSRB1 = ZEROB ~TSRB~ B0_ -> ZEROB;
+RuleTSRB1 = ZEROB[sigma_] ~TSRB~ B0_ -> ZEROB[sigma ~ProdType~ TypeProjB[TypeCalc[B0]]];
 AppendTo[DNCoreRules, RuleTSRB1];
 
 
-RuleTSRB2 = B0_ ~TSRB~ ZEROB -> ZEROB;
+RuleTSRB2 = B0_ ~TSRB~ ZEROB[sigma_] -> ZEROB[TypeProjB[TypeCalc[B0]] ~ProdType~ sigma];
 AppendTo[DNCoreRules, RuleTSRB2];
 
 
@@ -784,11 +787,11 @@ AppendTo[DNCoreRules, RuleOUTER6];
 (*ADJO*)
 
 
-RuleADJO1 = ADJO[ZEROO] -> ZEROO;
+RuleADJO1 = ADJO[ZEROO[sigma_, tau_]] -> ZEROO[tau, sigma];
 AppendTo[DNCoreRules, RuleADJO1];
 
 
-RuleADJO2 = ADJO[ONEO] -> ONEO;
+RuleADJO2 = ADJO[ONEO[sigma_]] -> ONEO[sigma];
 AppendTo[DNCoreRules, RuleADJO2];
 
 
@@ -844,7 +847,7 @@ AppendTo[DNCoreRules, RuleSCRO5];
 (*ADDO*)
 
 
-RuleADDO1 = O0_ ~ADDO~ ZEROO[_, _] -> O0;
+RuleADDO1 = O0_ ~ADDO~ ZEROO[sigma_, tau_] -> O0;
 AppendTo[DNCoreRules, RuleADDO1];
 
 
@@ -864,19 +867,19 @@ AppendTo[DNCoreRules, RuleADDO4];
 (*MLTO*)
 
 
-RuleMLTO1 = ZEROO[sigma_, _] ~MLTO~ O0_ :> ZEROO[sigma, TypeProjB[TypeCalc[O0]]];
+RuleMLTO1 = ZEROO[sigma_, tau_] ~MLTO~ O0_ :> ZEROO[sigma, TypeProjB[TypeCalc[O0]]];
 AppendTo[DNCoreRules, RuleMLTO1];
 
 
-RuleMLTO2 = O0_ ~MLTO~ ZEROO[_, tau_] :> ZEROO[TypeProjK[TypeCalc[O0]], tau];
+RuleMLTO2 = O0_ ~MLTO~ ZEROO[sigma_, tau_] :> ZEROO[TypeProjK[TypeCalc[O0]], tau];
 AppendTo[DNCoreRules, RuleMLTO2];
 
 
-RuleMLTO3 = ONEO[_] ~MLTO~ O0_ -> O0;
+RuleMLTO3 = ONEO[sigma_] ~MLTO~ O0_ -> O0;
 AppendTo[DNCoreRules, RuleMLTO3];
 
 
-RuleMLTO4 = O0_ ~MLTO~ ONEO[_] -> O0;
+RuleMLTO4 = O0_ ~MLTO~ ONEO[sigma_] -> O0;
 AppendTo[DNCoreRules, RuleMLTO4];
 
 

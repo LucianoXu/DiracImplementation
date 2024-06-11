@@ -1,0 +1,15 @@
+[a, b, c, x, y, S0, S1, S2, S3, s, s1, s2, t, t1, t2, B0, B1, B2, K0, K1, K2, O0, O1, O2, O1', O2', T1, T2, T3, T4]
+AC [+, *, MLTS, ADDS, ADDK, ADDB, ADDO]
+C [DELTA]
+
+PI(x, y) -> x
+PI(x, y) -> y
+
+ADJO(0O(T1, T2)) -> 0O(T2, T1)
+ADJO(1O(T1)) -> 1O(T1)
+ADJO(OUTER(K0, B0)) -> OUTER(ADJK(B0), ADJB(K0))
+ADJO(ADJO(O0)) -> O0
+ADJO(SCRO(S0, O0)) -> SCRO(CONJS(S0), ADJO(O0))
+ADJO(ADDO(O1, O2)) -> ADDO(ADJO(O1), ADJO(O2))
+ADJO(MLTO(O1, O2)) -> MLTO(ADJO(O2), ADJO(O1))
+ADJO(TSRO(O1, O2)) -> TSRO(ADJO(O1), ADJO(O2))

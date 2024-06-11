@@ -195,8 +195,9 @@ Yingte TODO list (Jun 7 - Jun 14):
 \begin{itemize}
     \item Update tool implementation
     \begin{itemize}
-        \item Consider entry expansion with typing information
-        \item Implement type checking
+        \item \done Consider entry expansion with typing information
+        \item \done Implement type checking
+        \item Implement user language, output notation and type unification.
     \end{itemize}
     \item Prove Termintation (without fst and snd)
     \item Consider quantifier elimination in implementation
@@ -1053,15 +1054,13 @@ Note that the signature here is richer than the one introduced before on typings
 \begin{gather*}
   \delta{s, s} \reduce C(1)
   \qquad
-  \delta_{u, (s, t)} \reduce \delta_{\fst u, s} \times \delta_{\snd u, t} 
-  \qquad
-  \delta_{\fst u, \fst v}\times\delta_{\snd u, \snd v} \reduce \delta_{u, v}
+  \delta_{u, (s, t)} \reduce \delta_{\fst u, s} \times \delta_{\snd u, t}
 \end{gather*}
 
 \textbf{Remark:} These last two rules are for completion.
 
 
-\subsubsection*{\textsf{SCR-C}}
+\subsubsection*{\textsf{SCR-ADD}}
 \begin{gather*}
    C(0) + S \reduce S
   \qquad
@@ -1071,8 +1070,10 @@ Note that the signature here is richer than the one introduced before on typings
    C(\alpha) \times S + S \reduce C(\alpha + 1) \times S
   \qquad
    C(\alpha) \times S + C(\beta) \times S \reduce C(\alpha + \beta) \times S
-  \\
-  \\
+\end{gather*}
+
+\subsubsection*{\textsf{SCR-MLT}}
+\begin{gather*}
    C(0) \times S \reduce C(0)
   \qquad
    C(1) \times S \reduce S
@@ -1080,8 +1081,12 @@ Note that the signature here is richer than the one introduced before on typings
    C(\alpha) \times C(\beta) \reduce C(\alpha \times \beta)
   \qquad
    S_1 \times (S_2 + S_3) \reduce S_1 \times S_2 + S_1 \times S_3
-  \\
-  \\
+   \\
+  \delta_{\fst u, \fst v}\times\delta_{\snd u, \snd v} \reduce \delta_{u, v}
+\end{gather*}
+
+\subsubsection*{\textsf{SCR-CONJ}}
+\begin{gather*}
    C(\alpha)^* \reduce C(\alpha^*)
   \qquad
    \delta_{s, t}^* \reduce \delta_{s, t} \\

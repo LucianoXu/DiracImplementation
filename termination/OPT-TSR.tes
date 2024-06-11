@@ -1,0 +1,15 @@
+[a, b, c, x, y, S0, S1, S2, S3, s, s1, s2, t, t1, t2, B0, B1, B2, K0, K1, K2, O0, O1, O2, O1', O2', T1, T2, T3, T4]
+AC [+, *, MLTS, ADDS, ADDK, ADDB, ADDO]
+C [DELTA]
+
+PI(x, y) -> x
+PI(x, y) -> y
+
+TSRO(0O(T1, T2), O0) -> 0O(PROD(T1, PROJK(type(O0))), PROD(T2, PROJB(type(O0))))
+TSRO(O0, 0O(T1, T2)) -> 0O(PROD(PROJK(type(O0)), T1), PROD(PROJB(type(O0)), T2))
+TSRO(1O(T1), 1O(T2)) -> 1O(PROD(T1, T2))
+TSRO(OUTER(K1, B1), OUTER(K2, B2)) -> OUTER(TSRK(K1, K2), TSRB(B1, B2))
+TSRO(SCRO(S0, O1), O2) -> SCRO(S0, TSRO(O1, O2))
+TSRO(O1, SCRO(S0, O2)) -> SCRO(S0, TSRO(O1, O2))
+TSRO(ADDO(O1, O2), O0) -> ADDO(TSRO(O1, O0), TSRO(O2, O0))
+TSRO(O0, ADDO(O1, O2)) -> ADDO(TSRO(O0, O1), TSRO(O0, O2))

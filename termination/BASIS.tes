@@ -1,0 +1,10 @@
+[a, b, c, x, y, S0, S1, S2, S3, s, s1, s2, t, t1, t2, B0, B1, B2, K0, K1, K2, O0, O1, O2, O1', O2', T1, T2, T3, T4]
+AC [+, *, MLTS, ADDS, ADDK, ADDB, ADDO]
+C [DELTA]
+
+PI(x, y) -> x
+PI(x, y) -> y
+
+FST(PAIR(s, t)) -> s
+SND(PAIR(s, t)) -> t
+PAIR(FST(s), SND(s)) -> s

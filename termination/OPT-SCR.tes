@@ -1,0 +1,12 @@
+[a, b, c, x, y, S0, S1, S2, S3, s, s1, s2, t, t1, t2, B0, B1, B2, K0, K1, K2, O0, O1, O2, O1', O2', T1, T2, T3, T4]
+AC [+, *, MLTS, ADDS, ADDK, ADDB, ADDO]
+C [DELTA]
+
+PI(x, y) -> x
+PI(x, y) -> y
+
+SCRO(C(0), O0) -> 0O(PROJK(type(O0)), PROJB(type(O0)))
+SCRO(C(1), O0) -> O0
+SCRO(S0, 0O(T1, T2)) -> 0O(T1, T2)
+SCRO(S1, SCRO(S2, O0)) -> SCRO(MLTS(S1, S2), O0)
+SCRO(S0, ADDO(O1, O2)) -> ADDO(SCRO(S0, O1), SCRO(S0, O2))

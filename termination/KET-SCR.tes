@@ -1,0 +1,12 @@
+[a, b, c, x, y, S0, S1, S2, S3, s, s1, s2, t, t1, t2, B0, B1, B2, K0, K1, K2, O0, O1, O2, O1', O2', T1, T2, T3, T4]
+AC [+, *, MLTS, ADDS, ADDK, ADDB, ADDO]
+C [DELTA]
+
+PI(x, y) -> x
+PI(x, y) -> y
+
+SCRK(C(0), K0) -> 0K(PROJK(type(K0)))
+SCRK(C(1), K0) -> K0
+SCRK(S0, 0K(T1)) -> 0K(T1)
+SCRK(S1, SCRK(S2, K0)) -> SCRK(MLTS(S1, S2), K0)
+SCRK(S0, ADDK(K1, K2)) -> ADDK(SCRK(S0, K1), SCRK(S0, K2))

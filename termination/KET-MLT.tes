@@ -1,0 +1,19 @@
+[a, b, c, x, y, S0, S1, S2, S3, s, s1, s2, t, t1, t2, B0, B1, B2, K0, K1, K2, O0, O1, O2, O1', O2', T1, T2, T3, T4]
+AC [+, *, MLTS, ADDS, ADDK, ADDB, ADDO]
+C [DELTA]
+
+PI(x, y) -> x
+PI(x, y) -> y
+
+MLTK(0O(T1, T2), K0) -> 0K(T1)
+MLTK(O0, 0K(T1)) -> 0K(PROJK(type(O0)))
+MLTK(1O(T1), K0) -> K0
+MLTK(SCRO(S0, O0), K0) -> SCRK(S0, MLTK(O0, K0))
+MLTK(O0, SCRK(S0, K0)) -> SCRK(S0, MLTK(O0, K0))
+MLTK(ADDO(O1, O2), K0) -> ADDK(MLTK(O1, K0), MLTK(O2, K0))
+MLTK(O0, ADDK(K1, K2)) -> ADDK(MLTK(O0, K1), MLTK(O0, K2))
+MLTK(OUTER(K1, B0), K2) -> SCRK(DOT(B0, K2), K1)
+MLTK(MLTO(O1, O2), K0) -> MLTK(O1, MLTK(O2, K0))
+MLTK(TSRO(O1, O2), MLTK(TSRO(O1', O2'), K0)) -> MLTK(TSRO(MLTO(O1, O1'), MLTO(O2, O2')), K0)
+MLTK(TSRO(O1, O2), KET(t)) -> TSRK(MLTK(O1, KET(FST(t))), MLTK(O2, KET(SND(t))))
+MLTK(TSRO(O1, O2), TSRK(K1, K2)) -> TSRK(MLTK(O1, K1), MLTK(O2, K2))

@@ -1,0 +1,12 @@
+[a, b, c, x, y, S0, S1, S2, S3, s, s1, s2, t, t1, t2, B0, B1, B2, K0, K1, K2, O0, O1, O2, O1', O2', T1, T2, T3, T4]
+AC [+, *, MLTS, ADDS, ADDK, ADDB, ADDO]
+C [DELTA]
+
+PI(x, y) -> x
+PI(x, y) -> y
+
+ADDS(C(0), a) -> a
+ADDS(C(a), C(b)) -> C(a + b)
+ADDS(S0, S0) -> MLTS(C(1 + 1), S0)
+ADDS(MLTS(C(a), S0), S0) -> MLTS(C(a + 1), S0)
+ADDS(MLTS(C(a), S0), MLTS(C(b), S0)) -> MLTS(C(a + b), S0)

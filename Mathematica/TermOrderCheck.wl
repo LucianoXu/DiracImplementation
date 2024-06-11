@@ -10,6 +10,7 @@ BeginPackage["TermOrderCheck`"];
 ClosureCheck;
 OrderCheck;
 OrderCheckDerivative;
+RuleOrderCheckDerivative;
 
 
 Begin["Private`"];
@@ -58,7 +59,7 @@ OrderCheckDerivative[lhs_, rhs_, vars_, lb_]:=
 		derivatives=D[lhs-rhs,{vars}]
 	},
 	If[
-		!(TrueQ[init>0] && FullSimplify[#>=0&/@derivatives,(#>=lb&&Element[#,Integers])&/@vars]),
+		!(TrueQ[init>0] && AllTrue[FullSimplify[#>=0&/@derivatives,(#>=lb&&Element[#,Integers])&/@vars], TrueQ]),
 		Throw[
 			{
 				"Order Check Derivatives Error:\n",
