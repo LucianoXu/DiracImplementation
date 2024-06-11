@@ -5,7 +5,7 @@
 
 
 AppendTo[$Path, NotebookDirectory[]];
-BeginPackage["DiracAll`", {"Unification`", "DiracCore`", "DiracDeltaExt`", "DiracSumExt`"}];
+BeginPackage["DiracAll`", {"Unification`", "DiracCore`", "DiracDeltaExt`", "DiracSumExt`", "DiracProjExt`","DiracProjSumExt`"}];
 
 
 DNRules;
@@ -17,7 +17,7 @@ Begin["Private`"];
 
 
 (* The order matters *)
-DNRules = Join[DNSetRules, DNCoreRules, DNDeltaExtRules, DNSumPushRules, DNSumExtRules];
+DNRules = Join[DNSetRules, DNProjRules, DNCoreRules, DNDeltaExtRules, DNSumPushRules, DNSumExtRules, DNProjSumRules];
 
 
 (* Type checking is integrated into normalization *)

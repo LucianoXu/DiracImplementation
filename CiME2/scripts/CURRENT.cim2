@@ -114,8 +114,6 @@ let R = TRS F X "
 
 
   type(PAIR(s, t)) -> type(s) PROD type(t) ;
-  type(FST(s)) -> PROJ1(type(s)) ;
-  type(SND(s)) -> PROJ2(type(s)) ;
 
   type(C(a)) -> S ;
   type(DELTA(s, t)) -> S ;
@@ -167,17 +165,6 @@ let R = TRS F X "
   (a * b) ^* -> (a ^*) * (b ^*) ;
   (a ^*) ^* -> a ;
 
-  (********************************************)
-  (*                 Basis                    *)
-  (********************************************)
-
-(*  FST(A(s)) -> A(s) ;
-  SND(A(s)) -> A(s) ;
-  *)
-
-  FST(PAIR(s, t)) -> s ;
-  SND(PAIR(s, t)) -> t ;
-  PAIR(FST(s), SND(s)) -> s ;
 
 
   (********************************************)
@@ -187,12 +174,8 @@ let R = TRS F X "
   (* ============== Delta Operator ================ *)
   
   DELTA(s, s) -> C(1) ;
-  DELTA(s, PAIR(t1, t2)) -> DELTA(FST(s), t1) MLTS DELTA(SND(s), t2) ;
-  
-  (*
-  DELTA(A(s), FST(t)) MLTS DELTA(A(s), SND(t)) -> DELTA(A(s), t) ;
-  DELTA(A(s), A(t)) MLTS DELTA(A(s), A(t)) -> DELTA(A(s), A(t)) ;
-  *)
+  DELTA(PAIR(s1, s2), PAIR(t1, t2)) -> DELTA(s1, t1) MLTS DELTA(s2, t2) ;
+
 
   (* ============================================== *)
 
@@ -206,7 +189,7 @@ let R = TRS F X "
   C(1) MLTS a -> a ;
   C(a) MLTS C(b) -> C(a * b) ;
   S1 MLTS (S2 ADDS S3) -> (S1 MLTS S2) ADDS (S1 MLTS S3) ;
-  DELTA(FST(s), FST(t)) MLTS DELTA(SND(s), SND(t)) -> DELTA(s, t) ;
+
 
 
   CONJS(C(a)) -> C(a ^*) ;
@@ -223,12 +206,12 @@ let R = TRS F X "
   (B1 ADDB B2) DOT K0 -> (B1 DOT K0) ADDS (B2 DOT K0) ;
   B0 DOT (K1 ADDK K2) -> (B0 DOT K1) ADDS (B0 DOT K2) ;
   BRA(s) DOT KET(t) -> DELTA(s, t) ;
-  (B1 TSRB B2) DOT KET(t) -> (B1 DOT KET(FST(t))) MLTS (B2 DOT KET(SND(t))) ;
-  BRA(t) DOT (K1 TSRK K2) -> (BRA(FST(t)) DOT K1) MLTS (BRA(SND(t)) DOT K2) ;
+  (B1 TSRB B2) DOT KET(PAIR(s, t)) -> (B1 DOT KET(s)) MLTS (B2 DOT KET(t)) ;
+  BRA(PAIR(s, t)) DOT (K1 TSRK K2) -> (BRA(s) DOT K1) MLTS (BRA(t) DOT K2) ;
   (B1 TSRB B2) DOT (K1 TSRK K2) -> (B1 DOT K1) MLTS (B2 DOT K2) ;
 
   (B0 MLTB O0) DOT K0 -> B0 DOT (O0 MLTK K0) ;
-  BRA(s) DOT ((O1 TSRO O2) MLTK K0) -> ((BRA(FST(s)) MLTB O1) TSRB (BRA(SND(s)) MLTB O2)) DOT K0 ;
+  BRA(PAIR(s, t)) DOT ((O1 TSRO O2) MLTK K0) -> ((BRA(s) MLTB O1) TSRB (BRA(t) MLTB O2)) DOT K0 ;
   (B1 TSRB B2) DOT ((O1 TSRO O2) MLTK K0) -> ((B1 MLTB O1) TSRB (B2 MLTB O2)) DOT K0 ;
 
 
@@ -290,7 +273,7 @@ let R = TRS F X "
   (K1 OUTER B0) MLTK K2 -> (B0 DOT K2) SCRK K1 ;
   (O1 MLTO O2) MLTK K0 -> O1 MLTK (O2 MLTK K0) ;
   (O1 TSRO O2) MLTK ((O1' TSRO O2') MLTK K0) -> ((O1 MLTO O1') TSRO (O2 MLTO O2')) MLTK K0 ;
-  (O1 TSRO O2) MLTK KET(t) -> (O1 MLTK KET(FST(t))) TSRK (O2 MLTK KET(SND(t))) ;
+  (O1 TSRO O2) MLTK KET(PAIR(s, t)) -> (O1 MLTK KET(s)) TSRK (O2 MLTK KET(t)) ;
   (O1 TSRO O2) MLTK (K1 TSRK K2) -> (O1 MLTK K1) TSRK (O2 MLTK K2) ;
 
   B0 MLTB 0O(T1, T2) -> 0B(T2) ;
@@ -303,7 +286,7 @@ let R = TRS F X "
   B1 MLTB (K0 OUTER B2) -> (B1 DOT K0) SCRB B2 ;
   B0 MLTB (O1 MLTO O2) -> (B0 MLTB O1) MLTB O2 ;
   (B0 MLTB (O1' TSRO O2')) MLTB (O1 TSRO O2) -> B0 MLTB ((O1' MLTO O1) TSRO (O2' MLTO O2)) ;
-  BRA(t) MLTB (O1 TSRO O2) -> (BRA(FST(t)) MLTB O1) TSRB (BRA(SND(t)) MLTB O2) ;
+  BRA(PAIR(s, t)) MLTB (O1 TSRO O2) -> (BRA(s) MLTB O1) TSRB (BRA(t) MLTB O2) ;
   (B1 TSRB B2) MLTB (O1 TSRO O2) -> (B1 MLTB O1) TSRB (B2 MLTB O2) ;
 
   (* >>>> Tensor Product <<<< *)
@@ -384,6 +367,25 @@ let R = TRS F X "
   (O1 ADDO O2) TSRO O0 -> (O1 TSRO O0) ADDO (O2 TSRO O0) ;
   O0 TSRO (O1 ADDO O2) -> (O0 TSRO O1) ADDO (O0 TSRO O2) ;
 
+
+
+  (* ######################## Fst - Snd Ext ####################### *)
+
+  type(FST(s)) -> PROJ1(type(s)) ;
+  type(SND(s)) -> PROJ2(type(s)) ;
+
+  FST(PAIR(s, t)) -> s ;
+  SND(PAIR(s, t)) -> t ;
+  PAIR(FST(s), SND(s)) -> s ;
+
+  DELTA(s, PAIR(t1, t2)) -> DELTA(FST(s), t1) MLTS DELTA(SND(s), t2) ;
+  DELTA(FST(s), FST(t)) MLTS DELTA(SND(s), SND(t)) -> DELTA(s, t) ;
+
+  (B1 TSRB B2) DOT KET(t) -> (B1 DOT KET(FST(t))) MLTS (B2 DOT KET(SND(t))) ;
+  BRA(t) DOT (K1 TSRK K2) -> (BRA(FST(t)) DOT K1) MLTS (BRA(SND(t)) DOT K2) ;
+  BRA(s) DOT ((O1 TSRO O2) MLTK K0) -> ((BRA(FST(s)) MLTB O1) TSRB (BRA(SND(s)) MLTB O2)) DOT K0 ;
+  (O1 TSRO O2) MLTK KET(t) -> (O1 MLTK KET(FST(t))) TSRK (O2 MLTK KET(SND(t))) ;
+  BRA(t) MLTB (O1 TSRO O2) -> (BRA(FST(t)) MLTB O1) TSRB (BRA(SND(t)) MLTB O2) ;
 
 ";
 

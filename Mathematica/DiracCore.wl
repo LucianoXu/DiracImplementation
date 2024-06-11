@@ -42,8 +42,6 @@ TypingRules;
 
 (* The term symbols *)
 PAIR;
-FST;
-SND;
 
 CPX;
 DELTA;
@@ -153,12 +151,6 @@ TypeDeduce[OType[sigma_, tau_]] := OType[TypeDeduce[sigma], TypeDeduce[tau]];
 (* Basis *)
 TypeDeduce[PAIR[s_, t_]] := TypeDeduce[s] ~ProdType~ TypeDeduce[t];
 
-TypeDeduce[FST[s_]] := TypeChecking[FSTTyping[TypeDeduce[s]]];
-TypeChecking[FSTTyping[sigma1_ ~ProdType~ sigma2_]] := sigma1;
-
-TypeDeduce[SND[s_]] := TypeChecking[SNDTyping[TypeDeduce[s]]];
-TypeChecking[SNDTyping[sigma1_ ~ProdType~ sigma2_]] := sigma2;
-
 (* Scalar *)
 TypeDeduce[CPX[alpha_]] := SType;
 
@@ -259,8 +251,6 @@ TypeProjB[OType[T1_, T2_]]:=T2;
 TypeCalc[a_?InDiracCtxQ]:=a/.DiracCtx;
 (*TypeCalc[a_/;MatchQ[a, DefinedPatterns]]:=With[{},Print[a];Print[DiracCtx];a/.DiracCtx];*)
 TypeCalc[PAIR[s_, t_]]:=TypeCalc[s] ~ProdType~ TypeCalc[t];
-TypeCalc[FST[s_]]:=TypeProj1[TypeCalc[s]];
-TypeCalc[SND[s_]]:=TypeProj2[TypeCalc[s]];
 
 TypeCalc[CPX[_]]:=SType;
 TypeCalc[DELTA[_, _]]:=SType;
@@ -308,31 +298,18 @@ DNCoreRules={};
 
 
 (* ::Subsection:: *)
-(*Basis*)
-
-
-RuleBasis1 = FST[PAIR[s_, t_]] -> s;
-AppendTo[DNCoreRules, RuleBasis1];
-
-RuleBasis2 = SND[PAIR[s_, t_]] -> t;
-AppendTo[DNCoreRules, RuleBasis2];
-
-RuleBasis3 = PAIR[FST[t_], SND[t_]] -> t;
-AppendTo[DNCoreRules, RuleBasis3];
-
-
-(* ::Subsection:: *)
-(*Scalars*)
+(*Delta*)
 
 
 RuleDelta1 = DELTA[s_, s_] -> CPX[1];
 AppendTo[DNCoreRules, RuleDelta1];
 
-RuleDelta2 = DELTA[s_, PAIR[t1_, t2_]] -> DELTA[FST[s], t1] ~MLTS~ DELTA[SND[s], t2];
+RuleDelta2 = DELTA[PAIR[s1_, s2_], PAIR[t1_, t2_]] -> DELTA[s1, t1] ~MLTS~ DELTA[s2, t2];
 AppendTo[DNCoreRules, RuleDelta2];
 
-RuleDelta3 = DELTA[FST[s_], FST[t_]] ~MLTS~ DELTA[SND[s_], SND[t_]] -> DELTA[s, t];
-AppendTo[DNCoreRules, RuleDelta3];
+
+(* ::Subsection:: *)
+(*Scalars*)
 
 
 RuleScalar1 = CPX[0] ~ADDS~ a_ -> a;
@@ -423,11 +400,11 @@ RuleScalar22 = BRA[s_] ~DOT~ KET[t_] -> DELTA[s, t];
 AppendTo[DNCoreRules, RuleScalar22];
 
 
-RuleScalar23 = (B1_ ~TSRB~ B2_) ~DOT~ KET[t_] -> (B1 ~DOT~ KET[FST[t]]) ~MLTS~ (B2 ~DOT~ KET[SND[t]]);
+RuleScalar23 = (B1_ ~TSRB~ B2_) ~DOT~ KET[PAIR[s_, t_]] -> (B1 ~DOT~ KET[s]) ~MLTS~ (B2 ~DOT~ KET[t]);
 AppendTo[DNCoreRules, RuleScalar23];
 
 
-RuleScalar24 = BRA[t_] ~DOT~ (K1_ ~TSRK~ K2_) -> (BRA[FST[t]] ~DOT~ K1) ~MLTS~ (BRA[SND[t]] ~DOT~ K2);
+RuleScalar24 = BRA[PAIR[s_, t_]] ~DOT~ (K1_ ~TSRK~ K2_) -> (BRA[s] ~DOT~ K1) ~MLTS~ (BRA[t] ~DOT~ K2);
 AppendTo[DNCoreRules, RuleScalar24];
 
 
@@ -439,7 +416,7 @@ RuleScalar26 = (B0_ ~MLTB~ O0_) ~DOT~ K0_ -> B0 ~DOT~ (O0 ~MLTK~ K0);
 AppendTo[DNCoreRules, RuleScalar26];
 
 
-RuleScalar27 = BRA[s_] ~DOT~ ((O1_ ~TSRO~ O2_) ~MLTK~ K0_) -> ((BRA[FST[s]] ~MLTB~ O1) ~TSRB~ (BRA[SND[s]] ~MLTB~ O2)) ~DOT~ K0;
+RuleScalar27 = BRA[PAIR[s_, t_]] ~DOT~ ((O1_ ~TSRO~ O2_) ~MLTK~ K0_) -> ((BRA[s] ~MLTB~ O1) ~TSRB~ (BRA[t] ~MLTB~ O2)) ~DOT~ K0;
 AppendTo[DNCoreRules, RuleScalar27];
 
 
@@ -635,7 +612,7 @@ RuleMLTK10 = (O1_ ~TSRO~ O2_) ~MLTK~ ((O1p_ ~TSRO~ O2p_) ~MLTK~ K0_) -> ((O1 ~ML
 AppendTo[DNCoreRules, RuleMLTK10];
 
 
-RuleMLTK11 = (O1_ ~TSRO~ O2_) ~MLTK~ KET[t_] -> (O1 ~MLTK~ KET[FST[t]]) ~TSRK~ (O2 ~MLTK~ KET[SND[t]]);
+RuleMLTK11 = (O1_ ~TSRO~ O2_) ~MLTK~ KET[PAIR[s_, t_]] -> (O1 ~MLTK~ KET[s]) ~TSRK~ (O2 ~MLTK~ KET[t]);
 AppendTo[DNCoreRules, RuleMLTK11];
 
 
@@ -683,7 +660,7 @@ RuleMLTB10 = (B0_ ~MLTB~ (O1p_ ~TSRO~ O2p_)) ~MLTB~ (O1_ ~TSRO~ O2_) -> B0 ~MLTB
 AppendTo[DNCoreRules, RuleMLTB10];
 
 
-RuleMLTB11 = BRA[t_] ~MLTB~ (O1_ ~TSRO~ O2_) -> (BRA[FST[t]] ~MLTB~ O1) ~TSRB~ (BRA[SND[t]] ~MLTB~ O2);
+RuleMLTB11 = BRA[PAIR[s_, t_]] ~MLTB~ (O1_ ~TSRO~ O2_) -> (BRA[s] ~MLTB~ O1) ~TSRB~ (BRA[t] ~MLTB~ O2);
 AppendTo[DNCoreRules, RuleMLTB11];
 
 

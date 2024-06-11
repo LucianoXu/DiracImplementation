@@ -964,10 +964,6 @@ Note that the signature here is richer than the one introduced before on typings
 \subsubsection*{\textsf{TYPE-BASIS}}
 \begin{gather*}
   \type((s, t)) \reduce \type(s) \times \type(t)
-  \qquad
-  \type(\fst s) \reduce \pi_1 (\type(s))
-  \qquad
-  \type(\snd s) \reduce \pi_2 (\type(s))
 \end{gather*}
 
 \subsubsection*{\textsf{TYPE-SCALAR}}
@@ -1040,21 +1036,11 @@ Note that the signature here is richer than the one introduced before on typings
 
 \textbf{Remark: } The rewriting rules above are for type calculation. Note that these rules does not enforce type checkings, and should only operate on well-typed expressions.
 
-
-\subsubsection*{\textsf{BASIS}}
-\begin{gather*}
-    \fst (s, t) \reduce s
-    \qquad
-    \snd (s, t) \reduce t
-    \qquad
-    (\fst s, \snd s) \reduce s
-\end{gather*}
-
 \subsubsection*{\textsf{DELTA}}
 \begin{gather*}
   \delta{s, s} \reduce C(1)
   \qquad
-  \delta_{u, (s, t)} \reduce \delta_{\fst u, s} \times \delta_{\snd u, t}
+  \delta_{(s_1, s_2), (t_1, t_2)} \reduce \delta_{s_1, t_1} \times \delta_{s_2, t_2}
 \end{gather*}
 
 \textbf{Remark:} These last two rules are for completion.
@@ -1081,8 +1067,6 @@ Note that the signature here is richer than the one introduced before on typings
    C(\alpha) \times C(\beta) \reduce C(\alpha \times \beta)
   \qquad
    S_1 \times (S_2 + S_3) \reduce S_1 \times S_2 + S_1 \times S_3
-   \\
-  \delta_{\fst u, \fst v}\times\delta_{\snd u, \snd v} \reduce \delta_{u, v}
 \end{gather*}
 
 \subsubsection*{\textsf{SCR-CONJ}}
@@ -1117,8 +1101,8 @@ Note that the signature here is richer than the one introduced before on typings
 \end{gather*}
 
 \begin{gather*}
-  (B_1 \otimes B_2) \cdot \ket{t} \reduce (B_1 \cdot \ket{\fst t}) \times (B_2 \cdot \ket{\snd t}) \\
-  \bra{t} \cdot (K_1 \otimes K_2) \reduce (\bra{\fst t} \cdot K_1) \times (\bra{\snd t} \cdot K_2) \\
+  (B_1 \otimes B_2) \cdot \ket{(s, t)} \reduce (B_1 \cdot \ket{s}) \times (B_2 \cdot \ket{t}) \\
+  \bra{(s, t)} \cdot (K_1 \otimes K_2) \reduce (\bra{s} \cdot K_1) \times (\bra{t} \cdot K_2) \\
   (B_1 \otimes B_2) \cdot (K_1 \otimes K_2) \reduce (B_1 \cdot K_1) \times (B_2 \cdot K_2)
 \end{gather*}
 
@@ -1127,7 +1111,7 @@ Note that the signature here is richer than the one introduced before on typings
 \subsubsection*{\textsf{SCR-SORT}}
 \begin{gather*}
   (B \cdot O) \cdot K \reduce B \cdot (O \cdot K) \\
-  \bra{s} \cdot ((O_1 \otimes O_2) \cdot K) \reduce ((\bra{\fst s} \cdot O_1) \otimes (\bra{\snd t} \cdot O_2)) \cdot K \\
+  \bra{(s, t)} \cdot ((O_1 \otimes O_2) \cdot K) \reduce ((\bra{s} \cdot O_1) \otimes (\bra{t} \cdot O_2)) \cdot K \\
   (B_1 \otimes B_2) \cdot ((O_1 \otimes O_2) \cdot K) \reduce ((B_1 \cdot O_1) \otimes (B_2 \cdot O_2)) \cdot K \\
 \end{gather*}
 
@@ -1193,7 +1177,7 @@ Note that the signature here is richer than the one introduced before on typings
   \qquad
   (O_1 \cdot O_2) \cdot K \reduce O_1 \cdot (O_2 \cdot K) \label{rule: ketbradiff1} \\
   (O_1 \otimes O_2) \cdot ((O_1' \otimes O_2') \cdot K) \reduce ((O_1 \cdot O_1') \otimes (O_2 \cdot O_2')) \cdot K \label{rule: ketbradiff2} \\
-  (O_1 \otimes O_2) \cdot \ket{t} \reduce (O_1 \cdot \ket{\fst t}) \otimes (O_2 \cdot \ket{\snd t}) \notag \\
+  (O_1 \otimes O_2) \cdot \ket{(s, t)} \reduce (O_1 \cdot \ket{s}) \otimes (O_2 \cdot \ket{t}) \notag \\
   (O_1 \otimes O_2) \cdot (K_1 \otimes K_2) \reduce (O_1 \cdot K_1) \otimes (O_2 \cdot K_2) \notag
 \end{gather}
 
@@ -1425,10 +1409,23 @@ This extension rules are automatically added for all rules encoded in \texttt{Ci
 
 \subsection{Termination of $R_\textsf{DN}$}
 
-Attempted to prove termination by modularity of simple terminating property. Not successful: cannot cut the whole system into several simply terminating one. Notice the rule $\delta_{s, (u, v)} \reduce \delta_{\fst s, u} \times \delta_{\snd s, v}$.
+Termination of TRS guarantees that there will never be infinite rewriting chains. It is also a key gradient for proving confluence from local confluence. 
 
-Cannot find the interpretation to positive integers.
+To prove the large TRS $R_\textsf{DN}$ is terminating, we first slice the whole TRS $R_\textsf{DN}$ into small pieces, and use the automated tool \texttt{AProVE} to prove the CE-termination of each. Then the termination $R_\textsf{DN}$ is implied by the modularity theorem.
 
+CE-termination is a stronger form of termination, which add an extra requirement of ``terminating under non-deterministic collapses''.
+
+\begin{definition}[CE-termination] \cite{Gramlich1994}
+  A term rewriting system $R$ is \textbf{CE-terminating} if $R \cup \{G(x, y) \reduce x, G(x, y) \reduce y\}$ is terminating, where $G$ is a fresh symbol and $x, y$ are variables.
+\end{definition}
+
+Modularity of CE-termination means we can slice the whole TRS into pieces satisfying certain constraints, and decompose the proof of CE-termintation into that of the TRS pieces. Here we will decompose $R_\textsf{DN}$ into \textit{constructor-sharing} TRS pieces, which is defined as follows.
+
+\begin{definition}[defined symbols and constructors]
+  Let $R$ be a TRS on signature $\Sigma$. The set $\mathcal{D}$ of \textbf{defined symbols} consists of the those appears at the root of the left hand side of some rule, i.e., $\mathcal{D} \equiv \{ \mathrm{root}(l)\ |\ l \reduce r \in R \}$. The set $\mathcal{C}$ of \textbf{constructors} are defined as the remaining symbols $\Sigma / \mathcal{D}$.
+\end{definition}
+
+The idea behind defined symbols and constructors is to compare term rewriting with the computation of functional programs. Two TRS's $R_1$ and $R_2$ are called \textit{constructor-sharing} if they share at most constructors, i.e., $\Sigma_1 \cap \Sigma_2 = \mathcal{C}_1 \cup \mathcal{C}_2$. It is equivalent to $\mathcal{D}_1 \cap \mathcal{D}_2 = \emptyset$.
 
 
 \subsection{Confluence by Modularity}

@@ -19,10 +19,7 @@ O(PROJK(T1), PROJB(T1)) -> T1
 PROJK(O(T1, T2)) -> T1
 PROJB(O(T1, T2)) -> T2
 
-
 type(PAIR(s, t)) -> PROD(type(s), type(t))
-type(FST(s)) -> PROJ1(type(s))
-type(SND(s)) -> PROJ2(type(s))
 
 type(C(a)) -> S
 type(DELTA(s, t)) -> S
