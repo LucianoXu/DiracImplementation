@@ -1,0 +1,43 @@
+
+\section{Implementation}
+
+In order to test the capability of our design, we implemented the language and algorithm in \textit{Mathematica}, and experimented with a broad range of examples from different fields and topics in quantum computing. The result suggests that our language is capable to express many important statements, and can correctly decide all encoded problems efficiently.
+
+\subsection{Mathematica Implementation}
+Our tool implementation is provided as a program package written in the \textit{Wolfram Language} (i.e., Mathematica). 
+% In general, the design of Mathematica can be considered as an extended version of \texttt{LISP}. 
+Mathematica is a flexible functional programming language and implementation, where programs and states are encoded akin to LISP expressions, and calculations are powered by pattern matching and rewriting. Besides, it is an outstanding computer algebra system that can automatically solve a large scope of mathematical problems.
+
+There are several reasons why we favor Mathematica over other languages like \texttt{Python} or \texttt{OCaml}.
+One reason is, that universal algebra fits well in the LISP style calculation, and rewritings can be implemented directly by the built-in matching and substitution.
+Another reason is the built-in algebra system for complex numbers. This relates to the decidability of reals: although we know that the real closed field is decidable, it does not include several symbols that often appear in quantum computing: $e^x$, $\mathrm{cos}(t)$, $\mathrm{sin}(t)$ and so on. The algebra system in Mathematica is a practical solution to it.
+Thirdly, the flexibility of Mathematica enables convenient interactive deductions. For example, we can introduce customized constructions, e.g. partial trace and swap, and extend the expressiveness of the language at the runtime. Such flexibility also allows us to control the rewriting process, assist in the deduction by manually making involved rewritings when necessary.
+
+We demonstrate the usage of our tool by the next example from \texttt{CoqQ}.
+
+\begin{example}
+  \label{ex: MMA}
+Check the equivalence
+  \[
+    \mathrm{tr}_1(so2choi(\mathcal{E}) \cdot (X^\top \otimes I)) = \mathcal{E}(X),
+  \]
+where $\mathcal{E}$ is a quantum channel, $\mathrm{tr}_1(A)$ is the partial trace over the first subsystem of $A$, and $so2choi$ transform the super operator to its Choi representation.
+\end{example}
+
+Quantum channels are completely positive super operators, and we can encode it in the Kraus operator sum representation, meaning that $\mathcal{E}(X) = \sum_{i \in \mathbf{U}} E_i X E_i^\dagger$. Then we construct the two ``high-level'' functions using big operators:
+
+  \begin{gather*}
+    \mathrm{tr}_1(A) \equiv \sum_{i\in\mathbf{U}}\sum_{j\in\mathbf{U}} (\sum_{k\in\mathbf{U}} \bra{k, i} A \ket{k, j}) \ket{i}\bra{j},
+    \qquad
+    so2choi(E) \equiv \sum_{i\in\mathbf{U}}\sum_{j\in\mathbf{U}} \ket{i}\bra{j} \otimes (\sum_{k\in\mathbf{U}} E_k \ket{i}\bra{j} E_k^\dagger).
+  \end{gather*}
+
+  Finally the equivalence is checked automatically by the tool. See Fig.\ref{fig: MMA ex} for the code implementation.
+
+\begin{figure*}
+  \includegraphics*[width=0.8\textwidth]{fig/MMAexample.png}
+  \caption{The code encoding Example.\ref{ex: MMA} \yx{I can consider add pretty notation outputs to the code.}}
+  \label{fig: MMA ex}
+\end{figure*}
+
+Actually, the equality also holds if $\mathcal{E}$ is a general super operator. But this cannot be checked for the time being, since our language does not yet directly support super operators.

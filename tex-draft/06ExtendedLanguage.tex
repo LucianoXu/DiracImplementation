@@ -1,0 +1,204 @@
+
+\section{Dirac Notation Extended Language}
+
+Necessary of extended language: the following logic cannot be implemented by a simple term rewriting system.
+- big operator contains bind variables
+- axioms for reducing delta
+
+\subsection{Syntax, Typing and Semantics}
+\begin{definition}[DNE]
+    The \textbf{language of Dirac Notation Extended}, denoted as $\textsf{DNE}(\Sigma_\mathcal{B}, \Sigma_\mathcal{S})$, consists of the same sorts as the core language and the following new symbols:
+    \begin{align*}
+        & \text{(set type)} && T ::= \texttt{Set}(\sigma) \\
+        & \text{(set)} && M ::= x\ |\ \mathbf{U}(\sigma)\ |\ M \times M \\
+        & \text{(extended Dirac notation)} && S ::= \sum_{i \in M} S
+        \qquad K ::= \sum_{i \in M} K
+        \qquad B ::= \sum_{i \in M} B
+        \qquad O ::= \sum_{i \in M} O
+    \end{align*}
+    The index $i$ for summation is a bind variable, and $M$ is the variable for the multiset of summation. The common equivalence involving bind variables are adopted here: $\alpha$-conversion and substitutions.
+\end{definition}
+
+% typing
+
+\yx{some typing calculation rules are needed here.}
+
+The typing rules of DNE consist of those for DN and the following rules.
+
+\textsc{(Set)}
+\begin{gather*}
+  \frac{}{\Gamma \vdash \mathbf{U}(\sigma) : \texttt{Set}(\sigma)}
+  \qquad
+  \frac{\Gamma \vdash M_1 : \texttt{Set}(\sigma) \qquad \Gamma \vdash M_2 : \texttt{Set}(\tau)}{\Gamma \vdash M_1 \times M_2 : \texttt{Set}(\sigma \times \tau)}
+\end{gather*}
+
+\textsc{(Big-op)}
+\begin{gather*}
+  \frac{\Gamma \vdash M : \texttt{Set}(\sigma) \qquad \Gamma::(i : \sigma) \vdash S : \Sc}{\Gamma \vdash \sum_{i \in M} S : \Sc}
+  \qquad
+  \frac{\Gamma \vdash M : \texttt{Set}(\sigma) \qquad \Gamma::(i : \sigma) \vdash K : \K(\tau)}{\Gamma \vdash \sum_{i \in M} K : \K(\tau)} \\
+  \\
+  \frac{\Gamma \vdash M : \texttt{Set}(\sigma) \qquad \Gamma::(i : \sigma) \vdash B : \B(\tau)}{\Gamma \vdash \sum_{i \in M} B : \B(\tau)}
+  \qquad
+  \frac{\Gamma \vdash M : \texttt{Set}(\sigma) \qquad \Gamma::(i : \sigma) \vdash O : \Op(\tau, \rho)}{\Gamma \vdash \sum_{i \in M} O : \Op(\tau, \rho)}
+\end{gather*}
+
+Note the typing for the big operator sum requires checking the body type with updated context $\Gamma :: (i : \sigma)$. This indicate that the variable $i$ is a bind variable with the scope limited to the body expression. 
+
+\begin{definition}[semantics of extended Dirac notation]
+  The semantics of the extended Dirac notations are defined as follows:
+  \begin{align*}
+    & \text{(Set Types)} && \begin{aligned}
+      \sem{\texttt{Set}(\sigma)} \equiv 2^{\sem{\sigma}},
+    \end{aligned} \\
+    & \text{(Set)} && \begin{aligned}
+      \sem{\mathbf{U}(\sigma)} \equiv \sem{\sigma},
+      \qquad
+      \sem{M_1 \times M_2} \equiv \sem{M_1} \times \sem{M_2},
+    \end{aligned} \\
+    \\
+    & \text{(Big-op)} && \begin{aligned}
+      & \sem{\sum_{i \in M} S}^v \equiv \sum_{m \in \sem{M}} \sem{S}^{v;\ i\mapsto m},
+      \qquad
+      \sem{\sum_{i \in M} K}^v \equiv \sum_{m \in \sem{M}} \sem{K}^{v;\ i\mapsto m},
+      \\
+      & \sem{\sum_{i \in M} B}^v \equiv \sum_{m \in \sem{M}} \sem{B}^{v;\ i\mapsto m},
+      \qquad
+      \sem{\sum_{i \in M} O}^v \equiv \sum_{m \in \sem{M}} \sem{O}^{v;\ i\mapsto m}.
+    \end{aligned}
+  \end{align*}
+\end{definition}
+
+Note that $v;\ i \mapsto m$ means the valuation that updates $v$ with variable $i$ mapping to $m$.
+
+\section{Extended Language Decision Procedure}
+Checking equivalence of expressions with big operators needs more involved techniques. 
+Therefore, the decision procedure of the extended language is a combination of (conditional) rewriting rules, one-time operations and a unification algorithm. They are introduced in order of application in the following.
+
+% \subsubsection*{\textsf{BETA-REDUCTION}}
+% \begin{gather*}
+%   (\lambda x.A)\ t \reduce A[x:=t]
+% \end{gather*}
+% \textbf{Reamrk:} We need abstraction and application to represent Dirac notations dependent on some variable. For example, $\sum_{i \in M} v_i$.
+
+\subsection{Rewriting Rules}
+The first part of the decision procedure is the rewriting rules.
+
+\subsubsection*{\textsf{SET-SIMP}}
+\begin{gather*}
+  \mathbf{U}(\sigma) \times \mathbf{U}(\tau) \reduce \mathbf{U}(\sigma \times \tau)
+\end{gather*}
+
+\subsubsection*{\textsf{SUM-ELIM}}
+\begin{gather*}
+  \sum_{i \in M} C(0) \reduce C(0)
+  \qquad
+  \sum_{i \in M} \mathbf{0}_\mathcal{K}(\sigma) \reduce \mathbf{0}_\mathcal{K}(\sigma)
+  \qquad
+  \sum_{i \in M} \mathbf{0}_\mathcal{B}(\sigma) \reduce \mathbf{0}_\mathcal{B}(\sigma)
+  \qquad
+  \sum_{i \in M} \mathbf{0}_\mathcal{O}(\sigma, \tau) \reduce \mathbf{0}_\mathcal{O}(\sigma, \tau)\\
+  \mathbf{1}_\mathcal{O}(\sigma) \reduce \sum_{i \in \mathbf{U}(\sigma)} \ket{i}\otimes\bra{i}
+\end{gather*}
+
+One common condition is attached to the following four rules: variable $i$ does not have free appearance in term $s$.
+
+Here $S.A$ is interpreted as three cases: $S.K$, $S.B$ and $S.O$. Here $A[i:=s]$ denotes the term $A$ with vairable $i$ substituted by the term $s$.
+\begin{gather*}
+  \sum_{i \in \mathbf{U}(\sigma)} \delta_{i, s} \reduce C(1)
+  \qquad
+  \sum_{i \in \mathbf{U}(\sigma)} (\delta_{i, s} \times S) \reduce S[i:=s] \\
+  \sum_{i \in \mathbf{U}(\sigma)} (\delta_{i, s}.A) \reduce A[i:=s]
+  \qquad
+  \sum_{i \in \mathbf{U}(\sigma)} ((\delta_{i, s} \times S).A) \reduce S[i:=s].A[i:=s]
+\end{gather*}
+\begin{gather*}
+  \sum_{i \in M} \sum_{j \in M} \delta_{i, j} \reduce \sum_{j \in M} C(1)
+  \qquad
+  \sum_{i \in M} \sum_{j \in M} (\delta_{i, j} \times S) \reduce \sum_{j \in M} S[i:=j] \\
+  \sum_{i \in M} \sum_{j \in M} (\delta_{i, j}.A) \reduce \sum_{j \in M} A[i:=j]
+  \qquad
+  \sum_{i \in M} \sum_{j \in M} ((\delta_{i, j} \times S).A) \reduce \sum_{j \in M} S[i:=j].A[i:=j]
+\end{gather*}
+\textbf{Remark:} To avoid problems, we assume that bind variables cannot be substituted into sum expressions. For example:
+$$
+\sum_{i \in M} \delta_{i, s}[s:=i^2] = \sum_{j \in M} \delta_{j, i^2}.
+$$
+In other words, the variables will never implicitly depend on bind variables.
+
+\subsubsection*{\textsf{SUM-PUSH}}
+
+Here $A$ is interpreted in three sorts: ket, bra and operator.
+The bind variable $i$ does not have free appearances in $X$.
+Here $A \cdot B$ is interpreted as four cases: $B \cdot K$, $O \cdot K$, $B \cdot O$ and $O_1 \cdot O_2$. $A \otimes B$ is interpreted as four cases: $K_1 \otimes K_2$, $B_1 \otimes B_2$, $K \otimes B$ and $O_1 \otimes O_2$.
+
+\begin{gather*}
+  (\sum_{i \in M} S) \times X \reduce \sum_{i \in M} (S \times X)
+  \qquad
+  (\sum_{i \in M} S)^* \reduce \sum_{i \in M} S^* \\
+  (\sum_{i \in M} A)^\dagger \reduce \sum_{i \in M} A^\dagger
+  \qquad
+  (\sum_{i \in M} A)^\top \reduce \sum_{i \in M} A^\top \\
+  X.(\sum_{i \in M} A) \reduce \sum_{i \in M} (X.A)
+  \qquad
+  (\sum_{i \in M} S). X \reduce \sum_{i \in M} (S.X) \\
+  (\sum_{i \in M} A) \cdot X \reduce \sum_{i \in M} (A \cdot X) 
+  \qquad
+  X \cdot (\sum_{i \in M} B) \reduce \sum_{i \in M} (X \cdot B) \\
+  (\sum_{i \in M} A) \otimes X \reduce \sum_{i \in M} (A \otimes X) 
+  \qquad
+  X \otimes (\sum_{i \in M} B) \reduce \sum_{i \in M} (X \otimes B)
+\end{gather*}
+
+\subsubsection*{About \textsf{SUM-DIST}: push in or pull out?}
+We can flip the direction of the rules in \textsf{SUM-DIST} to pull elements out of the summation. I believe the difference lies in the \textbf{information of bind variable dependencices}.
+
+When pushing inside, the information of bind variable independence is lost. This makes elimination rule less complete. Maybe we want to do in the opposite way: pull everything out as much as possible. Those rules involve checking whether the subterm to be pulled out is independent on the bind variable. But this strategy makes matching elimination rule simpler.
+
+\yx{Discuss: to pull out or push in ...}
+
+% \subsubsection*{\textsf{SUM-ADD}}
+% Here the addition $A + B$ is interpreted in four sorts: scalar, ket, bra and operator.
+% \begin{align*}
+%   & (\sum_{i \in M} A) + (\sum_{j \in N} B) \reduce \sum_{k \in M \cup N} (A[i:=k] + B[j:=k])
+% \end{align*}
+\subsubsection*{SUM-ADD}
+\begin{gather*}
+  (\sum_{i \in M} X) + (\sum_{j \in M} Y) = \sum_{k \in M} (X[i:=k] + Y[j:=k])
+\end{gather*}
+
+\subsubsection*{SUM-INDEX}
+\yx{Need to adjust the following rules according to typing information.}
+\begin{gather*}
+  \frac{\fst i \text{ not free in } A \vee \snd i \text{ not free in } A}{\sum_{i\in\mathbf{U}(\sigma \times \tau)}A \reduce \sum_{j\in\mathbf{U}(\sigma)}\sum_{k\in\mathbf{U}(\tau)}A[\fst i:=j, \snd i:=k, i:=(j,k)]}
+  \\
+  \\
+  \frac{\fst i \text{ not free in } A \vee \snd i \text{ not free in } A}{\sum_{i\in M_1 \times M_2}A \reduce \sum_{j\in M_1}\sum_{k\in M_2}A[\fst i:=j, \snd i:=k, i:=(j,k)]}
+  \\
+  \\
+  \frac{(j, k) \text{ not free in } A \wedge i, j \text{ appear in } A \text{ only as } (i, j)}{\sum_{j\in M_1}\sum_{k\in M_2}A \reduce \sum_{i\in M_1\times M_2}A[(j,k):=i]}
+\end{gather*}
+
+\subsection{Entry Expansion}
+
+The following axioms hold for ket, bra and operators respectively. 
+\begin{gather*}
+  \sum_{i \in \mathbf{U}(\pi_K(\type(K)))} (\bra{i} \cdot K).\ket{i} = K
+  \qquad
+  \sum_{i \in \mathbf{U}(\pi_B(\type(B)))} (B \cdot \ket{i}).\bra{i} = b
+  \\
+  \sum_{i \in \mathbf{U}(\pi_K(\type(A)))} \sum_{j \in \mathbf{U}(\pi_B(\type(A)))} (\bra{i} A \ket{j}).\ket{i}\bra{j} = A
+\end{gather*}
+
+During equivalence checking, sometimes its necessary rewrite from right to left to expand variables. We call this technique ``entry expansion''. This also corresponds to inserting identity operators $\sum_{i}\ket{i}\bra{i}$ in human proof, and this is essentially reducing the decision problem to reals, which is the technique used in proving the decidability of linear algebra in \cite{Solovay2012}.
+
+During the equivalence checking, the algorithm will expand the atomic variables of ket, bra and operator.
+
+\subsection{Considering $\alpha$-conversion}
+
+Our goal is to design the algorithm that checks whether two terms are equivalent. Ideally this can be achieved by rewriting to normal forms, but for complicated scenarios, the normal form may not exist. This is the case with transpose and big operator. We have these axioms: 
+\begin{align*}
+& \text{(SUM-SWAP)} && \sum_{i \in M} \sum_{j \in N} A = \sum_{j \in N} \sum_{i \in M} A 
+\end{align*}
+
+Our algorithm for deciding equivalence takes these equations into consideration....

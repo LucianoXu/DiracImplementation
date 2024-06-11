@@ -1,0 +1,864 @@
+\section{Decision Procedure}
+
+
+\subsection{Axiomatic Semantics}
+
+To further study the properties of this language, we try to axiomatize the equivalence in the denotational semantics as a proof system with equations, which results in the axiomatic semantics $AX$. The formal proof system should be sound in the sense that the axioms as equations hold in the denotational semantics. Meanwhile, the equivalence defined by axioms should be as comprehensive as possible compared to that in the denotational semantics, enabling it to cover most of the equivalence relations in which we are interested.
+
+The symbol $\vdash_{AX}$ is omitted for the axioms.
+
+\yx{axioms need modifying}
+
+\begin{definition}[axiomatic semantics of complex numbers]
+  \begin{gather*}
+    0 + \alpha = \alpha
+    \qquad
+    \alpha + \beta = \beta + \alpha
+    \qquad
+    (\alpha + \beta) + \gamma = \alpha + (\beta + \gamma) \\
+    0 \times \alpha = 0
+    \qquad
+    1 \times \alpha = \alpha
+    \qquad
+    \alpha \times \beta = \beta \times \alpha \\
+    (\alpha \times \beta) \times \gamma = \alpha \times (\beta \times \gamma) \qquad
+    \alpha \times (\beta + \gamma) = \alpha \times \beta + \alpha \times \gamma \\
+    (\alpha + \beta)^* = \alpha^* + \beta^*
+    \qquad
+    (\alpha \times \beta)^* = \alpha^* \times \beta^*
+    \qquad
+    (\alpha^*)^* = \alpha
+  \end{gather*}
+\end{definition}
+Compared to the ``scalar rewrite system'' in the Lineal paper\cite{Arrighi2017}, here we have three more axioms for the conjugate symbol.
+
+
+\begin{definition}[BASIS]
+  \begin{gather*}
+      \fst (s, t) = s
+      \qquad
+      \snd (s, t) = t
+  \end{gather*}
+\end{definition}
+
+Although in the denotational semantics we have to consider the case where projections are applied on atomic basis, we can omit the two rules 
+$
+\fst a = a,
+\snd a = a
+$
+in the axiomatic semantics, as the extra definition in the denotational semantics are only necessary for technical reasons.
+
+
+
+Many axioms have the similar form for scalars, bra, ket and operators. In the following we express them in a unified style and use the letter $D$ to represent some Dirac notation term of the appropriate sort.
+
+\begin{definition}[UNI-LINEAR]
+  \begin{gather*}
+    D + \mathbf{0} = D
+    \qquad
+    D_1 + D_2 = D_2 + D_1
+    \qquad
+    (D_1 + D_2) + D_3 = D_1 + (D_2 + D_3) \\
+    C(0).D = \mathbf{0}
+    \qquad
+    C(1).D = D
+    \qquad
+    S.\mathbf{0} = \mathbf{0} \\
+    S_1.(S_2.D) = (S_1 \times S_2).D
+    \qquad
+    S.(D_1 + D_2) = S.D_1 + S.D_2
+  \end{gather*}
+\end{definition}
+
+\begin{definition}[UNI-ADJOINT]
+  \begin{gather*}
+    \textbf{0}^\dagger = \textbf{0}
+    \qquad
+    \mathbf{1}_\mathcal{O}^\dagger = \mathbf{1}_\mathcal{O}
+    \qquad
+    \ket{t}^\dagger = \bra{t}
+    \qquad
+    (D^\dagger)^\dagger = D \\
+    (S.D)^\dagger = S^*.(D^\dagger)
+    \qquad
+    (D_1 + D_2)^\dagger = D_1^\dagger + D_2^\dagger \\
+    (D_1 \cdot D_2)^\dagger = D_2^\dagger \cdot D_1^\dagger \\
+    (K_1 \otimes K_2)^\dagger = K_1^\dagger \otimes K_2^\dagger
+    \qquad
+    (B_1 \otimes B_2)^\dagger = B_1^\dagger \otimes B_2^\dagger
+    \qquad
+    (O_1 \otimes O_2)^\dagger = O_1^\dagger \otimes O_2^\dagger \\
+    (K \otimes B)^\dagger = B^\dagger \otimes K^\dagger
+  \end{gather*}
+\end{definition}
+
+
+\begin{definition}[UNI-DOT]
+  \begin{gather*}
+      \textbf{0} \cdot D = \textbf{0}
+      \qquad
+      \textbf{1}_\mathcal{O} \cdot D = D \\
+      D_1 \cdot (S.D_2) = S.(D_1 \cdot D_2)
+      \qquad
+      D_0 \cdot (D_1 + D_2) = D_0 \cdot D_1 + D_0 \cdot D_2 \\
+      D_0 \cdot (D_1 \cdot D_2) = (D_0 \cdot D_1) \cdot D_2 \\
+      (B_1 \otimes B_2) \cdot (K_1 \otimes K_2) = (B_1 \cdot K_1) \times (B_2 \cdot K_2) \\
+      (O_1 \otimes O_2) \cdot (K_1 \otimes K_2) = (O_1 \cdot O_1) \times (B_2 \cdot K_2) \\
+      (B_1 \otimes B_2) \cdot (O_1 \otimes O_2) = (B_1 \cdot K_1) \times (O_2 \cdot O_2) \\
+      (O_1 \otimes O_2) \cdot (O_1' \otimes O_2') = (O_1 \cdot O_1') \times (O_2 \cdot O_2') \\
+      (K_1 \otimes B_1) \cdot (K_2 \otimes B_2) = (B_1 \cdot K_2) . (K_1 \otimes B_2)
+  \end{gather*}
+\end{definition}
+
+
+\begin{definition}[UNI-TENSOR]
+  \begin{gather*}
+      \mathbf{0} \otimes D = \mathbf{0}
+      \qquad
+      D \otimes \mathbf{0} = \mathbf{0}
+      \qquad
+      \mathbf{1}_\mathcal{O} \otimes \mathbf{1}_\mathcal{O} = \mathbf{1}_\mathcal{O} \\
+      \ket{s} \otimes \ket{t} =\ket{(s, t)} \\
+      D_1 \otimes (S.D_2) = S.(D_1 \otimes D_2)
+      \qquad
+      D_0 \otimes (D_1 + D_2) = D_0 \otimes D_1 + D_0 \otimes D_2 \\
+      (K_1 \otimes B) \cdot K_2 = (B \cdot K_2).K_1
+      \qquad
+      B_1 \cdot (K \otimes B_2) = (B_1 \cdot K).B_2 \\
+      (K \otimes B) \cdot O = K \otimes (B \cdot O)
+      \qquad
+      O \cdot (K \otimes B) = (O \cdot K) \otimes B \\
+      (K_1 \otimes B_1) \otimes (K_2 \otimes B_2) = (K_1 \otimes K_2) \otimes (B_1 \otimes B_2) \\
+  \end{gather*}
+\end{definition}
+
+Note the axiom $\ket{s} \otimes \ket{t} =\ket{(s, t)}$ here. The combination of two subsystems can either be expressed as tensor product in linear algebra (on the left), or by data structure of pairing (on the right). This points to the isomorphism $\mathcal{H}_{A \times B} \cong \mathcal{H}_A \otimes \mathcal{H}_B$.
+
+Because the symbols and semantics of scalars are different, we list the axioms of scalars as follows.
+
+\begin{definition}[SCR-BASIC]
+  \begin{gather*}
+    C(0) + S = S
+    \qquad
+    S_1 + S_2 = S_2 + S_1
+    \qquad
+    (S_1 + S_2) + S_3 = S_1 + (S_2 + S_3) \\
+    C(0) \times S = C(0)
+    \qquad
+    C(1) \times S = S
+    \qquad
+    S_1 \times S_2 = S_2 \times S_1 \\
+    (S_1 \times S_2) \times S_3 = S_1 \times (S_2 \times S_3)
+    \qquad
+    S_1 \times (S_2 + S_3) = S_1 \times S_2 + S_1 \times S_3 \\
+    C(\alpha) + C(\beta) = C(\alpha + \beta)
+    \qquad
+    C(\alpha) \times C(\beta) = C(\alpha \times \beta)
+    \qquad
+    C(\alpha)^* = C(\alpha^*) \\
+    \delta_{s, t}^* = \delta_{s, t}
+    \qquad
+    (S_1 + S_2)^* = S_1^* + S_2^*
+    \qquad
+    (S_1 \times S_2)^* = S_1^* \times S_2^*
+    \qquad
+    (S^*)^* = S
+    \qquad
+    (B \cdot K)^* = K^\dagger \cdot B^\dagger
+  \end{gather*}  
+\end{definition}
+
+\begin{definition}[SCR-DELTA]
+  \label{def: SCR-DELTA}
+  \begin{gather*}
+    \delta_{s, s} = C(1) \\
+    s, t \text{ are different constants} \vdash_{AX} \delta_{s, t} = C(0)  \tag{*} \\
+    (\bigwedge_i s_i = t_i) \leftrightarrow (\bigwedge_i s_i' = t_i') \vdash_{AX} \prod_i \delta_{s_i, t_i} = \prod_i \delta_{s_i', t_i'} \tag{**}
+  \end{gather*}
+\end{definition}
+
+An example for the (**) axiom is $\delta_{i, j} \times \delta_{j, k} = \delta_{i, k} \times \delta_{j, k}$. This means the reasoning of Delta operators also involve some propositional logic.
+
+\begin{definition}[SCR-DOT]
+  \begin{gather*}
+    \mathbf{0} \cdot K = C(0) \\
+    B \cdot (S.K) = S \times (B \cdot K) \\
+    B \cdot (K_1 + K_2) = B_0 \cdot K_1 + B_0 \cdot K_2 \\
+    \bra{s} \cdot \ket{t} = \delta_{s, t} \\
+    (B_1 \otimes B_2) \cdot (K_1 \otimes K_2) = (B_1 \cdot K_1) \times (B_2 \cdot K_2)
+  \end{gather*}
+\end{definition}
+
+The symmetric rules can be deduced. For example,
+\begin{align*}
+(B_1 + B_2) \cdot K & = (((B_1 + B_2) \cdot K)^*)^* \\
+& = (K^\dagger \cdot (B_1 + B_2)^\dagger)^* \\
+& = (K^\dagger \cdot (B_1^\dagger + B_2^\dagger))^* \\
+& = (K^\dagger \cdot B_1^\dagger + K^\dagger \cdot B_2^\dagger)^* \\
+& = (K^\dagger \cdot B_1^\dagger)^* + (K^\dagger \cdot B_2^\dagger)^* \\
+& = (B_1^\dagger)^\dagger \cdot (K^\dagger)^\dagger + (B_2^\dagger)^\dagger \cdot (K^\dagger)^\dagger \\
+& = B_1 \cdot K + B_2 \cdot K.
+\end{align*}
+
+The axiomatic semantics are concluded above. To mitigate the formalization workload, its consistency compared to the denotational semantics is not directly proved here. Instead, we first prove the completeness of the term rewriting system w.r.t. the axioms, then prove the soundness of all the rewriting rules in \texttt{CoqQ} directly, which in the end implies that the axiomatic semantics is not stronger than the denotational one.
+
+
+\section{Core Language Decision Procedure}
+\label{sec: typed_dirac_rules}
+
+Although the formal system implies the equivalence of Dirac notations we desire, it does not point out how to correctly apply the axioms. Therefore, we still need to design an algorithm to decide the equivalence. A classical approach is to assign directions to the application of equations, resulting in the term rewriting system.
+The axiomatic semantics then serve as the criterion for the proof of soundness and completeness of the rewriting algorithm.
+
+The decision procedure of the core language is purely an AC term rewriting system.
+
+\subsection{AC Term Rewriting Algorithm}
+It is reasonable to assume that we have the rewriting term system to decide the complex number in $\Sigma_\mathcal{C}$ and atomic basis in $\Sigma_\mathcal{A}$, which are described in the following.
+
+\begin{definition}[TRS $R_{\Sigma_\mathcal{A}}$]
+  For the atomic basis language $\Sigma_\mathcal{A}$, the TRS $R_{\Sigma_\mathcal{A}}$ is any terminating and confluent TRS.
+\end{definition}
+
+
+\begin{definition}[TRS $R_{\Sigma_\mathcal{C}}$]
+  For the complex number language $\Sigma_\mathcal{C}$, the TRS $R_{\Sigma_\mathcal{C}}$ is an TRS such that:
+  \begin{itemize}
+    \item $R_{\Sigma_\mathcal{C}}$ is terminating and ground confluent,
+    \item for all closed terms $\alpha$, $\beta$ and $\gamma$, the pair of terms
+    \begin{itemize}
+        \item $0 + \alpha$ and $\alpha$,
+        \item $0 \times \alpha$ and $0$,
+        \item $1 \times \alpha$ and $\alpha$,
+        \item $\alpha \times (\beta + \gamma)$ and $(\alpha \times \beta) + (\alpha \times \gamma)$,
+        \item $(\alpha + \beta) + \gamma$ and $\alpha + (\beta + \gamma)$,
+        \item $\alpha + \beta$ and $\beta + \alpha$,
+        \item $(\alpha \times \beta) \times \gamma$ and $\alpha \times (\beta \times \gamma)$,
+        \item $\alpha \times \beta$ and $\beta \times \alpha$,
+        \item $(\alpha + \beta)^*$ and $\alpha^* + \beta^*$,
+        \item $(\alpha \times \beta)^*$ and $\alpha^* \times \beta^*$,
+        \item $(\alpha^*)^*$ and $\alpha$
+    \end{itemize}
+    have the same normal forms,
+    \item $0$ and $1$ are normal terms.
+  \end{itemize}  
+\end{definition}
+
+This definition follows the ``scalar rewrite system'' in Linear\cite{Arrighi2017}.
+
+
+To decide the equivalence of two Dirac notation terms, we will use a variant of standard term rewritings called \textbf{AC-Rewriting} to deal with the associative and commutative symbols such as $+$ and $\times$. 
+But here is one excpetion: the dot symbols in the core language is associative only, just like the multiplication in linear algebra, but one important tool called \texttt{CiME2} we will use later does not support associative only symbols. In this consideration, we have to handle the associativity using rules hard-coded by hand.
+
+\begin{definition} [TRS $R_\textsf{DN}$]
+  The AC-rewrite system for the core language, written as $R_\textsf{DN}$, consists of all the rules in Sec.\ref{sec: typed_dirac_rules}.
+  The AC-symbols are $+$ (for all sorts) and $\times$. The commutative symbol is $\delta_{s, t}$.
+\end{definition}
+
+Note that the signature here is richer than the one introduced before on typings. We have allowed type variables, and added corresponding symbols for typing deductions. In this way, the type calculation can be expressed as rewriting rules, and can be executed at runtime. Even though, the rewriting system does not carry out the type checking, and assumes that the terms are checked and well-typed.
+\yx{Do we need to explicitly exhibit the typing rules?}
+
+\subsubsection*{\textsf{TYPE-CALC}}
+\begin{gather*}
+  \pi_1(\sigma \times \tau) \reduce \sigma 
+  \qquad
+  \pi_2(\sigma \times \tau) \reduce \tau 
+  \\
+  \K(\pi_K(T)) \reduce T
+  \qquad 
+  \pi_K(\K(\sigma)) \reduce \sigma
+  \qquad
+  \B(\pi_B(T)) \reduce T
+  \qquad 
+  \pi_B(\B(\sigma)) \reduce \sigma
+  \\
+  \Op(\pi_K(T), \pi_B(T)) \reduce T
+  \qquad
+  \pi_K(\Op(\sigma, \tau)) \reduce \sigma
+  \qquad
+  \pi_B(\Op(\sigma, \tau)) \reduce \tau
+\end{gather*}
+
+\subsubsection*{\textsf{TYPE-BASIS}}
+\begin{gather*}
+  \type((s, t)) \reduce \type(s) \times \type(t)
+\end{gather*}
+
+\subsubsection*{\textsf{TYPE-SCALAR}}
+\begin{gather*}
+  \type(C(a)) \reduce \Sc
+  \qquad
+  \type(\delta_{s, t}) \reduce \Sc
+  \qquad
+  \type(S_1 + S_2) \reduce \Sc
+  \\
+  \type(S_1 \times S_2) \reduce \Sc
+  \qquad
+  \type(S^*) \reduce \Sc
+  \qquad
+  \type(B \cdot K) \reduce \Sc
+\end{gather*}
+
+\subsubsection*{\textsf{TYPE-KET}}
+\begin{gather*}
+  \type(\mathbf{0}_\mathcal{K}(\sigma)) \reduce \K(\sigma)
+  \qquad
+  \type(\ket{s}) \reduce \K(\type(s))
+  \qquad
+  \type(B^\dagger) \reduce \K(\pi_B(\type(B))) 
+  \\
+  \type(S . K) \reduce \type(K)
+  \qquad
+  \type(K_1 + K_2) \reduce \type(K_1)
+  \qquad
+  \type(O \cdot K) \reduce \K(\pi_K(\type(O)))
+  \\
+  \type(K_1 \otimes K_2) \reduce \K(\pi_K(\type(K_1)) \times \pi_K(\type(K_2)))
+\end{gather*}
+
+\subsubsection*{\textsf{TYPE-BRA}}
+\begin{gather*}
+  \type(\mathbf{0}_\mathcal{B}(\sigma)) \reduce \mathcal{B}(T)
+  \qquad
+  \type(\bra{s}) \reduce \mathcal{B}(\type(s))
+  \qquad
+  \type(K^\dagger) \reduce \mathcal{B}(\pi_K(\type(K)))
+  \\
+  \type(S . B) \reduce \type(B)
+  \qquad
+  \type(B_1 + B_2) \reduce type(B_1)
+  \qquad
+  \type(B \cdot O) \reduce \mathcal{B}(\pi_B(\type(O)))
+  \\
+  \type(B_1 \otimes B_2) \reduce \mathcal{B}(\pi_B(\type(B)) \times \pi_B(\type(B)))
+\end{gather*}
+
+\subsubsection*{\textsf{TYPE-OP}}
+\begin{gather*}
+  \type(\mathbf{0}_\mathcal{O}(\sigma, \tau)) \reduce \mathcal{O}(\sigma, \tau)
+  \qquad
+  \type(\mathbf{1}_\mathcal{O}(\sigma)) \reduce \mathcal{O}(\sigma, \sigma)
+  \\
+  \type(K \otimes B) \reduce \mathcal{O}(\pi_K(\type(K)), \pi_B(\type(B)))
+  \qquad
+  \type(O^\dagger) \reduce \mathcal{O}(\pi_B(\type(O)), \pi_K(\type(O)))
+  \\
+  \type(S . O) \reduce \type(O)
+  \qquad
+  \type(O_1 + O_2) \reduce \type(O_1)
+  \qquad
+  \type(O_1 \cdot O_2) \reduce \mathcal{O}(\pi_K(\type(O_1)), \pi_B(\type(O_2)))
+  \\
+  \type(O_1 \otimes O_2) \reduce \mathcal{O}(\pi_K(\type(O_1)) \times \pi_K(\type(O_2)), \pi_B(\type(O_1)) \times \pi_B(\type(O_2)))
+\end{gather*}
+
+\textbf{Remark: } The rewriting rules above are for type calculation. Note that these rules does not enforce type checkings, and should only operate on well-typed expressions.
+
+\subsubsection*{\textsf{DELTA}}
+\begin{gather*}
+  \delta{s, s} \reduce C(1)
+  \qquad
+  \delta_{(s_1, s_2), (t_1, t_2)} \reduce \delta_{s_1, t_1} \times \delta_{s_2, t_2}
+\end{gather*}
+
+\textbf{Remark:} These last two rules are for completion.
+
+
+\subsubsection*{\textsf{SCR-ADD}}
+\begin{gather*}
+   C(0) + S \reduce S
+  \qquad
+   C(\alpha) + C(\beta) \reduce C(\alpha + \beta)
+  \qquad
+   S + S \reduce C(1 + 1) \times S \\
+   C(\alpha) \times S + S \reduce C(\alpha + 1) \times S
+  \qquad
+   C(\alpha) \times S + C(\beta) \times S \reduce C(\alpha + \beta) \times S
+\end{gather*}
+
+\subsubsection*{\textsf{SCR-MLT}}
+\begin{gather*}
+   C(0) \times S \reduce C(0)
+  \qquad
+   C(1) \times S \reduce S
+  \qquad
+   C(\alpha) \times C(\beta) \reduce C(\alpha \times \beta)
+  \qquad
+   S_1 \times (S_2 + S_3) \reduce S_1 \times S_2 + S_1 \times S_3
+\end{gather*}
+
+\subsubsection*{\textsf{SCR-CONJ}}
+\begin{gather*}
+   C(\alpha)^* \reduce C(\alpha^*)
+  \qquad
+   \delta_{s, t}^* \reduce \delta_{s, t} \\
+   (S_1 + S_2)^* \reduce S_1^* + S_2^*
+  \qquad
+   (S_1 \times S_2)^* \reduce S_1^* \times S_2^*
+  \qquad
+   (S^*)^* \reduce S
+  \qquad
+   (B \cdot K)^* \reduce K^\dagger \cdot B^\dagger
+\end{gather*}
+
+
+\subsubsection*{\textsf{SCR-DOT}}
+\begin{gather*}
+  \mathbf{0}_\mathcal{B}(\sigma) \cdot K \reduce C(0)
+  \qquad
+  B \cdot \mathbf{0}_\mathcal{K}(\sigma) \reduce C(0)
+  \qquad
+  (S.B) \cdot K \reduce S \times (B \cdot K)
+  \qquad
+  B \cdot (S.K) \reduce S \times (B \cdot K) \\
+  (B_1 + B_2) \cdot K \reduce B_1 \cdot K + B_2 \cdot K
+  \qquad
+  B \cdot (K_1 + K_2) \reduce B \cdot K_1 + B \cdot K_2
+  \qquad
+  \bra{s} \cdot \ket{t} \reduce \delta_{s, t} \\
+\end{gather*}
+
+\begin{gather*}
+  (B_1 \otimes B_2) \cdot \ket{(s, t)} \reduce (B_1 \cdot \ket{s}) \times (B_2 \cdot \ket{t}) \\
+  \bra{(s, t)} \cdot (K_1 \otimes K_2) \reduce (\bra{s} \cdot K_1) \times (\bra{t} \cdot K_2) \\
+  (B_1 \otimes B_2) \cdot (K_1 \otimes K_2) \reduce (B_1 \cdot K_1) \times (B_2 \cdot K_2)
+\end{gather*}
+
+\textbf{Remark:} The difficulty here comes from Hilbert space structure. The intuition is that, we decompose the multiplication (inner product) when at least one side is explicitly in tensor product form.
+
+\subsubsection*{\textsf{SCR-SORT}}
+\begin{gather*}
+  (B \cdot O) \cdot K \reduce B \cdot (O \cdot K) \\
+  \bra{(s, t)} \cdot ((O_1 \otimes O_2) \cdot K) \reduce ((\bra{s} \cdot O_1) \otimes (\bra{t} \cdot O_2)) \cdot K \\
+  (B_1 \otimes B_2) \cdot ((O_1 \otimes O_2) \cdot K) \reduce ((B_1 \cdot O_1) \otimes (B_2 \cdot O_2)) \cdot K \\
+\end{gather*}
+
+
+\textbf{Remark:} Because we cannot use associative only symbols, we have to manually encode the decision logic. The first rule sorts the multiplication to the right, which breaks the symmetry of ket and bra. The remaining two rules are for completion.
+
+\subsubsection*{\textsf{KET-ADJ}}
+\begin{gather*}
+  \textbf{0}_\mathcal{B}(\sigma)^\dagger \reduce \textbf{0}_\mathcal{K}(\sigma)
+  \qquad
+  \bra{t}^\dagger \reduce \ket{t}
+  \qquad
+  (K^\dagger)^\dagger \reduce K
+  \qquad
+  (S.B)^\dagger \reduce S^*.(B^\dagger) \\
+  (B_1 + B_2)^\dagger \reduce B_1^\dagger + B_2^\dagger
+  \qquad
+  (B \cdot O)^\dagger \reduce O^\dagger \cdot B^\dagger
+  \qquad
+  (B_1 \otimes B_2)^\dagger \reduce B_1^\dagger \otimes B_2^\dagger
+\end{gather*}
+
+\subsubsection*{\textsf{KET-SCR}}
+\begin{gather*}
+  C(0).K \reduce \textbf{0}_{\mathcal{K}}(\pi_K(\type(K)))
+  \qquad
+  C(1).K \reduce K
+  \qquad
+  S.\textbf{0}_\mathcal{K}(\sigma) \reduce \textbf{0}_\mathcal{K}(\sigma)
+  \\
+  S_1.(S_2.K) \reduce (S_1 \times S_2).K
+  \qquad
+  S.(K_1 + K_2) \reduce S.K_1 + S.K_2
+\end{gather*}
+
+\textbf{Remark: } The first rule reduces scalar multiplication by zero to the zero ket. The type notation of $\mathbf{0}_\mathcal{K}$ is calculated from the type of $K$.
+
+\subsubsection*{\textsf{KET-ADD}}
+\begin{gather*}
+  K + \textbf{0}_\mathcal{K}(\sigma) \reduce K
+  \qquad
+  K + K \reduce C(1 + 1).K
+  \qquad
+  S.K + K \reduce (S + C(1)).K
+  \qquad
+  S_1.K + S_2.K \reduce (S_1 + S_2).K
+\end{gather*}
+
+\subsubsection*{\textsf{KET-MLT}}
+\begin{gather}
+  \textbf{0}_\mathcal{O}(\sigma, \tau) \cdot K \reduce \textbf{0}_\mathcal{K}(\sigma)
+  \qquad
+  O \cdot \mathbf{0}_{\mathcal{K}}(\sigma) \reduce \mathbf{0}_{\mathcal{K}}(\pi_K(\type(O)))
+  \qquad
+  \textbf{1}_\mathcal{O}(\sigma) \cdot K \reduce K \notag \\
+  (S.O) \cdot K \reduce S.(O \cdot K)
+  \qquad
+  O \cdot (S.K) \reduce S.(O \cdot K) \notag \\
+  (O_1 + O_2) \cdot K \reduce O_1 \cdot K + O_2 \cdot K
+  \qquad
+  O \cdot (K_1 + K_2) \reduce O \cdot K_1 + O \cdot K_2 \notag \\
+  (K_1 \otimes B) \cdot K_2 \reduce (B \cdot K_2).K_1
+  \qquad
+  (O_1 \cdot O_2) \cdot K \reduce O_1 \cdot (O_2 \cdot K) \label{rule: ketbradiff1} \\
+  (O_1 \otimes O_2) \cdot ((O_1' \otimes O_2') \cdot K) \reduce ((O_1 \cdot O_1') \otimes (O_2 \cdot O_2')) \cdot K \label{rule: ketbradiff2} \\
+  (O_1 \otimes O_2) \cdot \ket{(s, t)} \reduce (O_1 \cdot \ket{s}) \otimes (O_2 \cdot \ket{t}) \notag \\
+  (O_1 \otimes O_2) \cdot (K_1 \otimes K_2) \reduce (O_1 \cdot K_1) \otimes (O_2 \cdot K_2) \notag
+\end{gather}
+
+\textbf{Remark:} Again, the difficulty comes from space structure. The intuition for reductions is also the same: decompose the multiplication when at least one side is explicitly in tensor product form.
+
+
+\subsubsection*{\textsf{KET-TSR}}
+\begin{gather*}
+  \mathbf{0}_\mathcal{K}(\sigma) \otimes K \reduce \mathbf{0}_\mathcal{K}(\sigma \times \pi_K(\type(K)))
+  \qquad
+  K \otimes \mathbf{0}_\mathcal{K}(\sigma) \reduce \mathbf{0}_\mathcal{K}(\pi_K(\type(K)) \times \sigma)
+  \qquad
+  \ket{s} \otimes \ket{t}\reduce\ket{(s, t)} \\
+  (S.K_1) \otimes K_2 \reduce S.(K_1 \otimes K_2)
+  \qquad
+  K_1 \otimes (S.K_2) \reduce S.(K_1 \otimes K_2) \\
+  (K_1 + K_2) \otimes K_3 \reduce K_1 \otimes K_3 + K_2 \otimes K_3
+  \qquad
+  K_1 \otimes (K_2 + K_3) \reduce K_1 \otimes K_2 + K_1 \otimes K_3
+\end{gather*}
+
+The rules for bra are symmetric to the rules for ket. Only the rules in \ref{rule: ketbradiff1} and \ref{rule: ketbradiff2} are different, which are replace by the three rules in the following:
+
+\begin{gather*}
+  B_1 \cdot (K \otimes B_2) \reduce (B_1 \cdot K).B_2 \\
+  B \cdot (O_1 \cdot O_2) \reduce (B \cdot O_1) \cdot O_2 \\
+  (B \cdot (O_1 \otimes O_2)) \cdot (O_1' \otimes O_2') \reduce B \cdot ((O_1 \cdot O_1') \otimes (O_2 \cdot O_2'))
+\end{gather*}
+
+\subsubsection*{\textsf{OPT-OUTER}}
+\begin{gather*}
+  \mathbf{0}_\mathcal{K}(\sigma) \otimes B \reduce \mathbf{0}_\mathcal{O}(\sigma, \pi_B(\type(B)))
+  \qquad
+  K \otimes \mathbf{0}_\mathcal{B}(\sigma) \reduce \mathbf{0}_\mathcal{O}(\pi_K(\type(K)), \sigma) \\
+  (S.K) \otimes B \reduce S.(K \otimes B)
+  \qquad
+  K \otimes (S.B) \reduce S.(K \otimes B) \\
+  (K_1 + K_2) \otimes B \reduce K_1 \otimes B + K_2 \otimes B
+  \qquad
+  K \otimes (B_1 + B_2) \reduce K \otimes B_1 + K \otimes B_2
+\end{gather*}
+
+
+\subsubsection*{\textsf{OPT-ADJ}}
+\begin{gather*}
+  \textbf{0}_\mathcal{O}(\sigma, \tau)^\dagger \reduce \textbf{0}_\mathcal{O}(\tau, \sigma)
+  \qquad
+  \textbf{1}_\mathcal{O}(\sigma)^\dagger \reduce \textbf{1}_\mathcal{O}(\sigma)
+  \qquad
+  (K \otimes B)^\dagger \reduce B^\dagger \otimes K^\dagger
+  \qquad
+  (O^\dagger)^\dagger \reduce O \\
+  (S.O)^\dagger \reduce S^*.(O^\dagger)
+  \qquad
+  (O_1 + O_2)^\dagger \reduce O_1^\dagger + O_2^\dagger
+  \qquad
+  (O_1 \cdot O_2)^\dagger \reduce O_2^\dagger \cdot O_1^\dagger
+  \qquad
+  (O_1 \otimes O_2)^\dagger \reduce O_1^\dagger \otimes O_2^\dagger
+\end{gather*}
+
+\subsubsection*{\textsf{OPT-SCR}}
+\begin{gather*}
+  C(0).O \reduce \mathbf{0}_\mathcal{O}(\pi_K(\type(O)), \pi_B(\type(O)))
+  \qquad
+  C(1).O \reduce O
+  \qquad
+  S.\textbf{0}_\mathcal{O}(\sigma, \tau) \reduce \textbf{0}_\mathcal{O}(\sigma, \tau) \\
+  S_1.(S_2.O) \reduce (S_1 \times S_2).O
+  \qquad
+  S.(O_1 + O_2) \reduce S.O_1 + S.O_2
+\end{gather*}
+
+\subsubsection*{\textsf{OPT-ADD}}
+\begin{gather*}
+  O + \mathbf{0}_\mathcal{O}(\sigma, \tau) \reduce O
+  \qquad
+  O + O \reduce C(1 + 1).O
+  \quad
+  S.O + O \reduce (S + C(1)).O
+  \quad
+  S_1.O + S_2.O \reduce (S_1 + S_2).O
+\end{gather*}
+
+\subsubsection*{\textsf{OPT-MLT}}
+\begin{gather*}
+  \mathbf{0}_\mathcal{O}(\sigma, \tau) \cdot O \reduce \mathbf{0}_\mathcal{O}(\sigma, \pi_B(\type(O)))
+  \qquad
+  O \cdot \mathbf{0}_\mathcal{O}(\sigma, \tau) \reduce \mathbf{0}_\mathcal{O}(\pi_K(\type(O)), \tau) \\
+  \mathbf{1}_\mathcal{O}(\sigma) \cdot O \reduce O
+  \qquad
+  O \cdot \mathbf{1}_\mathcal{O}(\sigma) \reduce O \\
+  (K \otimes B) \cdot O \reduce K \otimes (B \cdot O)
+  \qquad
+  O \cdot (K \otimes B) \reduce (O \cdot K) \otimes B\\
+  (S.O_1) \cdot O_2 \reduce S.(O_1 \cdot O_2)
+  \qquad
+  O_1 \cdot (S.O_2) \reduce S.(O_1 \cdot O_2) \\
+  (O_1 + O_2) \cdot O_3 \reduce O_1 \cdot O_3 + O_2 \cdot O_3
+  \qquad
+  O_1 \cdot (O_2 + O_3) \reduce O_1 \cdot O_2 + O_1 \cdot O_3 \\
+  (O_1 \cdot O_2) \cdot O_3 \reduce O_1 \cdot (O_2 \cdot O_3) \\
+  (O_1 \otimes O_2) \cdot (O_1' \otimes O_2') \reduce (O_1 \cdot O_1') \otimes (O_2 \cdot O_2') \\
+  (O_1 \otimes O_2) \cdot ((O_1' \otimes O_2') \cdot O_3) \reduce ((O_1 \cdot O_1') \otimes (O_2 \cdot O_2')) \cdot O_3
+\end{gather*}
+
+
+\subsubsection*{\textsf{OPT-TSR}}
+\begin{gather}
+  \mathbf{0}_\mathcal{O}(\sigma, \tau) \otimes O \reduce \mathbf{0}_\mathcal{O}(\sigma \times \pi_K(\type(O)), \tau \times \pi_B(\type(O)))
+  \notag \\
+  O \otimes \mathbf{0}_\mathcal{O}(\sigma, \tau) \reduce \mathbf{0}_\mathcal{O}(\pi_K(\type(O)) \times \sigma, \pi_B(\type(O)) \times \tau) \notag \\
+  \mathbf{1}_\mathcal{O}(\sigma) \otimes \mathbf{1}_\mathcal{O}(\tau) \reduce \mathbf{1}_\mathcal{O}(\sigma \times \tau) \notag \\
+  (K_1 \otimes B_1) \otimes (K_2 \otimes B_2) \reduce (K_1 \otimes K_2) \otimes (B_1 \otimes B_2) \label{rule: KBKB} \\
+  (S.O_1) \otimes O_2 \reduce S.(O_1 \otimes O_2)
+  \qquad
+  O_1 \otimes (S.O_2) \reduce S.(O_1 \otimes O_2) \notag \\
+  (O_1 + O_2) \otimes O_3 \reduce O_1 \otimes O_3 + O_2 \otimes O_3
+  \qquad
+  O_1 \otimes (O_2 + O_3) \reduce O_1 \otimes O_2 + O_1 \otimes O_3 \notag
+\end{gather}
+
+\textbf{Remark: } The rule \ref{rule: KBKB} may be hard to understand. In the left hand side, $K_1 \otimes B_1$ and $K_2 \otimes B_2$ are two operators constructed by outer product, and the tensor product of such two operators is reduced to the outer product of $K_1 \otimes K_2$ and $B_1 \otimes B_2$. In the traditional Dirac notation, it is expressed as $(\ket{v_1}\otimes\bra{u_1}) \otimes (\ket{v_2} \otimes \bra{u_2}) = (\ket{v_1}\ket{v_2}) \otimes (\bra{u_1}\bra{u_2})$.
+
+
+\subsection{Confluence of $R_\textsf{DN}$}
+
+Confluence is an important property for term rewriting systems. It guarantees the determinism of the calculation: the calculation is independent of the order of rewriting rules applications, and the result is always the same (for terminating TRS) or joinable (for unterminating ones). In this section we prove the local confluence of $R_\textsf{DN}$.
+
+The language is intended to be used in the multi-sorted manner, but in the proof of local confluence property, we check the unsorted version. The unsorted version simply removes all sort constraints, and its confluence is equivalent to that of the multi-sorted version, which is the persistancy proved in \cite{Aoto1997}.
+
+Because the large amount of rewriting rules, manually checking the confluence can be a tremendous work. Luckly, local confluence can be checked by investigating whether all critical pairs are all joinable, which is a decidable problem. The \texttt{CiME2}\cite{Contejean2011} tool extends the decidability of naive TRS local confluence to the AC term rewriting scenarios, and we use it to encode and check our TRS for Dirac notation automatically.
+
+We now present a smallest instantiation $R_{\Sigma_\mathcal{C}}$ of a complext scalar rewrite system. 
+
+\begin{definition}[The rewrite system $R_{\Sigma_\mathcal{C}0}$]
+  The system $R_{\Sigma_\mathcal{C}0}$ is defined by the following rules:
+  \begin{gather*}
+    0 + \alpha \reduce \alpha
+    \qquad
+    0 \times \alpha \reduce 0
+    \qquad
+    1 \times \alpha \reduce \alpha \\
+    \alpha \times (\beta + \gamma) \reduce \alpha \times \beta + \alpha \times \gamma \\
+    0^* \reduce 0
+    \qquad
+    1^* \reduce 1 \\
+    (\alpha + \beta)^* \reduce \alpha^* + \beta^*
+    \qquad
+    (\alpha \times \beta)^* \reduce \alpha^* \times \beta^*
+    \qquad
+    (\alpha^*)^* \reduce \alpha
+  \end{gather*}
+  where $+$ and $\times$ are AC-symbols.
+\end{definition}
+
+We can compare the avatar $R_{\Sigma_\mathcal{C}0}$ above with the general complex number rewrite system $R_{\Sigma_\mathcal{C}}$ and prove the subsumption relation.
+
+\begin{lemma}
+  $R_{\Sigma_\mathcal{C}}$ subsumes $R_{\Sigma_\mathcal{C}0}$.
+\end{lemma}
+
+\begin{proof}
+  Obvious.
+\end{proof}
+
+
+If a TRS $R$ contains AC-symbols, checking the critical pairs of $R$ is not enough to ensure the local confluence of $R$. This is because the LHS of rules can match the term unlocally. For example:
+$$
+(K_0 + K_1) + K_0 \reduce C(1 + 1).K_0 + K_1
+$$
+by the rule $ K + K \reduce C(1 + 1).K$. Therefore, to prove the confluence of a AC-rewrite system, we need to consider an extended system, as indicated by the following definition.
+
+\begin{definition}[The extension rules]
+  Let $X$ be a AC-rewrite system with AC symbols $f_1, \cdots, f_n$. We define the AC-rewrite system $X_{ext}$ as containing the same AC symbols as $X$, the same rules as $X$, plus the rule $f_i(t, x) \to f_i(u, x)$ for each rule $t \to u$ of $X$ where the head symbol of $t$ is $f_i$.
+\end{definition}
+
+This extension rules are automatically added for all rules encoded in \texttt{CiME2}.
+
+\begin{lemma}
+  \label{lemma: CiME2 conf}
+  The system $R_\textsf{DN} \cup R_{\Sigma_\mathcal{C}0}$ is locally confluent on well-typed terms.
+\end{lemma}
+\begin{proof}
+  We check that all the critical pairs are joinable. This is completed in two steps: firstly, encode the TRS within \texttt{CiME2} and find the unjoinable critical pairs. There are 55 typing related unjoinable critical pairs out of ~2000 critical pairs. Then we manually checked that with the well-typed constraint, the remaining 55 critical paris are also joinable. 
+  
+  As an example, there is an unjoinable critical pair
+  $$
+    \type(K_1) \reducefrom \type(K_1 + K_2) \reduce \type(K_2)
+  $$
+  from the rule $\type(K_1 + K_2) \reduce \type(K_1)$ on itself. But considering the well-typed constraint on $K_1 + K_2$, we should have $\type(K_1) = \type(K_2)$. Therefore the critical pair is actually joinable.
+\end{proof}
+
+
+% \subsection{Checking by \texttt{CiME}}
+
+% We encoded the typed Dirac notation in a simple TRS and checked the confluence of the whole system. Here is a summary of the rules.
+
+
+% \begin{center}
+%   \begin{tabular}{c|c}
+%   \hline
+%   Type & Rule Number \\
+%   \hline
+%   type checking & 27 \\
+%   overloading polymorphic symbols & 22 \\
+%   complex scalar avatar & 9 \\
+%   Dirac notation & 141 \\
+%   AC-symbol extension rules & 25 \\
+%   \hline
+%   Total & 224 \\
+%   \hline
+%   \end{tabular}
+% \end{center}
+
+% And all the 3133 critical pairs are joinable.
+
+% \subsubsection*{About Reduandancy}
+% I also checked through a \texttt{Python} script that removing any of the reduction rule will lead to non-confluence or change of the equational theory. For example, I found that removing 
+% $$
+%  (\fst e, \snd e)\reduce e
+% $$
+% or
+% $$
+%  (K_1 \otimes B_1) \otimes (K_2 \otimes B_2) \reduce (K_1 \otimes K_2) \otimes (B_1 \otimes B_2)
+% $$
+% respectively will still lead to a confluence TRS, but the equivalence induced by the TRS will be be changed.
+
+
+\subsection{Termination of $R_\textsf{DN}$}
+
+Termination of TRS guarantees that there will never be infinite rewriting chains. It is also a key gradient for proving confluence from local confluence. 
+
+To prove the large TRS $R_\textsf{DN}$ is terminating, we first slice the whole TRS $R_\textsf{DN}$ into small pieces, and use the automated tool \texttt{AProVE} to prove the CE-termination of each. Then the termination $R_\textsf{DN}$ is implied by the modularity theorem.
+
+CE-termination is a stronger form of termination, which add an extra requirement of ``terminating under non-deterministic collapses''.
+
+\begin{definition}[CE-termination] \cite{Gramlich1994}
+  A term rewriting system $R$ is \textbf{CE-terminating} if $R \cup \{G(x, y) \reduce x, G(x, y) \reduce y\}$ is terminating, where $G$ is a fresh symbol and $x, y$ are variables.
+\end{definition}
+
+Modularity of CE-termination means we can slice the whole TRS into pieces satisfying certain constraints, and decompose the proof of CE-termintation into that of the TRS pieces. Here we will decompose $R_\textsf{DN}$ into \textit{constructor-sharing} TRS pieces, which is defined as follows.
+
+\begin{definition}[defined symbols and constructors]
+  Let $R$ be a TRS on signature $\Sigma$. The set $\mathcal{D}$ of \textbf{defined symbols} consists of the those appears at the root of the left hand side of some rule, i.e., $\mathcal{D} \equiv \{ \mathrm{root}(l)\ |\ l \reduce r \in R \}$. The set $\mathcal{C}$ of \textbf{constructors} are defined as the remaining symbols $\Sigma / \mathcal{D}$.
+\end{definition}
+
+The idea behind defined symbols and constructors is to compare term rewriting with the computation of functional programs. Two TRS's $R_1$ and $R_2$ are called \textit{constructor-sharing} if they share at most constructors, i.e., $\Sigma_1 \cap \Sigma_2 = \mathcal{C}_1 \cup \mathcal{C}_2$. It is equivalent to $\mathcal{D}_1 \cap \mathcal{D}_2 = \emptyset$.
+
+
+\subsection{Confluence by Modularity}
+\label{sec: conf-modular}
+
+Our theories on Dirac notations can be divided into different parts, each containing its own language and computational methods. For example, the parts concerning complex numbers and basis vectors of vector spaces are relatively independent and complete; while the language and algorithm of Dirac notations are based on these components. Subsequent theoretical developments can build on this entire result, such as our extended Dirac language which incorporates a big operator sum and indices for quantum registers.
+
+These components are relatively independent and complete, allowing us to refer to them as different modules. Traditionally, the entire formal system has been studied as a whole. This approach is straightforward and direct, avoiding the need to consider how the parts interact, but at the expense of flexibility. Taking Dirac notation as an example, when we expand the language of complex numbers or design a more comprehensive rewriting system, the properties of the entire formal system need to be reconsidered. 
+To make theoretical results more general, we can explore a modular narrative and proof methodology. For rewriting systems, we can utilize the Avatar Lemma \cite{Arrighi2005}\cite{Arrighi2017}, which is introduced below.
+
+% First we introduce some concepts about modularity and the avatar lemma.
+
+
+\begin{definition}[Subsumption]
+  A terminating and confluent relation $S$ subsumes a relation $S_0$ if whenever $t \to_{S_0} u$, $t$ and $u$ have the same $S$-normal form.
+\end{definition}
+
+\begin{definition}[Commuting relations]
+  Two relations $X$ and $Y$ are said to be commuting if whenever $t \to_X u$ and $t \to_Y v$, there exists a term $w$ such that $u \to_Y w$ and $v \to_X w$.
+\end{definition}
+
+\begin{lemma}[The avatar lemma] \cite{Arrighi2005} Let $X$, $S$ and $S_0$ be three relations defined on a set such that:
+  \begin{itemize}
+    \item $S$ is terminating and confluent;
+    \item $S$ subsumes $S_0$;
+    \item $S_0 \cup X$ is locally confluent;
+    \item $X$ commutes with $S^*$.
+  \end{itemize}
+  Then, the relation $S \cup X$ is locally confluent.
+\end{lemma}
+
+The smaller relation $S_0$ here is called the avatar, since it captures the critical part of the larger relation $S$ that will appear in the rest part $X$. The avatar lemma formalizes our intuition about the modularity of confluence: if we start with the locally confluent system $S_0 \cup X$ and extend the system from $S_0$ to $S$, which will not interfere with the other part $X$ and is still confluent, then the whole system $S\cup X$ will remain locally confluent. In our development of Dirac notations, we will use such avatars to represent the weakest requirement on complex numbers and basis.
+
+With the avatar lemma and the local confluence of $R_\textsf{DN} \cup R_{\Sigma_\mathcal{C}0}$ proved in Lemma.\ref{lemma: CiME2 conf}, we can prove our main theorem: the local confluence of the integrated TRS.
+
+\begin{theorem}[local confluence of $R_\textsf{DN}$]
+  For any complex number rewrite system $R_{\Sigma_\mathcal{A}}$ and atomic basis rewrite system $R_{\Sigma_\mathcal{C}}$, the system $R_\textsf{DN} \cup R_{\Sigma_\mathcal{A}} \cup R_{\Sigma_\mathcal{C}}$ is locally confluent.
+\end{theorem}
+\begin{proof}
+  Both $R_{\Sigma_\mathcal{A}}$ and $R_{\Sigma_\mathcal{C}}$ are terminating and confluent by definition. 
+  The system $R_{\Sigma_\mathcal{C}}$ subsumes $R_{\Sigma_\mathcal{C}0}$, and $R_{\Sigma_\mathcal{A}}$ subsumes an empty rewriting system. 
+  The system $R_\textsf{DN} \cup R_{\Sigma_\mathcal{C}0}$ is locally confluent. 
+  The system $R_{\Sigma_\mathcal{C}}$ commutes with $R_\textsf{DN}^*$, because the terms in $\Sigma_\mathcal{C}$ appears in the left hand sides of rules in $R_\textsf{DN}$ only as variables and constants $0, 1$, therefore all the rules in $R_{\Sigma_\mathcal{C}}$ commutes with $R_\textsf{DN}^*$. 
+  Then the avatar lemma finishes the proof.
+\end{proof}
+
+\subsection{Soundness and Completeness of $R_\textsf{DN}$}
+
+\yx{Core langauge cannot be complete, because $\delta_{i,j} \times \delta{j,k} = \delta{i, k} \times \delta{j, k}$ cannot be proved. we need to add such a axiom in the extended language.}
+
+To evaluate the reliability and capability of $R_\textsf{DN}$, we consider their soundness and correctness, which are defined and proved below.
+
+\begin{definition}[soundness and completeness]
+  A formal system $F$ is sound to decide $\textsf{DN}(\Sigma_\mathcal{A}, \Sigma_\mathcal{C})$ if for all $X, Y \in \textsf{DN}(\Sigma_\mathcal{A}, \Sigma_\mathcal{C})$, $F \vdash X = Y$ implies $\sem{X} = \sem{Y}$. If for another formal proof system $G$, for all $X, Y \in \textsf{DN}(\Sigma_\mathcal{A}, \Sigma_\mathcal{C})$, $G \vdash X = Y$ implies $F \vdash X = Y$, we say the system $F$ is complete for $G$.
+\end{definition}
+
+\begin{lemma}[soundness of $R_\textsf{DN}$]
+  The system $R_\textsf{DN}$ is sound.
+\end{lemma}
+\begin{proof}
+  The proof is a formalization in \texttt{CoqQ}. Based on the constructions of linear space, we encoded the language syntax and denotational semantics, and proved that for all rules $e_1 \reduce e_2$ in $R_\textsf{DN}$, the proposition $\sem{e_1} = \sem{e_2}$ holds.
+\end{proof}
+
+Then We consider completeness. The two deduction rules (*) and (**) in \ref{def: SCR-DELTA} cannot be encoded and proved in the term rewrite system $R_\textsf{DN}$. Other axioms are checked by normalizing both sides of the equations.
+
+\begin{lemma}[relative completeness of $R_\textsf{DN}$]
+  For any complete rewrite system $R_{\Sigma_\mathcal{A}}$ and $R_{\Sigma_\mathcal{C}}$, the system $R_\textsf{DN}\cup R_{\Sigma_\mathcal{A}} \cup R_{\Sigma_\mathcal{C}}$ is complete for the axiomatic semantics $AX$ excluding (*), (**).
+\end{lemma}
+\begin{proof}
+  Encoded and calculated in the implementation of $R_\textsf{DN}$.
+\end{proof}
+
+The above results generally means that the TRS $R_\textsf{DN}$ is sound for the denotational semantics, and is not weaker than the axiomatic semantics. Combining these two, we can easily prove the consistency of the two sematnics as a byproduct.
+
+\begin{corollary}[consistency of denotational and axiomatic semantics]
+  The axiomatic semantics is consistent with the denotational one. In other words, for all $X, Y \in \textsf{DN}(\Sigma_\mathcal{A}, \Sigma_\mathcal{C})$, if $AX \vdash X = Y$, then $\sem{X} = \sem{Y}$.
+\end{corollary}
+\begin{proof}
+  By induction on the proof by $AX$. The cases of axioms in $AX$ are proved by the relative completeness and soundness of $R_\textsf{DN}$. The deduction rules (*) and (**) in \ref{def: SCR-DELTA} can be checked by hand.
+  \yx{A small problem here. Difference in s, t symbols does not imply that their semantical explanations are different. I should modify the premises of (*) and (**).}
+\end{proof}
+
+\subsection{Completeness of $R_\textsf{DN}$ (New Proof)}
+
+\begin{definition}[completeness]
+  We say the TRS $R$ of language $L$ is complete w.r.t. the denotational semantics, if for all terms $e_1, e_2$ and $L$, 
+  $\sem{e_1}^\sigma = \sem{e_2}^\sigma$ for all valuations $\sigma$ implies $R \vdash e_1 \downarrow = e_2 \downarrow$.
+\end{definition}
+
+\begin{theorem}[relative completeness of $R_\textsf{DN}$]
+  Assume the TRS $R_{\Sigma_\mathcal{A}}$ is complete for $\Sigma_\mathcal{A}$ and $R_{\Sigma_\mathcal{C}}$ is complete for $\Sigma_\mathcal{C}$, then TRS $R_\textsf{DN}\cup R_{\Sigma_\mathcal{A}} \cup R_{\Sigma_\mathcal{C}}$ is complete for $\textsf{DN}(\Sigma_\mathcal{A}, \Sigma_\mathcal{C})$.
+\end{theorem}
+\begin{proof}
+  Assume we have $u, v$ in $\textsf{DN}(\Sigma_\mathcal{A}, \Sigma_\mathcal{C})$ and $\sem{u}_\sigma = \sem{v}_\sigma$ for all valuations $\sigma$. 
+  We prove by structural induction on the terms $u$ and $v$ in different sorts.
+  
+  \textbf{$\mathcal{C}$(complex number).} By completeness of $\Sigma_\mathcal{C}$.
+
+  \textbf{$\mathcal{E}$(basis).} 
+   
+  \begin{enumerate}
+    \item $(u \equiv x_1)$. 
+    \begin{itemize}
+      \item $(v \equiv x_2)$. Since $\sigma(u) = \sigma(v)$ for all $\sigma$, $u$ and $v$ must be the same variable. This also applies to the cases when $u$ and $v$ are both variables in other sorts.
+      \item $(v \equiv a)$. $\forall \sigma. \sigma(u) = \sem{v}_\sigma$ not satisfied.
+      \item $(v \equiv \fst s)$. 
+    \end{itemize}
+    To satisfy $\forall \sigma. \sigma(u) = \sem{v}_\sigma$, $v$ must also be the variable $x$. Otherwise, we can find valuations distinguishing them by making $\sigma(u) \in A$ and $\sem{v}_\sigma \in \mathcal{D}_{\mathcal{E}} - A$, or $\sigma(u) \in \mathcal{D}_{\mathcal{E}} - A$ and $\sem{v}_\sigma \in A$.
+    \item $(u \equiv a_1)$. Since the semantics of $(t, t)$, $\fst t$ and $\snd t$ are out of $A$, we must have $v \equiv a_2$. By completeness of $R_{\Sigma_\mathcal{A}}$, $u$ and $v$ have the same normal form.
+    \item $(u \equiv (t_1, t_2))$. 
+      \begin{itemize}
+        \item $(v \equiv (s_1, s_2))$. $\sem{(t_1, t_2)} = (\sem{t_1}, \sem{t_2}) = (\sem{s_1}, \sem{s_2}) = \sem{(s_1, s_2)}$, therefore we have $\sem{t_1} = \sem{s_1} \wedge \sem{t_2} = \sem{s_2}$. Then finished by induction hypothesis.
+        \item $(v \equiv \fst s)$. If $\sem{s}_\sigma = (a_1, a_2)$, then $s \equiv (r_1, r_2)$ for some $r_1, r_2$. By reduction rule in \textsc{BASIS} we have 
+      \end{itemize}
+  \end{enumerate}
+
+  \yx{Core language TRS is not complete because the axiom of $\delta$.}\
+
+\end{proof}
+
