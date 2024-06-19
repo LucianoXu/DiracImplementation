@@ -5,7 +5,7 @@
 
 
 AppendTo[$Path, NotebookDirectory[]];
-BeginPackage["DiracSumExt`", {"Unification`", "DiracCore`", "DiracTpExt`"}];
+BeginPackage["DiracSumExt`", {"Unification`", "DiracCore`"}];
 
 
 SetType;
@@ -49,6 +49,11 @@ DNSumExtRules = {};
 (*Notation*)
 
 
+(* ::Text:: *)
+(*This format will influence the calculation, so we disable it.*)
+
+
+(*
 Format[SUMS[IDX[indices___], body_]]:=\!\(
 \*SubscriptBox[\(\[Sum]\), \(indices\)]body\);
 Format[SUMK[IDX[indices___], body_]]:=\!\(
@@ -57,6 +62,7 @@ Format[SUMB[IDX[indices___], body_]]:=\!\(
 \*SubscriptBox[\(\[Sum]\), \(indices\)]body\);
 Format[SUMO[IDX[indices___], body_]]:=\!\(
 \*SubscriptBox[\(\[Sum]\), \(indices\)]body\);
+*)
 
 
 (* ::Section:: *)
@@ -406,47 +412,31 @@ AppendTo[DNSumPullRules, RuleSumPull10OO];
 (*SUM-ADD*)
 
 
-(* see whether the two set of indices can be added *)
-IdxUnifyQ[idx1_IDX,idx2_IDX]:=Sort[Last/@List@@idx1]===Sort[Last/@List@@idx2];
-
-IdxUnify[idx1_IDX,idx2_IDX]:=
+RuleSumAdd1 = SUMS[IDX[{i_, M_}, indicesl___], S1_] ~ADDS~ SUMS[IDX[{j_, M_}, indicesr___], S2_] :>
 	With[
-		{nvs=Table[Unique[],Length[idx1]]},
-		{
-			Thread[First/@Sort[List@@#1,#1[[2]]<#2[[2]]&]->#2]&[idx1, nvs],
-			Thread[First/@Sort[List@@#1,#1[[2]]<#2[[2]]&]->#2]&[idx2, nvs]
-		}
-	];
-
-RuleSumAdd1 = SUMS[idx1_, S1_] ~ADDS~ SUMS[idx2_, S2_] /; 
-	IdxUnifyQ[idx1, idx2] :>
-	With[
-		{renaming=IdxUnify[idx1, idx2]},
-		SUMS[idx1/.renaming[[1]], (S1 /.renaming[[1]]) ~ADDS~ (S2 /. renaming[[2]])]
+		{newvar=Unique[]},
+		SUMS[IDX[{newvar, M}], SUMS[IDX[indicesl], (S1 /.{i -> newvar})] ~ADDS~ SUMS[IDX[indicesr], (S2 /. {j -> newvar})]]
 	];
 AppendTo[DNSumExtRules, RuleSumAdd1];
 
-RuleSumAdd2 = SUMK[idx1_, K1_] ~ADDK~ SUMK[idx2_, K2_] /; 
-	IdxUnifyQ[idx1, idx2] :>
+RuleSumAdd2 = SUMK[IDX[{i_, M_}, indicesl___], K1_] ~ADDK~ SUMK[IDX[{j_, M_}, indicesr___], K2_] :>
 	With[
-		{renaming=IdxUnify[idx1, idx2]},
-		SUMK[idx1/.renaming[[1]], (K1 /.renaming[[1]]) ~ADDK~ (K2 /. renaming[[2]])]
+		{newvar=Unique[]},
+		SUMK[IDX[{newvar, M}], SUMK[IDX[indicesl], (K1 /.{i -> newvar})] ~ADDK~ SUMK[IDX[indicesr], (K2 /. {j -> newvar})]]
 	];
 AppendTo[DNSumExtRules, RuleSumAdd2];
 
-RuleSumAdd3 = SUMB[idx1_, B1_] ~ADDB~ SUMB[idx2_, B2_] /; 
-	IdxUnifyQ[idx1, idx2] :>
+RuleSumAdd3 = SUMB[IDX[{i_, M_}, indicesl___], B1_] ~ADDB~ SUMB[IDX[{j_, M_}, indicesr___], B2_] :>
 	With[
-		{renaming=IdxUnify[idx1, idx2]},
-		SUMB[idx1/.renaming[[1]], (B1 /.renaming[[1]]) ~ADDB~ (B2 /. renaming[[2]])]
+		{newvar=Unique[]},
+		SUMB[IDX[{newvar, M}], SUMB[IDX[indicesl], (B1 /.{i -> newvar})] ~ADDB~ SUMB[IDX[indicesr], (B2 /. {j -> newvar})]]
 	];
 AppendTo[DNSumExtRules, RuleSumAdd3];
 
-RuleSumAdd4 = SUMO[idx1_, O1_] ~ADDO~ SUMO[idx2_, O2_] /; 
-	IdxUnifyQ[idx1, idx2] :>
+RuleSumAdd4 = SUMO[IDX[{i_, M_}, indicesl___], O1_] ~ADDO~ SUMO[IDX[{j_, M_}, indicesr___], O2_] :>
 	With[
-		{renaming=IdxUnify[idx1, idx2]},
-		SUMO[idx1/.renaming[[1]], (O1 /.renaming[[1]]) ~ADDO~ (O2 /. renaming[[2]])]
+		{newvar=Unique[]},
+		SUMO[IDX[{newvar, M}], SUMO[IDX[indicesl], (O1 /.{i -> newvar})] ~ADDO~ SUMO[IDX[indicesr], (O2 /. {j -> newvar})]]
 	];
 AppendTo[DNSumExtRules, RuleSumAdd4];
 

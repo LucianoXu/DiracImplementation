@@ -1,4 +1,0 @@
-(* ::Package:: *)
-
-(* ::Title:: *)
-(*DiracTyping*)

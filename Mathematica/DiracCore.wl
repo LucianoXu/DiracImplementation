@@ -5,7 +5,7 @@
 
 
 AppendTo[$Path, NotebookDirectory[]];
-BeginPackage["DiracCore`", {"Typing`"}];
+BeginPackage["DiracCore`"];
 
 
 (* ::Section:: *)
