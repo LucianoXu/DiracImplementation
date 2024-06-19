@@ -31,6 +31,9 @@ TypeChecking[SNDTyping[sigma1_ ~ProdType~ sigma2_]] := sigma2;
 (*Type Calculations*)
 
 
+TypeProj1[ProdType[T1_, T2_]]:=T1;
+TypeProj2[ProdType[T1_, T2_]]:=T2;
+
 TypeCalc[FST[s_]]:=TypeProj1[TypeCalc[s]];
 TypeCalc[SND[s_]]:=TypeProj2[TypeCalc[s]];
 

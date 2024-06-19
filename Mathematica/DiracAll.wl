@@ -25,7 +25,7 @@ DNNorm[term_] := With[
 	{},
 	TypeDeduce[term];
 	FullSimplify[
-		DNEntryExpand[term//.DNRules]//.DNRules//.DNEntryReduceRules//.DNRules
+		DNEntryExpand[term//.DNRules]//.DNRules
 		(*//.DNEntryReduceRules//.DNRules*)
 	]
 ]

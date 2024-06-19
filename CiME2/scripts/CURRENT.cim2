@@ -98,9 +98,6 @@ let X = vars "a b c x S0 S1 S2 S3 s s1 s2 t t1 t2 X Y B0 B1 B2 K0 K1 K2 O0 O1 O2
 let R = TRS F X "
 
   (* ############# Typing ############## *)
-  
-  PROJ1(T1 PROD T2) -> T1 ;
-  PROJ2(T1 PROD T2) -> T2 ;
 
   K(PROJK(T1)) -> T1 ;
   PROJK(K(T1)) -> T1 ;
@@ -371,6 +368,9 @@ let R = TRS F X "
 
   (* ######################## Fst - Snd Ext ####################### *)
 
+  PROJ1(T1 PROD T2) -> T1 ;
+  PROJ2(T1 PROD T2) -> T2 ;
+  
   type(FST(s)) -> PROJ1(type(s)) ;
   type(SND(s)) -> PROJ2(type(s)) ;
 

@@ -190,23 +190,27 @@ AppendTo[DNSetRules, RuleSet4];
 
 
 (* ::Subsubsection:: *)
+(*SUM-CONST*)
+
+
+RuleSumConst1 = SUMS[IDX[___], CPX[0]] -> CPX[0];
+AppendTo[DNSumExtRules, RuleSumConst1];
+
+RuleSumConst2 = SUMK[IDX[___], ZEROK[sigma_]] -> ZEROK[sigma];
+AppendTo[DNSumExtRules, RuleSumConst2];
+
+RuleSumConst3 = SUMB[IDX[___], ZEROB[sigma_]] -> ZEROB[sigma];
+AppendTo[DNSumExtRules, RuleSumConst3];
+
+RuleSumConst4 = SUMO[IDX[___], ZEROO[sigma_, tau_]] -> ZEROO[sigma, tau];
+AppendTo[DNSumExtRules, RuleSumConst4];
+
+RuleSumConstOne = ONEO[sigma_] -> CompleteBasis[sigma];
+AppendTo[DNSumExtRules, RuleSumConstOne];
+
+
+(* ::Subsubsection:: *)
 (*SUM-ELIM*)
-
-
-RuleSumElim1 = SUMS[IDX[___], CPX[0]] -> CPX[0];
-AppendTo[DNSumExtRules, RuleSumElim1];
-
-RuleSumElim2 = SUMK[IDX[___], ZEROK[sigma_]] -> ZEROK[sigma];
-AppendTo[DNSumExtRules, RuleSumElim2];
-
-RuleSumElim3 = SUMB[IDX[___], ZEROB[sigma_]] -> ZEROB[sigma];
-AppendTo[DNSumExtRules, RuleSumElim3];
-
-RuleSumElim4 = SUMO[IDX[___], ZEROO[sigma_, tau_]] -> ZEROO[sigma, tau];
-AppendTo[DNSumExtRules, RuleSumElim4];
-
-RuleSumElimOne = ONEO[sigma_] -> CompleteBasis[sigma];
-AppendTo[DNSumExtRules, RuleSumElimOne];
 
 
 RuleSumElim5 = SUMS[IDX[{i_, USET[_]}, indices___], DELTA[i_, s_]]/;FreeQ[s, i] -> SUMS[IDX[indices], CPX[1]];
@@ -328,7 +332,7 @@ RuleSumPush10OO = SUMO[idx_, O1_] ~TSRO~ O2_ :> With[{nv=UniqueRenaming[idx]}, S
 AppendTo[DNSumPushRules, RuleSumPush10OO];
 
 
-(* ::Subsubsection:: *)
+(* ::Subsubsection::Closed:: *)
 (*SUM-PULL*)
 
 
@@ -543,31 +547,6 @@ AppendTo[DNEntryReduceRules, RuleEntryReduce2];
 
 RuleEntryReduce3 = SUMO[IDX[{i1_, USET[_]}, {i2_, USET[_]}, indices___], (BRA[i1_]~DOT~(A_~MLTK~KET[i2_]))~SCRO~(KET[i1_]~OUTER~BRA[i2_])] -> SUMO[IDX[indices], A];
 AppendTo[DNEntryReduceRules, RuleEntryReduce3];
-
-
-(* ::Subsubsection:: *)
-(*Index Split*)
-
-
-RuleIndexSplit1 = (sum:SUMS|SUMK|SUMB|SUMO)[IDX[{i_, USET[sigma_ ~ProdType~ tau_]}, indices___], body_]/;
-	!FreeQ[body, FST[i]|SND[i]] :> 
-	With[{nv1=Unique[], nv2=Unique[]}, sum[IDX[{nv1, USET[sigma]}, {nv2, USET[tau]}, indices], body//.{FST[i]->nv1, SND[i]->nv2, i->PAIR[nv1,nv2]}]];
-AppendTo[DNSumExtRules, RuleIndexSplit1];
-
-RuleIndexSplit2 = (sum:SUMS|SUMK|SUMB|SUMO)[IDX[{i_, M1_ ~SETPROD~ M2_}, indices___], body_]/;
-	!FreeQ[body, FST[i]|SND[i]] :> 
-	With[{nv1=Unique[], nv2=Unique[]}, sum[IDX[{nv1, M1}, {nv2, M2}, indices], body//.{FST[i]->nv1, SND[i]->nv2, i->PAIR[nv1,nv2]}]];
-AppendTo[DNSumExtRules, RuleIndexSplit2];
-
-
-RuleIndexSplit3 = (sum:SUMS|SUMK|SUMB|SUMO)[IDX[{i_, M1_}, {j_, M2_}, indices___], body_]/;
-	And[
-		!FreeQ[body, PAIR[i,j]], 
-		Length[Position[body, PAIR[i,j]]]===Length[Position[body, i]], 
-		Length[Position[body, PAIR[i,j]]]===Length[Position[body, j]]
-	] :> 
-	With[{nv=Unique[]}, sum[IDX[{nv, M1 ~SETPROD~ M2}, indices], body//.(PAIR[i,j]->nv)]];
-AppendTo[DNSumExtRules, RuleIndexSplit3];
 
 
 (* ::Subsection:: *)

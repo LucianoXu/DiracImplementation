@@ -2,10 +2,6 @@
 AC [+, *, MLTS, ADDS, ADDK, ADDB, ADDO]
 C [DELTA]
 
-PI(x, y) -> x
-PI(x, y) -> y
-
-
 
 CONJS(C(a)) -> C(conj(a))
 CONJS(DELTA(s, t)) -> DELTA(s, t)
@@ -13,7 +9,6 @@ CONJS(ADDS(S1, S2)) -> ADDS(CONJS(S1), CONJS(S2))
 CONJS(MLTS(S1, S2)) -> MLTS(CONJS(S1), CONJS(S2))
 CONJS(CONJS(S0)) -> S0
 CONJS(DOT(B0, K0)) -> DOT(ADJB(K0), ADJK(B0))
-
 
 DOT(0B(T1), K0) -> C(0)
 DOT(B0, 0K(T1)) -> C(0)

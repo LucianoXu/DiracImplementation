@@ -238,13 +238,10 @@ TypeChecking[OType[sigma1_, tau1_] ~TSROTyping~ OType[sigma2_, tau2_]] := OType[
 (*Type Calculations*)
 
 
-TypeProj1[ProdType[T1_, T2_]]:=T1;
-TypeProj2[ProdType[T1_, T2_]]:=T2;
 KType[TypeProjK[T_]]:=T;
 TypeProjK[KType[T_]]:=T;
 BType[TypeProjB[T_]]:=T;
 TypeProjB[BType[T_]]:=T;
-OType[TypeProjK[T_],TypeProjB[T_]]:=T;
 TypeProjK[OType[T1_, T2_]]:=T1;
 TypeProjB[OType[T1_, T2_]]:=T2;
 
@@ -372,11 +369,11 @@ RuleScalar15 = CONJS[B0_ ~DOT~ K0_] -> ADJB[K0] ~DOT~ ADJK[B0];
 AppendTo[DNCoreRules, RuleScalar15];
 
 
-RuleScalar16 = ZEROB[_] ~DOT~ K0_ -> CPX[0];
+RuleScalar16 = ZEROB[sigma_] ~DOT~ K0_ -> CPX[0];
 AppendTo[DNCoreRules, RuleScalar16];
 
 
-RuleScalar17 = B0_ ~DOT~ ZEROK[_] -> CPX[0];
+RuleScalar17 = B0_ ~DOT~ ZEROK[sigma_] -> CPX[0];
 AppendTo[DNCoreRules, RuleScalar17];
 
 

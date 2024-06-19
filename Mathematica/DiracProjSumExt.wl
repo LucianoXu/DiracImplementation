@@ -34,7 +34,6 @@ AppendTo[DNProjSumRules, RuleIndexSplit2];
 
 RuleIndexSplit3 = (sum:SUMS|SUMK|SUMB|SUMO)[IDX[{i_, M1_}, {j_, M2_}, indices___], body_]/;
 	And[
-		!FreeQ[body, PAIR[i,j]], 
 		Length[Position[body, PAIR[i,j]]]===Length[Position[body, i]], 
 		Length[Position[body, PAIR[i,j]]]===Length[Position[body, j]]
 	] :> 
