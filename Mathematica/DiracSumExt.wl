@@ -412,7 +412,7 @@ AppendTo[DNSumPullRules, RuleSumPull10OO];
 (*SUM-ADD*)
 
 
-RuleSumAdd1 = SUMS[IDX[{i_, M_}, indicesl___], S1_] ~ADDS~ SUMS[IDX[{j_, M_}, indicesr___], S2_] :>
+(*RuleSumAdd1 = SUMS[IDX[{i_, M_}, indicesl___], S1_] ~ADDS~ SUMS[IDX[{j_, M_}, indicesr___], S2_] :>
 	With[
 		{newvar=Unique[]},
 		SUMS[IDX[{newvar, M}], SUMS[IDX[indicesl], (S1 /.{i -> newvar})] ~ADDS~ SUMS[IDX[indicesr], (S2 /. {j -> newvar})]]
@@ -438,7 +438,108 @@ RuleSumAdd4 = SUMO[IDX[{i_, M_}, indicesl___], O1_] ~ADDO~ SUMO[IDX[{j_, M_}, in
 		{newvar=Unique[]},
 		SUMO[IDX[{newvar, M}], SUMO[IDX[indicesl], (O1 /.{i -> newvar})] ~ADDO~ SUMO[IDX[indicesr], (O2 /. {j -> newvar})]]
 	];
+AppendTo[DNSumExtRules, RuleSumAdd4];*)
+
+
+(* ::Subsubsection:: *)
+(*SUM-ADD*)
+
+
+IdxUnifyQ[idx1_IDX, idx2_IDX]:=Sort[Last/@List@@idx1]===Sort[Last/@List@@idx2];
+
+IdxUnify[idx1_IDX, idx2_IDX]:=
+	With[
+		{nvs=Table[Unique[],Length[idx1]]},
+		{
+			Thread[First/@Sort[List@@#1,#1[[2]]<#2[[2]]&]->#2]&[idx1, nvs],
+			Thread[First/@Sort[List@@#1,#1[[2]]<#2[[2]]&]->#2]&[idx2, nvs]
+		}
+	];
+	
+IdxUnifySameTermQ[idx1_IDX, idx2_IDX, t1_, t2_]:=
+	With[
+		{nvs=Table[Unique[],Length[idx1]]},
+		SameQ[
+			t1/.(Thread[First/@Sort[List@@#1,#1[[2]]<#2[[2]]&]->#2]&[idx1, nvs]),
+			t2/.(Thread[First/@Sort[List@@#1,#1[[2]]<#2[[2]]&]->#2]&[idx2, nvs])
+		]
+	];
+
+RuleSumAdd1 = SUMS[idx_, S1_ ~ADDS~ S2_] -> SUMS[idx, S1] ~ADDS~ SUMS[idx, S2];
+AppendTo[DNSumExtRules, RuleSumAdd1];
+
+RuleSumAdd2 = SUMK[idx_, K1_ ~ADDK~ K2_] -> SUMK[idx, K1] ~ADDK~ SUMK[idx, K2];
+AppendTo[DNSumExtRules, RuleSumAdd2];
+
+RuleSumAdd3 = SUMB[idx_, B1_ ~ADDB~ B2_] -> SUMB[idx, B1] ~ADDB~ SUMB[idx, B2];
+AppendTo[DNSumExtRules, RuleSumAdd3];
+
+RuleSumAdd4 = SUMO[idx_, O1_ ~ADDO~ O2_] -> SUMO[idx, O1] ~ADDO~ SUMO[idx, O2];
 AppendTo[DNSumExtRules, RuleSumAdd4];
+
+RuleSumAddComp1 = SUMS[idx1_, CPX[alpha_] ~MLTS~ S1_] ~ADDS~ SUMS[idx2_, S2_] /; 
+	IdxUnifyQ[idx1, idx2]&&IdxUnifySameTermQ[idx1, idx2, S1, S2] :>
+	With[
+		{renaming=IdxUnify[idx1, idx2]},
+		SUMS[idx1/.renaming[[1]], (CPX[alpha+1]/.renaming[[1]]) ~ADDS~ (S2 /. renaming[[2]])]
+	];
+AppendTo[DNSumExtRules, RuleSumAddComp1];
+
+RuleSumAddComp2 = SUMS[idx1_, CPX[alpha_] ~MLTS~ S1_] ~ADDS~ SUMS[idx2_, CPX[beta_] ~MLTS~ S2_] /; 
+	IdxUnifyQ[idx1, idx2]&&IdxUnifySameTermQ[idx1, idx2, S1, S2] :>
+	With[
+		{renaming=IdxUnify[idx1, idx2]},
+		SUMS[idx1/.renaming[[1]], (CPX[(alpha/.renaming[[1]])+(beta/.renaming[[2]])]) ~ADDS~ (S2 /. renaming[[2]])]
+	];
+AppendTo[DNSumExtRules, RuleSumAddComp2];
+
+RuleSumAddComp3 = SUMK[idx1_, S_ ~SCRK~ K1_] ~ADDK~ SUMK[idx2_, K2_] /; 
+	IdxUnifyQ[idx1, idx2]&&IdxUnifySameTermQ[idx1, idx2, K1, K2] :>
+	With[
+		{renaming=IdxUnify[idx1, idx2]},
+		SUMK[idx1/.renaming[[1]], ((S/.renaming[[1]])~ADDS~CPX[1])~SCRK~(K2 /. renaming[[2]])]
+	];
+AppendTo[DNSumExtRules, RuleSumAddComp3];
+
+RuleSumAddComp4 = SUMK[idx1_, S1_ ~SCRK~ K1_] ~ADDK~ SUMK[idx2_, S2_ ~SCRK~ K2_] /; 
+	IdxUnifyQ[idx1, idx2]&&IdxUnifySameTermQ[idx1, idx2, K1, K2] :>
+	With[
+		{renaming=IdxUnify[idx1, idx2]},
+		SUMK[idx1/.renaming[[1]], ((S1/.renaming[[1]])~ADDS~(S2/.renaming[[2]]))~SCRK~(K2 /. renaming[[2]])]
+	];
+AppendTo[DNSumExtRules, RuleSumAddComp4];
+
+RuleSumAddComp5 = SUMB[idx1_, S_ ~SCRB~ B1_] ~ADDB~ SUMB[idx2_, B2_] /; 
+	IdxUnifyQ[idx1, idx2]&&IdxUnifySameTermQ[idx1, idx2, B1, B2] :>
+	With[
+		{renaming=IdxUnify[idx1, idx2]},
+		SUMB[idx1/.renaming[[1]], ((S/.renaming[[1]])~ADDS~CPX[1])~SCRB~(B2 /. renaming[[2]])]
+	];
+AppendTo[DNSumExtRules, RuleSumAddComp5];
+
+RuleSumAddComp6 = SUMB[idx1_, S1_ ~SCRB~ B1_] ~ADDB~ SUMB[idx2_, S2_ ~SCRB~ B2_] /; 
+	IdxUnifyQ[idx1, idx2]&&IdxUnifySameTermQ[idx1, idx2, B1, B2] :>
+	With[
+		{renaming=IdxUnify[idx1, idx2]},
+		SUMB[idx1/.renaming[[1]], ((S1/.renaming[[1]])~ADDS~(S2/.renaming[[2]]))~SCRB~(B2 /. renaming[[2]])]
+	];
+AppendTo[DNSumExtRules, RuleSumAddComp6];
+
+RuleSumAddComp7 = SUMO[idx1_, S_ ~SCRO~ O1_] ~ADDO~ SUMO[idx2_, O2_] /; 
+	IdxUnifyQ[idx1, idx2]&&IdxUnifySameTermQ[idx1, idx2, O1, O2] :>
+	With[
+		{renaming=IdxUnify[idx1, idx2]},
+		SUMO[idx1/.renaming[[1]], ((S/.renaming[[1]])~ADDS~CPX[1])~SCRO~(O2 /. renaming[[2]])]
+	];
+AppendTo[DNSumExtRules, RuleSumAddComp7];
+
+RuleSumAddComp8 = SUMO[idx1_, S1_ ~SCRO~ O1_] ~ADDO~ SUMO[idx2_, S2_ ~SCRO~ O2_] /; 
+	IdxUnifyQ[idx1, idx2]&&IdxUnifySameTermQ[idx1, idx2, O1, O2] :>
+	With[
+		{renaming=IdxUnify[idx1, idx2]},
+		SUMO[idx1/.renaming[[1]], ((S1/.renaming[[1]])~ADDS~(S2/.renaming[[2]]))~SCRO~(O2 /. renaming[[2]])]
+	];
+AppendTo[DNSumExtRules, RuleSumAddComp8];
 
 
 (* ::Subsubsection:: *)

@@ -5,7 +5,7 @@
 
 
 AppendTo[$Path, NotebookDirectory[]];
-BeginPackage["DiracAll`", {"Unification`", "DiracCore`", "DiracDeltaExt`", "DiracSumExt`", "DiracProjExt`","DiracProjSumExt`"}];
+BeginPackage["DiracAll`", {"Unification`", "DiracCore`", "DiracDeltaExt`", "DiracSumExt`", "DiracProjExt`","DiracProjSumExt`", "DiracUserLanguage`"}];
 
 
 DNRules;
@@ -22,10 +22,10 @@ DNRules = Join[DNSetRules, DNProjRules, DNCoreRules, DNDeltaExtRules, DNSumPushR
 
 (* Type checking is integrated into normalization *)
 DNNorm[term_] := With[
-	{},
-	TypeDeduce[term];
+	{parsedTerm = DiracParse[term]},
+	TypeDeduce[parsedTerm];
 	FullSimplify[
-		DNEntryExpand[term//.DNRules]//.DNRules
+		DNEntryExpand[parsedTerm//.DNRules]//.DNRules
 		(*//.DNEntryReduceRules//.DNRules*)
 	]
 ]

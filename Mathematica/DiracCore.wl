@@ -238,9 +238,7 @@ TypeChecking[OType[sigma1_, tau1_] ~TSROTyping~ OType[sigma2_, tau2_]] := OType[
 (*Type Calculations*)
 
 
-KType[TypeProjK[T_]]:=T;
 TypeProjK[KType[T_]]:=T;
-BType[TypeProjB[T_]]:=T;
 TypeProjB[BType[T_]]:=T;
 TypeProjK[OType[T1_, T2_]]:=T1;
 TypeProjB[OType[T1_, T2_]]:=T2;
