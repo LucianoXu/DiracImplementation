@@ -16,6 +16,10 @@ DNProjRules;
 Begin["Private`"];
 
 
+AppendTo[DiracSymbols, FST];
+AppendTo[DiracSymbols, SND];
+
+
 (* ::Section:: *)
 (*Type Checking Rules*)
 
@@ -31,11 +35,11 @@ TypeChecking[SNDTyping[sigma1_ ~ProdType~ sigma2_]] := sigma2;
 (*Type Calculations*)
 
 
-TypeProj1[ProdType[T1_, T2_]]:=T1;
-TypeProj2[ProdType[T1_, T2_]]:=T2;
+TProj1[ProdType[T1_, T2_]]:=T1;
+TProj2[ProdType[T1_, T2_]]:=T2;
 
-TypeCalc[FST[s_]]:=TypeProj1[TypeCalc[s]];
-TypeCalc[SND[s_]]:=TypeProj2[TypeCalc[s]];
+TCalc[FST[s_]]:=TProj1[TCalc[s]];
+TCalc[SND[s_]]:=TProj2[TCalc[s]];
 
 
 (* ::Section:: *)

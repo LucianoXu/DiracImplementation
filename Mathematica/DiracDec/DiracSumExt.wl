@@ -11,6 +11,8 @@ BeginPackage["DiracSumExt`", {"Unification`", "DiracCore`"}];
 SetType;
 TypeProjSet;
 
+DiracIdxCtx::usage="Transform IDX expression into a context.";
+
 USET;
 SETPROD;
 
@@ -42,6 +44,16 @@ DNEntryReduceRules;
 Begin["Private`"];
 
 
+AppendTo[DiracSymbols, USET];
+AppendTo[DiracSymbols, SETPROD];
+AppendTo[DiracSymbols, SUMS];
+AppendTo[DiracSymbols, SUMK];
+AppendTo[DiracSymbols, SUMB];
+AppendTo[DiracSymbols, SUMO];
+AppendTo[DiracSymbols, IDX];
+
+
+
 DNSumExtRules = {};
 
 
@@ -70,18 +82,20 @@ Format[SUMO[IDX[indices___], body_]]:=\!\(
 
 
 (* Get the new typing assumptions as an association*)
-TypingAssumpt[IDX[indices___]]:=#[[1]]->TypeProjSet[TypeCalc[#[[2]]]]&/@{indices};
+DiracIdxCtx[IDX[indices___]]:=#[[1]]->TypeProjSet[TCalc[#[[2]]]]&/@{indices};
 
 
 TypeDeduce[USET[sigma_]] := SetType[sigma];
 
 TypeDeduce[S1_ ~SETPROD~ S2_] := TypeChecking[TypeDeduce[S1] ~SETPRODTyping~ TypeDeduce[S2]];
 TypeChecking[SetType[sigma_] ~SETPRODTyping~ SetType[tau_]] := SetType[sigma ~ProdType~ tau];
+
+(* Notice that contexts are updated *)
 TypeDeduce[SUMS[idx:IDX[indices__], body_]] := 
 	TypeChecking[
 		SUMSTyping[
 			IDX@@({#[[1]],TypeDeduce[#[[2]]]}&/@{indices}), 
-			Block[{DiracCtx=Join[DiracCtx, TypingAssumpt[idx]]}, TypeDeduce[body]]
+			Block[{DiracCtx=Join[DiracCtx, DiracIdxCtx[idx]]}, TypeDeduce[body]]
 		]
 	];
 TypeChecking[SUMSTyping[_, SType]] := SType;
@@ -90,7 +104,7 @@ TypeDeduce[SUMK[idx:IDX[indices__], body_]] :=
 	TypeChecking[
 		SUMKTyping[
 			IDX@@({#[[1]],TypeDeduce[#[[2]]]}&/@{indices}), 
-			Block[{DiracCtx=Join[DiracCtx, TypingAssumpt[idx]]}, TypeDeduce[body]]
+			Block[{DiracCtx=Join[DiracCtx, DiracIdxCtx[idx]]}, TypeDeduce[body]]
 		]
 	];
 TypeChecking[SUMKTyping[_, KType[sigma_]]] := KType[sigma];
@@ -99,7 +113,7 @@ TypeDeduce[SUMB[idx:IDX[indices__], body_]] :=
 	TypeChecking[
 		SUMBTyping[
 			IDX@@({#[[1]],TypeDeduce[#[[2]]]}&/@{indices}), 
-			Block[{DiracCtx=Join[DiracCtx, TypingAssumpt[idx]]}, TypeDeduce[body]]
+			Block[{DiracCtx=Join[DiracCtx, DiracIdxCtx[idx]]}, TypeDeduce[body]]
 		]
 	];
 TypeChecking[SUMBTyping[_, BType[sigma_]]] := BType[sigma];
@@ -108,7 +122,7 @@ TypeDeduce[SUMO[idx:IDX[indices__], body_]] :=
 	TypeChecking[
 		SUMOTyping[
 			IDX@@({#[[1]],TypeDeduce[#[[2]]]}&/@{indices}), 
-			Block[{DiracCtx=Join[DiracCtx, TypingAssumpt[idx]]}, TypeDeduce[body]]
+			Block[{DiracCtx=Join[DiracCtx, DiracIdxCtx[idx]]}, TypeDeduce[body]]
 		]
 	];
 TypeChecking[SUMOTyping[_, OType[sigma_, tau_]]] := OType[sigma, tau];
@@ -118,41 +132,37 @@ TypeChecking[SUMOTyping[_, OType[sigma_, tau_]]] := OType[sigma, tau];
 (*Calculation about Sum Index*)
 
 
+(* ::Text:: *)
+(*Side conditions of SUM[..., SUM[...]]: latter indices does not depend on previous ones*)
+
+
 SUMS[IDX[], body_]:=body;
-SUMS[IDX[ids1___], SUMS[IDX[ids2___], body_]]:=SUMS[IDX[ids1,ids2], body];
+SUMS[IDX[ids1___], SUMS[IDX[ids2___], body_]]:=SUMS[IDX[ids1,ids2], body]/;AllTrue[First/@{ids1}, FreeQ[IDX[ids2], #]&];
 SUMS[i_, M_, body_]:=SUMS[IDX[{i, M}], body];
 
 SUMK[IDX[], body_]:=body;
-SUMK[IDX[ids1___], SUMK[IDX[ids2___], body_]]:=SUMK[IDX[ids1,ids2], body];
+SUMK[IDX[ids1___], SUMK[IDX[ids2___], body_]]:=SUMK[IDX[ids1,ids2], body]/;AllTrue[First/@{ids1}, FreeQ[IDX[ids2], #]&];
 SUMK[i_, M_, body_]:=SUMK[IDX[{i, M}], body];
 
 SUMB[IDX[], body_]:=body;
-SUMB[IDX[ids1___], SUMB[IDX[ids2___], body_]]:=SUMB[IDX[ids1,ids2], body];
+SUMB[IDX[ids1___], SUMB[IDX[ids2___], body_]]:=SUMB[IDX[ids1,ids2], body]/;AllTrue[First/@{ids1}, FreeQ[IDX[ids2], #]&];
 SUMB[i_, M_, body_]:=SUMB[IDX[{i, M}], body];
 
 SUMO[IDX[], body_]:=body;
-SUMO[IDX[ids1___], SUMO[IDX[ids2___], body_]]:=SUMO[IDX[ids1,ids2], body];
+SUMO[IDX[ids1___], SUMO[IDX[ids2___], body_]]:=SUMO[IDX[ids1,ids2], body]/;AllTrue[First/@{ids1}, FreeQ[IDX[ids2], #]&];
 SUMO[i_, M_, body_]:=SUMO[IDX[{i, M}], body];
 
-IndexOf[IDX[indices___]]:=First/@{indices};
 UniqueRenaming[IDX[indices___]]:=#->Unique[]&/@(First/@{indices});
-
-
-(* ::Section:: *)
-(*Convert to alpha-equivalent normal form*)
 
 
 (* get the list of all bind variables *)
 BindVars[term_]:=Cases[term,IDX[bindvs___]->bindvs,{0,Infinity}]//Union//Map[First];
-
-NewBindVars[bindvs_]:=Table[Symbol["idx"<>ToString[i]], {i, Length[bindvs]}];
 
 
 (* ::Section:: *)
 (*Set Attributes*)
 
 
-SetAttributes[UNION, {Orderless, Flat, OneIdentity}];
 SetAttributes[IDX, {Orderless}];
 
 
@@ -160,13 +170,13 @@ SetAttributes[IDX, {Orderless}];
 (*Type Calculation*)
 
 
-TypeCalc[USET[sigma_]]:=SetType[sigma];
-TypeCalc[M1_ ~SETPROD~ M2_]:=SetType[TypeProjSet[TypeCalc[M1]] ~ProdType~ TypeProjSet[TypeCalc[M2]]];
+TCalc[USET[sigma_]]:=SetType[sigma];
+TCalc[M1_ ~SETPROD~ M2_]:=SetType[TypeProjSet[TCalc[M1]] ~ProdType~ TypeProjSet[TCalc[M2]]];
 TypeProjSet[SetType[sigma_]]:=sigma;
 
-TypeCalc[SUMS[_, _]]:=SType;
+TCalc[SUMS[_, _]]:=SType;
 (* Need testing *)
-TypeCalc[t:(SUMK|SUMB|SUMO)[idx_, body_]]:=Block[{DiracCtx=Join[DiracCtx, TypingAssumpt[idx]]}, TypeCalc[body]];
+TCalc[t:(SUMK|SUMB|SUMO)[idx_, body_]]:=Block[{DiracCtx=Join[DiracCtx, DiracIdxCtx[idx]]}, TCalc[body]];
 
 
 (* ::Section:: *)
@@ -240,24 +250,24 @@ RuleSumElim8O = SUMO[IDX[{i_, USET[_]}, indices___], (DELTA[i_, s_] ~MLTS~ S_) ~
 AppendTo[DNSumExtRules, RuleSumElim8O];
 
 
-RuleSumElim9 = SUMS[IDX[{i_, M_}, {j_, M_}, indices___], DELTA[i_, j_]] -> SUMS[IDX[{j, M}, indices], CPX[1]];
+RuleSumElim9 = SUMS[IDX[{i_, M_}, {j_, M_}, indices___], DELTA[i_, j_]] /; FreeQ[M, i] -> SUMS[IDX[{j, M}, indices], CPX[1]];
 AppendTo[DNSumExtRules, RuleSumElim9];
 
-RuleSumElim10 = SUMS[IDX[{i_, M_}, {j_, M_}, indices___], DELTA[i_, j_] ~MLTS~ S_] :> SUMS[IDX[{j, M}, indices], S/.{i->j}];
+RuleSumElim10 = SUMS[IDX[{i_, M_}, {j_, M_}, indices___], DELTA[i_, j_] ~MLTS~ S_] /; FreeQ[M, i] :> SUMS[IDX[{j, M}, indices], S/.{i->j}];
 AppendTo[DNSumExtRules, RuleSumElim10];
 
-RuleSumElim11K = SUMK[IDX[{i_, M_}, {j_, M_}, indices___], DELTA[i_, j_] ~SCRK~ A_] :> SUMK[IDX[{j, M}, indices], A/.{i->j}];
+RuleSumElim11K = SUMK[IDX[{i_, M_}, {j_, M_}, indices___], DELTA[i_, j_] ~SCRK~ A_] /; FreeQ[M, i] :> SUMK[IDX[{j, M}, indices], A/.{i->j}];
 AppendTo[DNSumExtRules, RuleSumElim11K];
-RuleSumElim11B = SUMB[IDX[{i_, M_}, {j_, M_}, indices___], DELTA[i_, j_] ~SCRB~ A_] :> SUMB[IDX[{j, M}, indices], A/.{i->j}];
+RuleSumElim11B = SUMB[IDX[{i_, M_}, {j_, M_}, indices___], DELTA[i_, j_] ~SCRB~ A_] /; FreeQ[M, i] :> SUMB[IDX[{j, M}, indices], A/.{i->j}];
 AppendTo[DNSumExtRules, RuleSumElim11B];
-RuleSumElim11O = SUMO[IDX[{i_, M_}, {j_, M_}, indices___], DELTA[i_, j_] ~SCRO~ A_] :> SUMO[IDX[{j, M}, indices], A/.{i->j}];
+RuleSumElim11O = SUMO[IDX[{i_, M_}, {j_, M_}, indices___], DELTA[i_, j_] ~SCRO~ A_] /; FreeQ[M, i] :> SUMO[IDX[{j, M}, indices], A/.{i->j}];
 AppendTo[DNSumExtRules, RuleSumElim11O];
 
-RuleSumElim12K = SUMK[IDX[{i_, M_}, {j_, M_}, indices___], (DELTA[i_, j_] ~MLTS~ S_) ~SCRK~ A_] :> SUMK[IDX[{j, M}, indices], (S~SCRK~A)/.{i->j}];
+RuleSumElim12K = SUMK[IDX[{i_, M_}, {j_, M_}, indices___], (DELTA[i_, j_] ~MLTS~ S_) ~SCRK~ A_] /; FreeQ[M, i] :> SUMK[IDX[{j, M}, indices], (S~SCRK~A)/.{i->j}];
 AppendTo[DNSumExtRules, RuleSumElim12K];
-RuleSumElim12B = SUMB[IDX[{i_, M_}, {j_, M_}, indices___], (DELTA[i_, j_] ~MLTS~ S_) ~SCRB~ A_] :> SUMB[IDX[{j, M}, indices], (S~SCRB~A)/.{i->j}];
+RuleSumElim12B = SUMB[IDX[{i_, M_}, {j_, M_}, indices___], (DELTA[i_, j_] ~MLTS~ S_) ~SCRB~ A_] /; FreeQ[M, i] :> SUMB[IDX[{j, M}, indices], (S~SCRB~A)/.{i->j}];
 AppendTo[DNSumExtRules, RuleSumElim12B];
-RuleSumElim12O = SUMO[IDX[{i_, M_}, {j_, M_}, indices___], (DELTA[i_, j_] ~MLTS~ S_) ~SCRO~ A_] :> SUMO[IDX[{j, M}, indices], (S~SCRO~A)/.{i->j}];
+RuleSumElim12O = SUMO[IDX[{i_, M_}, {j_, M_}, indices___], (DELTA[i_, j_] ~MLTS~ S_) ~SCRO~ A_] /; FreeQ[M, i] :> SUMO[IDX[{j, M}, indices], (S~SCRO~A)/.{i->j}];
 AppendTo[DNSumExtRules, RuleSumElim12O];
 
 
@@ -562,7 +572,7 @@ EntryExpandK[K1_ ~ADDK~ K2_]:=EntryExpandK[K1] ~ADDK~ EntryExpandK[K2];
 EntryExpandK[O0_ ~MLTK~ K_]:=EntryExpandO[O0] ~MLTK~ EntryExpandK[K];
 EntryExpandK[K1_ ~TSRK~ K2_]:=EntryExpandK[K1] ~TSRK~ EntryExpandK[K2];
 EntryExpandK[SUMK[idx_, K_]]:=SUMK[idx, EntryExpandK[K]];
-EntryExpandK[K_]:=With[{nv=Unique[]}, SUMK[nv, USET[TypeProjK[TypeCalc[K]]], (BRA[nv]~DOT~K)~SCRK~KET[nv]]];
+EntryExpandK[K_]:=With[{nv=Unique[]}, SUMK[nv, USET[TProjK[TCalc[K]]], (BRA[nv]~DOT~K)~SCRK~KET[nv]]];
 
 EntryExpandB[B:ZEROB[_]|BRA[_]]:=B;
 EntryExpandB[ADJB[K_]]:=ADJB[EntryExpandK[K]];
@@ -571,7 +581,7 @@ EntryExpandB[B1_ ~ADDB~ B2_]:=EntryExpandB[B1] ~ADDB~ EntryExpandB[B2];
 EntryExpandB[B_ ~MLTB~ O0_]:=EntryExpandB[B] ~MLTB~ EntryExpandO[O0];
 EntryExpandB[B1_ ~TSRB~ B2_]:=EntryExpandB[B1] ~TSRB~ EntryExpandB[B2];
 EntryExpandB[SUMB[idx_, B_]]:=SUMB[idx, EntryExpandB[B]];
-EntryExpandB[B_]:=With[{nv=Unique[]}, SUMB[nv, USET[TypeProjB[TypeCalc[B]]], (B~DOT~KET[nv])~SCRB~BRA[nv]]];
+EntryExpandB[B_]:=With[{nv=Unique[]}, SUMB[nv, USET[TProjB[TCalc[B]]], (B~DOT~KET[nv])~SCRB~BRA[nv]]];
 
 EntryExpandO[O0:ZEROO[_, _]|ONEO[_]]:=O0;
 EntryExpandO[K_ ~OUTER~ B_]:=EntryExpandK[K] ~OUTER~ EntryExpandB[B];
@@ -582,7 +592,7 @@ EntryExpandO[O1_ ~TSRO~ O2_]:=EntryExpandO[O1] ~TSRO~ EntryExpandO[O2];
 EntryExpandO[O1_ ~MLTO~ O2_]:=EntryExpandO[O1] ~MLTO~ EntryExpandO[O2];
 EntryExpandO[SUMO[idx_, O_]]:=SUMO[idx, EntryExpandO[O]];
 EntryExpandO[O0_]:=With[{i=Unique[], j=Unique[]}, SUMO[
-	IDX[{i, USET[TypeProjK[TypeCalc[O0]]]}, {j, USET[TypeProjB[TypeCalc[O0]]]}], 
+	IDX[{i, USET[TProjK[TCalc[O0]]]}, {j, USET[TProjB[TCalc[O0]]]}], 
 	(BRA[i]~DOT~(O0~MLTK~KET[j]))~SCRO~(KET[i]~OUTER~BRA[j])
 ]];
 
@@ -617,9 +627,9 @@ DNEntryExpand[SUMO[idx_, O_]]:=SUMO[idx, EntryExpandO[O]];
 
 (* the following three rules expand variables according to the context *)
 
-DNEntryExpand[X_/;InDiracCtxQ[X]&&MatchQ[TypeCalc[X], KType[_]]]:=EntryExpandK[X];
-DNEntryExpand[X_/;InDiracCtxQ[X]&&MatchQ[TypeCalc[X], BType[_]]]:=EntryExpandB[X];
-DNEntryExpand[X_/;InDiracCtxQ[X]&&MatchQ[TypeCalc[X], OType[_,_]]]:=EntryExpandO[X];
+DNEntryExpand[X_/;InDiracCtxQ[X]&&MatchQ[TCalc[X], KType[_]]]:=EntryExpandK[X];
+DNEntryExpand[X_/;InDiracCtxQ[X]&&MatchQ[TCalc[X], BType[_]]]:=EntryExpandB[X];
+DNEntryExpand[X_/;InDiracCtxQ[X]&&MatchQ[TCalc[X], OType[_,_]]]:=EntryExpandO[X];
 
 DNEntryExpand[X_]:=X;
 
@@ -656,7 +666,11 @@ UnifyPreproc[s1:(sop:SUMS|SUMK|SUMB|SUMO)[idx1_, body1_], s2:(sop:SUMS|SUMK|SUMB
 			newbdvs1, newbdvs2
 		}, 
 		newbdvs1=Table[Unique[], Length[bindvs1]]; newbdvs2=Table[Unique[], Length[bindvs2]];
-		{s1/.Thread[bindvs1 -> newbdvs1], s2/.Thread[bindvs2 -> newbdvs2], Join[newbdvs1, newbdvs2]}
+		{
+			s1/.Thread[bindvs1 -> newbdvs1], 
+			s2/.Thread[bindvs2 -> newbdvs2], 
+			{newbdvs1, newbdvs2} (* Variables in the same group cannot be assigned to each other *)
+		}
 	];
 
 

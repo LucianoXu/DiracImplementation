@@ -1,0 +1,1243 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 14.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     44685,       1235]
+NotebookOptionsPosition[     41168,       1160]
+NotebookOutlinePosition[     41575,       1176]
+CellTagsIndexPosition[     41532,       1173]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Verifying HHL", "Title",ExpressionUUID->"c6575417-f821-4098-9059-ae47604f6e12"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"AppendTo", "[", 
+   RowBox[{"$Path", ",", 
+    RowBox[{"FileNameJoin", "[", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"NotebookDirectory", "[", "]"}], ",", "\"\<DiracDec\>\""}], 
+      "}"}], "]"}]}], "]"}], ";"}], "\n", 
+ RowBox[{"Get", "[", "\"\<DiracAll`\>\"", "]"}]}], "Code",
+ CellLabel->"In[50]:=",ExpressionUUID->"cdcd0075-d750-441f-83d0-24537a94534c"],
+
+Cell[CellGroupData[{
+
+Cell["Eq1", "Subsection",ExpressionUUID->"cbbcd56c-6a36-4942-934f-dc466215fb89"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Block", "[", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"{", "\[IndentingNewLine]", 
+    RowBox[{"DiracCtx", "=", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"0", "->", "T"}], ",", 
+       RowBox[{"b", "->", "T"}], ",", 
+       RowBox[{
+        RowBox[{"U", "[", "_", "]"}], "->", 
+        RowBox[{"OType", "[", 
+         RowBox[{"T", ",", "T"}], "]"}]}]}], "}"}]}], "\[IndentingNewLine]", 
+    "}"}], ",", "\[IndentingNewLine]", 
+   RowBox[{"DNEqQ", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{
+        TemplateBox[{"0"},
+         "Ket"], "\[CircleTimes]", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"U", "[", "b", "]"}], "\[SmallCircle]", 
+          TemplateBox[{"0"},
+           "Ket"]}], ")"}]}], ")"}], "\[CircleTimes]", 
+      TemplateBox[{"0"},
+       "Ket"]}], ",", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{
+        TemplateBox[{"0"},
+         "Ket"], "\[CircleTimes]", 
+        TemplateBox[{"b"},
+         "Ket"]}], ")"}], "\[CircleTimes]", 
+      TemplateBox[{"0"},
+       "Ket"]}], ",", "\[IndentingNewLine]", "False", ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"U", "[", "b_", "]"}], "~", "MLTK", "~", 
+        RowBox[{"KET", "[", "0", "]"}]}], "->", 
+       RowBox[{"KET", "[", "b", "]"}]}], "}"}]}], "\[IndentingNewLine]", 
+    "]"}]}], "\[IndentingNewLine]", "]"}]], "Input",
+ CellLabel->"In[52]:=",ExpressionUUID->"4ba4b617-838d-4ef4-bd56-d0434b6cf47f"],
+
+Cell[BoxData["True"], "Output",
+ CellLabel->"Out[52]=",ExpressionUUID->"57c1a856-8a7f-4b85-9ea4-148a6be6226d"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Eq2", "Subsection",ExpressionUUID->"5a808bf5-f7a0-4088-97c6-9bd8353724e5"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Block", "[", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"{", "\[IndentingNewLine]", 
+    RowBox[{"DiracCtx", "=", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"0", "->", "T"}], ",", 
+       RowBox[{"b", "->", "T"}], ",", 
+       RowBox[{
+        RowBox[{"U", "[", "_", "]"}], "->", 
+        RowBox[{"OType", "[", 
+         RowBox[{"T", ",", "T"}], "]"}]}], ",", 
+       RowBox[{"Hn", "->", 
+        RowBox[{"OType", "[", 
+         RowBox[{"T", ",", "T"}], "]"}]}]}], "}"}]}], "\[IndentingNewLine]", 
+    "}"}], ",", "\[IndentingNewLine]", 
+   RowBox[{"DNEqQ", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"Hn", "\[SmallCircle]", 
+          TemplateBox[{"0"},
+           "Ket"]}], ")"}], "\[CircleTimes]", 
+        TemplateBox[{"b"},
+         "Ket"]}], ")"}], "\[CircleTimes]", 
+      TemplateBox[{"0"},
+       "Ket"]}], ",", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"CPX", "[", 
+       RowBox[{"1", "/", 
+        RowBox[{"Sqrt", "[", 
+         RowBox[{"n", "+", "1"}], "]"}]}], "]"}], " ", 
+      RowBox[{"Sum", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{
+           TemplateBox[{"\[Tau]"},
+            "Ket"], "\[CircleTimes]", 
+           TemplateBox[{"b"},
+            "Ket"]}], ")"}], "\[CircleTimes]", 
+         TemplateBox[{"0"},
+          "Ket"]}], ",", 
+        RowBox[{"{", 
+         RowBox[{"\[Tau]", ",", 
+          RowBox[{"USET", "[", 
+           RowBox[{"Fin", "[", 
+            RowBox[{"n", "+", "1"}], "]"}], "]"}]}], "}"}]}], "]"}]}], ",", 
+     "\[IndentingNewLine]", "False", ",", "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"Hn", "~", "MLTK", "~", 
+        RowBox[{"KET", "[", "0", "]"}]}], ":>", 
+       RowBox[{
+        RowBox[{"CPX", "[", 
+         RowBox[{"1", "/", 
+          RowBox[{"Sqrt", "[", 
+           RowBox[{"n", "+", "1"}], "]"}]}], "]"}], "~", "SCRK", "~", 
+        RowBox[{"SUMK", "[", 
+         RowBox[{"\[Tau]", ",", 
+          RowBox[{"USET", "[", 
+           RowBox[{"Fin", "[", 
+            RowBox[{"n", "+", "1"}], "]"}], "]"}], ",", 
+          RowBox[{"KET", "[", "\[Tau]", "]"}]}], "]"}]}]}], "}"}]}], 
+    "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", "]"}]], "Input",
+ CellLabel->"In[93]:=",ExpressionUUID->"0d43fb5d-cf52-420a-a9e5-a8347b3271f8"],
+
+Cell[BoxData["True"], "Output",
+ CellLabel->"Out[93]=",ExpressionUUID->"f8684ce1-8522-4822-9508-11a80a944454"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Eq3", "Subsection",ExpressionUUID->"37a7088d-33fc-488d-8a2f-1a66e5d6c7a5"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Block", "[", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"{", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"DiracCtx", "=", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"0", "->", "T"}], ",", 
+        RowBox[{"M", "->", 
+         RowBox[{"SetType", "[", "m", "]"}]}], ",", 
+        RowBox[{
+         RowBox[{"\[Beta]", "[", "_", "]"}], "->", "SType"}], ",", 
+        RowBox[{"b", "->", "T"}], ",", 
+        RowBox[{
+         RowBox[{"u", "[", "_", "]"}], "->", 
+         RowBox[{"KType", "[", "T", "]"}]}], ",", 
+        RowBox[{
+         RowBox[{"U", "[", "_", "]"}], "->", 
+         RowBox[{"OType", "[", 
+          RowBox[{"T", ",", "T"}], "]"}]}], ",", 
+        RowBox[{"Hu", "->", 
+         RowBox[{"OType", "[", 
+          RowBox[{"T", ",", "T"}], "]"}]}], ",", " ", 
+        RowBox[{"Uf", "->", 
+         RowBox[{"OType", "[", 
+          RowBox[{
+           RowBox[{"T", "~", "ProdType", "~", "T"}], ",", " ", 
+           RowBox[{"T", "~", "ProdType", "~", "T"}]}], "]"}]}]}], "}"}]}], 
+     ",", "\[IndentingNewLine]", 
+     RowBox[{"Uf", "=", 
+      RowBox[{"Sum", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{
+           TemplateBox[{"i"},
+            "Ket"], "\[CircleTimes]", 
+           TemplateBox[{"i"},
+            "Bra"]}], ")"}], "\[CircleTimes]", 
+         RowBox[{"(", 
+          RowBox[{"Sum", "[", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"CPX", "[", 
+              RowBox[{"Exp", "[", 
+               RowBox[{"I", " ", "i", " ", 
+                RowBox[{"\[Lambda]", "[", "j", "]"}], " ", 
+                RowBox[{
+                 RowBox[{"t0", "[", "j", "]"}], " ", "/", " ", 
+                 RowBox[{"(", 
+                  RowBox[{"n", "+", "1"}], ")"}]}]}], "]"}], "]"}], 
+             RowBox[{"(", 
+              RowBox[{
+               RowBox[{"u", "[", "j", "]"}], "\[CircleTimes]", 
+               RowBox[{"(", 
+                SuperscriptBox[
+                 RowBox[{"u", "[", "j", "]"}], "\[Dagger]"], ")"}]}], ")"}]}],
+             ",", 
+            RowBox[{"{", 
+             RowBox[{"j", ",", 
+              RowBox[{"USET", "[", "T", "]"}]}], "}"}]}], "]"}], ")"}]}], ",", 
+        RowBox[{"{", 
+         RowBox[{"i", ",", 
+          RowBox[{"USET", "[", "T", "]"}]}], "}"}]}], "]"}]}]}], 
+    "\[IndentingNewLine]", "}"}], ",", "\[IndentingNewLine]", 
+   RowBox[{"DNEqQ", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"CPX", "[", 
+       RowBox[{"1", "/", 
+        RowBox[{"Sqrt", "[", 
+         RowBox[{"n", "+", "1"}], "]"}]}], "]"}], " ", 
+      RowBox[{"Sum", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"Uf", "\[SmallCircle]", 
+           RowBox[{"(", 
+            RowBox[{
+             TemplateBox[{"\[Tau]"},
+              "Ket"], "\[CircleTimes]", 
+             TemplateBox[{"b"},
+              "Ket"]}], ")"}]}], ")"}], "\[CircleTimes]", 
+         TemplateBox[{"0"},
+          "Ket"]}], ",", 
+        RowBox[{"{", 
+         RowBox[{"\[Tau]", ",", 
+          RowBox[{"USET", "[", "T", "]"}]}], "}"}]}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"CPX", "[", 
+       RowBox[{"1", "/", 
+        RowBox[{"Sqrt", "[", 
+         RowBox[{"n", "+", "1"}], "]"}]}], "]"}], " ", 
+      RowBox[{"Sum", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"Sum", "[", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"\[Beta]", "[", "j", "]"}], 
+              RowBox[{"CPX", "[", 
+               RowBox[{"Exp", "[", 
+                RowBox[{"I", " ", "\[Tau]", " ", 
+                 RowBox[{"\[Lambda]", "[", "j", "]"}], " ", 
+                 RowBox[{
+                  RowBox[{"t0", "[", "j", "]"}], "/", 
+                  RowBox[{"(", 
+                   RowBox[{"n", "+", "1"}], ")"}]}]}], "]"}], "]"}], 
+              TemplateBox[{"\[Tau]"},
+               "Ket"]}], ",", 
+             RowBox[{"{", 
+              RowBox[{"\[Tau]", ",", 
+               RowBox[{"USET", "[", "T", "]"}]}], "}"}]}], "]"}], 
+           "\[CircleTimes]", 
+           RowBox[{"u", "[", "j", "]"}]}], ")"}], "\[CircleTimes]", 
+         TemplateBox[{"0"},
+          "Ket"]}], ",", 
+        RowBox[{"{", 
+         RowBox[{"j", ",", 
+          RowBox[{"USET", "[", "T", "]"}]}], "}"}]}], "]"}]}], ",", 
+     "\[IndentingNewLine]", "False", ",", "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"KET", "[", "b", "]"}], "->", 
+        RowBox[{"SUMK", "[", 
+         RowBox[{"j", ",", " ", 
+          RowBox[{"USET", "[", "T", "]"}], ",", " ", 
+          RowBox[{
+           RowBox[{"\[Beta]", "[", "j", "]"}], "~", "SCRK", "~", 
+           RowBox[{"u", "[", "j", "]"}]}]}], "]"}]}], ",", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"ADJB", "[", 
+          RowBox[{"u", "[", "i_", "]"}], "]"}], "~", "DOT", "~", 
+         RowBox[{"u", "[", "j_", "]"}]}], "->", 
+        RowBox[{"DELTA", "[", 
+         RowBox[{"i", ",", "j"}], "]"}]}]}], "}"}]}], "\[IndentingNewLine]", 
+    "]"}]}], "\[IndentingNewLine]", "]"}]], "Input",
+ CellLabel->"In[94]:=",ExpressionUUID->"1599e5c9-0222-4b7f-8d07-d63be531e496"],
+
+Cell[BoxData["True"], "Output",
+ CellLabel->"Out[94]=",ExpressionUUID->"38ba965f-e1b3-44d0-b116-70c7217eff74"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Eq4 (CPX sum skipped)", "Subsection",ExpressionUUID->"f239a877-ac55-47d1-90f6-01e309fbd495"],
+
+Cell["notice that 2 pi (delta i) = (lambda i) t0", "Text",ExpressionUUID->"73fe6793-21ad-4ff5-b6ac-1ffc3dfdeeab"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Block", "[", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"{", "\[IndentingNewLine]", 
+    RowBox[{"DiracCtx", "=", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"0", "->", "T"}], ",", 
+       RowBox[{"M", "->", 
+        RowBox[{"SetType", "[", "m", "]"}]}], ",", 
+       RowBox[{
+        RowBox[{"\[Beta]", "[", "_", "]"}], "->", "SType"}], ",", 
+       RowBox[{
+        RowBox[{"\[Tau]", "[", "_", "]"}], "->", "SType"}], ",", 
+       RowBox[{"b", "->", "T"}], ",", 
+       RowBox[{
+        RowBox[{"u", "[", "_", "]"}], "->", 
+        RowBox[{"KType", "[", "T", "]"}]}], ",", 
+       RowBox[{
+        RowBox[{"U", "[", "_", "]"}], "->", 
+        RowBox[{"OType", "[", 
+         RowBox[{"T", ",", "T"}], "]"}]}], ",", 
+       RowBox[{"Hu", "->", 
+        RowBox[{"OType", "[", 
+         RowBox[{"T", ",", "T"}], "]"}]}], ",", " ", 
+       RowBox[{"Uf", "->", 
+        RowBox[{"OType", "[", 
+         RowBox[{
+          RowBox[{"T", "~", "ProdType", "~", "T"}], ",", " ", 
+          RowBox[{"T", "~", "ProdType", "~", "T"}]}], "]"}]}], ",", 
+       RowBox[{"IQFT", "->", 
+        RowBox[{"OType", "[", 
+         RowBox[{"T", ",", "T"}], "]"}]}]}], "}"}]}], "\[IndentingNewLine]", 
+    "}"}], ",", "\[IndentingNewLine]", 
+   RowBox[{"DNEqQ", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"CPX", "[", 
+       RowBox[{"1", "/", 
+        RowBox[{"Sqrt", "[", 
+         RowBox[{"n", "+", "1"}], "]"}]}], "]"}], " ", 
+      RowBox[{"Sum", "[", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"IQFT", "\[SmallCircle]", 
+            RowBox[{"Sum", "[", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"\[Beta]", "[", "j", "]"}], 
+               RowBox[{"CPX", "[", 
+                RowBox[{"Exp", "[", 
+                 RowBox[{"2", " ", "Pi", " ", "I", " ", "\[Tau]", " ", 
+                  RowBox[{
+                   RowBox[{"\[Delta]", "[", "\[Tau]", "]"}], " ", "/", 
+                   RowBox[{"(", 
+                    RowBox[{"n", "+", "1"}], ")"}]}]}], "]"}], "]"}], 
+               TemplateBox[{"\[Tau]"},
+                "Ket"]}], ",", 
+              RowBox[{"{", 
+               RowBox[{"\[Tau]", ",", 
+                RowBox[{"USET", "[", "T", "]"}]}], "}"}]}], "]"}]}], 
+           "\[CircleTimes]", 
+           RowBox[{"u", "[", "j", "]"}]}], ")"}], "\[CircleTimes]", 
+         TemplateBox[{"0"},
+          "Ket"]}], ",", 
+        RowBox[{"{", 
+         RowBox[{"j", ",", 
+          RowBox[{"USET", "[", "T", "]"}]}], "}"}]}], "]"}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"SUMK", "[", 
+      RowBox[{
+       RowBox[{"IDX", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"i", ",", 
+           RowBox[{"USET", "[", "T", "]"}]}], "}"}], ",", " ", 
+         RowBox[{"{", 
+          RowBox[{"j", ",", 
+           RowBox[{"USET", "[", "T", "]"}]}], "}"}]}], "]"}], ",", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"SUMS", "[", 
+           RowBox[{"k", ",", 
+            RowBox[{"USET", "[", "T", "]"}], ",", 
+            RowBox[{"CPX", "[", 
+             RowBox[{
+              RowBox[{"Exp", "[", 
+               RowBox[{
+                RowBox[{"-", "2"}], " ", "I", " ", "Pi", " ", "j", " ", 
+                RowBox[{
+                 RowBox[{"(", 
+                  RowBox[{"k", " ", "-", " ", 
+                   RowBox[{"\[Delta]", "[", "j", "]"}]}], ")"}], "/", 
+                 RowBox[{"(", 
+                  RowBox[{"1", "+", "n"}], ")"}]}]}], "]"}], "/", 
+              RowBox[{"(", 
+               RowBox[{"1", "+", "n"}], ")"}]}], "]"}]}], "]"}], "~", "MLTS", 
+          "~", 
+          RowBox[{"\[Beta]", "[", "j", "]"}]}], ")"}], "~", "SCRK", "~", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"KET", "[", "j", "]"}], "~", "TSRK", "~", 
+            RowBox[{"u", "[", "i", "]"}]}], ")"}], "~", "TSRK", "~", 
+          RowBox[{"KET", "[", "0", "]"}]}], ")"}]}]}], "]"}], ",", 
+     "\[IndentingNewLine]", "False", ",", "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"IQFT", "~", "MLTK", "~", 
+        RowBox[{"KET", "[", "i_", "]"}]}], "->", 
+       RowBox[{
+        RowBox[{"CPX", "[", 
+         RowBox[{"1", "/", 
+          RowBox[{"Sqrt", "[", 
+           RowBox[{"n", "+", "1"}], "]"}]}], "]"}], "~", "SCRK", "~", 
+        RowBox[{"SUMK", "[", 
+         RowBox[{"k", ",", 
+          RowBox[{"USET", "[", "T", "]"}], ",", 
+          RowBox[{
+           RowBox[{"CPX", "[", 
+            RowBox[{"Exp", "[", 
+             RowBox[{
+              RowBox[{"-", "2"}], " ", "Pi", " ", "I", " ", "i", " ", 
+              RowBox[{"k", " ", "/", " ", 
+               RowBox[{"(", 
+                RowBox[{"n", "+", "1"}], ")"}]}]}], "]"}], "]"}], "~", "SCRK",
+            "~", 
+           RowBox[{"KET", "[", "k", "]"}]}]}], "]"}]}]}], "}"}]}], 
+    "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", "]"}]], "Input",
+ CellLabel->"In[95]:=",ExpressionUUID->"e001811c-5edd-414b-8358-0c2f336ae7d4"],
+
+Cell[BoxData["True"], "Output",
+ CellLabel->"Out[95]=",ExpressionUUID->"781255e6-87f5-4f38-9b53-1c29d0417952"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Eq5", "Subsection",ExpressionUUID->"a93d65fa-fe66-4057-b5f7-d4a12ae6fe83"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Block", "[", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"{", "\[IndentingNewLine]", 
+    RowBox[{"DiracCtx", "=", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"0", "->", "T"}], ",", 
+       RowBox[{"M", "->", 
+        RowBox[{"SetType", "[", "m", "]"}]}], ",", 
+       RowBox[{
+        RowBox[{"\[Delta]", "[", "_", "]"}], "->", "T"}], ",", 
+       RowBox[{
+        RowBox[{"\[Beta]", "[", "_", "]"}], "->", "SType"}], ",", 
+       RowBox[{
+        RowBox[{"\[Tau]", "[", "_", "]"}], "->", "SType"}], ",", 
+       RowBox[{"b", "->", "T"}], ",", 
+       RowBox[{
+        RowBox[{"u", "[", "_", "]"}], "->", 
+        RowBox[{"KType", "[", "T", "]"}]}], ",", 
+       RowBox[{
+        RowBox[{"U", "[", "_", "]"}], "->", 
+        RowBox[{"OType", "[", 
+         RowBox[{"T", ",", "T"}], "]"}]}], ",", 
+       RowBox[{"Hu", "->", 
+        RowBox[{"OType", "[", 
+         RowBox[{"T", ",", "T"}], "]"}]}], ",", " ", 
+       RowBox[{"Uf", "->", 
+        RowBox[{"OType", "[", 
+         RowBox[{
+          RowBox[{"T", "~", "ProdType", "~", "T"}], ",", " ", 
+          RowBox[{"T", "~", "ProdType", "~", "T"}]}], "]"}]}], ",", 
+       RowBox[{"IQFT", "->", 
+        RowBox[{"OType", "[", 
+         RowBox[{"T", ",", "T"}], "]"}]}], ",", " ", 
+       RowBox[{"Uc", "->", 
+        RowBox[{"OType", "[", 
+         RowBox[{
+          RowBox[{"T", "~", "ProdType", "~", "T"}], ",", " ", 
+          RowBox[{"T", "~", "ProdType", "~", "T"}]}], "]"}]}], ",", " ", 
+       RowBox[{
+        RowBox[{"v", "[", "_", "]"}], "->", 
+        RowBox[{"KType", "[", "T", "]"}]}]}], "}"}]}], "\[IndentingNewLine]", 
+    "}"}], ",", "\[IndentingNewLine]", 
+   RowBox[{"DNEqQ", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"Sum", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"\[Beta]", "[", "j", "]"}], 
+        RowBox[{
+         RowBox[{"u", "[", "j", "]"}], "\[CircleTimes]", 
+         RowBox[{"(", 
+          RowBox[{"Uc", "\[SmallCircle]", 
+           RowBox[{"(", 
+            RowBox[{
+             TemplateBox[{
+               RowBox[{"\[Delta]", "[", "j", "]"}]},
+              "Ket"], "\[CircleTimes]", 
+             TemplateBox[{"0"},
+              "Ket"]}], ")"}]}], ")"}]}]}], ",", 
+       RowBox[{"{", 
+        RowBox[{"j", ",", 
+         RowBox[{"USET", "[", "T", "]"}]}], "}"}]}], "]"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"Sum", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"\[Beta]", "[", "j", "]"}], 
+        RowBox[{
+         RowBox[{"u", "[", "j", "]"}], "\[CircleTimes]", 
+         RowBox[{"(", 
+          RowBox[{
+           TemplateBox[{
+             RowBox[{"\[Delta]", "[", "j", "]"}]},
+            "Ket"], "\[CircleTimes]", 
+           RowBox[{"v", "[", 
+            RowBox[{"\[Delta]", "[", "j", "]"}], "]"}]}], ")"}]}]}], ",", 
+       RowBox[{"{", 
+        RowBox[{"j", ",", 
+         RowBox[{"USET", "[", "T", "]"}]}], "}"}]}], "]"}], ",", 
+     "\[IndentingNewLine]", "False", ",", "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"Uc", "~", "MLTK", "~", 
+        RowBox[{"KET", "[", 
+         RowBox[{"PAIR", "[", 
+          RowBox[{"i_", ",", "0"}], "]"}], "]"}]}], "->", 
+       RowBox[{
+        RowBox[{"KET", "[", "i", "]"}], "~", "TSRK", "~", 
+        RowBox[{"v", "[", "i", "]"}]}]}], "}"}]}], "\[IndentingNewLine]", 
+    "]"}]}], "\[IndentingNewLine]", "]"}]], "Input",
+ CellLabel->"In[96]:=",ExpressionUUID->"517f83ee-ee71-40ad-9410-959575555edb"],
+
+Cell[BoxData["True"], "Output",
+ CellLabel->"Out[96]=",ExpressionUUID->"29c492bf-04fa-43c6-af32-0001fa2a46c4"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Eq6", "Subsubsection",ExpressionUUID->"6bf139c1-d5ea-4e60-b4eb-13b932eae1d5"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Block", "[", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"{", "\[IndentingNewLine]", 
+    RowBox[{"DiracCtx", "=", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"0", "->", "T"}], ",", 
+       RowBox[{"M", "->", 
+        RowBox[{"SetType", "[", "m", "]"}]}], ",", 
+       RowBox[{
+        RowBox[{"\[Delta]", "[", "_", "]"}], "->", "T"}], ",", 
+       RowBox[{
+        RowBox[{"\[Beta]", "[", "_", "]"}], "->", "SType"}], ",", 
+       RowBox[{
+        RowBox[{"\[Tau]", "[", "_", "]"}], "->", "SType"}], ",", 
+       RowBox[{"b", "->", "T"}], ",", 
+       RowBox[{
+        RowBox[{"u", "[", "_", "]"}], "->", 
+        RowBox[{"KType", "[", "T", "]"}]}], ",", 
+       RowBox[{
+        RowBox[{"U", "[", "_", "]"}], "->", 
+        RowBox[{"OType", "[", 
+         RowBox[{"T", ",", "T"}], "]"}]}], ",", 
+       RowBox[{"Hu", "->", 
+        RowBox[{"OType", "[", 
+         RowBox[{"T", ",", "T"}], "]"}]}], ",", " ", 
+       RowBox[{"Uf", "->", 
+        RowBox[{"OType", "[", 
+         RowBox[{
+          RowBox[{"T", "~", "ProdType", "~", "T"}], ",", " ", 
+          RowBox[{"T", "~", "ProdType", "~", "T"}]}], "]"}]}], ",", 
+       RowBox[{"IQFT", "->", 
+        RowBox[{"OType", "[", 
+         RowBox[{"T", ",", "T"}], "]"}]}], ",", 
+       RowBox[{"QFT", "->", 
+        RowBox[{"OType", "[", 
+         RowBox[{"T", ",", "T"}], "]"}]}], ",", " ", 
+       RowBox[{"Uc", "->", 
+        RowBox[{"OType", "[", 
+         RowBox[{
+          RowBox[{"T", "~", "ProdType", "~", "T"}], ",", " ", 
+          RowBox[{"T", "~", "ProdType", "~", "T"}]}], "]"}]}], ",", " ", 
+       RowBox[{
+        RowBox[{"v", "[", "_", "]"}], "->", 
+        RowBox[{"KType", "[", "T", "]"}]}]}], "}"}]}], "\[IndentingNewLine]", 
+    "}"}], ",", "\[IndentingNewLine]", 
+   RowBox[{"DNEqQ", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"Sum", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"\[Beta]", "[", "j", "]"}], 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"QFT", "\[SmallCircle]", 
+           TemplateBox[{
+             RowBox[{"\[Delta]", "[", "j", "]"}]},
+            "Ket"]}], ")"}], "\[CircleTimes]", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"u", "[", "j", "]"}], "\[CircleTimes]", 
+           RowBox[{"v", "[", 
+            RowBox[{"\[Delta]", "[", "j", "]"}], "]"}]}], ")"}]}]}], ",", 
+       RowBox[{"{", 
+        RowBox[{"j", ",", 
+         RowBox[{"USET", "[", "T", "]"}]}], "}"}]}], "]"}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"CPX", "[", 
+       RowBox[{"1", "/", 
+        RowBox[{"Sqrt", "[", 
+         RowBox[{"n", "+", "1"}], "]"}]}], "]"}], " ", 
+      RowBox[{"Sum", "[", 
+       RowBox[{
+        RowBox[{"Sum", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"\[Beta]", "[", "j", "]"}], 
+           RowBox[{"CPX", "[", 
+            RowBox[{"Exp", "[", 
+             RowBox[{"I", " ", "2", " ", "Pi", " ", 
+              RowBox[{"\[Delta]", "[", "j", "]"}], " ", 
+              RowBox[{"\[Tau]", "/", 
+               RowBox[{"(", 
+                RowBox[{"1", "+", "n"}], ")"}]}]}], "]"}], "]"}], 
+           RowBox[{
+            TemplateBox[{"\[Tau]"},
+             "Ket"], "\[CircleTimes]", 
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"u", "[", "j", "]"}], "\[CircleTimes]", 
+              RowBox[{"v", "[", "j", "]"}]}], ")"}]}]}], ",", 
+          RowBox[{"{", 
+           RowBox[{"j", ",", 
+            RowBox[{"USET", "[", "T", "]"}]}], "}"}]}], "]"}], ",", 
+        RowBox[{"{", 
+         RowBox[{"\[Tau]", ",", 
+          RowBox[{"USET", "[", "T", "]"}]}], "}"}]}], "]"}]}], ",", 
+     "\[IndentingNewLine]", "False", ",", "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{"QFT", "~", "MLTK", "~", 
+        RowBox[{"KET", "[", "i_", "]"}]}], "->", 
+       RowBox[{
+        RowBox[{"CPX", "[", 
+         RowBox[{"1", "/", 
+          RowBox[{"Sqrt", "[", 
+           RowBox[{"n", "+", "1"}], "]"}]}], "]"}], "~", "SCRK", "~", 
+        RowBox[{"SUMK", "[", 
+         RowBox[{"k", ",", 
+          RowBox[{"USET", "[", "T", "]"}], ",", 
+          RowBox[{
+           RowBox[{"CPX", "[", 
+            RowBox[{"Exp", "[", 
+             RowBox[{"2", " ", "Pi", " ", "I", " ", "i", " ", 
+              RowBox[{"k", " ", "/", " ", 
+               RowBox[{"(", 
+                RowBox[{"n", "+", "1"}], ")"}]}]}], "]"}], "]"}], "~", "SCRK",
+            "~", 
+           RowBox[{"KET", "[", "k", "]"}]}]}], "]"}]}]}], "}"}]}], 
+    "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", "]"}]], "Input",
+ CellLabel->"In[97]:=",ExpressionUUID->"098e79e4-a0c2-449a-8bab-e07938622bbe"],
+
+Cell[BoxData["True"], "Output",
+ CellLabel->"Out[97]=",ExpressionUUID->"8efe9784-a927-4534-9716-8c54f15c52ed"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Eq7", "Subsubsection",ExpressionUUID->"3f58797c-d415-4109-b13b-10a5c836f229"],
+
+Cell["Note that the isomorphism is needed here.", "Text",ExpressionUUID->"b09c47f7-1869-468b-9946-79b715c6dfc5"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Block", "[", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"{", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"DiracCtx", "=", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"0", "->", "T"}], ",", 
+        RowBox[{"M", "->", 
+         RowBox[{"SetType", "[", "m", "]"}]}], ",", 
+        RowBox[{
+         RowBox[{"\[Delta]", "[", "_", "]"}], "->", "T"}], ",", 
+        RowBox[{
+         RowBox[{"\[Beta]", "[", "_", "]"}], "->", "SType"}], ",", 
+        RowBox[{
+         RowBox[{"\[Tau]", "[", "_", "]"}], "->", "SType"}], ",", 
+        RowBox[{"b", "->", "T"}], ",", 
+        RowBox[{
+         RowBox[{"u", "[", "_", "]"}], "->", 
+         RowBox[{"KType", "[", "T", "]"}]}], ",", 
+        RowBox[{
+         RowBox[{"U", "[", "_", "]"}], "->", 
+         RowBox[{"OType", "[", 
+          RowBox[{"T", ",", "T"}], "]"}]}], ",", 
+        RowBox[{"Hu", "->", 
+         RowBox[{"OType", "[", 
+          RowBox[{"T", ",", "T"}], "]"}]}], ",", " ", 
+        RowBox[{"Uf", "->", 
+         RowBox[{"OType", "[", 
+          RowBox[{
+           RowBox[{"T", "~", "ProdType", "~", "T"}], ",", " ", 
+           RowBox[{"T", "~", "ProdType", "~", "T"}]}], "]"}]}], ",", 
+        RowBox[{"IQFT", "->", 
+         RowBox[{"OType", "[", 
+          RowBox[{"T", ",", "T"}], "]"}]}], ",", 
+        RowBox[{"QFT", "->", 
+         RowBox[{"OType", "[", 
+          RowBox[{"T", ",", "T"}], "]"}]}], ",", " ", 
+        RowBox[{"Uc", "->", 
+         RowBox[{"OType", "[", 
+          RowBox[{
+           RowBox[{"T", "~", "ProdType", "~", "T"}], ",", " ", 
+           RowBox[{"T", "~", "ProdType", "~", "T"}]}], "]"}]}], ",", " ", 
+        RowBox[{
+         RowBox[{"v", "[", "_", "]"}], "->", 
+         RowBox[{"KType", "[", "T", "]"}]}], ",", 
+        RowBox[{"isomorphism", "->", 
+         RowBox[{"OType", "[", 
+          RowBox[{
+           RowBox[{"T", "~", "ProdType", "~", 
+            RowBox[{"(", 
+             RowBox[{"T", "~", "ProdType", "~", "T"}], ")"}]}], ",", 
+           RowBox[{
+            RowBox[{"(", 
+             RowBox[{"T", "~", "ProdType", "~", "T"}], ")"}], "~", "ProdType",
+             "~", "T"}]}], "]"}]}]}], "}"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"Uf", "=", 
+      RowBox[{"With", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"i", "=", 
+           RowBox[{"Unique", "[", "]"}]}], ",", 
+          RowBox[{"j", "=", 
+           RowBox[{"Unique", "[", "]"}]}]}], "}"}], ",", 
+        RowBox[{"Sum", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{
+             TemplateBox[{"i"},
+              "Ket"], "\[CircleTimes]", 
+             TemplateBox[{"i"},
+              "Bra"]}], ")"}], "\[CircleTimes]", 
+           RowBox[{"(", 
+            RowBox[{"Sum", "[", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"CPX", "[", 
+                RowBox[{"Exp", "[", 
+                 RowBox[{"I", " ", "i", " ", 
+                  RowBox[{"\[Lambda]", "[", "j", "]"}], " ", 
+                  RowBox[{
+                   RowBox[{"t0", "[", "j", "]"}], " ", "/", " ", 
+                   RowBox[{"(", 
+                    RowBox[{"n", "+", "1"}], ")"}]}]}], "]"}], "]"}], 
+               RowBox[{"(", 
+                RowBox[{
+                 RowBox[{"u", "[", "j", "]"}], "\[CircleTimes]", 
+                 RowBox[{"(", 
+                  SuperscriptBox[
+                   RowBox[{"u", "[", "j", "]"}], "\[Dagger]"], ")"}]}], 
+                ")"}]}], ",", 
+              RowBox[{"{", 
+               RowBox[{"j", ",", 
+                RowBox[{"USET", "[", "T", "]"}]}], "}"}]}], "]"}], ")"}]}], 
+          ",", 
+          RowBox[{"{", 
+           RowBox[{"i", ",", 
+            RowBox[{"USET", "[", "T", "]"}]}], "}"}]}], "]"}]}], "]"}]}], ",",
+      "\[IndentingNewLine]", 
+     RowBox[{"isomorphism", "=", 
+      RowBox[{"SUMO", "[", 
+       RowBox[{
+        RowBox[{"IDX", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"a", ",", 
+            RowBox[{"USET", "[", "T", "]"}]}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"b", ",", 
+            RowBox[{"USET", "[", "T", "]"}]}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"c", ",", 
+            RowBox[{"USET", "[", "T", "]"}]}], "}"}]}], "]"}], ",", 
+        RowBox[{
+         RowBox[{"KET", "[", 
+          RowBox[{"PAIR", "[", 
+           RowBox[{"a", ",", 
+            RowBox[{"PAIR", "[", 
+             RowBox[{"b", ",", "c"}], "]"}]}], "]"}], "]"}], "~", "OUTER", 
+         "~", 
+         RowBox[{"BRA", "[", 
+          RowBox[{"PAIR", "[", 
+           RowBox[{
+            RowBox[{"PAIR", "[", 
+             RowBox[{"a", ",", "b"}], "]"}], ",", "c"}], "]"}], "]"}]}]}], 
+       "]"}]}], ",", "\[IndentingNewLine]", "LHS"}], "\[IndentingNewLine]", 
+    "}"}], ",", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"LHS", "=", 
+     RowBox[{
+      RowBox[{"DNNorm", "[", "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"CPX", "[", 
+          RowBox[{"1", "/", 
+           RowBox[{"Sqrt", "[", 
+            RowBox[{"n", "+", "1"}], "]"}]}], "]"}], " ", 
+         RowBox[{"Sum", "[", 
+          RowBox[{
+           RowBox[{"Sum", "[", 
+            RowBox[{
+             RowBox[{
+              RowBox[{"\[Beta]", "[", "j", "]"}], 
+              RowBox[{"CPX", "[", 
+               RowBox[{"Exp", "[", 
+                RowBox[{"I", " ", "2", " ", "Pi", " ", 
+                 RowBox[{"\[Delta]", "[", "j", "]"}], " ", 
+                 RowBox[{"\[Tau]", "/", 
+                  RowBox[{"(", 
+                   RowBox[{"1", "+", "n"}], ")"}]}]}], "]"}], "]"}], 
+              RowBox[{
+               RowBox[{"(", 
+                RowBox[{
+                 SuperscriptBox["Uf", "\[Dagger]"], "\[SmallCircle]", 
+                 RowBox[{"(", 
+                  RowBox[{
+                   TemplateBox[{"\[Tau]"},
+                    "Ket"], "\[CircleTimes]", 
+                   RowBox[{"u", "[", "j", "]"}]}], ")"}]}], ")"}], 
+               "\[CircleTimes]", 
+               RowBox[{"v", "[", "j", "]"}]}]}], ",", 
+             RowBox[{"{", 
+              RowBox[{"j", ",", 
+               RowBox[{"USET", "[", "T", "]"}]}], "}"}]}], "]"}], ",", 
+           RowBox[{"{", 
+            RowBox[{"\[Tau]", ",", 
+             RowBox[{"USET", "[", "T", "]"}]}], "}"}]}], "]"}]}], ",", 
+        "\[IndentingNewLine]", "False", ",", "\[IndentingNewLine]", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{
+           RowBox[{
+            RowBox[{"ADJB", "[", 
+             RowBox[{"u", "[", "i_", "]"}], "]"}], "~", "DOT", "~", 
+            RowBox[{"u", "[", "j_", "]"}]}], "->", 
+           RowBox[{"DELTA", "[", 
+            RowBox[{"i", ",", " ", "j"}], "]"}]}], ",", " ", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"\[Lambda]", "[", "j_", "]"}], " ", 
+            RowBox[{"t0", "[", "j_", "]"}]}], "->", 
+           RowBox[{"2", " ", "Pi", " ", 
+            RowBox[{"\[Delta]", "[", "j", "]"}]}]}]}], "}"}]}], 
+       "\[IndentingNewLine]", "]"}], "/.", 
+      RowBox[{
+       RowBox[{"Exp", "[", "_", "]"}], "->", "1"}]}]}], ";", 
+    "\[IndentingNewLine]", 
+    RowBox[{"DNEqQ", "[", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"isomorphism", "\[SmallCircle]", "LHS"}], ",", 
+      "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"CPX", "[", 
+        RowBox[{"1", "/", 
+         RowBox[{"Sqrt", "[", 
+          RowBox[{"n", "+", "1"}], "]"}]}], "]"}], 
+       RowBox[{
+        RowBox[{"Sum", "[", 
+         RowBox[{
+          TemplateBox[{"\[Tau]"},
+           "Ket"], ",", 
+          RowBox[{"{", 
+           RowBox[{"\[Tau]", ",", 
+            RowBox[{"USET", "[", "T", "]"}]}], "}"}]}], "]"}], 
+        "\[CircleTimes]", 
+        RowBox[{"Sum", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"\[Beta]", "[", "j", "]"}], " ", 
+           RowBox[{
+            RowBox[{"u", "[", "j", "]"}], "\[CircleTimes]", 
+            RowBox[{"v", "[", "j", "]"}]}]}], ",", 
+          RowBox[{"{", 
+           RowBox[{"j", ",", 
+            RowBox[{"USET", "[", "T", "]"}]}], "}"}]}], "]"}]}]}]}], 
+     "\[IndentingNewLine]", "]"}]}]}], "\[IndentingNewLine]", "]"}]], "Input",\
+
+ CellLabel->"In[98]:=",ExpressionUUID->"306e20ce-651e-41bd-a0fe-e695401f6dcb"],
+
+Cell[BoxData["True"], "Output",
+ CellLabel->"Out[98]=",ExpressionUUID->"38940ebe-c12e-4ef0-817d-d22d22246597"]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Eq8", "Subsubsection",ExpressionUUID->"3ba35994-9571-4761-9e89-14f5436f5dad"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Block", "[", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"{", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"DiracCtx", "=", 
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{"0", "->", "T"}], ",", 
+        RowBox[{"M", "->", 
+         RowBox[{"SetType", "[", "m", "]"}]}], ",", 
+        RowBox[{
+         RowBox[{"\[Delta]", "[", "_", "]"}], "->", "T"}], ",", 
+        RowBox[{
+         RowBox[{"\[Beta]", "[", "_", "]"}], "->", "SType"}], ",", 
+        RowBox[{
+         RowBox[{"\[Tau]", "[", "_", "]"}], "->", "SType"}], ",", 
+        RowBox[{"b", "->", "T"}], ",", 
+        RowBox[{
+         RowBox[{"u", "[", "_", "]"}], "->", 
+         RowBox[{"KType", "[", "T", "]"}]}], ",", 
+        RowBox[{
+         RowBox[{"U", "[", "_", "]"}], "->", 
+         RowBox[{"OType", "[", 
+          RowBox[{"T", ",", "T"}], "]"}]}], ",", 
+        RowBox[{"Hn", "->", 
+         RowBox[{"OType", "[", 
+          RowBox[{"T", ",", "T"}], "]"}]}], ",", " ", 
+        RowBox[{"Uf", "->", 
+         RowBox[{"OType", "[", 
+          RowBox[{
+           RowBox[{"T", "~", "ProdType", "~", "T"}], ",", " ", 
+           RowBox[{"T", "~", "ProdType", "~", "T"}]}], "]"}]}], ",", 
+        RowBox[{"IQFT", "->", 
+         RowBox[{"OType", "[", 
+          RowBox[{"T", ",", "T"}], "]"}]}], ",", 
+        RowBox[{"QFT", "->", 
+         RowBox[{"OType", "[", 
+          RowBox[{"T", ",", "T"}], "]"}]}], ",", " ", 
+        RowBox[{"Uc", "->", 
+         RowBox[{"OType", "[", 
+          RowBox[{
+           RowBox[{"T", "~", "ProdType", "~", "T"}], ",", " ", 
+           RowBox[{"T", "~", "ProdType", "~", "T"}]}], "]"}]}], ",", " ", 
+        RowBox[{
+         RowBox[{"v", "[", "_", "]"}], "->", 
+         RowBox[{"KType", "[", "T", "]"}]}], ",", 
+        RowBox[{"isomorphism", "->", 
+         RowBox[{"OType", "[", 
+          RowBox[{
+           RowBox[{"T", "~", "ProdType", "~", 
+            RowBox[{"(", 
+             RowBox[{"T", "~", "ProdType", "~", "T"}], ")"}]}], ",", 
+           RowBox[{
+            RowBox[{"(", 
+             RowBox[{"T", "~", "ProdType", "~", "T"}], ")"}], "~", "ProdType",
+             "~", "T"}]}], "]"}]}]}], "}"}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{"Uf", "=", 
+      RowBox[{"With", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"i", "=", 
+           RowBox[{"Unique", "[", "]"}]}], ",", 
+          RowBox[{"j", "=", 
+           RowBox[{"Unique", "[", "]"}]}]}], "}"}], ",", 
+        RowBox[{"Sum", "[", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{
+             TemplateBox[{"i"},
+              "Ket"], "\[CircleTimes]", 
+             TemplateBox[{"i"},
+              "Bra"]}], ")"}], "\[CircleTimes]", 
+           RowBox[{"(", 
+            RowBox[{"Sum", "[", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"CPX", "[", 
+                RowBox[{"Exp", "[", 
+                 RowBox[{"I", " ", "i", " ", 
+                  RowBox[{"\[Lambda]", "[", "j", "]"}], " ", 
+                  RowBox[{
+                   RowBox[{"t0", "[", "j", "]"}], " ", "/", " ", 
+                   RowBox[{"(", 
+                    RowBox[{"n", "+", "1"}], ")"}]}]}], "]"}], "]"}], 
+               RowBox[{"(", 
+                RowBox[{
+                 RowBox[{"u", "[", "j", "]"}], "\[CircleTimes]", 
+                 RowBox[{"(", 
+                  SuperscriptBox[
+                   RowBox[{"u", "[", "j", "]"}], "\[Dagger]"], ")"}]}], 
+                ")"}]}], ",", 
+              RowBox[{"{", 
+               RowBox[{"j", ",", 
+                RowBox[{"USET", "[", "T", "]"}]}], "}"}]}], "]"}], ")"}]}], 
+          ",", 
+          RowBox[{"{", 
+           RowBox[{"i", ",", 
+            RowBox[{"USET", "[", "T", "]"}]}], "}"}]}], "]"}]}], "]"}]}], ",",
+      "\[IndentingNewLine]", 
+     RowBox[{"isomorphism", "=", 
+      RowBox[{"SUMO", "[", 
+       RowBox[{
+        RowBox[{"IDX", "[", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"a", ",", 
+            RowBox[{"USET", "[", "T", "]"}]}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"b", ",", 
+            RowBox[{"USET", "[", "T", "]"}]}], "}"}], ",", 
+          RowBox[{"{", 
+           RowBox[{"c", ",", 
+            RowBox[{"USET", "[", "T", "]"}]}], "}"}]}], "]"}], ",", 
+        RowBox[{
+         RowBox[{"KET", "[", 
+          RowBox[{"PAIR", "[", 
+           RowBox[{"a", ",", 
+            RowBox[{"PAIR", "[", 
+             RowBox[{"b", ",", "c"}], "]"}]}], "]"}], "]"}], "~", "OUTER", 
+         "~", 
+         RowBox[{"BRA", "[", 
+          RowBox[{"PAIR", "[", 
+           RowBox[{
+            RowBox[{"PAIR", "[", 
+             RowBox[{"a", ",", "b"}], "]"}], ",", "c"}], "]"}], "]"}]}]}], 
+       "]"}]}], ",", "\[IndentingNewLine]", "LHS"}], "\[IndentingNewLine]", 
+    "}"}], ",", "\[IndentingNewLine]", 
+   RowBox[{"DNEqQ", "[", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"CPX", "[", 
+       RowBox[{"1", "/", 
+        RowBox[{"Sqrt", "[", 
+         RowBox[{"n", "+", "1"}], "]"}]}], "]"}], 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         SuperscriptBox["Hn", "\[Dagger]"], "\[SmallCircle]", 
+         RowBox[{"Sum", "[", 
+          RowBox[{
+           TemplateBox[{"\[Tau]"},
+            "Ket"], ",", 
+           RowBox[{"{", 
+            RowBox[{"\[Tau]", ",", 
+             RowBox[{"USET", "[", "T", "]"}]}], "}"}]}], "]"}]}], ")"}], 
+       "\[CircleTimes]", 
+       RowBox[{"Sum", "[", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"\[Beta]", "[", "j", "]"}], " ", 
+          RowBox[{
+           RowBox[{"u", "[", "j", "]"}], "\[CircleTimes]", 
+           RowBox[{"v", "[", "j", "]"}]}]}], ",", 
+         RowBox[{"{", 
+          RowBox[{"j", ",", 
+           RowBox[{"USET", "[", "T", "]"}]}], "}"}]}], "]"}]}]}], ",", 
+     "\[IndentingNewLine]", 
+     RowBox[{"Sum", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"\[Beta]", "[", "i", "]"}], 
+        RowBox[{
+         TemplateBox[{"0"},
+          "Ket"], "\[CircleTimes]", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"u", "[", "i", "]"}], "\[CircleTimes]", 
+           RowBox[{"v", "[", "i", "]"}]}], ")"}]}]}], ",", 
+       RowBox[{"{", 
+        RowBox[{"i", ",", 
+         RowBox[{"USET", "[", "T", "]"}]}], "}"}]}], "]"}], ",", 
+     "\[IndentingNewLine]", "False", ",", "\[IndentingNewLine]", 
+     RowBox[{"{", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"ADJO", "[", "Hn", "]"}], "~", "MLTK", "~", 
+        RowBox[{"SUMK", "[", 
+         RowBox[{
+          RowBox[{"IDX", "[", 
+           RowBox[{"{", 
+            RowBox[{"i_", ",", 
+             RowBox[{"USET", "[", "T", "]"}]}], "}"}], "]"}], ",", 
+          RowBox[{"KET", "[", "i_", "]"}]}], "]"}]}], ":>", 
+       RowBox[{
+        RowBox[{"CPX", "[", 
+         RowBox[{"Sqrt", "[", 
+          RowBox[{"n", "+", "1"}], "]"}], "]"}], "~", "SCRK", "~", 
+        RowBox[{"KET", "[", "0", "]"}]}]}], "}"}]}], "\[IndentingNewLine]", 
+    "]"}]}], "\[IndentingNewLine]", "]"}]], "Input",
+ CellLabel->"In[99]:=",ExpressionUUID->"faa07c4d-b967-4527-bc5c-6e8c06d1f958"],
+
+Cell[BoxData["True"], "Output",
+ CellLabel->"Out[99]=",ExpressionUUID->"a240f191-894a-484f-b6da-654b5874045b"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{1416, 897},
+WindowMargins->{{Automatic, 55}, {37, Automatic}},
+FrontEndVersion->"14.0 for Mac OS X ARM (64-bit) (2023\:5e7412\:670812\:65e5)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"853d6620-0193-4703-b678-84b6452c7868"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[580, 22, 85, 0, 98, "Title",ExpressionUUID->"c6575417-f821-4098-9059-ae47604f6e12"],
+Cell[668, 24, 403, 10, 72, "Code",ExpressionUUID->"cdcd0075-d750-441f-83d0-24537a94534c"],
+Cell[CellGroupData[{
+Cell[1096, 38, 80, 0, 54, "Subsection",ExpressionUUID->"cbbcd56c-6a36-4942-934f-dc466215fb89"],
+Cell[CellGroupData[{
+Cell[1201, 42, 1555, 45, 286, "Input",ExpressionUUID->"4ba4b617-838d-4ef4-bd56-d0434b6cf47f"],
+Cell[2759, 89, 110, 1, 34, "Output",ExpressionUUID->"57c1a856-8a7f-4b85-9ea4-148a6be6226d"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[2918, 96, 80, 0, 54, "Subsection",ExpressionUUID->"5a808bf5-f7a0-4088-97c6-9bd8353724e5"],
+Cell[CellGroupData[{
+Cell[3023, 100, 2397, 68, 316, "Input",ExpressionUUID->"0d43fb5d-cf52-420a-a9e5-a8347b3271f8"],
+Cell[5423, 170, 110, 1, 34, "Output",ExpressionUUID->"f8684ce1-8522-4822-9508-11a80a944454"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[5582, 177, 80, 0, 54, "Subsection",ExpressionUUID->"37a7088d-33fc-488d-8a2f-1a66e5d6c7a5"],
+Cell[CellGroupData[{
+Cell[5687, 181, 5214, 143, 359, "Input",ExpressionUUID->"1599e5c9-0222-4b7f-8d07-d63be531e496"],
+Cell[10904, 326, 110, 1, 34, "Output",ExpressionUUID->"38ba965f-e1b3-44d0-b116-70c7217eff74"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[11063, 333, 98, 0, 54, "Subsection",ExpressionUUID->"f239a877-ac55-47d1-90f6-01e309fbd495"],
+Cell[11164, 335, 113, 0, 35, "Text",ExpressionUUID->"73fe6793-21ad-4ff5-b6ac-1ffc3dfdeeab"],
+Cell[CellGroupData[{
+Cell[11302, 339, 5077, 133, 348, "Input",ExpressionUUID->"e001811c-5edd-414b-8358-0c2f336ae7d4"],
+Cell[16382, 474, 110, 1, 34, "Output",ExpressionUUID->"781255e6-87f5-4f38-9b53-1c29d0417952"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[16541, 481, 80, 0, 54, "Subsection",ExpressionUUID->"a93d65fa-fe66-4057-b5f7-d4a12ae6fe83"],
+Cell[CellGroupData[{
+Cell[16646, 485, 3451, 92, 337, "Input",ExpressionUUID->"517f83ee-ee71-40ad-9410-959575555edb"],
+Cell[20100, 579, 110, 1, 34, "Output",ExpressionUUID->"29c492bf-04fa-43c6-af32-0001fa2a46c4"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[20247, 585, 83, 0, 45, "Subsubsection",ExpressionUUID->"6bf139c1-d5ea-4e60-b4eb-13b932eae1d5"],
+Cell[CellGroupData[{
+Cell[20355, 589, 4640, 122, 352, "Input",ExpressionUUID->"098e79e4-a0c2-449a-8bab-e07938622bbe"],
+Cell[24998, 713, 110, 1, 34, "Output",ExpressionUUID->"8efe9784-a927-4534-9716-8c54f15c52ed"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[25157, 720, 83, 0, 45, "Subsubsection",ExpressionUUID->"3f58797c-d415-4109-b13b-10a5c836f229"],
+Cell[25243, 722, 112, 0, 35, "Text",ExpressionUUID->"b09c47f7-1869-468b-9946-79b715c6dfc5"],
+Cell[CellGroupData[{
+Cell[25380, 726, 8267, 220, 539, "Input",ExpressionUUID->"306e20ce-651e-41bd-a0fe-e695401f6dcb"],
+Cell[33650, 948, 110, 1, 34, "Output",ExpressionUUID->"38940ebe-c12e-4ef0-817d-d22d22246597"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[33809, 955, 83, 0, 45, "Subsubsection",ExpressionUUID->"3ba35994-9571-4761-9e89-14f5436f5dad"],
+Cell[CellGroupData[{
+Cell[33917, 959, 7086, 192, 458, "Input",ExpressionUUID->"faa07c4d-b967-4527-bc5c-6e8c06d1f958"],
+Cell[41006, 1153, 110, 1, 57, "Output",ExpressionUUID->"a240f191-894a-484f-b6da-654b5874045b"]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
