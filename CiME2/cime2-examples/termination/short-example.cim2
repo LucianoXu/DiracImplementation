@@ -1,6 +1,0 @@
-let F = signature "f,g : unary";  
-let X = vars "x";
-let R = TRS F X "f(f(x)) -> f(g(f(x)))";
-termcrit "dp";
-polyinterpkind "linear";
-termination R;

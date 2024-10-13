@@ -1,6 +1,0 @@
-let F = signature "
-  a,b : constant
-";
-
-let o = MPO (precedence F "a > b, b> a");
-
