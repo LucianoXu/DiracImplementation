@@ -12,9 +12,9 @@ To run the tool, you should have Mathematica installed on your machine. The file
 
 Other files in the folder are:
 
-- `DiracDec`: the Mathematica implmenetation of DiracDec. The rewriting rules for the core language can be found in `DiracDec/DiracCore.wl`.
+- `DiracDec`: the Mathematica implementation of DiracDec. The rewriting rules for the core language can be found in `DiracDec/DiracCore.wl`.
 - `ExampleList.nb`: the Mathematica notebook containing the example list.
-- `HHL.nb`: the Mathematica notebook containing the exceprt verification of the HHL example.
+- `HHL.nb`: the Mathematica notebook containing the excerpt verification of the HHL example.
 
 
 ## CoqQ Mechanization
